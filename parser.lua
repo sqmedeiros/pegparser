@@ -90,6 +90,7 @@ defs.newSuffix = function (p, ...)
 			i = i + 2
 		end
 	end
+	return p
 end 
 
 defs.newRule = function (k, v, p)
@@ -104,19 +105,19 @@ local peg = [[
 
   exp           <-   (seq ('/' S seq^SeqExp)*) -> newOrd
 
-  seq           <-   {| (prefix (S prefix)*) |} -> newSeq
+  seq           <-   (prefix (S prefix)*) -> newSeq
 
   prefix        <-   '&' S prefix^AndPred -> newAnd  / 
                      '!' S prefix^NotPred -> newNot  /  suffix
 
   suffix        <-   (primary ({'+'} S /  {'*'} S /  {'?'} S /  {'^'} S name)*) -> newSuffix
 
-  primary       <-   '(' S exp ')' S  /  string  /  class  /  any  /  var /  throw 
+  primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var /  throw
 
-  string        <-   ("'" {(!("'" / %nl) .)*} "'"  S  /
-                      '"' {(!('"' / %nl) .)*} '"'  S) -> newString 
+  string        <-   ("'" {(!("'" / %nl) .)*} "'"^SingQuote  S  /
+                      '"' {(!('"' / %nl) .)*} '"'^DoubQuote  S) -> newString
 
-	class         <-   '[' {| ({(.'-'.)} / (!']' {.}))* |} -> newClass ']' S
+	class         <-   '[' {| ({(.'-'.)} / (!']' {.}))* |} -> newClass ']'^RBraClass S
 
   any           <-   '.' -> newAny S
 
@@ -124,7 +125,7 @@ local peg = [[
 
   name          <-   {[a-zA-Z_] [a-zA-Z0-9_]*} S
  
-  throw         <-   '%{' S name -> newThrow '}' S 
+  throw         <-   '%{' S name^NameThrow -> newThrow '}'^RCurlyThrow S
 
   arrow         <-   '<-' S
 

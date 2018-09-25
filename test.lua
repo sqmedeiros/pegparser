@@ -4,7 +4,9 @@ local pretty = require 'pretty'
 
 local function assertlab (g, lab)
 	local r, msg, pos = m.match(g)
-	assert(string.find(msg, errinfo[lab], 1, true))
+	local errMsg = errinfo[lab]
+	assert(errMsg, "InvalidLabel '" .. lab .. "'")
+	assert(string.find(msg, errMsg, 1, true), "Expected label '" .. lab .. "'")
 end
 
 assertlab([[a <- 'b' 3]], 'Extra')
@@ -21,21 +23,34 @@ assertlab([[a <- 'b'& ]], 'AndPred')
 
 assertlab([[a <- ! ]], 'NotPred')
 
+assertlab([[a <- () ]], 'ExpPri')
+
+assertlab([[a <- ( 'b' ]], 'RParPri')
+
+assertlab([[a <- ( 'b" ]], 'SingQuote')
+
+assertlab([[a <- ( "b' ]], 'DoubQuote')
+
+assertlab([[a <- [a-z]], 'RBraClass')
+
+assertlab([[a <- %{ } ]], 'NameThrow')
+
+assertlab([[a <- %{ ops ]], 'RCurlyThrow')
+
+
+print(pretty.printg(m.match[[a <- 'b']]))
 
 local r, l, pos =  m.match[[a <- 'b' / 'c'  d <- 'a'^bola]]
-print(r, l, pos)
-
-for k, v in pairs(r) do
-	print("ei", k, v)
-end
+print(pretty.printg(r))
 
 local r, l, pos =  m.match[[a <- 'bc' 'd' 'c' [a-zA-Z0-9_] ]]
-print("vamos", r, l, pos)
+print(pretty.printg(r))
 
-for k, v in pairs(r) do
-	print("ei", k, v)
-end
 
-local t = m.match([[a <- 'b' ('c' / 'd') / 'e']]
+local r, l, pos = m.match([[a <- 'b' ('c' / 'd') / 'e']])
+print(pretty.printg(r))
+
+local r, l, pos = m.match([[new <- 'x' ('c' / 'd') / 'e' %{Nada}]])
+print(pretty.printg(r))
 
 
