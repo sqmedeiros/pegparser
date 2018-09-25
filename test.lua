@@ -49,21 +49,21 @@ assertlab([[a <- %{ ops ]], 'RCurThrow')
 print(pretty.printg(m.match[[a <- 'b']]))
 
 local r, l, pos =  m.match[[a <- 'b' / 'c'  d <- 'a'^bola]]
-print(pretty.printg(r))
+print(pretty.printg(r, l))
 
 local r, l, pos =  m.match[[a <- 'bc' 'd' 'c' [a-zA-Z0-9_] ]]
-print(pretty.printg(r))
+print(pretty.printg(r, l))
 
 
 local r, l, pos = m.match([[a <- 'b' ('c' / 'd') / 'e']])
-print(pretty.printg(r))
+print(pretty.printg(r, l))
 
 local r, l, pos = m.match([[new <- 'x' ('c' / 'd') / 'e' %{Nada}]])
-print(pretty.printg(r))
+print(pretty.printg(r, l))
 
 local r, l, pos = m.match([[
 Start <- X ('c' / 'd') / 'e' %{Nada}
 X     <- &'a' !'b' {.} {} {| [a-z]* |} Z
 Z     <- 'a'? 'b'* 'c'+]])
-print(pretty.printg(r))
+print(pretty.printg(r, l))
 

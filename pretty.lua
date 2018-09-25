@@ -44,10 +44,10 @@ pretty.printp = function (p, iscon)
 	end
 end
 
-pretty.printg = function (g)
+pretty.printg = function (g, l)
 	local t = {}
-	for k, v in pairs(g) do
-		table.insert(t, string.format("%-15s <-  %s", k, pretty.printp(v)))
+	for i, r in ipairs(l) do
+		table.insert(t, string.format("%-15s <-  %s", r, pretty.printp(g[r])))
 	end
 	return table.concat(t, '\n')
 end

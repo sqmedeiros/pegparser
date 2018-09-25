@@ -105,8 +105,9 @@ defs.newSuffix = function (p, ...)
 	return p
 end 
 
-defs.newRule = function (k, v, p)
+defs.newRule = function (k, v)
 	tree[k] = v
+	rules[#rules + 1] = k
 end
 
 
@@ -151,12 +152,13 @@ local peg = [[
 local p = re.compile(peg, defs)
 
 local function match (s)
+	rules = {}
   tree = {}
 	local r, lab, pos = p:match(s)
   if not r then
 		return r, errinfo[lab] or lab, pos
 	else
-		return tree
+		return tree, rules
 	end
 end
 
