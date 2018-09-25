@@ -18,14 +18,14 @@ defs.newVar = function (v)
 end
 
 defs.newAny = function (v)
-	return newAny('any', v)
+	return newNode('any')
 end
 
 defs.newVar = function (v)
 	return newNode('var', v)
 end
 
-defs.newClass =function (l)
+defs.newClass = function (l)
 	local p = newNode('set', l)
 	return p
 end
@@ -71,6 +71,18 @@ defs.newThrow = function (lab)
 	return newNode('throw', lab)
 end
 
+defs.newPosCap = function ()
+	return newNode('posCap')
+end
+
+defs.newSimpCap = function (p)
+	return newNode('simpCap', p)
+end
+
+defs.newTabCap = function (p)
+	return newNode('tabCap', p)
+end
+
 defs.newSuffix = function (p, ...)
   local l = { ... }
 	local i = 1
@@ -112,7 +124,11 @@ local peg = [[
 
   suffix        <-   (primary ({'+'} S /  {'*'} S /  {'?'} S /  {'^'} S name)*) -> newSuffix
 
-  primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var /  throw
+  primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var /  throw /
+                     ('{|' S  exp^ExpTabCap '|}'^RCurTabCap S)   -> newTabCap /
+                     ('{'  S  exp          '}'^RCurCap  S)       -> newSimpCap /
+                      '{'  S               '}'^RCurCap  S        -> newPosCap
+
 
   string        <-   ("'" {(!("'" / %nl) .)*} "'"^SingQuote  S  /
                       '"' {(!('"' / %nl) .)*} '"'^DoubQuote  S) -> newString
@@ -125,7 +141,7 @@ local peg = [[
 
   name          <-   {[a-zA-Z_] [a-zA-Z0-9_]*} S
  
-  throw         <-   '%{' S name^NameThrow -> newThrow '}'^RCurlyThrow S
+  throw         <-   '%{' S name^NameThrow -> newThrow '}'^RCurThrow S
 
   arrow         <-   '<-' S
 

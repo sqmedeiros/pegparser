@@ -8,11 +8,14 @@ local errinfo = {
   NotPred = "expected an expression after '!'",
   ExpPri = "expected an expression after '('",
   RParPri = "expected ')'",
+  ExpTabCap = "expected an expression after '{|'",
+  RCurTabCap = "expected '|}' to close table capture",
+  RCurCap = "expected '}' to close capture",
   SingQuote = [[expected "'" to close string]],
   DoubQuote = [[expected '"' to close string]],
   RBraClass = "expected ']' to close character class",
   NameThrow = "expected a name after '%{'",
-  RCurlyThrow = "expected '}' to close throw expression",
+  RCurThrow = "expected '}' to close throw expression",
 }
 
 return errinfo

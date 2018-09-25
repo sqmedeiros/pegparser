@@ -27,6 +27,14 @@ assertlab([[a <- () ]], 'ExpPri')
 
 assertlab([[a <- ( 'b' ]], 'RParPri')
 
+assertlab([[hei <- {| |} ]], 'ExpTabCap')
+
+assertlab([[hei <- {| 'b'* } ]], 'RCurTabCap')
+
+assertlab([[hei <- { 'b']], 'RCurCap')
+
+assertlab([[hei <- { ]], 'RCurCap')
+
 assertlab([[a <- ( 'b" ]], 'SingQuote')
 
 assertlab([[a <- ( "b' ]], 'DoubQuote')
@@ -35,7 +43,7 @@ assertlab([[a <- [a-z]], 'RBraClass')
 
 assertlab([[a <- %{ } ]], 'NameThrow')
 
-assertlab([[a <- %{ ops ]], 'RCurlyThrow')
+assertlab([[a <- %{ ops ]], 'RCurThrow')
 
 
 print(pretty.printg(m.match[[a <- 'b']]))
@@ -53,4 +61,9 @@ print(pretty.printg(r))
 local r, l, pos = m.match([[new <- 'x' ('c' / 'd') / 'e' %{Nada}]])
 print(pretty.printg(r))
 
+local r, l, pos = m.match([[
+Start <- X ('c' / 'd') / 'e' %{Nada}
+X     <- &'a' !'b' {.} {} {| [a-z]* |} Z
+Z     <- 'a'? 'b'* 'c'+]])
+print(pretty.printg(r))
 

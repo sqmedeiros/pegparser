@@ -9,6 +9,12 @@ pretty.printp = function (p, iscon)
 		return "''"
 	elseif p.tag == 'any' then
 		return "."
+	elseif p.tag == 'posCap' then
+		return '{}'
+	elseif p.tag == 'simpCap' then
+		return '{' .. pretty.printp(p.p1) .. '}'
+	elseif p.tag == 'tabCap' then
+		return '{|' .. pretty.printp(p.p1) .. '|}'
 	elseif p.tag == 'var' then
 		return p.p1
 	elseif p.tag == 'ord' then
