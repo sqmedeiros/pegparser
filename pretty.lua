@@ -1,12 +1,12 @@
 local pretty = {}
 
 pretty.printp = function (p, iscon)
-	if p.tag == 'char' then
+	if p.tag == 'empty' then
+		return "''"
+	elseif p.tag == 'char' then
 		return "'" .. p.p1 .. "'"
 	elseif p.tag == 'set' then
 		return "[" .. table.concat(p.p1) .. "]"
-	elseif p.tag == 'empty' then
-		return "''"
 	elseif p.tag == 'any' then
 		return "."
 	elseif p.tag == 'posCap' then

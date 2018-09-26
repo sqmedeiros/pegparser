@@ -151,7 +151,7 @@ local peg = [[
 
 local p = re.compile(peg, defs)
 
-local function match (s)
+local function defs.match (s)
 	rules = {}
   tree = {}
 	local r, lab, pos = p:match(s)
@@ -162,8 +162,5 @@ local function match (s)
 	end
 end
 
-return {
-  match = match
-}
 
-
+return defs
