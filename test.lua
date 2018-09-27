@@ -1,6 +1,7 @@
 local m = require 'init'
 local errinfo = require 'syntax_errors'
 local pretty = require 'pretty'
+local coder = require 'coder'
 
 local function assertlab (g, lab)
 	local r, msg, pos = m.match(g)
@@ -46,7 +47,7 @@ assertlab([[a <- %{ } ]], 'NameThrow')
 assertlab([[a <- %{ ops ]], 'RCurThrow')
 
 
-print(pretty.printg(m.match[[a <- 'b']]))
+print(pretty.printg(m.match[[a <- 'b'*]]))
 
 local r, l, pos =  m.match[[a <- 'b' / 'c'  d <- 'a'^bola]]
 print(pretty.printg(r, l))
@@ -66,4 +67,31 @@ Start <- X ('c' / 'd') / 'e' %{Nada}
 X     <- &'a' !'b' {.} {} {| [a-z]* |} Z
 Z     <- 'a'? 'b'* 'c'+]])
 print(pretty.printg(r, l))
+
+
+-- testing coder
+local g = [[
+  S <- "0" B / "1" A / ""   -- balanced strings
+  A <- "0" S / "1" A A      -- one more 0
+  B <- "1" S / "0" B B      -- one more 1
+]]
+
+local p = coder.makeg(m.match(g), "S")
+assert(p:match("00011011") == 9)
+
+local g = [[
+  S <- ("0" B / "1" A)*
+  A <- "0" / "1" A A
+  B <- "1" / "0" B B
+]]
+
+local tree, r = m.match(g)
+print(pretty.printg(tree, r))
+local p = coder.makeg(m.match(g), "S")
+
+assert(p:match("00011011") == 9)
+assert(p:match("000110110") == 9)
+assert(p:match("011110110") == 3)
+print(p:match("000110010"))
+assert(p:match("000110010") == 1)
 

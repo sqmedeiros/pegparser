@@ -102,42 +102,6 @@ local function matchEmpty (p)
 end
 
 
-local function writepeg (p, iscon)
-	if p.tag == 'char' then
-		return "'" .. p.v .. "'"
-	elseif p.tag == 'empty' then
-		return "''"
-	elseif p.tag == 'any' then
-		return "."
-	elseif p.tag == 'var' then
-		return p.v
-	elseif p.tag == 'ord' then
-		local s1 = writepeg(p.p1, false)
-		local s2 = writepeg(p.p2, false)
-		if iscon then
-			return '(' .. s1 .. " / " .. s2 .. ')'
-		else
-			return s1 .. " / " .. s2
-		end
-	elseif p.tag == 'con' then
-		return writepeg(p.p1, true) .. " " .. writepeg(p.p2, true)
-	elseif p.tag == 'and' then
-		return '&(' .. writepeg(p.p1)	.. ')'
-	elseif p.tag == 'not' then
-		return '!(' .. writepeg(p.p1)	.. ')'
-  elseif p.tag == 'opt' then
-    return writepeg(p.p1) .. '?'
-  elseif p.tag == 'star' then
-    return writepeg(p.p1) .. '*'
-  elseif p.tag == 'plus' then
-    return writepeg(p.p1) .. '+'
-	else
-		error("Unknown tag: " .. p.tag)
-	end
-end
-
-
-
 local function printfollow (g)
 	for k, v in pairs(g) do
 		local s = k .. ':'

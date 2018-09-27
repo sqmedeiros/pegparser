@@ -5,7 +5,7 @@ local errinfo = require 'syntax_errors'
 local tree = {}
 local defs = {}
 
-local newNode = function (tag, p1, p2)
+local newNode = function (tag, p1, p2, props)
 	return { tag = tag, p1 = p1, p2 = p2 } 
 end
 
@@ -86,7 +86,7 @@ end
 defs.newSuffix = function (p, ...)
   local l = { ... }
 	local i = 1
-	while i < #l do
+	while i <= #l do
 		local v = l[i]
 		if v == '*' then
 			p = newNode('star', p)
@@ -108,6 +108,45 @@ end
 defs.newRule = function (k, v)
 	tree[k] = v
 	rules[#rules + 1] = k
+end
+
+defs.isSimpleExp = function (p)
+	local tag = p.tag
+	return tag == 'empty' or tag == 'char' or tag == 'any' or
+         tag == 'set' or tag == 'var' or tag == 'throw' or
+         tag == 'posCap'
+end
+
+defs.repSymbol = function (p)
+	local tag = p.tag
+	assert(tag == 'opt' or tag == 'plus' or tag == 'star', p.tag)
+	if p.tag == 'star' then
+		return '*'
+	elseif p.tag == 'plus' then
+		return '+'
+	else
+		return '?'
+	end
+end
+
+
+defs.matchEmpty = function (p)
+	local tag = p.tag
+	if tag == 'empty' or tag == 'not' or tag == 'and' or
+     tag == 'posCap' or tag == 'star' or tag == 'opt' then
+		return true
+	elseif tag == 'char' or tag == 'set' or tag == 'any' or
+         tag == 'plus' or tag == 'throw' then
+		return false
+	elseif tag == 'con' then
+		return defs.matchEmpty(p.p1) and defs.matchEmpty(p.p2)
+	elseif tag == 'ord' then
+		return defs.matchEmpty(p.p1) or defs.matchEmpty(p.p2)
+	elseif tag == 'var' then
+		return matchEmpty(tree[p.p1])
+	elseif tag == 'simpCap' or tag == 'tabCap' then
+		return matchEmpty(p.p1)
+	end
 end
 
 
@@ -151,7 +190,7 @@ local peg = [[
 
 local p = re.compile(peg, defs)
 
-local function defs.match (s)
+defs.match = function (s)
 	rules = {}
   tree = {}
 	local r, lab, pos = p:match(s)

@@ -1,56 +1,74 @@
 local pretty = {}
 
-pretty.printp = function (p, iscon)
+local parser = require 'parser'
+
+local function printp (p)
 	if p.tag == 'empty' then
 		return "''"
 	elseif p.tag == 'char' then
 		return "'" .. p.p1 .. "'"
-	elseif p.tag == 'set' then
-		return "[" .. table.concat(p.p1) .. "]"
 	elseif p.tag == 'any' then
 		return "."
+	elseif p.tag == 'set' then
+		return "[" .. table.concat(p.p1) .. "]"
 	elseif p.tag == 'posCap' then
 		return '{}'
 	elseif p.tag == 'simpCap' then
-		return '{' .. pretty.printp(p.p1) .. '}'
+		return '{' .. printp(p.p1) .. '}'
 	elseif p.tag == 'tabCap' then
-		return '{|' .. pretty.printp(p.p1) .. '|}'
+		return '{|' .. printp(p.p1) .. '|}'
 	elseif p.tag == 'var' then
 		return p.p1
 	elseif p.tag == 'ord' then
-		local s1 = pretty.printp(p.p1, false)
-		local s2 = pretty.printp(p.p2, false)
-		if iscon then
-			return '(' .. s1 .. " / " .. s2 .. ')'
+		local s1 = printp(p.p1)
+		local s2 = printp(p.p2)
+		if p.p2.tag == 'throw' then
+			return '[' .. s1 .. ']^' .. string.sub(s2, 2)
 		else
-			return s1 .. " / " .. s2
+			return  s1 .. '  /  ' .. s2
 		end
 	elseif p.tag == 'con' then
-		return pretty.printp(p.p1, true) .. " " .. pretty.printp(p.p2, true)
+		local s1 = printp(p.p1)
+		local s2 = printp(p.p2)
+		local s = s1
+		if p.p1.tag == 'ord' and p.p1.p2.tag ~= 'throw' then
+			s = '(' .. s .. ')'
+		end
+		if p.p2.tag == 'ord' and p.p2.p2.tag ~= 'throw' then
+			s = s .. ' (' .. s2 .. ')'
+		else
+			s = s .. ' ' .. s2
+		end
+		return s
 	elseif p.tag == 'and' then
-		return '&(' .. pretty.printp(p.p1, false)	.. ')'
+		return '&(' .. printp(p.p1)	.. ')'
 	elseif p.tag == 'not' then
-		return '!(' .. pretty.printp(p.p1, false)	.. ')'
-  elseif p.tag == 'opt' then
-    return pretty.printp(p.p1, false) .. '?'
-  elseif p.tag == 'star' then
-    return pretty.printp(p.p1, false) .. '*'
-  elseif p.tag == 'plus' then
-    return pretty.printp(p.p1, false) .. '+'
+		return '!(' .. printp(p.p1)	.. ')'
+	elseif p.tag == "star" or p.tag == 'plus' or p.tag == 'opt' then
+		local s = printp(p.p1)
+		if parser.isSimpleExp(p.p1) then
+			return s .. parser.repSymbol(p)
+		else
+			return '(' .. s .. ')' .. parser.repSymbol(p)
+		end
   elseif p.tag == 'throw' then
     return '^' .. p.p1
 	else
+		print(p, p.tag)
 		error("Unknown tag: " .. p.tag)
 	end
 end
 
-pretty.printg = function (g, l)
+local function printg (g, l)
 	local t = {}
 	for i, r in ipairs(l) do
-		table.insert(t, string.format("%-15s <-  %s", r, pretty.printp(g[r])))
+		table.insert(t, string.format("%-15s <-  %s", r, printp(g[r])))
 	end
 	return table.concat(t, '\n')
 end
 
 
-return pretty
+return {
+	printp = printp,
+	printg = printg
+}
