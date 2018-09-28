@@ -175,7 +175,7 @@ local peg = [[
   string        <-   ("'" {(!("'" / %nl) .)*} "'"^SingQuote  S  /
                       '"' {(!('"' / %nl) .)*} '"'^DoubQuote  S) -> newString
 
-	class         <-   '[' {| ({(.'-'.)} / (!']' {.}))* |} -> newClass ']'^RBraClass S
+	class         <-   '[' {| (({(.'-'.)} / (!']' {.}))+)^EmptyClass |} -> newClass ']'^RBraClass S
 
   any           <-   '.' -> newAny S
 
