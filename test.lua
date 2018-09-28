@@ -42,6 +42,8 @@ assertlab([[a <- ( 'b" ]], 'SingQuote')
 
 assertlab([[a <- ( "b' ]], 'DoubQuote')
 
+assertlab([[a <- []], 'EmptyClass')
+
 assertlab([[a <- [a-z]], 'RBraClass')
 
 assertlab([[a <- %{ } ]], 'NameThrow')
