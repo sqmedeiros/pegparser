@@ -2,15 +2,17 @@ local m = require 'init'
 local errinfo = require 'syntax_errors'
 local pretty = require 'pretty'
 local coder = require 'coder'
+local first = require 'first'
 
 local function assertlab (g, lab)
 	local r, msg, pos = m.match(g)
 	local errMsg = errinfo[lab]
 	assert(errMsg, "InvalidLabel '" .. lab .. "'")
+	if r then pretty.printg(r, msg) end
 	assert(string.find(msg, errMsg, 1, true), "Expected label '" .. lab .. "'")
 end
 
-assertlab([[a <- 'b' 3]], 'Extra')
+assertlab([[a <- 'b'  3 ]], 'Extra')
 
 assertlab([[]], 'Rule')
 
@@ -94,4 +96,41 @@ assert(p:match("000110110") == 9)
 assert(p:match("011110110") == 3)
 print(p:match("000110010"))
 assert(p:match("000110010") == 1)
+
+
+
+-- testing FIRST and FOLLOW
+local g = [[
+	S <- (A / B)* 'c'
+	A <- 'a'
+  B <- 'b' 
+]]
+
+local tree, r = m.match(g)
+print(pretty.printg(tree, r))
+
+first.calcFst(tree)
+first.calcFlw(tree, r[1])
+print("FIRST")
+first.printfirst(tree, r)
+print("FOLLOW")
+first.printfollow(r)
+
+local g = [[
+	S <- ('o' A / 'u' B)* (C / D)* 'c'
+	A <- 'a'
+  B <- 'b' 
+  C <- 'k'
+	D <- 'd'
+]]
+
+local tree, r = m.match(g)
+print(pretty.printg(tree, r))
+
+first.calcFst(tree)
+first.calcFlw(tree, r[1])
+print("FIRST")
+first.printfirst(tree, r)
+print("FOLLOW")
+first.printfollow(r)
 

@@ -5,7 +5,7 @@ local errinfo = require 'syntax_errors'
 local tree = {}
 local defs = {}
 
-local newNode = function (tag, p1, p2, props)
+local newNode = function (tag, p1, p2)
 	return { tag = tag, p1 = p1, p2 = p2 } 
 end
 
@@ -26,8 +26,7 @@ defs.newVar = function (v)
 end
 
 defs.newClass = function (l)
-	local p = newNode('set', l)
-	return p
+	return newNode('set', l)
 end
 
 local function binOpLeft (tag, l)
@@ -143,9 +142,12 @@ defs.matchEmpty = function (p)
 	elseif tag == 'ord' then
 		return defs.matchEmpty(p.p1) or defs.matchEmpty(p.p2)
 	elseif tag == 'var' then
-		return matchEmpty(tree[p.p1])
+		return defs.matchEmpty(tree[p.p1])
 	elseif tag == 'simpCap' or tag == 'tabCap' then
-		return matchEmpty(p.p1)
+		return defs.matchEmpty(p.p1)
+	else
+		print(p)
+		error("Unknown tag", p.tag)
 	end
 end
 
@@ -188,12 +190,12 @@ local peg = [[
   S             <-   (%s  /  '--' [^%nl]*)*  --spaces and comments
 ]]
 
-local p = re.compile(peg, defs)
+local ppk = re.compile(peg, defs)
 
 defs.match = function (s)
 	rules = {}
   tree = {}
-	local r, lab, pos = p:match(s)
+	local r, lab, pos = ppk:match(s)
   if not r then
 		return r, errinfo[lab] or lab, pos
 	else

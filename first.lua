@@ -1,12 +1,12 @@
-local lpeg = require"lpeg"
 local parser = require'parser'
+local pretty = require'pretty'
 local FIRST
 local FOLLOW
 local empty = '' 
 local calcf
 local newString = parser.newString
 local newOrd = parser.newOrd
-local printfirst, calcfirst, calck
+local printfirst, printsymbols, calcfirst, calck
 
 
 local function disjoint (s1, s2)
@@ -80,49 +80,17 @@ local function set2choice (s)
 end
 
 
-local function matchEmpty (p)
-	if p.tag == 'empty' or p.tag == 'star' or
-     p.tag == 'not' or p.tag == 'and' or p.tag == 'opt' then 
-		return true
-	elseif p.tag == 'char' or p.tag == 'plus' or p.tag == 'any' then
-		return false
-	elseif p.tag == 'ord' then
-		return matchEmpty(p.p1) or matchEmpty(p.p2)
-	elseif p.tag == 'con' then
-		if matchEmpty(p.p1) then
-			return matchEmpty(p.p2)
-		else
-			return false
-		end
-	elseif p.tag == 'var' then
-		return FIRST[p.v][empty]
-  else
-		error("Unknown tag " .. tostring(p.tag))
+
+local function printfollow (r)
+	for i, v in ipairs(r) do
+		print(v .. ': ', table.concat(sortset(FOLLOW[v]), ", "))
 	end
 end
 
-
-local function printfollow (g)
-	for k, v in pairs(g) do
-		local s = k .. ':'
-		local fst = calcfirst(v)
-    local r = sortset(FOLLOW[k])
-		for _, v1 in ipairs(r) do
-			s = s .. ' ' .. v1
-		end
-		print(s)
-    print("FIRST")
-		printfirst(fst) 
+function printfirst (g, r)
+	for i, v in ipairs(r) do
+		print(v .. ': ', table.concat(sortset(calcfirst(g[v])), ", "))
 	end
-end
-
-
-function printfirst (t)
-	local s = ''
-	for k, _ in pairs(t) do
-		s = s .. ' ' .. k
-	end
-	print(s) 
 end
 
 
@@ -130,7 +98,7 @@ function calcfirst (p)
 	if p.tag == 'empty' then
 		return { [empty] = true }
 	elseif p.tag == 'char' then
-    return { [p.v] = true }
+    return { [p.p1] = true }
 	elseif p.tag == 'ord' then
 		return union(calcfirst(p.p1), calcfirst(p.p2))
 	elseif p.tag == 'con' then
@@ -142,7 +110,7 @@ function calcfirst (p)
 			return s1
 		end
 	elseif p.tag == 'var' then
-		return FIRST[p.v]
+		return FIRST[p.p1]
 	elseif p.tag == 'throw' then
 		return { }
 	elseif p.tag == 'any' then
@@ -158,6 +126,7 @@ function calcfirst (p)
   elseif p.tag == 'plus' then
 		return calcfirst(p.p1)
 	else
+		print(p, p.tag, p.empty, p.any)
 		error("Unknown tag: " .. p.tag)
 	end
 end
@@ -165,10 +134,10 @@ end
 
 local function updateFollow (p, k)
 	if p.tag == 'var' then
-    local v = p.v
+    local v = p.p1
     FOLLOW[v] = union(FOLLOW[v], k, true)
 	elseif p.tag == 'con' then
-		if p.p1.tag == 'var' and matchEmpty(p.p2) then
+		if p.p1.tag == 'var' and parser.matchEmpty(p.p2) then
 			updateFollow(p.p1, k)
 		end
     updateFollow(p.p2, k)
@@ -183,7 +152,7 @@ function calck (g, p, k)
 	if p.tag == 'empty' then
 		return k
 	elseif p.tag == 'char' then
-		return { [p.v]=true }
+		return { [p.p1]=true }
 	elseif p.tag == 'ord' then
 		local k1 = calck(g, p.p1, k)
 		local k2 = calck(g, p.p2, k)
@@ -192,10 +161,10 @@ function calck (g, p, k)
 		local k2 = calck(g, p.p2, k)
 		return calck(g, p.p1, k2)
 	elseif p.tag == 'var' then
-    if matchEmpty(p) then
-			return union(FIRST[p.v], k, true)
+    if parser.matchEmpty(p) then
+			return union(FIRST[p.p1], k, true)
     else
-		  return FIRST[p.v]
+		  return FIRST[p.p1]
     end
 	elseif p.tag == 'throw' then
 		return k
@@ -266,12 +235,12 @@ end
 
 local function calcFlwAux (p, flw)
   if p.tag == 'var' then
-    FOLLOW[p.v] = union(FOLLOW[p.v], flw)
+    FOLLOW[p.p1] = union(FOLLOW[p.p1], flw)
   elseif p.tag == 'con' then
     calcFlwAux(p.p2, flw)
     local k = calcfirst(p.p2)
-    assert(not k[empty] == not matchEmpty(p.p2), tostring(k[empty]) .. ' ' .. tostring(matchEmpty(p.p2)) .. ' ' .. writepeg(p.p2, p.p2.tag == 'con'))
-    if matchEmpty(p.p2) then
+    assert(not k[empty] == not parser.matchEmpty(p.p2), tostring(k[empty]) .. ' ' .. tostring(parser.matchEmpty(p.p2)) .. ' ' .. pretty.printp(p.p2))
+    if parser.matchEmpty(p.p2) then
     --if k[empty] then
       calcFlwAux(p.p1, union(k, flw, true))
     else
@@ -319,9 +288,9 @@ return {
   calcFst = calcFst,
 	calcfirst = calcfirst,
 	printfollow = printfollow,
+	printfirst = printfirst,
 	disjoint = disjoint,
 	set2choice = set2choice,
 	calck = calck,
-	matchEmpty = matchEmpty
 }
 
