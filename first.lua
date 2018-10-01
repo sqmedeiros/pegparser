@@ -2,7 +2,8 @@ local parser = require'parser'
 local pretty = require'pretty'
 local FIRST
 local FOLLOW
-local empty = '' 
+local empty = '__empty'
+local any = '__any'
 local calcf
 local newString = parser.newString
 local newOrd = parser.newOrd
@@ -95,6 +96,7 @@ end
 
 
 function calcfirst (p)
+	--print(p.tag, p.p1.tag, p.p1)
 	if p.tag == 'empty' then
 		return { [empty] = true }
 	elseif p.tag == 'char' then
@@ -105,7 +107,9 @@ function calcfirst (p)
 		local s1 = calcfirst(p.p1)
     local s2 = calcfirst(p.p2)
 		if s1[empty] then
-      return union(s1, s2, not s2[empty])
+			--print(p.p1.tag, p.p2.tag)
+			s1[empty] = nil
+      return union(s1, s2)
 		else
 			return s1
 		end
@@ -114,7 +118,9 @@ function calcfirst (p)
 	elseif p.tag == 'throw' then
 		return { }
 	elseif p.tag == 'any' then
-		return { ["any"] = true }
+		return { [any] = true }
+	elseif p.tag == 'and' then
+		return { [empty] = true }
 	elseif p.tag == 'not' then
 		return { [empty] = true }
   -- in a well-formed PEG, given p*, we know p does not match the empty string
@@ -216,6 +222,7 @@ local function calcFst (g)
       FIRST[k], equal = union(FIRST[k], calcfirst(v))
       if not equal then
         update = true
+				print('update', k)
       end
     end
 	end
@@ -292,5 +299,7 @@ return {
 	disjoint = disjoint,
 	set2choice = set2choice,
 	calck = calck,
+	empty = empty,
+	any = any,
 }
 
