@@ -4,6 +4,8 @@ local errinfo = require 'syntax_errors'
 
 local tree = {}
 local defs = {}
+local lvars = {}
+
 
 local newNode = function (tag, p1, p2)
 	return { tag = tag, p1 = p1, p2 = p2 } 
@@ -13,15 +15,13 @@ defs.newString = function (v)
 	return newNode('char', v)
 end
 
-defs.newVar = function (v)
-	return newNode('var', v)
-end
-
 defs.newAny = function (v)
 	return newNode('any')
 end
 
 defs.newVar = function (v)
+	print("v ", v)
+	lvars[#lvars + 1] = v
 	return newNode('var', v)
 end
 
@@ -195,10 +195,14 @@ local ppk = re.compile(peg, defs)
 defs.match = function (s)
 	rules = {}
   tree = {}
+	lvars = {}
 	local r, lab, pos = ppk:match(s)
   if not r then
 		return r, errinfo[lab] or lab, pos
 	else
+		for i,v in ipairs(lvars) do
+			assert(tree[v] ~= nil, "Rule '" .. v .. "' was not defined")
+		end
 		return tree, rules
 	end
 end
