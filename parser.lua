@@ -20,7 +20,6 @@ defs.newAny = function (v)
 end
 
 defs.newVar = function (v)
-	print("v ", v)
 	lvars[#lvars + 1] = v
 	return newNode('var', v)
 end
@@ -132,10 +131,11 @@ end
 defs.matchEmpty = function (p)
 	local tag = p.tag
 	if tag == 'empty' or tag == 'not' or tag == 'and' or
-     tag == 'posCap' or tag == 'star' or tag == 'opt' then
+     tag == 'posCap' or tag == 'star' or tag == 'opt' or
+		 tag == 'throw' then
 		return true
 	elseif tag == 'char' or tag == 'set' or tag == 'any' or
-         tag == 'plus' or tag == 'throw' then
+         tag == 'plus' then
 		return false
 	elseif tag == 'con' then
 		return defs.matchEmpty(p.p1) and defs.matchEmpty(p.p2)

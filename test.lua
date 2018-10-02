@@ -4,6 +4,7 @@ local pretty = require 'pretty'
 local coder = require 'coder'
 local first = require 'first'
 
+
 local function assertlab (g, lab)
 	local r, msg, pos = m.match(g)
 	local errMsg = errinfo[lab]
@@ -11,6 +12,9 @@ local function assertlab (g, lab)
 	if r then pretty.printg(r, msg) end
 	assert(string.find(msg, errMsg, 1, true), "Expected label '" .. lab .. "'")
 end
+
+--testing labels
+io.write("Testing labels... ")
 
 assertlab([[a <- 'b'  3 ]], 'Extra')
 
@@ -49,6 +53,15 @@ assertlab([[a <- [a-z]], 'RBraClass')
 assertlab([[a <- %{ } ]], 'NameThrow')
 
 assertlab([[a <- %{ ops ]], 'RCurThrow')
+
+print("Ok")
+
+
+--testing undefined nonterminal
+local r, msg = pcall(m.match, [[a <- 'a' b]])
+
+print(r, msg)
+assert(not r and string.find(msg, "'b' was not defined", 1, true))
 
 
 print(pretty.printg(m.match[[a <- 'b'*]]))
@@ -101,38 +114,4 @@ assert(p:match("000110010") == 1)
 
 
 
--- testing FIRST and FOLLOW
-local g = [[
-	S <- (A / B)* 'c'
-	A <- 'a'
-  B <- 'b' 
-]]
-
-local tree, r = m.match(g)
-print(pretty.printg(tree, r))
-
-first.calcFst(tree)
-first.calcFlw(tree, r[1])
-print("FIRST")
-first.printfirst(tree, r)
-print("FOLLOW")
-first.printfollow(r)
-
-local g = [[
-	S <- ('o' A / 'u' B)* (C / D)* 'c'
-	A <- 'a'
-  B <- 'b' 
-  C <- 'k'
-	D <- 'd'
-]]
-
-local tree, r = m.match(g)
-print(pretty.printg(tree, r))
-
-first.calcFst(tree)
-first.calcFlw(tree, r[1])
-print("FIRST")
-first.printfirst(tree, r)
-print("FOLLOW")
-first.printfollow(r)
 

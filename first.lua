@@ -20,7 +20,7 @@ local function disjoint (s1, s2)
 end
 
 
-local function equalSet (s1, s2)
+local function isequal (s1, s2)
   for k, _ in pairs(s1) do
     if not s2[k] then
       return false
@@ -37,23 +37,16 @@ end
 
 local function union (s1, s2, notEmpty)
 	local s3 = {}
-  local eq = true
 	for k, _ in pairs(s1) do
 		s3[k] = true
-    if not s2[k] then
-      eq = false
-    end
 	end
 	for k, _ in pairs(s2) do
 		s3[k] = true
-    if not s1[k] then
-      eq = false
-    end
 	end
   if notEmpty then
 		s3[empty] = nil
 	end	
-	return s3, eq
+	return s3
 end
 
 
@@ -95,30 +88,49 @@ function printfirst (g, r)
 end
 
 
+local function unfoldset (l)
+	local t = {}
+	for i, v in ipairs(l) do
+		if #v == 3 then
+			local x = string.byte(v:sub(1, 1))
+			local y = string.byte(v:sub(3, 3))
+			for i = x, y do
+				t[string.char(i)] = true
+			end
+		else
+			t[v] = true
+		end
+	end
+	return t
+end
+
 function calcfirst (p)
 	--print(p.tag, p.p1.tag, p.p1)
 	if p.tag == 'empty' then
 		return { [empty] = true }
 	elseif p.tag == 'char' then
     return { [p.p1] = true }
+	elseif p.tag == 'any' then
+		return { [any] = true }
+	elseif p.tag == 'set' then
+		return unfoldset(p.p1)
 	elseif p.tag == 'ord' then
-		return union(calcfirst(p.p1), calcfirst(p.p2))
+		return union(calcfirst(p.p1), calcfirst(p.p2), false)
 	elseif p.tag == 'con' then
 		local s1 = calcfirst(p.p1)
     local s2 = calcfirst(p.p2)
 		if s1[empty] then
-			--print(p.p1.tag, p.p2.tag)
 			s1[empty] = nil
-      return union(s1, s2)
+      local s3 = union(s1, s2, false)
+			s1[empty] = true
+			return s3
 		else
 			return s1
 		end
 	elseif p.tag == 'var' then
 		return FIRST[p.p1]
 	elseif p.tag == 'throw' then
-		return { }
-	elseif p.tag == 'any' then
-		return { [any] = true }
+		return { [empty] = true }
 	elseif p.tag == 'and' then
 		return { [empty] = true }
 	elseif p.tag == 'not' then
@@ -128,7 +140,7 @@ function calcfirst (p)
     --if p.tag == 'plus' and p.p1.v == 'recordfield' then
     --  print ('danado', p.p1.v)
     --end
-		return union(calcfirst(p.p1), { [empty] = true})
+		return union(calcfirst(p.p1), { [empty] = true}, false)
   elseif p.tag == 'plus' then
 		return calcfirst(p.p1)
 	else
@@ -213,17 +225,16 @@ end
 
 local function calcFst (g)
   local update = true
-  local equal
   initFst(g)
 	
   while update do
     update = false
     for k, v in pairs(g) do
-      FIRST[k], equal = union(FIRST[k], calcfirst(v))
-      if not equal then
+			local firstv = calcfirst(v)
+			if not isequal(FIRST[k], firstv) then
         update = true
-				print('update', k)
-      end
+	      FIRST[k] = union(FIRST[k], firstv, false)
+			end
     end
 	end
 
@@ -242,7 +253,7 @@ end
 
 local function calcFlwAux (p, flw)
   if p.tag == 'var' then
-    FOLLOW[p.p1] = union(FOLLOW[p.p1], flw)
+    FOLLOW[p.p1] = union(FOLLOW[p.p1], flw, true)
   elseif p.tag == 'con' then
     calcFlwAux(p.p2, flw)
     local k = calcfirst(p.p2)
@@ -280,7 +291,7 @@ local function calcFlw (g, init)
 
     update = false
     for k, v in pairs(g) do
-      if not equalSet(FOLLOW[k], tmp[k]) then
+      if not isequal(FOLLOW[k], tmp[k]) then
 			  update = true
       end
     end
