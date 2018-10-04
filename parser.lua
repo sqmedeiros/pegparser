@@ -61,8 +61,11 @@ defs.newSeq = function (...)
 	return binOpLeft('con', {...})
 end
 
+-- the algorithm that inserts labels
+-- gives  a better result when we consider
+-- a right-associative choice
 defs.newOrd = function (...)
-	return binOpLeft('ord', {...})
+	return binOpRight('ord', {...})
 end
 
 defs.newThrow = function (lab)
@@ -124,6 +127,16 @@ defs.repSymbol = function (p)
 		return '+'
 	else
 		return '?'
+	end
+end
+
+defs.predSymbol = function (p)
+	local tag = p.tag
+	assert(tag == 'not' or tag == 'and', p.tag)
+	if p.tag == 'not' then
+		return '!'
+	else
+		return '&'
 	end
 end
 
@@ -207,5 +220,5 @@ defs.match = function (s)
 	end
 end
 
-
+defs.newNode = newNode
 return defs

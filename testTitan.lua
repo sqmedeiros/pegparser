@@ -3,6 +3,7 @@ local errinfo = require 'syntax_errors'
 local pretty = require 'pretty'
 local coder = require 'coder'
 local first = require 'first'
+local recovery = require 'recovery'
 
 g = [[
   program         <-  SKIP* (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import / foreign)* !.
@@ -70,13 +71,8 @@ g = [[
   SKIP            <-  ' ']]
 
 
-local tree, r = m.match(g)
-print(pretty.printg(tree, r))
+local tree, r1 = m.match(g)
+print(pretty.printg(tree, r1))
 
-first.calcFst(tree)
-first.calcFlw(tree, r[1])
-print("FIRST")
-first.printfirst(tree, r)
-print("FOLLOW")
-first.printfollow(r)
-
+local glab, r2 = recovery.addlab(tree, r1)
+print(pretty.printg(glab, r2))
