@@ -40,8 +40,13 @@ local function printp (p)
 			s = s .. ' ' .. s2
 		end
 		return s
-	elseif p.tag == 'and' then
-		return '&(' .. printp(p.p1)	.. ')'
+	elseif p.tag == 'and' or p.tag == 'not' then
+		local s = printp(p.p1)
+		if parser.isSimpleExp(p.p1) then
+			return parser.predSymbol(p) .. s
+		else
+			return  parser.predSymbol(p) .. '(' .. s .. ')'
+		end
 	elseif p.tag == 'not' then
 		return '!(' .. printp(p.p1)	.. ')'
 	elseif p.tag == "star" or p.tag == 'plus' or p.tag == 'opt' then
