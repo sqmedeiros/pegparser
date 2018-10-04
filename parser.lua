@@ -84,6 +84,14 @@ defs.newTabCap = function (p)
 	return newNode('tabCap', p)
 end
 
+defs.newAnonCap = function (p)
+	return newNode('anonCap', p)
+end
+
+defs.newNameCap = function (p1, p2)
+	return newNode('nameCap', p1, p2)
+end
+
 defs.newSuffix = function (p, ...)
   local l = { ... }
 	local i = 1
@@ -156,7 +164,8 @@ defs.matchEmpty = function (p)
 		return defs.matchEmpty(p.p1) or defs.matchEmpty(p.p2)
 	elseif tag == 'var' then
 		return defs.matchEmpty(tree[p.p1])
-	elseif tag == 'simpCap' or tag == 'tabCap' then
+	elseif tag == 'simpCap' or tag == 'tabCap' or
+	       tag == 'anonCap' or tag == 'nameCap' then
 		return defs.matchEmpty(p.p1)
 	else
 		print(p)
@@ -180,9 +189,11 @@ local peg = [[
   suffix        <-   (primary ({'+'} S /  {'*'} S /  {'?'} S /  {'^'} S name)*) -> newSuffix
 
   primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var /  throw /
-                     ('{|' S  exp^ExpTabCap '|}'^RCurTabCap S)   -> newTabCap /
-                     ('{'  S  exp          '}'^RCurCap  S)       -> newSimpCap /
-                      '{'  S               '}'^RCurCap  S        -> newPosCap
+                     ('{|' S  exp^ExpTabCap '          |}'^RCurTabCap S)   -> newTabCap /
+                     ('{:' S  name S ':'  exp         ':}'^RCurNameCap  S) -> newNameCap /
+                     ('{:' S  exp^ExpAnonCap          ':}'^RCurNameCap  S) -> newAnonCap /
+                     ('{'  S  exp                      '}'^RCurCap  S)     -> newSimpCap /
+                      '{'  S                           '}'^RCurCap  S      -> newPosCap
 
 
   string        <-   ("'" {(!("'" / %nl) .)*} "'"^SingQuote  S  /

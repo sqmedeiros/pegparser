@@ -17,6 +17,10 @@ local function printp (p)
 		return '{' .. printp(p.p1) .. '}'
 	elseif p.tag == 'tabCap' then
 		return '{|' .. printp(p.p1) .. '|}'
+	elseif p.tag == 'nameCap' then
+		return '{:' .. printp(p.p1) .. ': ' .. printp(p.p2) .. ':}'
+	elseif p.tag == 'anonCap' then
+		return '{:' .. printp(p.p1) .. ':}'
 	elseif p.tag == 'var' then
 		return p.p1
 	elseif p.tag == 'ord' then

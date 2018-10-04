@@ -16,6 +16,10 @@ local function makep (p)
 		return m.C(makep(p.p1))
 	elseif p.tag == 'tabCap' then
 		return m.Ct(makep(p.p1))
+	elseif p.tag == 'nameCap' then
+		return m.Cg(makep(p.p1), makep(p.p2))
+	elseif p.tag == 'anonCap' then
+		return m.Cg(makep(p.p1))
 	elseif p.tag == 'var' then
 		return m.V(p.p1)
 	elseif p.tag == 'ord' then

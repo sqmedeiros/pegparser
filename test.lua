@@ -36,7 +36,11 @@ assertlab([[a <- ( 'b' ]], 'RParPri')
 
 assertlab([[hei <- {| |} ]], 'ExpTabCap')
 
+assertlab([[hei <- {: :} ]], 'ExpAnonCap')
+
 assertlab([[hei <- {| 'b'* } ]], 'RCurTabCap')
+
+assertlab([[hei <- {: 'b'* } ]], 'RCurNameCap')
 
 assertlab([[hei <- { 'b']], 'RCurCap')
 

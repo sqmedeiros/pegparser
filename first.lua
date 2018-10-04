@@ -114,6 +114,12 @@ function calcfirst (p)
 		return { [any] = true }
 	elseif p.tag == 'set' then
 		return unfoldset(p.p1)
+	elseif p.tag == 'posCap' then
+		return { [empty] = true }
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		return calcfirst(p.p1)
+	elseif p.tag == 'nameCap'then
+		return calcfirst(p.p2)
 	elseif p.tag == 'ord' then
 		return union(calcfirst(p.p1), calcfirst(p.p2), false)
 	elseif p.tag == 'con' then
@@ -159,6 +165,10 @@ function calck (g, p, k)
 		return { [any] = true }
 	elseif p.tag == 'set' then
 		return unfoldset(p.p1)
+	elseif p.tag == 'posCap' then
+		return { [empty] = true }
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'nameCap' or p.tag == 'anonCap' then
+		return { [empty] = true }
 	elseif p.tag == 'ord' then
 		local k1 = calck(g, p.p1, k)
 		local k2 = calck(g, p.p2, k)
@@ -247,6 +257,10 @@ local function calcFlwAux (p, flw)
   elseif p.tag == 'ord' then
     calcFlwAux(p.p1, flw)
     calcFlwAux(p.p2, flw)
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		calcFlwAux(p.p1, flw)
+	elseif p.tag == 'nameCap' then
+		calcFlwAux(p.p2, flw)
 	end
 end
 
