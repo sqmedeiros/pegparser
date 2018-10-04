@@ -150,27 +150,15 @@ function calcfirst (p)
 end
 
 
-local function updateFollow (p, k)
-	if p.tag == 'var' then
-    local v = p.p1
-    FOLLOW[v] = union(FOLLOW[v], k, true)
-	elseif p.tag == 'con' then
-		if p.p1.tag == 'var' and parser.matchEmpty(p.p2) then
-			updateFollow(p.p1, k)
-		end
-    updateFollow(p.p2, k)
-	elseif p.tag == 'ord' then
-		updateFollow(p.p1, k)
-		updateFollow(p.p2, k)
-	end
-end
-
-
 function calck (g, p, k)
 	if p.tag == 'empty' then
 		return k
 	elseif p.tag == 'char' then
 		return { [p.p1]=true }
+	elseif p.tag == 'any' then
+		return { [any] = true }
+	elseif p.tag == 'set' then
+		return unfoldset(p.p1)
 	elseif p.tag == 'ord' then
 		local k1 = calck(g, p.p1, k)
 		local k2 = calck(g, p.p2, k)
@@ -194,20 +182,8 @@ function calck (g, p, k)
 		return union(calck(g, p.p1, k), k, true) 
   -- in case of a well-formed PEG a repetition does not match the empty string
 	elseif p.tag == 'star' then
-    updateFollow(g, p.p1, calcfirst(p))
-    --if p.p1.tag == 'var' then
-    --  local v = p.p1.v
-		--	FOLLOW[v] = union(FOLLOW[v], calcfirst(g, g[v], {}), true)
-		--end
 		return union(calck(g, p.p1, k), k, true)
 	elseif p.tag == 'plus' then
-    --return calck(g, p.p1, k)
-    updateFollow(g, p.p1, calcfirst(p))
-    --[[if p.p1.tag == 'var' then
-      local v = p.p1.v
-			FOLLOW[v] = union(FOLLOW[v], calcfirst(g, g[v], {}), true)
-		end]]
-		--return union(calck(g, p.p1, k), k) 
 		return union(calck(g, p.p1, k), k, true)
 	else
 		error("Unknown tag: " .. p.tag)
