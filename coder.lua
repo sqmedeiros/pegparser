@@ -1,15 +1,34 @@
 local m = require'lpeglabel'
-local re = require'relabel'
+
+local predef = {}
+m.locale(predef)
+local sp = predef.space^0
+
+local function unfoldset (l)
+	local set = {}
+	for i, v in ipairs(l) do
+		if #v == 3 then
+			local x = string.byte(v:sub(1, 1))
+			local y = string.byte(v:sub(3, 3))
+			for i = x, y do
+				set[#set + 1] = string.char(i)
+			end
+		else
+			set[#set + 1] = v
+		end
+	end
+	return table.concat(set)
+end
 
 local function makep (p)
 	if p.tag == 'empty' then
-		return m.P""
+		return m.P"" * sp
 	elseif p.tag == 'char' then
-		return m.P(p.p1)
+		return m.P(p.p1) * sp
 	elseif p.tag == 'set' then
-		return re.compile(p.p1)
+		return m.S(unfoldset(p.p1)) * sp
 	elseif p.tag == 'any' then
-		return m.P(1)
+		return m.P(1) * sp
 	elseif p.tag == 'posCap' then
 		return m.Cp()
 	elseif p.tag == 'simpCap' then
