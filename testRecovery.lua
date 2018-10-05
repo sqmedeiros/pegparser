@@ -2,7 +2,6 @@ local m = require 'init'
 local errinfo = require 'syntax_errors'
 local pretty = require 'pretty'
 local coder = require 'coder'
-local first = require 'first'
 local recovery = require 'recovery'
 
 

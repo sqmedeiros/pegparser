@@ -15,13 +15,16 @@ local matchEmpty = parser.matchEmpty
 local calck = first.calck
 local ierr
 local gerr
+local flagrecovery
 
 
 local function adderror (p, flw)
   local s = 'Err_' .. string.format("%03d", ierr)
-	local pred = newNot(set2choice(flw))
-  gerr[s] = newNode('star', newSeq(pred, newAny()))
 	ierr = ierr + 1
+	if flagRecovery then
+		local pred = newNot(set2choice(flw))
+		gerr[s] = newNode('star', newSeq(pred, newAny()))
+	end
 	return newOrd(p, newThrow(s))
 end
 
@@ -87,9 +90,10 @@ local function addrecrules (g, r)
 
 end
 
-local function addlab (g, rules)
+local function addlab (g, rules, rec)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g, rules[1])	
+	flagRecovery = rec
 
 	local newg = {}
 	local newrules = {}
@@ -99,8 +103,10 @@ local function addlab (g, rules)
 		newg[v] = addlab_aux(g, g[v], false, flw[v])
 		newrules[i] = v
 	end
-	
-	addrecrules(newg, newrules)
+
+	if flagRecovery then
+		addrecrules(newg, newrules)
+	end
 		
 	return newg, newrules
 end

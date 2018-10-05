@@ -222,7 +222,9 @@ defs.match = function (s)
 	lvars = {}
 	local r, lab, pos = ppk:match(s)
   if not r then
-		return r, errinfo[lab] or lab, pos
+		local line, col = re.calcline(s, pos)
+		local msg = line .. ':' .. col .. ':'
+		return r, msg .. (errinfo[lab] or lab), pos
 	else
 		for i,v in ipairs(lvars) do
 			assert(tree[v] ~= nil, "Rule '" .. v .. "' was not defined")
