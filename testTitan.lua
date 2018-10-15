@@ -74,5 +74,5 @@ g = [[
 local tree, r1 = m.match(g)
 print(pretty.printg(tree, r1))
 
-local glab, r2 = recovery.addlab(tree, r1)
+local glab, r2 = recovery.addlab(tree, r1, false, true)
 print(pretty.printg(glab, r2))

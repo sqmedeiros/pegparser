@@ -27,10 +27,26 @@ Factor      <- '(' Expression ')'  /  Name  /  Number
 Name        <- [a-z]+
 Number      <- [1-9][0-9]*]]
 
-print(pretty.printg(tree, rules)) 
+print(pretty.printg(tree, rules), '\n')
 
-local treerec, rulesrec = recovery.addlab(tree, rules, false)
-print(pretty.printg(treerec, rulesrec))
+local treerec, rulesrec = recovery.addlab(tree, rules, false, true)
+print(pretty.printg(treerec, rulesrec), '\n')
+
+
+local tree, rules =  m.match[[
+S           <- (Assignment / Expression)*  !.
+Assignment  <- Name '=' Expression
+Expression  <- Term ('+' Term)*
+Term        <- Factor ('*' Factor)*
+Factor      <- '(' Expression ')'  /  Name  /  Number
+Name        <- [a-z]+
+Number      <- [1-9][0-9]*]]
+
+print(pretty.printg(tree, rules), '\n')
+
+local treerec, rulesrec = recovery.addlab(tree, rules, false, true)
+print(pretty.printg(treerec, rulesrec), '\n')
+
 
 local p = coder.makeg(treerec, "S")
 

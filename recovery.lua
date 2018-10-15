@@ -16,7 +16,7 @@ local calck = first.calck
 local ierr
 local gerr
 local flagrecovery
-
+local banned
 
 local function adderror (p, flw)
   local s = 'Err_' .. string.format("%03d", ierr)
@@ -34,6 +34,29 @@ local function makeFailure (f, s)
 end
 
 
+local function notannotate (p, seq)
+	if p.tag == 'var' then
+		if not banned[p.p1] then
+			banned[p.p1] = true
+			notannotate(p.p1, seq)
+		end
+	elseif p.tag == 'ord' then
+		banned(p.p1, seq)
+		banned(p.p2, seq)
+	elseif p.tag == 'con' then
+		notannotate(p.p1)
+		if matchEmpty(p.p1) then
+			notannotate(p.p2)
+		end
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		notannotate(p.p1)
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		notannotate(p.p1)
+	elseif p.tag == 'nameCap' then
+		notannotate(p.p2)
+	end
+end
+
 local function addlab_aux (g, p, seq, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq then
     return adderror(p, flw)
@@ -45,6 +68,8 @@ local function addlab_aux (g, p, seq, flw)
 		local p1 = p.p1
     if flagDisjoint then
       p1 = addlab_aux(g, p.p1, false, flw)
+		else
+			notannotate(p.p1, false)
     end
 		local p2 = addlab_aux(g, p.p2, false, flw)
 		if seq and not matchEmpty(p) then
@@ -86,21 +111,24 @@ local function addrecrules (g, r)
 		g[s] = gerr[s]
 		r[#r + 1] = s
 	end
-
-
 end
 
-local function addlab (g, rules, rec)
+local function addlab (g, rules, rec, flagBanned)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g, rules[1])	
 	flagRecovery = rec
 
 	local newg = {}
 	local newrules = {}
+	banned = {}  -- map with non-terminals that we mut not annotate
 	gerr = {}
 	ierr = 1
 	for i, v in ipairs(rules) do
-		newg[v] = addlab_aux(g, g[v], false, flw[v])
+		if not flagBanned or not banned[v] then
+			newg[v] = addlab_aux(g, g[v], false, flw[v])
+		else
+			newg[v] = g[v]
+		end
 		newrules[i] = v
 	end
 
