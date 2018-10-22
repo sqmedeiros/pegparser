@@ -34,15 +34,15 @@ local function makeFailure (f, s)
 end
 
 
-local function notannotate (p, seq)
+local function notannotate (p)
 	if p.tag == 'var' then
 		if not banned[p.p1] then
 			banned[p.p1] = true
-			notannotate(p.p1, seq)
+			notannotate(p.p1)
 		end
 	elseif p.tag == 'ord' then
-		banned(p.p1, seq)
-		banned(p.p2, seq)
+		notannotate(p.p1)
+		notannotate(p.p2)
 	elseif p.tag == 'con' then
 		notannotate(p.p1)
 		if matchEmpty(p.p1) then

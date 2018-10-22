@@ -173,6 +173,15 @@ defs.matchEmpty = function (p)
 	end
 end
 
+local function setSkip (tree, rules)
+	local skip = defs.newClass{' ','\t','\n','\v','\f','\r'}
+	if tree['comment'] then
+		skip = 	defs.newSuffix(defs.newOrd(skip, defs.newVar('comment')), '*')
+	end
+	tree['skip'] = skip
+	rules[#rules + 1] = 'skip'
+end
+
 
 local peg = [[
 	grammar       <-   S rule+^Rule (!.)^Extra
@@ -226,6 +235,7 @@ defs.match = function (s)
 		local msg = line .. ':' .. col .. ':'
 		return r, msg .. (errinfo[lab] or lab), pos
 	else
+		setSkip(tree, rules)
 		for i,v in ipairs(lvars) do
 			assert(tree[v] ~= nil, "Rule '" .. v .. "' was not defined")
 		end

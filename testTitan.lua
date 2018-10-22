@@ -73,6 +73,11 @@ g = [[
 
 local tree, r1 = m.match(g)
 print(pretty.printg(tree, r1))
+print()
 
 local glab, r2 = recovery.addlab(tree, r1, false, true)
+print(pretty.printg(glab, r2))
+print()
+
+local glab, r2 = recovery.addlab(tree, r1, true, false)
 print(pretty.printg(glab, r2))

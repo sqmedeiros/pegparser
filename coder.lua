@@ -1,4 +1,5 @@
 local m = require'lpeglabel'
+local parser = require 'parser'
 
 local predef = {}
 m.locale(predef)
@@ -22,13 +23,13 @@ end
 
 local function makep (p)
 	if p.tag == 'empty' then
-		return m.P"" * sp
+		return m.P""
 	elseif p.tag == 'char' then
-		return m.P(p.p1) * sp
+		return m.P(p.p1)
 	elseif p.tag == 'set' then
-		return m.S(unfoldset(p.p1)) * sp
+		return m.S(unfoldset(p.p1))
 	elseif p.tag == 'any' then
-		return m.P(1) * sp
+		return m.P(1)
 	elseif p.tag == 'posCap' then
 		return m.Cp()
 	elseif p.tag == 'simpCap' then
@@ -63,9 +64,43 @@ local function makep (p)
 end
 
 
+local function matchskip (p)
+	return parser.newSeq(p, parser.newVar('skip'))
+end
+
+local function autoskip (p)
+	if p.tag == 'empty' or p.tag == 'char' or p.tag == 'set' or
+     p.tag == 'any' then
+		return matchskip(p)
+	elseif p.tag == 'posCap' then
+		return p
+	elseif p.tag == 'simpCap' then
+		return matchskip(p)  --TODO: see if this is ok
+	elseif p.tag == 'tabCap' then
+		return matchskip(p)
+	elseif p.tag == 'nameCap' then
+		return matchskip(p)
+	elseif p.tag == 'anonCap' then
+		return matchskip(p)
+	elseif p.tag == 'var' then
+		return p
+	elseif p.tag == 'ord' or p.tag == 'con' then
+		return parser.newNode(p.tag, autoskip(p.p1), autoskip(p.p2))
+	elseif p.tag == 'and' or p.tag == 'not' or p.tag == 'opt' or
+         p.tag == 'star' or p.tag == 'plus' then
+		return parser.newNode(p.tag, autoskip(p.p1))
+	elseif p.tag == 'throw' then
+		return p
+	else
+		error("Unknown tag: " .. p.tag)
+	end
+end
+
+
 local function makeg (g, s)
 	local peg = { [1] = s }
 	for k, v in pairs(g) do
+		v = autoskip(v)
 		peg[k] = makep(v)
 	end
 	return m.P(peg)
