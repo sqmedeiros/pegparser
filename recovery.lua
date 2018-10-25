@@ -34,26 +34,29 @@ local function makeFailure (f, s)
 end
 
 
-local function notannotate (p)
+local function notannotate (p, flw, flag)
 	if p.tag == 'var' then
-		if not banned[p.p1] then
+		if flag and not banned[p.p1] then
 			banned[p.p1] = true
-			notannotate(p.p1)
 		end
 	elseif p.tag == 'ord' then
-		notannotate(p.p1)
-		notannotate(p.p2)
+		local k = calck(g, p.p2, flw)
+		flag = flag or not disjoint(calcfirst(p.p1), k)
+		--if p.p1.p1 == 'function_def' and p.p2.p1 == 'decl' then
+		--	print("tamos aqui: flag ", flag)
+		--end
+		notannotate(p.p1, flw, flag)
+		notannotate(p.p2, flw, flag)
 	elseif p.tag == 'con' then
-		notannotate(p.p1)
-		if matchEmpty(p.p1) then
-			notannotate(p.p2)
-		end
+		notannotate(p.p1, calck(g, p.p2, flw), flag)
+		notannotate(p.p2, flw, flag)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		notannotate(p.p1)
+		flag = flag or not disjoint(calcfirst(p.p1), flw)
+		notannotate(p.p1, flw, flag)
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		notannotate(p.p1)
+		notannotate(p.p1, flw, flag)
 	elseif p.tag == 'nameCap' then
-		notannotate(p.p2)
+		notannotate(p.p2, flw, flag)
 	end
 end
 
@@ -68,8 +71,6 @@ local function addlab_aux (g, p, seq, flw)
 		local p1 = p.p1
     if flagDisjoint then
       p1 = addlab_aux(g, p.p1, false, flw)
-		else
-			notannotate(p.p1, false)
     end
 		local p2 = addlab_aux(g, p.p2, false, flw)
 		if seq and not matchEmpty(p) then
@@ -79,8 +80,6 @@ local function addlab_aux (g, p, seq, flw)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(p.p1), flw) then
 		local newp
-    --if seq then
-    --if true then
     if false then
       local p1 = addlab_aux(g, p.p1, false, flw)
       local s = 'Err_' .. string.format("%03d", ierr) .. '_Flw'
@@ -123,6 +122,14 @@ local function addlab (g, rules, rec, flagBanned)
 	banned = {}  -- map with non-terminals that we mut not annotate
 	gerr = {}
 	ierr = 1
+
+	if flagBanned then
+		for i, v in ipairs(rules) do
+			notannotate(g[v], flw[v], false)
+		end
+	end
+
+
 	for i, v in ipairs(rules) do
 		if not flagBanned or not banned[v] then
 			newg[v] = addlab_aux(g, g[v], false, flw[v])
@@ -131,6 +138,12 @@ local function addlab (g, rules, rec, flagBanned)
 		end
 		newrules[i] = v
 	end
+
+	io.write"Banned: "
+	for k, v in pairs(banned) do
+		io.write(k .. ', ')
+	end
+	io.write"\n"
 
 	if flagRecovery then
 		addrecrules(newg, newrules)

@@ -1,0 +1,54 @@
+* C Grammar by Victor
+
+* Changes from the original Victor's grammar
+  - In rule 'param_decl': ( V"declarator" + V"abstract_declarator"^-1 ) should be ( V"declarator" + V"abstract_declarator" )^-1
+  - In rule 'relational_exp', I changed the order of the relational operators to '<=' / '>=' / '<' / '>'
+
+* Got 'generatedCParser.lua' from 'testCParserVictor.lua' with the following changes:
+  - Fixed expressions of the form ''' in char_const, string and esc_char. Simplified char_const and string, ignoring esc_char
+    
+* Removed labels after running conservative algorithm:
+  - Rule direct_declarator: label associated with 'declarator' and with the following ')'
+    . Both labels do not seem wrong, but depends on semantic actions to correctly match 'typedef_name',
+    otherwise any valid id will match as such, and so decl_spec will match
+
+    . This causes problems with input like 'factorial(5)' and 'pow(x, y)'
+
+
+Anotações do algoritmo conservativo:
+
+translation_unit     <- Faltou anotar 'external_decl' (não dá pra automatizar) e !. (dá pra modificar)
+
+external_decl        <- Sem labels
+
+function_def         <- Sem labels
+
+decl_spec            <- Sem labels
+
+decl                 <- Sem labels
+
+storage_class_spec   <- Sem labels
+
+type_spec            <- Faltou anotar 'enumerator' (2 vezes) e '}' (escolha não é LL(1)), 
+                        anotação extra correta em 'id',
+                        faltou anotar 'struct_decl' e '}' (escolha não é LL(1)),
+												outra anotação extra correta em 'id'
+
+type_qualifier       <- Sem labels
+
+struct_or_union      <- Sem labels
+
+init_declarator_list <- Faltou anotar 'init_declarator' (init_declarator_list foi banida porque aparece em escolha não LL(1) em 'decl')
+
+init_declarator      <- Sem labels
+
+struct_decl          <- Faltou anotar 'struct_declarator' e ';' (escolha não é LL(1)) (struct_decl banida pois aparece em uma escolha não LL(1) em type_spec)
+
+spec_qualifier_list  <- Sem labels
+
+spec_qualifier       <- Sem labels
+
+struct_declarator    <- Faltou anotar 'const_exp' (escolha não é LL(1)) (struct_declarator banida pois aparece em uma escolha não LL(1) em struct_decl)
+
+enumerator           <- Faltou anotar 'const_exp' (escolha não é LL(1)) (enumerator banida pois aparece em uma escolha não LL(1) em type_spec)
+

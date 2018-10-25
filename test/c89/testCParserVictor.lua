@@ -4,6 +4,7 @@ local pretty = require 'pretty'
 local coder = require 'coder'
 local lfs = require 'lfs'
 local re = require 'relabel'
+local first = require'first'
 
 local function assertErr (p, s, lab)
   local r, l, pos = p:match(s)
@@ -170,9 +171,9 @@ xdigit                <- [0-9a-fA-F]
 
 digit                 <- [0-9]
 
-char_const            <-  "'" (esc_char  /  (!['\n\\] .))* "'"
+char_const            <-  "'" ('\n'  /  !"'" .)  "'"
 
-string                <-  '"' (esc_char  /  (!["\n\\] .))* '"'
+string                <-  '"' ('\n'  /  !'"' .)* '"'
  
 esc_char              <-  '\\' ('n' / 't' / 'v' / 'b' / 'r' / 'f' / 'a' / '\\' / '?' / "'" / '"' /
                           [01234567] ([01234567]? [01234567]?)  /  'x' xdigit)
@@ -197,13 +198,18 @@ Token                 <-  keywords  /  id  /  string  /  constant  /  .
 print(pretty.printg(tree, rules), '\n')
 local p = coder.makeg(tree, rules[1])
 
+--first.calcFst(tree)
+--first.calcFlw(tree, rules[1])
+--first.printfirst(tree, rules)
+
 local treelab, ruleslab = recovery.addlab(tree, rules, false, true)
-print(pretty.printg(treelab, ruleslab), '\n')
-local p = coder.makeg(treelab, ruleslab[1])
+print(pretty.printg(treelab, ruleslab, true), '\n')
+
+local p = coder.makeg(tree, rules[1])
 
 local dir = lfs.currentdir() .. '/test/c89/test/yes/'	
 for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' and file == 'switch.c' then
+	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
 		print("file = ", file)
 		local f = io.open(dir .. file)
 		local s = f:read('a')

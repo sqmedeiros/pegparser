@@ -1,1 +1,3 @@
-struct point{ int x, y; };
+struct a{
+    int x;
+};
