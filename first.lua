@@ -302,5 +302,6 @@ return {
 	calck = calck,
 	empty = empty,
 	any = any,
+	isequal = isequal,
 }
 

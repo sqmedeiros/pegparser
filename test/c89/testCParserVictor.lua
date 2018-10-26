@@ -202,7 +202,7 @@ local p = coder.makeg(tree, rules[1])
 --first.calcFlw(tree, rules[1])
 --first.printfirst(tree, rules)
 
-local treelab, ruleslab = recovery.addlab(tree, rules, false, true)
+local treelab, ruleslab = recovery.addlab(tree, rules, false, 'soft')
 print(pretty.printg(treelab, ruleslab, true), '\n')
 
 local p = coder.makeg(tree, rules[1])

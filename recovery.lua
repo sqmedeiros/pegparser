@@ -17,6 +17,7 @@ local ierr
 local gerr
 local flagrecovery
 local banned
+local changedBan
 
 local function adderror (p, flw)
   local s = 'Err_' .. string.format("%03d", ierr)
@@ -59,6 +60,53 @@ local function notannotate (p, flw, flag)
 		notannotate(p.p2, flw, flag)
 	end
 end
+
+
+local function notannotateSoft (p, flw, flag, v)
+	if p.tag == 'var' then
+		if flag and not banned[p.p1] then
+			print("Soft bani")
+			banned[p.p1] = true
+			changedBan = true
+		end
+	elseif p.tag == 'ord' then
+		if flag then
+			notannotateSoft(p.p1, flw, true, v)
+			notannotateSoft(p.p2, flw, true, v)
+		else
+			local k = calck(g, p.p2, flw)
+			local firstp1 = calcfirst(p.p1)
+			if not disjoint(calcfirst(p.p1), k) then
+				if not banned[v] and first.isequal(firstp1, k) then
+					notannotateSoft(p.p1, flw, false, v)
+					notannotateSoft(p.p2, flw, false, v)
+				elseif not banned[v] then
+					notannotateSoft(p.p1, flw, true, v)
+					notannotateSoft(p.p2, flw, false, v)
+				else
+					notannotateSoft(p.p1, flw, true, v)
+					notannotateSoft(p.p2, flw, true, v)
+				end
+			else
+				notannotateSoft(p.p1, flw, false, v)
+				notannotateSoft(p.p2, flw, false, v)
+			end
+		end
+	elseif p.tag == 'con' then
+		notannotateSoft(p.p1, calck(g, p.p2, flw), flag, v)
+		notannotateSoft(p.p2, flw, flag, v)
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		flag = flag or not disjoint(calcfirst(p.p1), flw)
+		notannotateSoft(p.p1, flw, flag, v)
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		notannotateSoft(p.p1, flw, flag, v)
+	elseif p.tag == 'nameCap' then
+		notannotateSoft(p.p2, flw, flag, v)
+	end
+end
+
+
+
 
 local function addlab_aux (g, p, seq, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq then
@@ -124,8 +172,18 @@ local function addlab (g, rules, rec, flagBanned)
 	ierr = 1
 
 	if flagBanned then
-		for i, v in ipairs(rules) do
-			notannotate(g[v], flw[v], false)
+		if flagBanned == 'soft' then
+			changedBan = true
+			while changedBan do
+				changedBan = false
+				for i, v in ipairs(rules) do
+					notannotateSoft(g[v], flw[v], false, v)
+				end
+			end
+		else
+			for i, v in ipairs(rules) do
+				notannotate(g[v], flw[v], false)
+			end
 		end
 	end
 

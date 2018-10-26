@@ -52,3 +52,92 @@ struct_declarator    <- Faltou anotar 'const_exp' (escolha não é LL(1)) (struc
 
 enumerator           <- Faltou anotar 'const_exp' (escolha não é LL(1)) (enumerator banida pois aparece em uma escolha não LL(1) em type_spec)
 
+declarator           <- Sem labels
+
+direct_declarator    <- Anotação extra correta (dependente do semântico) em 'declarator', faltou anotar o ')' após 'param_type_list' (escolha não é LL(1))
+
+pointer              <- Sem labels (pointer banida pois aparece em escolha não LL(1) em abstract_declarator)
+
+param_type_list      <- Faltou anotar '...' (param_type_list banida pois aparece em uma escolha não LL(1) em direct_declarator e em direct_abstract_declarator)
+
+param_decl           <- Sem labels (param_decl banida pois aparecem em uma escolha não LL(1) em param_type_list)
+
+id_list              <- Faltou anotar 'id' (id_list banida pois aparece em uma escolha não LL(1) (podia anotar, já que aparece somente na segunda alternativa da escolha))
+
+initializer          <- Faltou anotar '}' e 'assignment_exp' (não dá pra anotar 'assignment_exp' automaticamente) (initilizer banida pois aparece em escolha não LL(1) em initilizer e em init_declarator)
+
+type_name            <- Sem labels (type_name banida pois aparece em escolha não LL(1) em cast_exp)
+
+abstract_declarator  <- Sem labels (escolha não é LL(1)) (abstract_declarator banida pois aparece em escolha não LL(1) em direct_abstract_declarator)
+
+direct_abstract_declarator <- Faltou todos os labels (escolha não é LL(1)) (direct_abstract_declarator banida pois aparece em escolha não LL(1) em abstract_declarator)
+
+typedef_name         <- Sem labels
+
+stat                 <- Faltou todos os labels (escolha não é sempre LL(1)) (stat banida pois aparece em escolha não LL(1) na própria stat e em compound_stat)
+
+compound_stat        <- Faltou o label em '}' (repetição decl* seguida por stat* não é LL(1)) (compound_stat banida pois aparece em escolha não LL(1) em stat)
+
+exp                  <- Faltou o label em 'assignment_exp' na repetição (exp banida pois aparece em escolha não LL(1) em stat)
+
+assignment_exp       <- Faltou o label 'assignement_exp' (assignment_exp banida , não consegui ver onde é o conflito)
+
+assignment_operator  <- Sem labels
+
+conditional_exp      <- Faltou todos os labels (escolha não é LL(1)) (conditional_exp banida pois aparece em escolha não LL(1) na própria conditional_exp)
+
+const_exp            <- Sem labels
+
+logical_or_exp       <- Faltou todos os labels (logical_or_exp banida pois aparece em escolha não LL(1) em conditional_exp)
+
+logical_and_exp      <- Ok
+
+inclusive_or_exp     <- Ok
+
+exclusive_or_exp     <- Ok
+
+and_exp              <- Ok
+
+equality_exp         <- Ok
+
+relational_exp       <- Ok
+
+shift_exp            <- Ok
+
+additive_exp         <- Ok
+
+multiplicative_exp   <- Ok
+
+cast_exp             <- Faltou anotar ')' (escolha não é LL(1)) (cast_exp banida pois aparece em escolha não LL(1) na própria cast_exp)
+
+unary_exp            <- Faltou todos os labels (unary_exp banida pois aparece em escolha não LL(1) em cast_exp)
+
+postfix_exp          <- Ok
+
+primary_exp          <- Anotação extra (aparentemente correta) em 'exp'
+
+constant             <- Sem labels
+
+Total de labels: Manual 88 x 23 Algoritmo
+
+
+Com o uso do algoritmo 'soft' pra banir: (também passando nos testes 'yes')
+Total de labels: Manual 88 x 27 Algoritmo
+
+Anotações extras nas regras: struct_decl, param_type_list, id_list, logical_or_exp 
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
