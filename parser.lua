@@ -177,6 +177,8 @@ local function setSkip (tree, rules)
 	local skip = defs.newClass{' ','\t','\n','\v','\f','\r'}
 	if tree['comment'] then
 		skip = 	defs.newSuffix(defs.newOrd(skip, defs.newVar('comment')), '*')
+	else
+		skip = defs.newSuffix(skip, '*')
 	end
 	tree['skip'] = skip
 	rules[#rules + 1] = 'skip'
