@@ -65,11 +65,12 @@ end
 local function notannotateSoft (p, flw, flag, v)
 	if p.tag == 'var' then
 		if flag and not banned[p.p1] then
-			print("Soft bani")
 			banned[p.p1] = true
 			changedBan = true
 		end
 	elseif p.tag == 'ord' then
+		-- TODO: should not ban A in a choice A p1 / A p2 (the benefit of this
+		-- extra case seems small)
 		if flag then
 			notannotateSoft(p.p1, flw, true, v)
 			notannotateSoft(p.p2, flw, true, v)
@@ -77,7 +78,7 @@ local function notannotateSoft (p, flw, flag, v)
 			local k = calck(g, p.p2, flw)
 			local firstp1 = calcfirst(p.p1)
 			if not disjoint(calcfirst(p.p1), k) then
-				if not banned[v] and first.isequal(firstp1, k) then
+				if not banned[v] and first.issubset(firstp1, k) then
 					notannotateSoft(p.p1, flw, false, v)
 					notannotateSoft(p.p2, flw, false, v)
 				elseif not banned[v] then
