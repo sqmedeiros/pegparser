@@ -75,9 +75,19 @@ local tree, r1 = m.match(g)
 print(pretty.printg(tree, r1))
 print()
 
+print("Regular Annotation")
+local glab, r2 = recovery.addlab(tree, r1, true, false)
+print(pretty.printg(glab, r2))
+print()
+
+
+print("Conservative Annotation (Hard)")
 local glab, r2 = recovery.addlab(tree, r1, false, true)
 print(pretty.printg(glab, r2))
 print()
 
-local glab, r2 = recovery.addlab(tree, r1, true, false)
+
+print("Conservative Annotation (Soft)")
+local glab, r2 = recovery.addlab(tree, r1, false, 'soft')
 print(pretty.printg(glab, r2))
+print()

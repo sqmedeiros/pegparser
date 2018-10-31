@@ -1,0 +1,119 @@
+program         <-  SKIP* (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
+toplevelfunc    <-  localopt 'function' NAME '(' paramlist ')' rettypeopt block 'end'
+toplevelvar     <-  localopt decl '=' exp
+toplevelrecord  <-  'record' NAME recordfields 'end'
+localopt        <-  'local'?
+import          <-  'local' NAME '=' 'import' ('(' STRINGLIT ')'  /  STRINGLIT)
+foreign         <-  'local' NAME '=' 'foreign' ('(' STRINGLIT ')'  /  STRINGLIT)
+rettypeopt      <-  (':' rettype)?
+paramlist       <-  (param (',' param)*)?
+param           <-  NAME ':' type
+decl            <-  NAME (':' type)?
+decllist        <-  decl (',' decl)*
+simpletype      <-  'nil'  /  'boolean'  /  'integer'  /  'float'  /  'string'  /  'value'  /  NAME  /  '{' type '}'
+typelist        <-  '(' (type (',' type)*)? ')'
+rettype         <-  typelist '->' rettype  /  simpletype '->' rettype  /  typelist  /  simpletype
+type            <-  typelist '->' rettype  /  simpletype '->' rettype  /  simpletype
+recordfields    <-  recordfield+
+recordfield     <-  NAME ':' type ';'?
+block           <-  statement* returnstat?
+statement       <-  ';'  /  'do' block 'end'  /  'while' exp 'do' block 'end'  /  'repeat' block 'until' exp  /  'if' exp 'then' block elseifstats elseopt 'end'  /  'for' decl '=' exp ',' exp (',' exp)? 'do' block 'end'  /  'local' decllist '=' explist  /  varlist '=' explist  /  suffixedexp
+elseifstats     <-  elseifstat*
+elseifstat      <-  'elseif' exp 'then' block
+elseopt         <-  ('else' block)?
+returnstat      <-  'return' explist? ';'?
+exp             <-  e1
+e1              <-  e2 ('or' e2)*
+e2              <-  e3 ('and' e3)*
+e3              <-  e4 (('=='  /  '~='  /  '<'  /  '>'  /  '<='  /  '>=') e4)*
+e4              <-  e5 ('|' e5)*
+e5              <-  e6 ('~' e6)*
+e6              <-  e7 ('&' e7)*
+e7              <-  e8 (('<<'  /  '>>') e8)*
+e8              <-  e9 ('..' e8)?
+e9              <-  e10 (('+'  /  '-') e10)*
+e10             <-  e11 (('*'  /  '%%'  /  '/'  /  '//') e11)*
+e11             <-  ('not'  /  '#'  /  '-'  /  '~')* e12
+e12             <-  castexp ('^' e11)?
+suffixedexp     <-  prefixexp expsuffix+
+expsuffix       <-  funcargs  /  ':' NAME funcargs  /  '[' exp ']'  /  '.' NAME
+prefixexp       <-  NAME  /  '(' exp ')'
+castexp         <-  simpleexp 'as' type  /  simpleexp
+simpleexp       <-  'nil'  /  'false'  /  'true'  /  NUMBER  /  STRINGLIT  /  initlist  /  suffixedexp  /  prefixexp
+var             <-  suffixedexp  /  NAME !expsuffix
+varlist         <-  var (',' var)*
+funcargs        <-  '(' explist? ')'  /  initlist  /  STRINGLIT
+explist         <-  exp (',' exp)*
+initlist        <-  '{' fieldlist? '}'
+fieldlist       <-  field (fieldsep field)* fieldsep?
+field           <-  (NAME '=')? exp
+fieldsep        <-  ';'  /  ','
+STRINGLIT       <-  '"' (!'"' .)* '"'
+RESERVED        <-  'repeat'
+NAME            <-  !RESERVED 'X' ('a'  /  'b'  /  'c'  /  NUMBER)*
+NUMBER          <-  ('0'  /  '1'  /  '2'  /  '3'  /  '4'  /  '5'  /  '6'  /  '7'  /  '8'  /  '9')+
+SKIP            <-  ' '
+p1	var
+p1	var
+p1	var
+p1	con
+p1	con
+p1	con
+p1	con
+p1	con
+p1	var
+program         <-  SKIP* (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
+toplevelfunc    <-  localopt 'function' NAME '(' paramlist ')' rettypeopt block 'end'
+toplevelvar     <-  localopt decl '=' exp
+toplevelrecord  <-  'record' [NAME]^Err_001 [recordfields]^Err_002 ['end']^Err_003
+localopt        <-  'local'?
+import          <-  'local' NAME '=' 'import' ('(' STRINGLIT ')'  /  STRINGLIT)
+foreign         <-  'local' [NAME]^Err_004 ['=']^Err_005 ['foreign']^Err_006 ['(' [STRINGLIT]^Err_007 [')']^Err_008  /  STRINGLIT]^Err_009
+rettypeopt      <-  (':' [rettype]^Err_010)?
+paramlist       <-  (param (',' [param]^Err_011)*)?
+param           <-  NAME [':']^Err_012 [type]^Err_013
+decl            <-  NAME (':' [type]^Err_014)?
+decllist        <-  decl (',' [decl]^Err_015)*
+simpletype      <-  'nil'  /  'boolean'  /  'integer'  /  'float'  /  'string'  /  'value'  /  NAME  /  '{' [type]^Err_016 ['}']^Err_017
+typelist        <-  '(' (type (',' [type]^Err_018)*)? [')']^Err_019
+rettype         <-  typelist '->' rettype  /  simpletype '->' rettype  /  typelist  /  simpletype
+type            <-  typelist ['->']^Err_020 [rettype]^Err_021  /  simpletype '->' rettype  /  simpletype
+recordfields    <-  recordfield+
+recordfield     <-  NAME [':']^Err_022 [type]^Err_023 ';'?
+block           <-  statement* returnstat?
+statement       <-  ';'  /  'do' block ['end']^Err_024  /  'while' [exp]^Err_025 ['do']^Err_026 block ['end']^Err_027  /  'repeat' block ['until']^Err_028 [exp]^Err_029  /  'if' [exp]^Err_030 ['then']^Err_031 block elseifstats elseopt ['end']^Err_032  /  'for' [decl]^Err_033 ['=']^Err_034 [exp]^Err_035 [',']^Err_036 [exp]^Err_037 (',' [exp]^Err_038)? ['do']^Err_039 block ['end']^Err_040  /  'local' [decllist]^Err_041 ['=']^Err_042 [explist]^Err_043  /  varlist '=' explist  /  suffixedexp
+elseifstats     <-  elseifstat*
+elseifstat      <-  'elseif' [exp]^Err_044 ['then']^Err_045 block
+elseopt         <-  ('else' block)?
+returnstat      <-  'return' explist? ';'?
+exp             <-  e1
+e1              <-  e2 ('or' [e2]^Err_046)*
+e2              <-  e3 ('and' [e3]^Err_047)*
+e3              <-  e4 (('=='  /  '~='  /  '<'  /  '>'  /  '<='  /  '>=') [e4]^Err_048)*
+e4              <-  e5 ('|' [e5]^Err_049)*
+e5              <-  e6 ('~' [e6]^Err_050)*
+e6              <-  e7 ('&' [e7]^Err_051)*
+e7              <-  e8 (('<<'  /  '>>') [e8]^Err_052)*
+e8              <-  e9 ('..' [e8]^Err_053)?
+e9              <-  e10 (('+'  /  '-') [e10]^Err_054)*
+e10             <-  e11 (('*'  /  '%%'  /  '/'  /  '//') [e11]^Err_055)*
+e11             <-  ('not'  /  '#'  /  '-'  /  '~')* e12
+e12             <-  castexp ('^' [e11]^Err_056)?
+suffixedexp     <-  prefixexp expsuffix+
+expsuffix       <-  funcargs  /  ':' [NAME]^Err_057 [funcargs]^Err_058  /  '[' [exp]^Err_059 [']']^Err_060  /  '.' [NAME]^Err_061
+prefixexp       <-  NAME  /  '(' [exp]^Err_062 [')']^Err_063
+castexp         <-  simpleexp 'as' type  /  simpleexp
+simpleexp       <-  'nil'  /  'false'  /  'true'  /  NUMBER  /  STRINGLIT  /  initlist  /  suffixedexp  /  prefixexp
+var             <-  suffixedexp  /  NAME !expsuffix
+varlist         <-  var (',' var)*
+funcargs        <-  '(' explist? [')']^Err_064  /  initlist  /  STRINGLIT
+explist         <-  exp (',' [exp]^Err_065)*
+initlist        <-  '{' fieldlist? ['}']^Err_066
+fieldlist       <-  field (fieldsep field)* fieldsep?
+field           <-  (NAME '=')? exp
+fieldsep        <-  ';'  /  ','
+STRINGLIT       <-  '"' (!'"' .)* ['"']^Err_067
+RESERVED        <-  'repeat'
+NAME            <-  !RESERVED 'X' ('a'  /  'b'  /  'c'  /  NUMBER)*
+NUMBER          <-  ('0'  /  '1'  /  '2'  /  '3'  /  '4'  /  '5'  /  '6'  /  '7'  /  '8'  /  '9')+
+SKIP            <-  ' '
