@@ -35,6 +35,16 @@ local function isequal (s1, s2)
 end
 
 
+local function issubset (s1, s2)
+  for k, _ in pairs(s1) do
+    if not s2[k] then
+      return false
+    end
+  end
+  return true
+end
+
+
 local function union (s1, s2, notEmpty)
 	local s3 = {}
 	for k, _ in pairs(s1) do
@@ -303,5 +313,6 @@ return {
 	empty = empty,
 	any = any,
 	isequal = isequal,
+	issubset = issubset
 }
 
