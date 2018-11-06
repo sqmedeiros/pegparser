@@ -32,18 +32,18 @@ primitiveType        <-  annotation* basicType
 
 referenceType        <-  primitiveType dim+  /  classType dim*
 
-classType            <-  annotation* identifier typeArguments?
-                           ('.' annotation* identifier typeArguments?)*
+classType            <-  annotation* Identifier typeArguments?
+                           ('.' annotation* Identifier typeArguments?)*
 
 type                 <-  primitiveType  /  classType
 
 arrayType            <-  primitiveType dim+  /  classType dim+
 
-typeVariable         <-  annotation* identifier
+typeVariable         <-  annotation* Identifier
 
 dim                  <-  annotation* '[' ']'
 
-typeParameter        <-  typeParameterModifier* identifier typeBound?
+typeParameter        <-  typeParameterModifier* Identifier typeBound?
 
 typeParameterModifier  <-  annotation
 
@@ -63,13 +63,13 @@ wildcardBounds       <-  'extends' referenceType  / 'super' referenceType
 
 
 -- JLS 6 Names
-qualIdent            <-  identifier ('.' identifier)*
+qualIdent            <-  Identifier ('.' Identifier)*
 
 
 -- JLS 7 Packages
 compilationUnit      <-  packageDeclaration? importDeclaration* typeDeclaration*
 
-packageDeclaration   <-  packageModifier* 'package' identifier ('.' identifier)* ';'
+packageDeclaration   <-  packageModifier* 'package' Identifier ('.' Identifier)* ';'
 
 packageModifier      <-  annotation
 
@@ -81,7 +81,7 @@ typeDeclaration      <-  classDeclaration  /  interfaceDeclaration  /  ';'
 -- JLS 8 Classes
 classDeclaration     <-  normalClassDeclaration  /  enumDeclaration
 
-normalClassDeclaration  <-  classModifier* 'class' identifier typeParameters?
+normalClassDeclaration  <-  classModifier* 'class' Identifier typeParameters?
                               superclass? superinterfaces? classBody
 
 classModifier        <-  annotation  /  'public'  /  'protected'  /  'private'  /
@@ -111,12 +111,12 @@ variableDeclaratorList  <-  variableDeclarator (',' variableDeclarator)*
 
 variableDeclarator   <-  variableDeclaratorId ('='!'=' variableInitializer)?
 
-variableDeclaratorId <-  identifier dim*
+variableDeclaratorId <-  Identifier dim*
 
 variableInitializer  <-  expression  /  arrayInitializer
 
-unannClassType       <-  identifier typeArguments?
-                           ('.' annotation* identifier typeArguments?)*
+unannClassType       <-  Identifier typeArguments?
+                           ('.' annotation* Identifier typeArguments?)*
 
 unannType            <-  basicType dim*  /  unannClassType dim*
 
@@ -128,7 +128,7 @@ methodDeclaration    <-  methodModifier* methodHeader methodBody
 methodHeader         <-  result methodDeclarator throws?  /
                          typeParameters annotation* result methodDeclarator throws?
 
-methodDeclarator     <-  identifier '(' formalParameterList? ')' dim*
+methodDeclarator     <-  Identifier '(' formalParameterList? ')' dim*
 
 formalParameterList  <-  (receiverParameter  /  formalParameter) (',' formalParameter)*
 
@@ -137,7 +137,7 @@ formalParameter      <-  variableModifier* unannType variableDeclaratorId  /
 
 variableModifier     <-  annotation  /  'final'
 
-receiverParameter    <-  variableModifier* unannType (identifier '.')? 'this'
+receiverParameter    <-  variableModifier* unannType (Identifier '.')? 'this'
 
 result               <-  unannType  /  'void'
 
@@ -159,7 +159,7 @@ staticInitializer    <-  'static' block
 
 constructorDeclaration  <-  constructorModifier* constructorDeclarator throws? constructorBody
 
-constructorDeclarator  <-  typeParameters? identifier '(' formalParameterList? ')'
+constructorDeclarator  <-  typeParameters? Identifier '(' formalParameterList? ')'
 
 constructorModifier  <-  annotation  /  'public'  /  'protected'  /  'private'
 
@@ -170,13 +170,13 @@ explicitConstructorInvocation  <-  typeArguments? 'this'  arguments ';'  /
                                    primary '.' typeArguments? 'super' arguments ';'  /
                                    qualIdent '.' typeArguments? 'super' arguments ';'
 
-enumDeclaration       <-  classModifier* 'enum' identifier superinterfaces? enumBody
+enumDeclaration       <-  classModifier* 'enum' Identifier superinterfaces? enumBody
 
 enumBody              <-  '{' enumConstantList? ','? enumBodyDeclarations? '}'
 
 enumConstantList      <-  enumConstant (',' enumConstant)*
 
-enumConstant          <-  enumConstantModifier* identifier arguments? classBody?
+enumConstant          <-  enumConstantModifier* Identifier arguments? classBody?
 
 enumConstantModifier  <-  annotation
 
@@ -186,7 +186,7 @@ enumBodyDeclarations  <-  ';' classBodyDeclaration*
 -- JLS 9 Interfaces
 interfaceDeclaration  <-  normalInterfaceDeclaration  /  annotationTypeDeclaration
 
-normalInterfaceDeclaration  <-  interfaceModifier* 'interface' identifier typeParameters?
+normalInterfaceDeclaration  <-  interfaceModifier* 'interface' Identifier typeParameters?
                                   extendsInterfaces? interfaceBody
 
 interfaceModifier     <-  annotation  /  'public'  /  'protected'  /  'private'  /
@@ -208,7 +208,7 @@ interfaceMethodDeclaration  <-  interfaceMethodModifier* methodHeader methodBody
 interfaceMethodModifier  <-  annotation  /  'public'  /  'abstract'  /
                              'default'  /  'static'  /  'strictfp'
 
-annotationTypeDeclaration  <-  interfaceModifier* '@' 'interface' identifier annotationTypeBody
+annotationTypeDeclaration  <-  interfaceModifier* '@' 'interface' Identifier annotationTypeBody
 
 annotationTypeBody    <-  '{' annotationTypeMemberDeclaration* '}'
 
@@ -219,7 +219,7 @@ annotationTypeMemberDeclaration  <-  annotationTypeElementDeclaration  /
                                      ';'
 
 annotationTypeElementDeclaration  <-  annotationTypeElementModifier* unannType
-                                        identifier '(' ')' dim* defaultValue? ';'
+                                        Identifier '(' ')' dim* defaultValue? ';'
 
 annotationTypeElementModifier  <-  annotation  /  'public'  /  'abstract'
 
@@ -233,7 +233,7 @@ normalAnnotation      <-  qualIdent '(' elementValuePairList* ')'
 
 elementValuePairList  <-  elementValuePair (',' elementValuePair)*
 
-elementValuePair      <-  identifier '='!'=' elementValue
+elementValuePair      <-  Identifier '='!'=' elementValue
 
 elementValue          <-  conditionalExpression         /
                           elementValueArrayInitializer  /
@@ -278,12 +278,12 @@ statement            <-  block                                             /
                          'synchronized' parExpression block                /
                          'return' expression? ';'                          /
                          'throw' expression ';'                            /
-                         'break' identifier? ';'                           /
-                         'continue' identifier? ';'                        /
+                         'break' Identifier? ';'                           /
+                         'continue' Identifier? ';'                        /
                          'assert' expression (':' expression)? ';'         /
                          ';'                                               /
                          statementExpression ';'                           /
-                         identifier ':' statement
+                         Identifier ':' statement
 
 statementExpression   <-  assignment                           /
                           ('++' / '--') (primary / qualIdent)  /
@@ -299,7 +299,7 @@ switchLabels          <-  switchLabel switchLabel*
 switchLabel           <-  'case' (constantExpression / enumConstantName) ':'  /
                           'default' ':'
 
-enumConstantName      <-  identifier
+enumConstantName      <-  Identifier
 
 basicForStatement     <-  'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
 
@@ -336,36 +336,36 @@ expression            <-  lambdaExpression  /  assignmentExpression
 primary               <-  primaryBase primaryRest*
 
 primaryBase           <-  'this'
-                       /  literal
+                       /  Literal
                        /  parExpression
-                       /  'super' ('.' typeArguments? identifier arguments  /
-                                   '.' identifier                            /
-                                   '::' typeArguments? identifier
+                       /  'super' ('.' typeArguments? Identifier arguments  /
+                                   '.' Identifier                            /
+                                   '::' typeArguments? Identifier
                                   ) 
                        /  'new' (classCreator  /  arrayCreator)
                        /  qualIdent ('[' expression ']' /
                                      arguments          /
                                      '.' ('this'  /  'new' classCreator                    /
                                           'new' classCreator                               /
-                                          typeArguments identifier arguments               /
-                                          'super' '.' typeArguments? identifier arguments  /
-                                          'super' '.' identifier                           /
-                                          'super' '::' typeArguments? identifier arguments
+                                          typeArguments Identifier arguments               /
+                                          'super' '.' typeArguments? Identifier arguments  /
+                                          'super' '.' Identifier                           /
+                                          'super' '::' typeArguments? Identifier arguments
                                          )
                                                         /  ('[' ']')* '.' 'class'
-                                                        /  '::' typeArguments? identifier
+                                                        /  '::' typeArguments? Identifier
                                      )
                        /  'void' '.' 'class'
                        /  basicType ('[' ']')* '.' 'class'
                        /  referenceType '::' typeArguments? 'new'
                        /  arrayType '::' 'new'
 
-primaryRest           <-  '.' (typeArguments? identifier arguments  /
-                               identifier                           /
+primaryRest           <-  '.' (typeArguments? Identifier arguments  /
+                               Identifier                           /
                                'new' classCreator
                               )
                        /  '[' expression ']'
-                       /  '::' typeArguments? identifier
+                       /  '::' typeArguments? Identifier
 
 parExpression         <-  '(' expression ')'
 
@@ -374,8 +374,8 @@ parExpression         <-  '(' expression ')'
 classCreator          <-  typeArguments? annotation* classTypeWithDiamond
                             arguments classBody?
 
-classTypeWithDiamond  <-  annotation* identifier typeArgumentsOrDiamond?
-                            ('.' annotation* identifier typeArgumentsOrDiamond?)*
+classTypeWithDiamond  <-  annotation* Identifier typeArgumentsOrDiamond?
+                            ('.' annotation* Identifier typeArgumentsOrDiamond?)*
 
 typeArgumentsOrDiamond  <-  typeArguments  /  '<' '>' !'.'
 
@@ -403,10 +403,10 @@ castExpression        <-  '(' primitiveType ')' unaryExpression                 
                           '(' referenceType additionalBound* ')' lambdaExpression  /
                           '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
 
-infixExpression       <-  unaryExpression ((infixOperator unaryExpression) /
+infixExpression       <-  unaryExpression ((InfixOperator unaryExpression) /
                                            ('instanceof' referenceType))*
 
-infixOperator         <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]          /
+InfixOperator         <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]          /
                           '=='  /  '!='  /  '<' ![=<]  /  '>'![=>]  /  '<='               /
                           '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /
                           '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
@@ -415,21 +415,21 @@ conditionalExpression <-  infixExpression ('query' expression ':' expression)*
 
 assignmentExpression  <-  assignment  /  conditionalExpression
 
-assignment            <-  leftHandSide assignmentOperator expression
+assignment            <-  leftHandSide AssignmentOperator expression
 
 leftHandSide          <-  primary  /  qualIdent
 
-assignmentOperator    <-  '='![=]  /  '*='  /  '/='  /  '%='  /
+AssignmentOperator    <-  '='![=]  /  '*='  /  '/='  /  '%='  /
                           '+='  /  '-='  /  '<<='  / '>>='    /
                           '>>>='  /  '&='  /  '^='  /  '|='
 
 lambdaExpression      <-  lambdaParameters '->' lambdaBody
 
-lambdaParameters      <-  identifier                          /
+lambdaParameters      <-  Identifier                          /
                           '(' formalParameterList? ')'        /
                           '(' inferredFormalParameterList ')'
 
-inferredFormalParameterList  <-  identifier (',' identifier)*
+inferredFormalParameterList  <-  Identifier (',' Identifier)*
 
 lambdaBody            <-  expression  /  block
 
@@ -437,10 +437,10 @@ constantExpression    <-  expression
 
 
 -- JLS 3.8 Identifiers
-identifier            <-  !keywords [a-zA-Z_] [a-zA-Z_$0-9]*
+Identifier            <-  !Keywords [a-zA-Z_] [a-zA-Z_$0-9]*
 
 -- JLS 3.9 Keywords
-keywords              <- 'abstract'  /  'assert'  /  'boolean'  /  'break'  /
+Keywords              <- 'abstract'  /  'assert'  /  'boolean'  /  'break'  /
                          'byte'  /  'case'  /  'catch'  /  'char'  /
                          'class'  /  'const'  /  'continue'  /  'default'  /
                          'double'  /  'do'  /  'else'  /  'enum'  /
@@ -456,65 +456,65 @@ keywords              <- 'abstract'  /  'assert'  /  'boolean'  /  'break'  /
    
  
 -- JLS 3.10 Literals
-literal               <-  floatLiteral  /  integerLiteral  /  booleanLiteral  /
-                          charLiteral  /  stringLiteral  /  nullLiteral
+Literal               <-  FloatLiteral  /  IntegerLiteral  /  BooleanLiteral  /
+                          CharLiteral  /  StringLiteral  /  NullLiteral
 
 -- JLS 3.10.1 Integer Literals
-integerLiteral        <-  (hexNumeral  /  binaryNumeral  /  octalNumeral  /  decimalNumeral) [lL]?
+IntegerLiteral        <-  (HexNumeral  /  BinaryNumeral  /  OctalNumeral  /  DecimalNumeral) [lL]?
 
-decimalNumeral        <-  '0'  /  [1-9] ([_]*[0-9])*
+DecimalNumeral        <-  '0'  /  [1-9] ([_]*[0-9])*
 
-hexNumeral            <-  ('0x' / '0X') hexDigits
+HexNumeral            <-  ('0x' / '0X') HexDigits
 
-octalNumeral          <-  '0' ([_]*[0-7])+
+OctalNumeral          <-  '0' ([_]*[0-7])+
 
-binaryNumeral         <-  ('0b' / '0B') [01]([_]*[01])* 
+BinaryNumeral         <-  ('0b' / '0B') [01]([_]*[01])* 
 
 -- JLS 3.10.2 Floating-point Literals
-floatLiteral          <-  hexadecimalFloatingPointLiteral  /  decimalFloatingPointLiteral
+FloatLiteral          <-  HexaDecimalFloatingPointLiteral  /  DecimalFloatingPointLiteral
 
-decimalFloatingPointLiteral  <- digits '.' digits? exponent? [fFdD]?  /
-                                '.' digits exponent? [fFdD]?          /
-                                digits exponent [fFdD]?               /
-                                digits exponent? [fFdD]
+DecimalFloatingPointLiteral  <- Digits '.' Digits? Exponent? [fFdD]?  /
+                                '.' Digits Exponent? [fFdD]?          /
+                                Digits Exponent [fFdD]?               /
+                                Digits Exponent? [fFdD]
 
-exponent             <-  [eE] [-+]? digits
+Exponent             <-  [eE] [-+]? Digits
 
-hexadecimalFloatingPointLiteral  <-  hexSignificand binaryExponent [fFdD]?
+HexaDecimalFloatingPointLiteral  <-  HexSignificand BinaryExponent [fFdD]?
 
-hexSignificand       <-  ('0x' / '0X') hexDigits? '.' hexDigits  /
-                         hexNumeral '.'?
+HexSignificand       <-  ('0x' / '0X') HexDigits? '.' HexDigits  /
+                         HexNumeral '.'?
 
-hexDigits            <-  hexDigit ([_]* hexDigit)*
+HexDigits            <-  HexDigit ([_]* HexDigit)*
 
-hexDigit             <-  [a-f]  /  [A-F]  /  [0-9]
+HexDigit             <-  [a-f]  /  [A-F]  /  [0-9]
 
-binaryExponent       <-  [pP] [-+]? digits
+BinaryExponent       <-  [pP] [-+]? Digits
 
-digits               <-  [0-9]([_]*[0-9])*
+Digits               <-  [0-9]([_]*[0-9])*
 
 
 -- JLS 3.10.3 Boolean Literals
-booleanLiteral       <-  'true'  /  'false'  
+BooleanLiteral       <-  'true'  /  'false'  
 
 
 -- JLS 3.10.4 Character Literals
 -- JLS 3.10.5 String Literals
 -- JLS 3.10.6 Null Literal
 
-charLiteral          <-  "'" ('\n'  /  !"'" .)  "'"
+CharLiteral          <-  "'" ('\n'  /  !"'" .)  "'"
 
-stringLiteral        <-  '"' ('\n'  /  !'"' .)* '"'
+StringLiteral        <-  '"' ('\n'  /  !'"' .)* '"'
 
-nullLiteral          <-  'NULL'
+NullLiteral          <-  'NULL'
 
-Token                 <-  keywords  /  identifier  /  literal  /  . 
+Token                 <-  Keywords  /  Identifier  /  Literal  /  . 
 ]] 
 
 
 print('tree', tree, rules)                        
 print(pretty.printg(tree, rules), '\n')
-local p = coder.makeg(tree, rules[1])
+local p = coder.makeg(tree, rules)
 
 --first.calcFst(tree)
 --first.calcFlw(tree, rules[1])
@@ -523,7 +523,7 @@ local p = coder.makeg(tree, rules[1])
 local treelab, ruleslab = recovery.addlab(tree, rules, false, 'soft')
 print(pretty.printg(treelab, ruleslab, true), '\n')
 
-local p = coder.makeg(tree, rules[1])
+local p = coder.makeg(tree, rules)
 
 local dir = lfs.currentdir() .. '/test/java18/test/yes/'	
 for file in lfs.dir(dir) do
