@@ -97,11 +97,20 @@ local function autoskip (p)
 end
 
 
-local function makeg (g, s)
-	local peg = { [1] = s }
-	for k, v in pairs(g) do
-		v = autoskip(v)
-		peg[k] = makep(v)
+local function makeg (g, r)
+	local peg = { [1] = r[1].name }
+	for i, v in ipairs(r) do
+		if v.name ~= 'skip' then
+			local p
+			if not v.lex then
+				p = autoskip(g[v.name])
+			else
+				p = matchskip(g[v.name])
+			end
+			peg[v.name] = makep(p)
+		else
+			peg[v.name] = makep(g[v.name])
+		end
 	end
 	return m.P(peg)
 end

@@ -114,9 +114,14 @@ defs.newSuffix = function (p, ...)
 	return p
 end 
 
+local function isLexRule (s)
+	local ch = string.sub(s, 1, 1)
+	return ch >= 'A' and ch <= 'Z'
+end
+
 defs.newRule = function (k, v)
 	tree[k] = v
-	rules[#rules + 1] = k
+	rules[#rules + 1] = { name = k, lex = isLexRule(k) }
 end
 
 defs.isSimpleExp = function (p)
@@ -181,7 +186,7 @@ local function setSkip (tree, rules)
 		skip = defs.newSuffix(skip, '*')
 	end
 	tree['skip'] = skip
-	rules[#rules + 1] = 'skip'
+	rules[#rules + 1] = { name = 'skip', lex = true }
 end
 
 

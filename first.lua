@@ -313,6 +313,7 @@ return {
 	empty = empty,
 	any = any,
 	isequal = isequal,
-	issubset = issubset
+	issubset = issubset,
+	sortset = sortset,
 }
 

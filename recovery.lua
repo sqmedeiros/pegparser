@@ -157,7 +157,7 @@ local function addrecrules (g, r)
 	for j = 1, ierr - 1 do
   	local s = 'Err_' .. string.format("%03d", j)
 		g[s] = gerr[s]
-		r[#r + 1] = s
+		r[#r + 1] = { name = s, lex = false }
 	end
 end
 
@@ -178,29 +178,30 @@ local function addlab (g, rules, rec, flagBanned)
 			while changedBan do
 				changedBan = false
 				for i, v in ipairs(rules) do
-					notannotateSoft(g[v], flw[v], false, v)
+					notannotateSoft(g[v.name], flw[v.name], false, v.name)
 				end
 			end
 		else
 			for i, v in ipairs(rules) do
-				notannotate(g[v], flw[v], false)
+				notannotate(g[v.name], flw[v.name], false)
 			end
 		end
 	end
 
 
 	for i, v in ipairs(rules) do
-		if not flagBanned or not banned[v] then
-			newg[v] = addlab_aux(g, g[v], false, flw[v])
+		if not flagBanned or not banned[v.name] then
+			newg[v.name] = addlab_aux(g, g[v.name], false, flw[v.name])
 		else
-			newg[v] = g[v]
+			newg[v.name] = g[v.name]
 		end
 		newrules[i] = v
 	end
 
-	io.write"Banned: "
-	for k, v in pairs(banned) do
-		io.write(k .. ', ')
+	local s = first.sortset(banned)
+	io.write("Banned (" .. #s .. "): ")
+	for i, v in ipairs(s) do
+		io.write(v .. ', ')
 	end
 	io.write"\n"
 

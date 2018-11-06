@@ -78,7 +78,7 @@ end
 local function printg (g, l, flagthrow)
 	local t = {}
 	for i, r in ipairs(l) do
-		table.insert(t, string.format("%-15s <-  %s", r, printp(g[r], flagthrow)))
+		table.insert(t, string.format("%-15s <-  %s", r.name, printp(g[r.name], flagthrow)))
 	end
 	return table.concat(t, '\n')
 end

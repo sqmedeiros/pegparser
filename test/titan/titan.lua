@@ -76,7 +76,7 @@ print(pretty.printg(tree, r1))
 print()
 
 print("Regular Annotation")
-local glab, r2 = recovery.addlab(tree, r1, true, false)
+local glab, r2 = recovery.addlab(tree, r1, false, false)
 print(pretty.printg(glab, r2))
 print()
 
