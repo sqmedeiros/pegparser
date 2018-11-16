@@ -1,0 +1,23 @@
+* Gramática Titan anotada manualmente:
+  - 
+
+* Algoritmo SBLP
+  - Adicionou 79 rótulos
+  - 2 regras rotuladas erronemante:
+    . toplevelvar (1 rótulo errado em '='): usada em 'program' em uma escolha não LL(1)
+    . import (1 rótulo errado em 'import'): usada em 'program' em uma escolha não LL(1)
+  - 1 label novo correto em relação à anotação manual: regra 'type' Err_032
+  - Anotações faltando em 4 regras das 50
+
+* Algoritmo Conservativo Hard
+  - Adicionou 43 rótulos
+  - Baniu 18 variáveis
+  - Zero regras rotuladas erroneamente
+  - Nenhum label novo correto em relação à anotação manual
+
+* Algoritmo Conservativo Soft
+  - Adicionou 68 rótulos
+  - Baniu 7 variáveis
+  - 1 regra rotulada erroneamente:
+    . import: mesmo caso de Algoritmo SBLP
+  - 1 label novo correto em relação à anotação manual: regra 'type' Err_026 (Err_032)

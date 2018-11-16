@@ -129,7 +129,26 @@ Anotações extras nas regras: struct_decl, param_type_list, id_list, logical_or
 
  
 
+Resumo:
 
+* Gramática C anotada manualmente:
+  - 
+
+* Algoritmo SBLP
+  - Adicionou 75 rótulos (até 'primary_exp')
+  - ?? regras rotuladas erronemante:
+
+* Algoritmo Conservativo Hard
+  - Adicionou 23 rótulos (até 'primary_exp')
+  - Baniu 38 variáveis
+  - Zero regra rotulada erroneamente
+  - 4 anotações novas corretas em relação à anotação manual
+
+* Algoritmo Conservativo Soft
+  - Adicionou 65 rótulos
+  - Baniu 16 variáveis
+  - Zero regra rotulada erroneamente:
+  - 4 anotações novas corretas em relação à anotação manual
 
 
 
