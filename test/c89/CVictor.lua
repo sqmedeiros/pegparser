@@ -36,10 +36,10 @@ storage_class_spec    <-  'auto'  /  'register'  /  'static'  /  'extern'  /  't
 
 type_spec             <-  'void'  /  'char'  /  'short'  /  'int'  /  'long'  /'float'  /
                           'double'  /  'signed'  /  'unsigned'  /  typedef_name  /
-                          'enum' id? '{' enumerator (',' enumerator)* '}'      /
-                          'enum' id                                            /
-                          struct_or_union id? '{' struct_decl+ '}'             /
-                          struct_or_union id
+                          'enum' ID? '{' enumerator (',' enumerator)* '}'      /
+                          'enum' ID                                            /
+                          struct_or_union ID? '{' struct_decl+ '}'             /
+                          struct_or_union ID
 
 type_qualifier        <-  'const'  /  'volatile'
 
@@ -58,11 +58,11 @@ spec_qualifier        <-  type_spec  /  type_qualifier
 
 struct_declarator     <-  declarator? ';' const_exp  /  declarator
  
-enumerator            <-  id '=' const_exp  /  id
+enumerator            <-  ID '=' const_exp  /  ID
 
 declarator            <-  pointer? direct_declarator
 
-direct_declarator     <-  (id  /  '(' declarator ')') ('[' const_exp? ']'       /
+direct_declarator     <-  (ID  /  '(' declarator ')') ('[' const_exp? ']'       /
                                                        '(' param_type_list ')'  /
                                                        '(' id_list? ')')*
 
@@ -72,7 +72,7 @@ param_type_list       <-  param_decl (',' param_decl)* (',' '...')?
 
 param_decl            <-  decl_spec+ (declarator  /  abstract_declarator)?
 
-id_list               <-  id (',' id)*
+id_list               <-  ID (',' ID)*
 
 initializer           <-  '{' initializer (',' initializer)* ','? '}'  /
                           assignment_exp
@@ -84,9 +84,9 @@ abstract_declarator   <-  pointer  /  pointer? direct_abstract_declarator
 direct_abstract_declarator <- '(' abstract_declarator ')' ('[' const_exp? ']'  /
                                                            '(' param_type_list? ')')*
 
-typedef_name          <-  id
+typedef_name          <-  ID
 
-stat                  <-  id ':' stat                                /
+stat                  <-  ID ':' stat                                /
                           'case' const_exp ':' stat                  / 
                           'default' ':' stat                         /
                           exp? ';'                                   /
@@ -97,7 +97,7 @@ stat                  <-  id ':' stat                                /
                           'while' '(' exp ')' stat                   /
                           'do' stat 'while' '(' exp ')' ';'          /
                           'for' '(' exp? ';' exp? ';' exp? ')' stat  / 
-                          'goto' id ';'                              /
+                          'goto' ID ';'                              /
                           'continue' ';'                             /
                           'break' ';'                                /
                           'return' exp? ';' 
@@ -146,43 +146,43 @@ unary_exp             <-  '++' unary_exp  /  '--' unary_exp  /
 
 postfix_exp           <-  primary_exp ('[' exp ']'                                      /
                                        '(' (assignment_exp (',' assignment_exp)*)? ')'  /
-                                       '.' id   /  '->' id  /  '++'  /  '--')*
+                                       '.' ID   /  '->' ID  /  '++'  /  '--')*
 
 
-primary_exp           <-  id  /  string  /  constant  /  '(' exp ')'   
+primary_exp           <-  ID  /  STRING  /  constant  /  '(' exp ')'   
   
-constant              <-  int_const  /  char_const  /  float_const  /  enumeration_const  
+constant              <-  INT_CONST  /  CHAR_CONST  /  FLOAT_CONST  /  ENUMERATION_CONST
   
 unary_operator        <-  '&'  /  '*'  /  '+'  /  '-'  /  '~'  /  '!'
 
-comment               <-  '/*' (!'*/' .)* '*/'
+COMMENT               <-  '/*' (!'*/' .)* '*/'
  
-int_const             <-  ('0' [xX] xdigit+  /  !'0' digit digit*  /  '0'[0-8]*)
+INT_CONST             <-  ('0' [xX] XDIGIT+  /  !'0' DIGIT DIGIT*  /  '0'[0-8]*)
                           ([uU] [lL]  /  [lL] [uU]  /  'l'  /  'L'  /  'u'  /  'U')?
                            
-float_const           <-  '0x' (
-                                (('.' / xdigit+)  /  (xdigit+ / '.')) ([eE] [-+]? xdigit+)? [lLfF]?  /
-                                 xdigit+ [eE] [-+]? xdigit+ [lLfF]?
+FLOAT_CONST           <-  '0x' (
+                                (('.' / XDIGIT+)  /  (XDIGIT+ / '.')) ([eE] [-+]? XDIGIT+)? [lLfF]?  /
+                                 XDIGIT+ [eE] [-+]? XDIGIT+ [lLfF]?
                               )  /
-                              (('.' / digit+)  /  (digit+ / '.')) ([eE] [-+]? digit+)? [lLfF]?  /
-                                 digit+ [eE] [-+]? digit+ [lLfF]?
+                              (('.' / DIGIT+)  /  (DIGIT+ / '.')) ([eE] [-+]? DIGIT+)? [lLfF]?  /
+                                 DIGIT+ [eE] [-+]? DIGIT+ [lLfF]?
  
-xdigit                <- [0-9a-fA-F]
+XDIGIT                <- [0-9a-fA-F]
 
-digit                 <- [0-9]
+DIGIT                 <- [0-9]
 
-char_const            <-  "'" ('\n'  /  !"'" .)  "'"
+CHAR_CONST            <-  "'" ('\n'  /  !"'" .)  "'"
 
-string                <-  '"' ('\n'  /  !'"' .)* '"'
+STRING                <-  '"' ('\n'  /  !'"' .)* '"'
  
-esc_char              <-  '\\' ('n' / 't' / 'v' / 'b' / 'r' / 'f' / 'a' / '\\' / '?' / "'" / '"' /
-                          [01234567] ([01234567]? [01234567]?)  /  'x' xdigit)
+ESC_CHAR              <-  '\\' ('n' / 't' / 'v' / 'b' / 'r' / 'f' / 'a' / '\\' / '?' / "'" / '"' /
+                          [01234567] ([01234567]? [01234567]?)  /  'x' XDIGIT)
 
-enumeration_const     <-  id
+ENUMERATION_CONST     <-  ID
   
-id                    <-  !keywords [a-zA-Z_] [a-zA-Z_0-9]* skip
+ID                    <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]* skip
   
-keywords              <-  ('auto'  /  'double'  /  'int'  /  'struct'  /
+KEYWORDS              <-  ('auto'  /  'double'  /  'int'  /  'struct'  /
                           'break'  /  'else'  /  'long'  /  'switch'  /
                           'case'  /  'enum'  /  'register'  /  'typedef'  /
                           'char'  /  'extern'  /  'return'  /  'union' /
@@ -191,7 +191,7 @@ keywords              <-  ('auto'  /  'double'  /  'int'  /  'struct'  /
                           'default'  /  'goto'  /  'sizeof'  /  'volatile'  /
                           'do'  /  'if'  /  'static'  /  'while')
    
-Token                 <-  keywords  /  id  /  string  /  constant  /  . 
+Token                 <-  KEYWORDS  /  ID  /  STRING  /  constant  /  . 
 ]] 
 
                         

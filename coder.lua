@@ -68,7 +68,7 @@ local function matchskip (p)
 	return parser.newSeq(p, parser.newVar('skip'))
 end
 
-local function autoskip (p)
+local function autoskip (p, g)
 	if p.tag == 'empty' or p.tag == 'char' or p.tag == 'set' or
      p.tag == 'any' then
 		return matchskip(p)
@@ -83,12 +83,16 @@ local function autoskip (p)
 	elseif p.tag == 'anonCap' then
 		return matchskip(p)
 	elseif p.tag == 'var' then
-		return p
+		if p.p1 ~= 'skip' and g[p.p1].lex then
+			return matchskip(p)
+		else
+			return p
+		end
 	elseif p.tag == 'ord' or p.tag == 'con' then
-		return parser.newNode(p.tag, autoskip(p.p1), autoskip(p.p2))
+		return parser.newNode(p.tag, autoskip(p.p1, g), autoskip(p.p2, g))
 	elseif p.tag == 'and' or p.tag == 'not' or p.tag == 'opt' or
          p.tag == 'star' or p.tag == 'plus' then
-		return parser.newNode(p.tag, autoskip(p.p1))
+		return parser.newNode(p.tag, autoskip(p.p1, g))
 	elseif p.tag == 'throw' then
 		return p
 	else
@@ -101,11 +105,9 @@ local function makeg (g, r)
 	local peg = { [1] = r[1].name }
 	for i, v in ipairs(r) do
 		if v.name ~= 'skip' then
-			local p
-			if not v.lex then
-				p = autoskip(g[v.name])
-			else
-				p = matchskip(g[v.name])
+			local p = g[v.name]
+			if not p.lex then
+				p = autoskip(p, g)
 			end
 			peg[v.name] = makep(p)
 		else

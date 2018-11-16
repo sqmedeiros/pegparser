@@ -121,6 +121,7 @@ end
 
 defs.newRule = function (k, v)
 	tree[k] = v
+  tree[k].lex = isLexRule(k)
 	rules[#rules + 1] = { name = k, lex = isLexRule(k) }
 end
 
@@ -180,8 +181,8 @@ end
 
 local function setSkip (tree, rules)
 	local skip = defs.newClass{' ','\t','\n','\v','\f','\r'}
-	if tree['comment'] then
-		skip = 	defs.newSuffix(defs.newOrd(skip, defs.newVar('comment')), '*')
+	if tree['COMMENT'] then
+		skip = 	defs.newSuffix(defs.newOrd(skip, defs.newVar('COMMENT')), '*')
 	else
 		skip = defs.newSuffix(skip, '*')
 	end
