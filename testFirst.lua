@@ -18,11 +18,13 @@ end
 
 local function assertequal (pre, comp)
 	local auxk = nil
+	comp['skip'] = nil
 	for k, v in pairs (pre) do
 		assertequal_aux(k, v, comp[k])
 		auxk = next(comp, auxk)
 	end
-	assert(next(comp, auxk) == nil)
+	local x = next(comp, auxk)
+	assert(x == nil, x)
 end
 
 local function makeset (l)
@@ -53,7 +55,7 @@ local preflw = {
 
 local tree, r = parser.match(g)
 local fst = first.calcFst(tree)
-local flw = first.calcFlw(tree, r[1])
+local flw = first.calcFlw(tree, r[1].name)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
@@ -97,7 +99,7 @@ local preflw = {
 
 local tree, r = parser.match(g)
 local fst = first.calcFst(tree)
-local flw = first.calcFlw(tree, r[1])
+local flw = first.calcFlw(tree, r[1].name)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
@@ -126,7 +128,7 @@ local preflw = {
 
 local tree, r = parser.match(g)
 local fst = first.calcFst(tree)
-local flw = first.calcFlw(tree, r[1])
+local flw = first.calcFlw(tree, r[1].name)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
@@ -161,7 +163,7 @@ local preflw = {
 
 local tree, r = parser.match(g)
 local fst = first.calcFst(tree)
-local flw = first.calcFlw(tree, r[1])
+local flw = first.calcFlw(tree, r[1].name)
 
 --print("FIRST")
 --first.printfirst(tree, r)

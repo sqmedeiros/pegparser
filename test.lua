@@ -97,7 +97,7 @@ local g = [[
   B <- "1" S / "0" B B      -- one more 1
 ]]
 
-local p = coder.makeg(m.match(g), "S")
+local p = coder.makeg(m.match(g))
 assert(p:match("00011011") == 9)
 
 local g = [[
@@ -108,7 +108,7 @@ local g = [[
 
 local tree, r = m.match(g)
 print(pretty.printg(tree, r))
-local p = coder.makeg(m.match(g), "S")
+local p = coder.makeg(m.match(g))
 
 assert(p:match("00011011") == 9)
 assert(p:match("000110110") == 9)
