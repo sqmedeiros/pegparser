@@ -48,7 +48,7 @@ local treerec, rulesrec = recovery.addlab(tree, rules, false, true)
 print(pretty.printg(treerec, rulesrec), '\n')
 
 
-local p = coder.makeg(treerec, "S")
+local p = coder.makeg(treerec, rulesrec)
 
 -- Valid programs
 assertOk(p, "af=2")

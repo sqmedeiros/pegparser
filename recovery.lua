@@ -107,6 +107,15 @@ local function notannotateSoft (p, flw, flag, v)
 end
 
 
+local function getTokenRules (r)
+	local t = {}
+	for i, v in ipairs(r) do
+		if v.lex then
+			table.insert(t, newNode('var', v.name))
+		end
+	end
+	return t
+end
 
 
 local function addlab_aux (g, p, seq, flw)
@@ -206,6 +215,11 @@ local function addlab (g, rules, rec, flagBanned)
 	io.write"\n"
 
 	if flagRecovery then
+		local unpack = unpack or table.unpack
+		local p = newOrd(unpack(getTokenRules(rules)))
+		local tkrule = { name = 'token', lex = false }
+		newg[tkrule.name] = p
+		table.insert(newrules, tkrule)
 		addrecrules(newg, newrules)
 	end
 		

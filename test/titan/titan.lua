@@ -88,6 +88,6 @@ print()
 
 
 print("Conservative Annotation (Soft)")
-local glab, r2 = recovery.addlab(tree, r1, false, 'soft')
+local glab, r2 = recovery.addlab(tree, r1, true, 'soft')
 print(pretty.printg(glab, r2))
 print()
