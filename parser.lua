@@ -5,6 +5,7 @@ local errinfo = require 'syntax_errors'
 local tree = {}
 local defs = {}
 local lvars = {}
+local tokens = {}
 
 
 local newNode = function (tag, p1, p2)
@@ -12,6 +13,7 @@ local newNode = function (tag, p1, p2)
 end
 
 defs.newString = function (v)
+	tokens[v] = true
 	return newNode('char', v)
 end
 
@@ -120,8 +122,12 @@ local function isLexRule (s)
 end
 
 defs.newRule = function (k, v)
+	local lex = isLexRule(k)
 	tree[k] = v
-  tree[k].lex = isLexRule(k)
+  tree[k].lex = lex
+	if lex then
+		tokens[k] = true
+	end
 	rules[#rules + 1] = { name = k, lex = isLexRule(k) }
 end
 
@@ -237,6 +243,7 @@ defs.match = function (s)
 	rules = {}
   tree = {}
 	lvars = {}
+	tokens = {}
 	local r, lab, pos = ppk:match(s)
   if not r then
 		local line, col = re.calcline(s, pos)

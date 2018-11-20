@@ -8,7 +8,7 @@ local calcf
 local newString = parser.newString
 local newOrd = parser.newOrd
 local printfirst, printsymbols, calcfirst, calck
-
+local locg
 
 local function disjoint (s1, s2)
 	for k, _ in pairs(s1) do
@@ -70,14 +70,22 @@ local function sortset(s)
 end
 
 
+local function getElem (v)
+	if type(v) == 'table' then
+		return v
+	else
+		return newString(v)
+	end
+end
+
 local function set2choice (s)
 	local p
   local r = sortset(s)
 	for i, v in ipairs(r) do
 		if not p then
-			p = newString(v)
+				p = getElem(v)
 		else
-			p = newOrd(newString(v), p)
+			p = newOrd(getElem(v), p)
 		end
 	end	
 	return p
@@ -144,6 +152,9 @@ function calcfirst (p)
 			return s1
 		end
 	elseif p.tag == 'var' then
+		if locg[p.p1].lex then
+			return { bola = true }
+		end
 		return FIRST[p.p1]
 	elseif p.tag == 'throw' then
 		return { [empty] = true }
@@ -187,6 +198,9 @@ function calck (g, p, k)
 		local k2 = calck(g, p.p2, k)
 		return calck(g, p.p1, k2)
 	elseif p.tag == 'var' then
+		if locg[p.p1].lex then
+			return { bolada = true }
+		end
     if parser.matchEmpty(p) then
 			return union(FIRST[p.p1], k, true)
     else
@@ -221,6 +235,7 @@ end
 
 local function calcFst (g)
   local update = true
+	locg = g
   initFst(g)
 	
   while update do

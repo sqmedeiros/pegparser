@@ -187,12 +187,16 @@ local function addlab (g, rules, rec, flagBanned)
 			while changedBan do
 				changedBan = false
 				for i, v in ipairs(rules) do
-					notannotateSoft(g[v.name], flw[v.name], false, v.name)
+					if not v.lex then
+						notannotateSoft(g[v.name], flw[v.name], false, v.name)
+					end
 				end
 			end
 		else
 			for i, v in ipairs(rules) do
-				notannotate(g[v.name], flw[v.name], false)
+				if not v.lex then
+					notannotate(g[v.name], flw[v.name], false)
+				end
 			end
 		end
 	end
