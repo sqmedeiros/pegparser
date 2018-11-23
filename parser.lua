@@ -2,18 +2,15 @@ local m = require 'lpeglabel'
 local re = require 'relabel'
 local errinfo = require 'syntax_errors'
 
-local tree = {}
+local g = {}
 local defs = {}
-local lvars = {}
-local tokens = {}
-
 
 local newNode = function (tag, p1, p2)
 	return { tag = tag, p1 = p1, p2 = p2 } 
 end
 
 defs.newString = function (v)
-	tokens[v] = true
+	g.tokens[v] = true
 	return newNode('char', v)
 end
 
@@ -22,7 +19,7 @@ defs.newAny = function (v)
 end
 
 defs.newVar = function (v)
-	lvars[#lvars + 1] = v
+	g.vars[#g.vars + 1] = v
 	return newNode('var', v)
 end
 
@@ -122,13 +119,12 @@ local function isLexRule (s)
 end
 
 defs.newRule = function (k, v)
-	local lex = isLexRule(k)
-	tree[k] = v
-  tree[k].lex = lex
-	if lex then
-		tokens[k] = true
+	g.prules[k] = v
+	g.plist[#g.plist + 1] = k
+	if isLexRule(k) then
+		g.lex[k] = true
+		g.tokens[k] = true
 	end
-	rules[#rules + 1] = { name = k, lex = isLexRule(k) }
 end
 
 defs.isSimpleExp = function (p)
@@ -175,7 +171,7 @@ defs.matchEmpty = function (p)
 	elseif tag == 'ord' then
 		return defs.matchEmpty(p.p1) or defs.matchEmpty(p.p2)
 	elseif tag == 'var' then
-		return defs.matchEmpty(tree[p.p1])
+		return defs.matchEmpty(g.prules[p.p1])
 	elseif tag == 'simpCap' or tag == 'tabCap' or
 	       tag == 'anonCap' or tag == 'nameCap' then
 		return defs.matchEmpty(p.p1)
@@ -185,15 +181,19 @@ defs.matchEmpty = function (p)
 	end
 end
 
-local function setSkip (tree, rules)
+local function setSkip (g)
 	local skip = defs.newClass{' ','\t','\n','\v','\f','\r'}
-	if tree['COMMENT'] then
+	if g.prules['COMMENT'] then
 		skip = 	defs.newSuffix(defs.newOrd(skip, defs.newVar('COMMENT')), '*')
 	else
 		skip = defs.newSuffix(skip, '*')
 	end
-	tree['skip'] = skip
-	rules[#rules + 1] = { name = 'skip', lex = true }
+	local s = 'SKIP'
+	if not g.prules[s] then
+		g.plist[#g.plist+1] = s
+		g.lex[s] = true
+	end
+	g.prules[s] = skip
 end
 
 
@@ -239,22 +239,30 @@ local peg = [[
 
 local ppk = re.compile(peg, defs)
 
+defs.initgrammar = function()
+	local g = {}
+	g.plist = {}
+	g.prules = {}
+	g.lex = {}
+	g.tokens = {}
+	g.vars = {}
+	return g
+end
+
 defs.match = function (s)
-	rules = {}
-  tree = {}
-	lvars = {}
-	tokens = {}
+	g = defs.initgrammar()
 	local r, lab, pos = ppk:match(s)
   if not r then
 		local line, col = re.calcline(s, pos)
 		local msg = line .. ':' .. col .. ':'
 		return r, msg .. (errinfo[lab] or lab), pos
 	else
-		setSkip(tree, rules)
-		for i,v in ipairs(lvars) do
-			assert(tree[v] ~= nil, "Rule '" .. v .. "' was not defined")
+		setSkip(g)
+		for i, v in ipairs(g.vars) do
+			assert(g.prules[v] ~= nil, "Rule '" .. v .. "' was not defined")
 		end
-		return tree, rules
+		g.init = g.plist[1]
+		return g 
 	end
 end
 

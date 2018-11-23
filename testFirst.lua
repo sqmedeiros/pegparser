@@ -18,7 +18,7 @@ end
 
 local function assertequal (pre, comp)
 	local auxk = nil
-	comp['skip'] = nil
+	comp['SKIP'] = nil
 	for k, v in pairs (pre) do
 		assertequal_aux(k, v, comp[k])
 		auxk = next(comp, auxk)
@@ -34,7 +34,7 @@ local function makeset (l)
 	end
 	return t
 end
-
+--[==[
 
 local g = [[
 	S <- (A / B)* 'c'
@@ -53,9 +53,9 @@ local preflw = {
 	B = makeset{'a', 'b', 'c'}
 }
 
-local tree, r = parser.match(g)
-local fst = first.calcFst(tree)
-local flw = first.calcFlw(tree, r[1].name)
+local peg = parser.match(g)
+local fst = first.calcFst(peg)
+local flw = first.calcFlw(peg)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
@@ -72,7 +72,6 @@ local g = [[
   G <- &'e' !'f'  
 ]]
 
-local tree, r = parser.match(g)
 
 local prefst = {
   S = makeset{'o', 'u', 'k', 'd', 'c'},
@@ -97,9 +96,9 @@ local preflw = {
 }
 
 
-local tree, r = parser.match(g)
-local fst = first.calcFst(tree)
-local flw = first.calcFlw(tree, r[1].name)
+local peg = parser.match(g)
+local fst = first.calcFst(peg)
+local flw = first.calcFlw(peg)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
@@ -110,8 +109,6 @@ local g = [[
 	A <- 'a' %{Erro}
   B <- 'b'? 'x'? ('y'+)^Erro2 
 ]]
-
-local tree, r = parser.match(g)
 
 local prefst = {
   S = makeset{'a', 'b', 'x', 'y', empty},
@@ -126,9 +123,9 @@ local preflw = {
 }
 
 
-local tree, r = parser.match(g)
-local fst = first.calcFst(tree)
-local flw = first.calcFlw(tree, r[1].name)
+local peg = parser.match(g)
+local fst = first.calcFst(peg)
+local flw = first.calcFlw(peg)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
@@ -142,7 +139,7 @@ local g = [[
 	D <- 'd' / C
 ]]
 
-local tree, r = parser.match(g)
+local peg = parser.match(g)
 
 local prefst = {
   S = makeset{any, 'a', 'b', 'c', 'd', 'f', 'y', empty},
@@ -161,9 +158,9 @@ local preflw = {
 }
 
 
-local tree, r = parser.match(g)
-local fst = first.calcFst(tree)
-local flw = first.calcFlw(tree, r[1].name)
+local peg = parser.match(g)
+local fst = first.calcFst(peg)
+local flw = first.calcFlw(peg)
 
 --print("FIRST")
 --first.printfirst(tree, r)
@@ -172,6 +169,30 @@ local flw = first.calcFlw(tree, r[1].name)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
+
+]==]
+print("+")
+
+local g = [[
+	S <- A
+	A <- 'a'   
+  B <- 'a'
+	C <- A
+	D <- B
+]]
+
+local peg = parser.match(g)
+local fst = first.calcFst(peg)
+local flw = first.calcFlw(peg)
+
+print(first.disjoint(fst['A'], fst['B']))
+print(first.disjoint(fst['C'], fst['D']))
+print(first.disjoint(fst['C'], fst['S']))
+
+for k,v in pairs(fst['D']) do
+	print(k, v)
+end
+
 
 print("Ok")
 

@@ -8,7 +8,6 @@ local calcf
 local newString = parser.newString
 local newOrd = parser.newOrd
 local printfirst, printsymbols, calcfirst, calck
-local locg
 
 local function disjoint (s1, s2)
 	for k, _ in pairs(s1) do
@@ -101,7 +100,7 @@ end
 
 function printfirst (g, r)
 	for i, v in ipairs(r) do
-		print(v .. ': ', table.concat(sortset(calcfirst(g[v])), ", "))
+		print(v .. ': ', table.concat(sortset(calcfirst(g, g[v])), ", "))
 	end
 end
 
@@ -122,7 +121,7 @@ local function unfoldset (l)
 	return t
 end
 
-function calcfirst (p)
+function calcfirst (g, p)
 	--print(p.tag, p.p1.tag, p.p1)
 	if p.tag == 'empty' then
 		return { [empty] = true }
@@ -135,14 +134,14 @@ function calcfirst (p)
 	elseif p.tag == 'posCap' then
 		return { [empty] = true }
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		return calcfirst(p.p1)
+		return calcfirst(g, p.p1)
 	elseif p.tag == 'nameCap'then
-		return calcfirst(p.p2)
+		return calcfirst(g, p.p2)
 	elseif p.tag == 'ord' then
-		return union(calcfirst(p.p1), calcfirst(p.p2), false)
+		return union(calcfirst(g, p.p1), calcfirst(g, p.p2), false)
 	elseif p.tag == 'con' then
-		local s1 = calcfirst(p.p1)
-    local s2 = calcfirst(p.p2)
+		local s1 = calcfirst(g, p.p1)
+    local s2 = calcfirst(g, p.p2)
 		if s1[empty] then
 			s1[empty] = nil
       local s3 = union(s1, s2, false)
@@ -152,8 +151,10 @@ function calcfirst (p)
 			return s1
 		end
 	elseif p.tag == 'var' then
-		if locg[p.p1].lex then
-			return { bola = true }
+		if g.lex[p.p1] then
+			local t = {}
+			t[p.p1] = true
+			return t
 		end
 		return FIRST[p.p1]
 	elseif p.tag == 'throw' then
@@ -167,9 +168,9 @@ function calcfirst (p)
     --if p.tag == 'plus' and p.p1.v == 'recordfield' then
     --  print ('danado', p.p1.v)
     --end
-		return union(calcfirst(p.p1), { [empty] = true}, false)
+		return union(calcfirst(g, p.p1), { [empty] = true}, false)
   elseif p.tag == 'plus' then
-		return calcfirst(p.p1)
+		return calcfirst(g, p.p1)
 	else
 		print(p, p.tag, p.empty, p.any)
 		error("Unknown tag: " .. p.tag)
@@ -198,9 +199,11 @@ function calck (g, p, k)
 		local k2 = calck(g, p.p2, k)
 		return calck(g, p.p1, k2)
 	elseif p.tag == 'var' then
-		if locg[p.p1].lex then
-			return { bolada = true }
-		end
+		--if g.lex[p.p1] then
+		--	local t = {}
+		--	t[p.p1] = true
+		--	return t
+		--end
     if parser.matchEmpty(p) then
 			return union(FIRST[p.p1], k, true)
     else
@@ -227,7 +230,7 @@ end
 
 local function initFst (g)
   FIRST = {}
-  for k, v in pairs(g) do
+  for k, v in pairs(g.prules) do
     FIRST[k] = {}
   end
 end
@@ -235,13 +238,12 @@ end
 
 local function calcFst (g)
   local update = true
-	locg = g
   initFst(g)
 	
   while update do
     update = false
-    for k, v in pairs(g) do
-			local firstv = calcfirst(v)
+    for k, v in pairs(g.prules) do
+			local firstv = calcfirst(g, v)
 			if not isequal(FIRST[k], firstv) then
         update = true
 	      FIRST[k] = union(FIRST[k], firstv, false)
@@ -253,46 +255,46 @@ local function calcFst (g)
 end
 
 
-local function initFlw(g, init)
+local function initFlw(g)
   FOLLOW = {}
-  for k, v in pairs(g) do
+  for k, v in pairs(g.prules) do
     FOLLOW[k] = {}
   end
-  FOLLOW[init] = { ['$'] = true }
+  FOLLOW[g.init] = { ['$'] = true }
 end
 
 
-local function calcFlwAux (p, flw)
+local function calcFlwAux (g, p, flw)
   if p.tag == 'var' then
     FOLLOW[p.p1] = union(FOLLOW[p.p1], flw, true)
   elseif p.tag == 'con' then
-    calcFlwAux(p.p2, flw)
-    local k = calcfirst(p.p2)
+    calcFlwAux(g, p.p2, flw)
+    local k = calcfirst(g, p.p2)
     assert(not k[empty] == not parser.matchEmpty(p.p2), tostring(k[empty]) .. ' ' .. tostring(parser.matchEmpty(p.p2)) .. ' ' .. pretty.printp(p.p2))
     if parser.matchEmpty(p.p2) then
     --if k[empty] then
-      calcFlwAux(p.p1, union(k, flw, true))
+      calcFlwAux(g, p.p1, union(k, flw, true))
     else
-      calcFlwAux(p.p1, k)
+      calcFlwAux(g, p.p1, k)
 		end
   elseif p.tag == 'star' or p.tag == 'plus' then
-    calcFlwAux(p.p1, union(calcfirst(p.p1), flw, true))
+    calcFlwAux(g, p.p1, union(calcfirst(g, p.p1), flw, true))
   elseif p.tag == 'opt' then
-    calcFlwAux(p.p1, flw)
+    calcFlwAux(g, p.p1, flw)
   elseif p.tag == 'ord' then
-    calcFlwAux(p.p1, flw)
-    calcFlwAux(p.p2, flw)
+    calcFlwAux(g, p.p1, flw)
+    calcFlwAux(g, p.p2, flw)
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		calcFlwAux(p.p1, flw)
+		calcFlwAux(g, p.p1, flw)
 	elseif p.tag == 'nameCap' then
-		calcFlwAux(p.p2, flw)
+		calcFlwAux(g, p.p2, flw)
 	end
 end
 
 
-local function calcFlw (g, init)
+local function calcFlw (g)
   local update = true
-  initFlw(g, init)
+  initFlw(g)
 
   while update do
     local tmp = {}
@@ -300,12 +302,12 @@ local function calcFlw (g, init)
       tmp[k] = v
     end
 
-    for k, v in pairs(g) do
-      calcFlwAux(v, FOLLOW[k]) 
+    for k, v in pairs(g.prules) do
+      calcFlwAux(g, v, FOLLOW[k]) 
     end
 
     update = false
-    for k, v in pairs(g) do
+    for k, v in pairs(g.prules) do
       if not isequal(FOLLOW[k], tmp[k]) then
 			  update = true
       end

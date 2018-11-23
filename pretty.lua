@@ -75,10 +75,10 @@ local function printp (p, flag)
 	end
 end
 
-local function printg (g, l, flagthrow)
+local function printg (g, flagthrow)
 	local t = {}
-	for i, r in ipairs(l) do
-		table.insert(t, string.format("%-15s <-  %s", r.name, printp(g[r.name], flagthrow)))
+	for i, v in ipairs(g.plist) do
+		table.insert(t, string.format("%-15s <-  %s", v, printp(g.prules[v], flagthrow)))
 	end
 	return table.concat(t, '\n')
 end

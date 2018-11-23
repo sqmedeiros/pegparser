@@ -71,23 +71,23 @@ g = [[
   SKIP            <-  ' ']]
 
 
-local tree, r1 = m.match(g)
-print(pretty.printg(tree, r1))
+local g = m.match(g)
+print(pretty.printg(g))
 print()
 
 print("Regular Annotation")
-local glab, r2 = recovery.addlab(tree, r1, false, false)
-print(pretty.printg(glab, r2))
+local glab = recovery.addlab(g, false, false)
+print(pretty.printg(glab))
 print()
 
 
 print("Conservative Annotation (Hard)")
-local glab, r2 = recovery.addlab(tree, r1, false, true)
-print(pretty.printg(glab, r2))
+local glab = recovery.addlab(g, false, true)
+print(pretty.printg(glab))
 print()
 
 
 print("Conservative Annotation (Soft)")
-local glab, r2 = recovery.addlab(tree, r1, true, 'soft')
-print(pretty.printg(glab, r2))
+local glab = recovery.addlab(g, true, 'soft')
+print(pretty.printg(glab))
 print()
