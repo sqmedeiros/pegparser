@@ -22,7 +22,7 @@ end
 
 
 local tree, rules =  m.match[[
-translation_unit      <-  skip external_decl+ !.
+translation_unit      <-  SKIP external_decl+ !.
 
 external_decl         <-  function_def  /  decl
 
@@ -180,7 +180,7 @@ ESC_CHAR              <-  '\\' ('n' / 't' / 'v' / 'b' / 'r' / 'f' / 'a' / '\\' /
 
 ENUMERATION_CONST     <-  ID
   
-ID                    <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]* skip
+ID                    <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]*
   
 KEYWORDS              <-  ('auto'  /  'double'  /  'int'  /  'struct'  /
                           'break'  /  'else'  /  'long'  /  'switch'  /
