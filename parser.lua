@@ -219,8 +219,8 @@ local peg = [[
                       '{'  S                           '}'^RCurCap  S      -> newPosCap
 
 
-  string        <-   ("'" {(!("'" / %nl) .)*} "'"^SingQuote  S  /
-                      '"' {(!('"' / %nl) .)*} '"'^DoubQuote  S) -> newString
+  string        <-   ("'" {(!"'"  .)*} "'"^SingQuote  S  /
+                      '"' {(!'"'  .)*} '"'^DoubQuote  S) -> newString
 
 	class         <-   '[' {| (({(.'-'.)} / (!']' {.}))+)^EmptyClass |} -> newClass ']'^RBraClass S
 

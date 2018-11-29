@@ -1,5 +1,6 @@
 local m = require'lpeglabel'
 local parser = require 'parser'
+local pretty = require 'pretty'
 
 local predef = {}
 m.locale(predef)
@@ -64,8 +65,22 @@ local function makep (p)
 end
 
 
+local function isLetter (s) --'for'
+	return (s >= 'a' and s <= 'z') or (s >= 'A' and s <= 'Z')
+end
+
 local function matchskip (p)
-	return parser.newSeq(p, parser.newVar('skip'))
+	if p.tag == 'char' and isLetter(string.sub(p.p1, 1)) then
+		print("machskip char", p.p1)
+		--local aux = parser.newClass('a-z', 'A-Z', '0-9')
+		local aux = parser.newClass{'a-z', 'A-Z', '0-9'}
+		aux = parser.newNot(aux)
+		aux = parser.newSeq(parser.newSeq(p, aux), parser.newVar('SKIP'))
+		--print(pretty.printp(aux))
+		return aux
+	else
+		return parser.newSeq(p, parser.newVar('SKIP'))
+	end
 end
 
 local function autoskip (p, g)
@@ -83,7 +98,7 @@ local function autoskip (p, g)
 	elseif p.tag == 'anonCap' then
 		return matchskip(p)
 	elseif p.tag == 'var' then
-		if p.p1 ~= 'skip' and g[p.p1].lex then
+		if p.p1 ~= 'SKIP' and g.lex[p.p1] then
 			return matchskip(p)
 		else
 			return p
@@ -101,17 +116,21 @@ local function autoskip (p, g)
 end
 
 
-local function makeg (g, r)
-	local peg = { [1] = r[1].name }
-	for i, v in ipairs(r) do
-		if v.name ~= 'skip' then
-			local p = g[v.name]
-			if not p.lex then
+local function makeg (g)
+	local peg = { [1] = g.plist[1] }
+	for i, v in ipairs(g.plist) do
+		--print("makeg", v)
+		if v == 'COMMENT' then
+			print(pretty.printp(g.prules[v]))
+		end
+		if v ~= 'SKIP' and v ~= 'COMMENT' then
+			local p = g.prules[v]
+			if not g.lex[v] then
 				p = autoskip(p, g)
 			end
-			peg[v.name] = makep(p)
+			peg[v] = makep(p)
 		else
-			peg[v.name] = makep(g[v.name])
+			peg[v] = makep(g.prules[v])
 		end
 	end
 	return m.P(peg)

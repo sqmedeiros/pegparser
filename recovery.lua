@@ -28,7 +28,7 @@ local function adderror (p, flw)
 	ierr = ierr + 1
 	if flagRecovery then
 		local pred = newNot(set2choice(flw))
-		local seq = newSeq(newNode('var', 'eatToken'), newNode('var', 'SKIP')) 
+		local seq = newNode('var', 'eatToken')
 		gerr[s] = newNode('star', newSeq(pred, seq))
 	end
 	return newOrd(p, newThrow(s))
@@ -225,6 +225,11 @@ local function addlab (g, rec, flagBanned)
 
 	if flagRecovery then
 		local unpack = unpack or table.unpack
+		local t = unpack(getTokenRules(g))
+		for k, v in pairs(g.tokens) do
+			print("tokens", k)
+			table.insert(t, k)
+		end
 		local p = newOrd(unpack(getTokenRules(g)))
 		newg.prules['token'] = p
 		table.insert(newg.plist, 'token')
@@ -235,9 +240,8 @@ local function addlab (g, rec, flagBanned)
 		local tk = newNode('var', 'token')
 		local notspace = newNot(newNode('var', 'SKIP'))
 		local eatToken = newOrd(tk, newNode('plus', newSeq(notspace, newAny())))
-		newg.prules['eatToken'] = eatToken
+		newg.prules['eatToken'] = newSeq(eatToken, newNode('var', 'SKIP'))
 		table.insert(newg.plist, 'eatToken')
-
 
 		addrecrules(newg)
 	end

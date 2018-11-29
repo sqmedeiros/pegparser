@@ -22,7 +22,7 @@ end
 
 
 local tree, rules =  m.match[[
-compilation           <-  skip compilationUnit !.
+compilation           <-  SKIP compilationUnit !.
 
 -- JLS 4 Types, Values and Variables
 basicType            <-  'byte'  /  'short'  /  'int'  /  'long'
@@ -57,7 +57,7 @@ typeArgumentList     <-  typeArgument (',' typeArgument)*
 
 typeArgument         <-  referenceType  /  wildcard
 
-wildcard             <-  annotation* 'query' wildcardBounds?
+wildcard             <-  annotation* '?' wildcardBounds?
 
 wildcardBounds       <-  'extends' referenceType  / 'super' referenceType
 
@@ -319,7 +319,7 @@ catchClause           <-  'catch' '(' catchFormalParameter ')' block
 
 catchFormalParameter  <-  variableModifier* catchType variableDeclaratorId
 
-catchType             <-  unannClassType ('or' classType)*
+catchType             <-  unannClassType ('|'![=|] classType)*
 
 finally               <-  'finally' block
 
@@ -437,10 +437,10 @@ constantExpression    <-  expression
 
 
 -- JLS 3.8 Identifiers
-Identifier            <-  !Keywords [a-zA-Z_] [a-zA-Z_$0-9]*
+Identifier            <-  !keywords [a-zA-Z_] [a-zA-Z_$0-9]*
 
 -- JLS 3.9 Keywords
-Keywords              <- 'abstract'  /  'assert'  /  'boolean'  /  'break'  /
+keywords              <- 'abstract'  /  'assert'  /  'boolean'  /  'break'  /
                          'byte'  /  'case'  /  'catch'  /  'char'  /
                          'class'  /  'const'  /  'continue'  /  'default'  /
                          'double'  /  'do'  /  'else'  /  'enum'  /
@@ -506,9 +506,11 @@ CharLiteral          <-  "'" ('\n'  /  !"'" .)  "'"
 
 StringLiteral        <-  '"' ('\n'  /  !'"' .)* '"'
 
-NullLiteral          <-  'NULL'
+NullLiteral          <-  'null'
 
-Token                 <-  Keywords  /  Identifier  /  Literal  /  . 
+Token                <-  keywords  /  Identifier  /  Literal  /  .
+
+COMMENT              <- '//' (!'\n' .)*  /  '/*' (!'*/' .)* '*/'
 ]] 
 
 
