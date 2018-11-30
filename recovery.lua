@@ -68,7 +68,7 @@ end
 
 
 local function notannotateSoft (g, p, flw, flag, v)
-  print("soft v tag", v, p.tag, p.p1 ) 
+  --print("soft v tag", v, p.tag, p.p1 )
 	if p.tag == 'var' then
 		if flag and not banned[p.p1] then
 			banned[p.p1] = true
@@ -83,7 +83,7 @@ local function notannotateSoft (g, p, flw, flag, v)
 		else
 			local k = calck(g, p.p2, flw)
 			local firstp1 = calcfirst(g, p.p1)
-			print("soft v disjoint", v, disjoint(calcfirst(g, p.p1), k)) 
+			--print("soft v disjoint", v, disjoint(calcfirst(g, p.p1), k))
 			if not disjoint(calcfirst(g, p.p1), k) then
 				if not banned[v] and first.issubset(firstp1, k) then
 					notannotateSoft(g, p.p1, flw, false, v)
@@ -192,7 +192,7 @@ local function addlab (g, rec, flagBanned)
 			while changedBan do
 				changedBan = false
 				for i, v in ipairs(g.plist) do
-					print("flagBanned", v)
+					--print("flagBanned", v)
 					if not g.lex[v] then
 						notannotateSoft(g, g.prules[v], flw[v], false, v)
 					end
@@ -227,12 +227,11 @@ local function addlab (g, rec, flagBanned)
 		local unpack = unpack or table.unpack
 		local t = unpack(getTokenRules(g))
 		for k, v in pairs(g.tokens) do
-			print("tokens", k)
-			table.insert(t, k)
+			table.insert(t, newNode('char', k))
 		end
-		local p = newOrd(unpack(getTokenRules(g)))
-		newg.prules['token'] = p
-		table.insert(newg.plist, 'token')
+		local p = newOrd(unpack(t))
+		newg.prules['tokenn'] = p
+		table.insert(newg.plist, 'tokenn')
 		
 
 		-- (!FOLLOW(p) eatToken space)*
