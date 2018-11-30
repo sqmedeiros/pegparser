@@ -28,7 +28,7 @@ local function adderror (p, flw)
 	ierr = ierr + 1
 	if flagRecovery then
 		local pred = newNot(set2choice(flw))
-		local seq = newNode('var', 'eatToken')
+		local seq = newNode('var', 'EatToken')
 		gerr[s] = newNode('star', newSeq(pred, seq))
 	end
 	return newOrd(p, newThrow(s))
@@ -230,8 +230,8 @@ local function addlab (g, rec, flagBanned)
 			table.insert(t, newNode('char', k))
 		end
 		local p = newOrd(unpack(t))
-		newg.prules['tokenn'] = p
-		table.insert(newg.plist, 'tokenn')
+		newg.prules['Token'] = p
+		table.insert(newg.plist, 'Token')
 		
 
 		-- (!FOLLOW(p) eatToken space)*
@@ -239,8 +239,8 @@ local function addlab (g, rec, flagBanned)
 		local tk = newNode('var', 'token')
 		local notspace = newNot(newNode('var', 'SKIP'))
 		local eatToken = newOrd(tk, newNode('plus', newSeq(notspace, newAny())))
-		newg.prules['eatToken'] = newSeq(eatToken, newNode('var', 'SKIP'))
-		table.insert(newg.plist, 'eatToken')
+		newg.prules['EatToken'] = newSeq(eatToken, newNode('var', 'SKIP'))
+		table.insert(newg.plist, 'EatToken')
 
 		addrecrules(newg)
 	end
