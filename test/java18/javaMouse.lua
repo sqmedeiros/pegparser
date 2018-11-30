@@ -502,15 +502,15 @@ BooleanLiteral       <-  'true'  /  'false'
 -- JLS 3.10.5 String Literals
 -- JLS 3.10.6 Null Literal
 
-CharLiteral          <-  "'" ('\n'  /  !"'" .)  "'"
+CharLiteral          <-  "'" (%nl  /  !"'" .)  "'"
 
-StringLiteral        <-  '"' ('\n'  /  !'"' .)* '"'
+StringLiteral        <-  '"' (%nl  /  !'"' .)* '"'
 
 NullLiteral          <-  'null'
 
 Token                <-  keywords  /  Identifier  /  Literal  /  .
 
-COMMENT              <- '//' (!'\n' .)*  /  '/*' (!'*/' .)* '*/'
+COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]] 
 
 

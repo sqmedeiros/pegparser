@@ -1,6 +1,7 @@
 local m = require 'lpeglabel'
 local re = require 'relabel'
 local errinfo = require 'syntax_errors'
+local predef = require 'predef'
 
 local g = {}
 local defs = {}
@@ -67,6 +68,13 @@ defs.newOrd = function (...)
 	return binOpRight('ord', {...})
 end
 
+defs.newDef = function (v)
+	if not predef[v] then
+		error("undefined name: ", v)
+	end
+	return newNode('def', v)
+end
+
 defs.newThrow = function (lab)
 	return newNode('throw', lab)
 end
@@ -131,7 +139,7 @@ defs.isSimpleExp = function (p)
 	local tag = p.tag
 	return tag == 'empty' or tag == 'char' or tag == 'any' or
          tag == 'set' or tag == 'var' or tag == 'throw' or
-         tag == 'posCap'
+         tag == 'posCap' or tag == 'def'
 end
 
 defs.repSymbol = function (p)
@@ -163,6 +171,8 @@ defs.matchEmpty = function (p)
      tag == 'posCap' or tag == 'star' or tag == 'opt' or
 		 tag == 'throw' then
 		return true
+	elseif tag == 'def' then
+		return false
 	elseif tag == 'char' or tag == 'set' or tag == 'any' or
          tag == 'plus' then
 		return false
@@ -211,7 +221,7 @@ local peg = [[
 
   suffix        <-   (primary ({'+'} S /  {'*'} S /  {'?'} S /  {'^'} S name)*) -> newSuffix
 
-  primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var /  throw /
+  primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var / def / throw /
                      ('{|' S  exp^ExpTabCap '          |}'^RCurTabCap S)   -> newTabCap /
                      ('{:' S  name S ':'  exp         ':}'^RCurNameCap  S) -> newNameCap /
                      ('{:' S  exp^ExpAnonCap          ':}'^RCurNameCap  S) -> newAnonCap /
@@ -230,6 +240,8 @@ local peg = [[
 
   name          <-   {[a-zA-Z_] [a-zA-Z0-9_]*} S
  
+  def           <-   '%' S name -> newDef
+
   throw         <-   '%{' S name^NameThrow -> newThrow '}'^RCurThrow S
 
   arrow         <-   '<-' S

@@ -48,7 +48,7 @@ public abstract class DAOAtividade<
 		if(prat.getArea() != null)
 			campos.add("codigoArea=" + prat.getArea());
 		
-		/*//chamar parte flexível*/
+		//chamar parte flexível
 		campos = compInserir(campos, prat);
 		
 		for(int i = 0; i < campos.size(); i++) {
@@ -58,7 +58,7 @@ public abstract class DAOAtividade<
 		}
 		sql += ";";
 	  	
-		System.out.println(sql); /*// Remover depois*/
+		System.out.println(sql); // Remover depois
 		try {
 			JDBC.runInsert(sql);
 		} catch (SQLException e) {
@@ -95,7 +95,7 @@ public abstract class DAOAtividade<
 		if(prat.getArea() != null)
 			campos.add("codigoArea=" + prat.getArea());
 			
-		/*//chamar parte flexível*/
+		//chamar parte flexível
 		campos = compAtualizar(campos, prat);
 		
 		for(int i = 0; i < campos.size(); i++) {

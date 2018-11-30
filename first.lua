@@ -171,6 +171,8 @@ function calcfirst (g, p)
 		return union(calcfirst(g, p.p1), { [empty] = true}, false)
   elseif p.tag == 'plus' then
 		return calcfirst(g, p.p1)
+	elseif p.tag == 'def' then
+		return { ['%' .. p.p1] = true }
 	else
 		print(p, p.tag, p.empty, p.any)
 		error("Unknown tag: " .. p.tag)
@@ -222,6 +224,8 @@ function calck (g, p, k)
 		return union(calck(g, p.p1, k), k, true)
 	elseif p.tag == 'plus' then
 		return union(calck(g, p.p1, k), k, true)
+	elseif p.tag == 'def' then
+		return { ['%' .. p.p1] = true }
 	else
 		error("Unknown tag: " .. p.tag)
 	end

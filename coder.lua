@@ -1,9 +1,8 @@
 local m = require'lpeglabel'
 local parser = require 'parser'
 local pretty = require 'pretty'
+local predef = require 'predef'
 
-local predef = {}
-m.locale(predef)
 local sp = predef.space^0
 
 local function unfoldset (l)
@@ -27,6 +26,8 @@ local function makep (p)
 		return m.P""
 	elseif p.tag == 'char' then
 		return m.P(p.p1)
+	elseif p.tag == 'def' then
+		return predef[p.p1]
 	elseif p.tag == 'set' then
 		return m.S(unfoldset(p.p1))
 	elseif p.tag == 'any' then
@@ -71,7 +72,6 @@ end
 
 local function matchskip (p)
 	if p.tag == 'char' and isLetter(string.sub(p.p1, 1)) then
-		print("machskip char", p.p1)
 		--local aux = parser.newClass('a-z', 'A-Z', '0-9')
 		local aux = parser.newClass{'a-z', 'A-Z', '0-9'}
 		aux = parser.newNot(aux)

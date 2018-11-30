@@ -69,6 +69,8 @@ local function printp (p, flag)
 		end
   elseif p.tag == 'throw' then
     return '^' .. p.p1
+	elseif p.tag == 'def' then
+		return '%' .. p.p1
 	else
 		print(p, p.tag)
 		error("Unknown tag: " .. p.tag)
