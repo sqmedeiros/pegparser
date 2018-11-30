@@ -72,6 +72,8 @@ end
 local function getElem (v)
 	if type(v) == 'table' then
 		return v
+	elseif v == '$' then
+		return parser.newNot(parser.newAny())
 	else
 		return newString(v)
 	end
