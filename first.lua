@@ -203,11 +203,11 @@ function calck (g, p, k)
 		local k2 = calck(g, p.p2, k)
 		return calck(g, p.p1, k2)
 	elseif p.tag == 'var' then
-		--if g.lex[p.p1] then
-		--	local t = {}
-		--	t[p.p1] = true
-		--	return t
-		--end
+		if g.lex[p.p1] then
+			local t = {}
+			t[p.p1] = true
+			return t
+		end
     if parser.matchEmpty(p) then
 			return union(FIRST[p.p1], k, true)
     else

@@ -21,7 +21,7 @@ local function assertOk(p, s)
 end
 
 
-local tree, rules =  m.match[[
+local g =  m.match[[
 translation_unit      <-  SKIP external_decl+ !.
 
 external_decl         <-  function_def  /  decl
@@ -195,27 +195,26 @@ Token                 <-  KEYWORDS  /  ID  /  STRING  /  constant  /  .
 ]] 
 
                         
-print(pretty.printg(tree, rules), '\n')
-local p = coder.makeg(tree, rules)
+--first.calcFst(g)
+--first.calcFlw(g)
+--first.printfirst(g)
 
---first.calcFst(tree)
---first.calcFlw(tree, rules[1])
---first.printfirst(tree, rules)
-
+print("Original Grammar")
+print(pretty.printg(g), '\n')
 
 print("Regular Annotation (SBLP paper)")
-local treelab, ruleslab = recovery.addlab(tree, rules, false, false)
-print(pretty.printg(treelab, ruleslab, true), '\n')
+local glabRegular = recovery.addlab(g, false, false)
+print(pretty.printg(glabRegular, true), '\n')
 
 print("Conservative Annotation (Hard)")
-local treelab, ruleslab = recovery.addlab(tree, rules, false, true)
-print(pretty.printg(treelab, ruleslab, true), '\n')
+local glabHard = recovery.addlab(g, false, true)
+print(pretty.printg(glabHard, true), '\n')
 
 print("Conservative Annotation (Soft)")
-local treelab, ruleslab = recovery.addlab(tree, rules, false, 'soft')
-print(pretty.printg(treelab, ruleslab, true), '\n')
+local glabSoft = recovery.addlab(g, false, 'soft')
+print(pretty.printg(glabSoft, true), '\n')
 
-local p = coder.makeg(tree, rules)
+local p = coder.makeg(g)
 
 local dir = lfs.currentdir() .. '/test/c89/test/yes/'	
 for file in lfs.dir(dir) do
