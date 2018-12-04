@@ -236,7 +236,7 @@ local function addlab (g, rec, flagBanned)
 
 		-- (!FOLLOW(p) eatToken space)*
 		-- eatToken  <-  token / (!space .)+
-		local tk = newNode('var', 'token')
+		local tk = newNode('var', 'Token')
 		local notspace = newNot(newNode('var', 'SKIP'))
 		local eatToken = newOrd(tk, newNode('plus', newSeq(notspace, newAny())))
 		newg.prules['EatToken'] = newSeq(eatToken, newNode('var', 'SKIP'))

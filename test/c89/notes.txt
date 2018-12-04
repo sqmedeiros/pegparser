@@ -145,6 +145,7 @@ Resumo:
   - 4 anotações novas corretas em relação à anotação manual
 
 * Algoritmo Conservativo Soft
+   - Em direct_declarator: tirar rótulos 004, 005 pois dependem do semântico
   - Adicionou 65 rótulos
   - Baniu 16 variáveis
   - Zero regra rotulada erroneamente:
