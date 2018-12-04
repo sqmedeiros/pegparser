@@ -1,6 +1,4 @@
 /* expected '}' */
 struct point{ int x, y; ;
 
-/*OK:
-struct point{ int x, y; };
-*/
+

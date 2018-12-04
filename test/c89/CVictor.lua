@@ -220,7 +220,7 @@ local p = coder.makeg(tree, rules)
 local dir = lfs.currentdir() .. '/test/c89/test/yes/'	
 for file in lfs.dir(dir) do
 	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
-		print("file = ", file)
+		print("Yes: ", file)
 		local f = io.open(dir .. file)
 		local s = f:read('a')
 		f:close()
@@ -230,5 +230,21 @@ for file in lfs.dir(dir) do
 			line, col = re.calcline(s, pos)
 		end
 		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
+	end
+end
+
+local dir = lfs.currentdir() .. '/test/c89/test/no/'	
+for file in lfs.dir(dir) do
+	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
+		print("No: ", file)
+		local f = io.open(dir .. file)
+		local s = f:read('a')
+		f:close()
+		local r, lab, pos = p:match(s)
+		local line, col = '', ''
+		if not r then
+			line, col = re.calcline(s, pos)
+		end
+		assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
 	end
 end
