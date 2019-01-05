@@ -20,7 +20,6 @@ local function assertOk(p, s)
   assert(r == #s + 1, "Matched until " .. r)
 end
 
-
 local tree, rules =  m.match[[
 compilation           <-  SKIP compilationUnit (!.)^EndErr
 
@@ -33,7 +32,7 @@ primitiveType        <-  annotation* basicType
 referenceType        <-  primitiveType dim+  /  classType dim*
 
 classType            <-  annotation* Identifier typeArguments?
-                           ('.' annotation* Identifier^IdErr typeArguments?)*
+                           ('.' annotation* Identifier typeArguments?)*
 
 type                 <-  primitiveType  /  classType
 
@@ -49,7 +48,7 @@ typeParameterModifier  <-  annotation
 
 typeBound            <-  'extends' (classType additionalBound*  /  typeVariable)
 
-additionalBound      <-  'and' classType^ClassTypeErr
+additionalBound      <-  'and' classType^ClassTypeErr1
 
 typeArguments        <-  '<' typeArgumentList '>'
 
@@ -59,7 +58,7 @@ typeArgument         <-  referenceType  /  wildcard
 
 wildcard             <-  annotation* '?' wildcardBounds?
 
-wildcardBounds       <-  'extends' referenceType^ReferenceTypeErr  / 'super' referenceType^ReferenceTypeErr
+wildcardBounds       <-  'extends' referenceType^ReferenceTypeErr1  / 'super' referenceType^ReferenceTypeErr2
 
 
 -- JLS 6 Names
@@ -69,11 +68,11 @@ qualIdent            <-  Identifier ('.' Identifier)*
 -- JLS 7 Packages
 compilationUnit      <-  packageDeclaration? importDeclaration* typeDeclaration*
 
-packageDeclaration   <-  packageModifier* 'package' Identifier^IdErr4 ('.' Identifier^IdErr5)* ';'^SemiErr
+packageDeclaration   <-  packageModifier* 'package' Identifier^IdErr1 ('.' Identifier^IdErr2)* ';'^SemiErr1
 
 packageModifier      <-  annotation
 
-importDeclaration    <-  'import' 'static'? qualIdent^QualIdentErr ('.' '*'^AsteriskErr)? ';'^SemiErr  /  ';'
+importDeclaration    <-  'import' 'static'? qualIdent^QualIdentErr1 ('.' '*'^AsteriskErr)? ';'^SemiErr2  /  ';'
 
 typeDeclaration      <-  classDeclaration  /  interfaceDeclaration  /  ';'
 
@@ -81,7 +80,7 @@ typeDeclaration      <-  classDeclaration  /  interfaceDeclaration  /  ';'
 -- JLS 8 Classes
 classDeclaration     <-  normalClassDeclaration  /  enumDeclaration
 
-normalClassDeclaration  <-  classModifier* 'class' Identifier^IdErr6 typeParameters?
+normalClassDeclaration  <-  classModifier* 'class' Identifier^IdErr3 typeParameters?
                               superclass? superinterfaces? classBody^ClassBodyErr
 
 classModifier        <-  annotation  /  'public'  /  'protected'  /  'private'  /
@@ -91,13 +90,13 @@ typeParameters       <-  '<' typeParameterList^TypeParameterListErr '>'^GeqErr
 
 typeParameterList    <-  typeParameter (',' typeParameter^TypeParameterErr)*
 
-superclass           <-  'extends' classType^ClassTypeErr
+superclass           <-  'extends' classType^ClassTypeErr2
 
-superinterfaces      <-  'implements' interfaceTypeList^InterfaceTypeListErr
+superinterfaces      <-  'implements' interfaceTypeList^InterfaceTypeListErr1
 
-interfaceTypeList    <-  classType (',' classType^ClassTypeErr)*
+interfaceTypeList    <-  classType (',' classType^ClassTypeErr3)*
 
-classBody            <-  '{' classBodyDeclaration* '}'
+classBody            <-  '{' classBodyDeclaration* '}'^CurRBrackErr1
 
 classBodyDeclaration <-  classMemberDeclaration  /  instanceInitializer  /
                          staticInitializer  /  constructorDeclaration
@@ -109,31 +108,31 @@ fieldDeclaration     <-  fieldModifier* unannType variableDeclaratorList ';'
 
 variableDeclaratorList  <-  variableDeclarator (',' variableDeclarator^VariableDeclaratorErr)*
 
-variableDeclarator   <-  variableDeclaratorId ('='(!'=')^EqErr variableInitializer^VariableInitializerErr)?
+variableDeclarator   <-  variableDeclaratorId ('='(!'=')^EqAvaliableErr1 variableInitializer^VariableInitializerErr1)?
 
 variableDeclaratorId <-  Identifier dim*
 
 variableInitializer  <-  expression  /  arrayInitializer
 
 unannClassType       <-  Identifier typeArguments?
-                           ('.' annotation* Identifier^IdErr7 typeArguments?)*
+                           ('.' annotation* Identifier typeArguments?)*
 
 unannType            <-  basicType dim*  /  unannClassType dim*
 
 fieldModifier        <-  annotation  /  'public'  /  'protected'  /  'private'  /
                          'static'  /  'final'  /  'transient'  /  'volatile'
 
-methodDeclaration    <-  methodModifier* methodHeader methodBody^MethodBodyErr
+methodDeclaration    <-  methodModifier* methodHeader methodBody^MethodBodyErr1
 
 methodHeader         <-  result methodDeclarator throws?  /
                          typeParameters annotation* result^ResultErr methodDeclarator^MethodDeclaratorErr throws?
 
-methodDeclarator     <-  Identifier '('^LParErr formalParameterList? ')'^RParErr dim*
+methodDeclarator     <-  Identifier '('^LParErr1 formalParameterList? ')'^RParErr1 dim*
 
 formalParameterList  <-  (receiverParameter  /  formalParameter) (',' formalParameter^FormalParameterErr)*
 
 formalParameter      <-  variableModifier* unannType variableDeclaratorId  /
-                         variableModifier* unannType annotation* '...' variableDeclaratorId^VariableDeclaratorIdErr (!',')^CommaAvaliableErr
+                         variableModifier* unannType annotation* '...' variableDeclaratorId^VariableDeclaratorIdErr1 (!',')^CommaAvaliableErr
 
 variableModifier     <-  annotation  /  'final'
 
@@ -155,26 +154,26 @@ methodBody           <-  block  /  ';'
 
 instanceInitializer  <-  block
 
-staticInitializer    <-  'static' block^BlockErr
+staticInitializer    <-  'static' block^BlockErr1
 
 constructorDeclaration  <-  constructorModifier* constructorDeclarator throws? constructorBody^ConstructorBodyErr
 
-constructorDeclarator  <-  typeParameters? Identifier '('^LParErr formalParameterList? ')'^RParErr
+constructorDeclarator  <-  typeParameters? Identifier '('^LParErr2 formalParameterList? ')'^RParErr2
 
 constructorModifier  <-  annotation  /  'public'  /  'protected'  /  'private'
 
-constructorBody      <-  '{' explicitConstructorInvocation? blockStatements? '}'^CurRBrackErr
+constructorBody      <-  '{' explicitConstructorInvocation? blockStatements? '}'^CurRBrackErr2
 
-explicitConstructorInvocation  <-  typeArguments? 'this'  arguments ';'^SemiErr  /
-                                   typeArguments? 'super' arguments ';'^SemiErr  /
-                                   primary '.' typeArguments? 'super'^SUPERErr arguments^ArgumentsErr ';'^SemiErr  /
-                                   qualIdent '.' typeArguments? 'super'^SUPERErr arguments^ArgumentsErr ';'^SemiErr
+explicitConstructorInvocation  <-  typeArguments? 'this'  arguments ';'^SemiErr3  /
+                                   typeArguments? 'super' arguments ';'^SemiErr4  /
+                                   primary '.' typeArguments? 'super'^SUPERErr1 arguments^ArgumentsErr1 ';'^SemiErr5  /
+                                   qualIdent '.' typeArguments? 'super'^SUPERErr2 arguments^ArgumentsErr2 ';'^SemiErr6
 
-enumDeclaration       <-  classModifier* 'enum' Identifier^IdErr8 superinterfaces? enumBody^EnumBodyErr
+enumDeclaration       <-  classModifier* 'enum' Identifier^IdErr4 superinterfaces? enumBody^EnumBodyErr
 
-enumBody              <-  '{' enumConstantList? ','? enumBodyDeclarations? '}'^CurRBrackErr
+enumBody              <-  '{' enumConstantList? ','? enumBodyDeclarations? '}'^CurRBrackErr3
 
-enumConstantList      <-  enumConstant (',' enumConstant^EnumConstantErr)*
+enumConstantList      <-  enumConstant (',' enumConstant)*
 
 enumConstant          <-  enumConstantModifier* Identifier arguments? classBody?
 
@@ -186,15 +185,15 @@ enumBodyDeclarations  <-  ';' classBodyDeclaration*
 -- JLS 9 Interfaces
 interfaceDeclaration  <-  normalInterfaceDeclaration  /  annotationTypeDeclaration
 
-normalInterfaceDeclaration  <-  interfaceModifier* 'interface' Identifier^IdErr9 typeParameters?
+normalInterfaceDeclaration  <-  interfaceModifier* 'interface' Identifier^IdErr5 typeParameters?
                                   extendsInterfaces? interfaceBody^InterfaceBodyErr
 
 interfaceModifier     <-  annotation  /  'public'  /  'protected'  /  'private'  /
                           'abstract'  /  'static'  /  'strictfp'
 
-extendsInterfaces     <-  'extends' interfaceTypeList^InterfaceTypeListErr
+extendsInterfaces     <-  'extends' interfaceTypeList^InterfaceTypeListErr2
 
-interfaceBody         <-  '{' interfaceMemberDeclaration* '}'^CurRBrackErr
+interfaceBody         <-  '{' interfaceMemberDeclaration* '}'^CurRBrackErr4
 
 interfaceMemberDeclaration  <-  constantDeclaration  /  interfaceMethodDeclaration  /
                                 classDeclaration  /  interfaceDeclaration  /  ';'
@@ -203,14 +202,14 @@ constantDeclaration   <-  constantModifier* unannType variableDeclaratorList^Var
 
 constantModifier      <-  annotation  /  'public'  /  'static'  /  'final'
 
-interfaceMethodDeclaration  <-  interfaceMethodModifier* methodHeader methodBody^MethodBodyErr
+interfaceMethodDeclaration  <-  interfaceMethodModifier* methodHeader methodBody^MethodBodyErr2
 
 interfaceMethodModifier  <-  annotation  /  'public'  /  'abstract'  /
                              'default'  /  'static'  /  'strictfp'
 
-annotationTypeDeclaration  <-  interfaceModifier* '@' 'interface'^InterfaceWordErr Identifier^IdErr10 annotationTypeBody^AnnotationTypeBodyErr
+annotationTypeDeclaration  <-  interfaceModifier* '@' 'interface'^InterfaceWordErr Identifier^IdErr6 annotationTypeBody^AnnotationTypeBodyErr
 
-annotationTypeBody    <-  '{' annotationTypeMemberDeclaration* '}'^CurRBrackErr
+annotationTypeBody    <-  '{' annotationTypeMemberDeclaration* '}'^CurRBrackErr5
 
 annotationTypeMemberDeclaration  <-  annotationTypeElementDeclaration  /
                                      constantDeclaration               /
@@ -219,11 +218,11 @@ annotationTypeMemberDeclaration  <-  annotationTypeElementDeclaration  /
                                      ';'
 
 annotationTypeElementDeclaration  <-  annotationTypeElementModifier* unannType
-                                      Identifier^IdErr11 '('^LParErr ')'^RParErr dim* defaultValue? ';'^SemiErr
+                                      Identifier^IdErr7 '('^LParErr3 ')'^RParErr3 dim* defaultValue? ';'^SemiErr7
 
 annotationTypeElementModifier  <-  annotation  /  'public'  /  'abstract'
 
-defaultValue          <-  'default' elementValue^ElementValueErr
+defaultValue          <-  'default' elementValue^ElementValueErr1
 
 annotation            <-  '@' (normalAnnotation         /
                                singleElementAnnotation  /
@@ -233,29 +232,29 @@ normalAnnotation      <-  qualIdent '(' elementValuePairList* ')'
 
 elementValuePairList  <-  elementValuePair (',' elementValuePair^ElementValuePairErr)*
 
-elementValuePair      <-  Identifier '=' (!'=')^EqAvaliableErr elementValue^ElementValueErr
+elementValuePair      <-  Identifier '=' (!'=')^EqAvaliableErr2 elementValue^ElementValueErr2
 
 elementValue          <-  conditionalExpression         /
                           elementValueArrayInitializer  /
                           annotation
 
-elementValueArrayInitializer  <-  '{' elementValueList? ','? '}'^CurRBrackErr
+elementValueArrayInitializer  <-  '{' elementValueList? ','? '}'^CurRBrackErr6
 
-elementValueList      <-  elementValue (',' elementValue^ElementValueErr)*
+elementValueList      <-  elementValue (',' elementValue^ElementValueErr3)*
 
 markerAnnotation      <-  qualIdent
 
-singleElementAnnotation  <-  qualIdent '(' elementValue^ElementValueErr ')'^RParErr
+singleElementAnnotation  <-  qualIdent '(' elementValue^ElementValueErr4 ')'^RParErr4
    
 
 -- JLS 10 Arrays
-arrayInitializer     <-  '{' variableInitializerList? ','? '}'^CurRBrackErr
+arrayInitializer     <-  '{' variableInitializerList? ','? '}'^CurRBrackErr7
 
-variableInitializerList  <- variableInitializer (',' variableInitializer^VariableInitializerErr)*
+variableInitializerList  <- variableInitializer (',' variableInitializer)*
 
 
 -- JLS 14 Blocks and Statements
-block                 <-  '{' blockStatements? '}'^CurRBrackErr
+block                 <-  '{' blockStatements? '}'^CurRBrackErr8
 
 blockStatements       <-  blockStatement blockStatement*
 
@@ -263,45 +262,45 @@ blockStatement        <-  localVariableDeclarationStatement  /
                           classDeclaration                    /
                           statement
 
-localVariableDeclarationStatement  <-  localVariableDeclaration ';'^SemiErr
+localVariableDeclarationStatement  <-  localVariableDeclaration ';'^SemiErr8
 
 localVariableDeclaration  <-  variableModifier* unannType variableDeclaratorList
 
 statement            <-  block                                             /
-                         'if' parExpression^ParExpressionErr statement^StatementErr ('else' statement^StatementErr)? /
+                         'if' parExpression^ParExpressionErr1 statement^StatementErr1 ('else' statement^StatementErr2)? /
                          basicForStatement                                 /
                          enhancedForStatement                              /
-                         'while' parExpression^ParExpressionErr statement^StatementErr /
-                         'do' statement^StatementErr 'while'^WHILEErr parExpression^ParExpressionErr ';'^SemiErr /
+                         'while' parExpression^ParExpressionErr2 statement^StatementErr3 /
+                         'do' statement^StatementErr4 'while'^WHILEErr parExpression^ParExpressionErr3 ';'^SemiErr9 /
                          tryStatement                                      /
-                         'switch' parExpression^ParExpressionErr switchBlock^SwitchBlockErr /
-                         'synchronized' parExpression^ParExpressionErr block^BlockErr /
-                         'return' expression? ';'^SemiErr                  /
-                         'throw' expression^ExpressionErr ';'^SemiErr      /
-                         'break' Identifier? ';'^SemiErr                   /
-                         'continue' Identifier? ';'^SemiErr                /
-                         'assert' expression^ExpressionErr (':' expression^ExpressionErr)? ';'^SemiErr /
-                         ';'                                               /
-                         statementExpression ';'^SemiErr                   /
-                         Identifier ':'^ColonErr statement^StatementErr
+                         'switch' parExpression^ParExpressionErr4 switchBlock^SwitchBlockErr /
+                         'synchronized' parExpression^ParExpressionErr5 block^BlockErr2 /
+                         'return' expression? ';'^SemiErr10                  /
+                         'throw' expression^ExpressionErr1 ';'^SemiErr11      /
+                         'break' Identifier? ';'^SemiErr12                   /
+                         'continue' Identifier? ';'^SemiErr13                /
+                         'assert' expression^ExpressionErr2 (':' expression^ExpressionErr3)? ';'^SemiErr14 /
+                         ';'                                                 /
+                         statementExpression ';'^SemiErr15                   /
+                         Identifier ':'^ColonErr1 statement^StatementErr5
 
 statementExpression   <-  assignment                           /
                           ('++' / '--') (primary / qualIdent)^AfterIteratorSymbolErr  /
                           (primary / qualIdent) ('++' / '--')  /
                           primary
 
-switchBlock           <-  '{' switchBlockStatementGroup* switchLabel* '}'^CurRBrackErr
+switchBlock           <-  '{' switchBlockStatementGroup* switchLabel* '}'^CurRBrackErr9
 
 switchBlockStatementGroup  <-  switchLabels blockStatements^BlockStatementsErr
 
 switchLabels          <-  switchLabel switchLabel*
 
-switchLabel           <-  'case' (constantExpression / enumConstantName)^CaseExpressionErr ':'^ColonErr  /
-                          'default' ':'^ColonErr
+switchLabel           <-  'case' (constantExpression / enumConstantName)^CaseExpressionErr ':'^ColonErr2  /
+                          'default' ':'^ColonErr3
 
 enumConstantName      <-  Identifier
 
-basicForStatement     <-  'for' '('^LParErr forInit? ';' expression? ';'^SemiErr forUpdate? ')'^RParErr statement^StatementErr
+basicForStatement     <-  'for' '('^LParErr4 forInit? ';' expression? ';'^SemiErr16 forUpdate? ')'^RParErr5 statement^StatementErr6
 
 forInit               <-  localVariableDeclaration  /  statementExpressionList
 
@@ -309,25 +308,25 @@ forUpdate             <-  statementExpressionList
 
 statementExpressionList  <-  statementExpression (',' statementExpression^StatementExpressionErr)*
 
-enhancedForStatement  <-  'for' '('^LParErr variableModifier* unannType variableDeclaratorId ':'^ColonErr
-                            expression^ExpressionErr ')'^RParErr statement^StatementErr
+enhancedForStatement  <-  'for' '(' variableModifier* unannType variableDeclaratorId ':'^ColonErr4
+                            expression^ExpressionErr4 ')'^RParErr6 statement^StatementErr7
 
 tryStatement          <-  'try' ( block (catchClause* finally  /  catchClause+)^AfterBlockErr
-                                / resourceSpecification block^BlockErr catchClause* finally? )^AfterTryErr
+                                / resourceSpecification block^BlockErr3 catchClause* finally? )^AfterTryErr
 
-catchClause           <-  'catch' '('^LParErr catchFormalParameter^CatchFormalParameterErr ')'^RParErr block^BlockErr
+catchClause           <-  'catch' '('^LParErr5 catchFormalParameter^CatchFormalParameterErr ')'^RParErr7 block^BlockErr4
 
-catchFormalParameter  <-  variableModifier* catchType variableDeclaratorId^VariableDeclaratorIdErr
+catchFormalParameter  <-  variableModifier* catchType variableDeclaratorId^VariableDeclaratorIdErr2
 
-catchType             <-  unannClassType ('|' (![=|])^VerticalBarAvaliableErr classType^ClassTypeErr)*
+catchType             <-  unannClassType ('|' (![=|])^EqVerticalBarAvaliableErr classType^ClassTypeErr4)*
 
-finally               <-  'finally' block^BlockErr
+finally               <-  'finally' block^BlockErr5
 
-resourceSpecification <-  '(' resourceList^ResourceListErr ';'? ')'^RParErr
+resourceSpecification <-  '(' resourceList^ResourceListErr ';'? ')'^RParErr8
 
 resourceList          <-  resource (',' resource^ResourceErr)*
 
-resource              <-  variableModifier* unannType variableDeclaratorId^VariableDeclaratorIdErr '=' (!'=')^EqAvaliableErr expression^ExpressionErr
+resource              <-  variableModifier* unannType variableDeclaratorId^VariableDeclaratorIdErr3 '=' (!'=')^EqAvaliableErr3 expression^ExpressionErr5
 
 
 -- JLS 15 Expressions
@@ -338,81 +337,81 @@ primary               <-  primaryBase primaryRest*
 primaryBase           <-  'this'
                        /  Literal
                        /  parExpression
-                       /  'super' ( '.' typeArguments? Identifier^IdErr12 arguments^ArgumentsErr
-                                  / '.' Identifier^IdErr13
-                                  / '::' typeArguments? Identifier^IdErr14 )^AfterSuperErr
-                       /  'new' (classCreator  /  arrayCreator)^AfterNewErr
-                       /  qualIdent ( '[' expression^ExpressionErr1 ']'^LBrackErr
+                       /  'super' ( '.' typeArguments? Identifier^IdErr8 arguments
+                                  / '.' Identifier
+                                  / '::' typeArguments? Identifier^IdErr9 )^AfterSuperErr
+                       /  'new' (classCreator / arrayCreator)^AfterNewErr
+                       /  qualIdent ( '[' expression ']'^RBrackErr1
                                     / arguments
                                     / '.' ( 'this'
-                                          / 'new' classCreator^ClassCreatorErr
-                                          / typeArguments Identifier^IdErr15 arguments^ArgumentsErr
-                                          / 'super' '.'^DotErr typeArguments? Identifier^IdErr16 arguments^ArgumentsErr
-                                          / 'super' '.'^DotErr Identifier^IdErr17
-                                          / 'super' '::'^DoubleColonErr typeArguments? Identifier^IdErr18 arguments
+                                          / 'new' classCreator^ClassCreatorErr1
+                                          / typeArguments Identifier^IdErr10 arguments^ArgumentsErr3
+                                          / 'super' '.' typeArguments? Identifier^IdErr11 arguments^ArgumentsErr4
+                                          / 'super' '.' Identifier
+                                          / 'super' '::' typeArguments? Identifier^IdErr12 arguments^ArgumentsErr5
                                           )
-                                    / ('[' ']'^LBrackErr)* '.' 'class'^f
-                                    /  '::' typeArguments? Identifier^IdErr19 )
-                       /  'void' '.'^DotErr 'class'^CLASSErr
-                       /  basicType ('[' ']'^LBrackErr)* '.'^DotErr 'class'^CLASSErr
-                       /  referenceType '::' typeArguments? 'new'^NEWErr
-                       /  arrayType '::' 'new'^NEWErr
+                                    / ('[' ']'^RBrackErr2)* '.' 'class'
+                                    /  '::' typeArguments? Identifier^IdErr13 )
+                       /  'void' '.'^DotErr1 'class'^CLASSErr1
+                       /  basicType ('[' ']'^RBrackErr3)* '.' 'class'^CLASSErr2
+                       /  referenceType '::' typeArguments? 'new'^NEWErr1
+                       /  arrayType '::' 'new'
 
 primaryRest           <-  '.' ( typeArguments? Identifier arguments
                               / Identifier
-                              / 'new' classCreator^ClassCreatorErr )^AfterDotErr
-                       /  '[' expression^ExpressionErr ']'^LBrackErr
-                       /  '::' typeArguments? Identifier^IdErr20
+                              / 'new' classCreator^ClassCreatorErr2 )
+                       /  '[' expression^ExpressionErr6 ']'^RBrackErr4
+                       /  '::' typeArguments? Identifier^IdErr14
 
-parExpression         <-  '(' expression^ExpressionErr ')'^RParErr
+parExpression         <-  '(' expression ')'^RParErr9
 
 -- Commented out: ClassInstanceCreationExpression
 
 classCreator          <-  typeArguments? annotation* classTypeWithDiamond
-                            arguments^ArgumentsErr classBody?
+                            arguments classBody?
 
 classTypeWithDiamond  <-  annotation* Identifier typeArgumentsOrDiamond?
-                            ('.' annotation* Identifier^IdErr21 typeArgumentsOrDiamond?)*
+                            ('.' annotation* Identifier^IdErr15 typeArgumentsOrDiamond?)*
 
-typeArgumentsOrDiamond  <-  typeArguments  /  '<' '>'^GreaterErr (!'.')^DotAvaliableErr
+typeArgumentsOrDiamond  <-  typeArguments  /  '<' '>'^GreaterErr1 (!'.')^DotAvaliableErr
 
 arrayCreator          <-  type dimExpr+ dim*  /  type dim+ arrayInitializer^ArrayInitializerErr
 
-dimExpr               <-  annotation* '[' expression ']'^CurRBrackErr
+dimExpr               <-  annotation* '[' expression ']'^RBrackErr5
 
 --Commented out: ArrayAcess, FieldAcess, MethodInvocation
 
-arguments             <-  '(' argumentList? ')'^RParErr
+arguments             <-  '(' argumentList? ')'^RParErr10
 
-argumentList          <-  expression (',' expression^ExpressionErr)*
+argumentList          <-  expression (',' expression^ExpressionErr7)*
 
 unaryExpression       <-  ('++' / '--') (primary / qualIdent)^PrimaryQualIdentErr /
-                          '+' (![=+])^EqualPlusErr unaryExpression^UnaryExpressionErr /
-                          '-' (![-=>])^MinusEqualGreaterErr unaryExpression^UnaryExpressionErr /
+                          '+' (![=+])^EqualPlusErr unaryExpression^UnaryExpressionErr1 /
+                          '-' (![-=>])^MinusEqualGreaterErr unaryExpression^UnaryExpressionErr2 /
                           unaryExpressionNotPlusMinus
 
-unaryExpressionNotPlusMinus  <-  '~' unaryExpression^UnaryExpressionErr        /
-                                 '!' ![=&] unaryExpression^UnaryExpressionErr  /
+unaryExpressionNotPlusMinus  <-  '~' unaryExpression^UnaryExpressionErr3        /
+                                 '!' (![=&])^EqualAmpersandErr unaryExpression^UnaryExpressionErr4  /
                                  castExpression                                /
                                  (primary / qualIdent) ('++' / '--')?
 
-castExpression        <-  '(' primitiveType ')'^RParErr unaryExpression^UnaryExpressionErr /
+castExpression        <-  '(' primitiveType ')'^RParErr11 unaryExpression^UnaryExpressionErr5 /
                           '(' referenceType additionalBound* ')' lambdaExpression /
                           '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus^UnaryExpressionNotPlusMinusErr
 
-infixExpression       <-  unaryExpression ((InfixOperator unaryExpression^UnaryExpressionErr) /
-                                           ('instanceof' referenceType^ReferenceTypeErr))*
+infixExpression       <-  unaryExpression ((InfixOperator unaryExpression^UnaryExpressionErr6) /
+                                           ('instanceof' referenceType^ReferenceTypeErr3))*
 
 InfixOperator         <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]          /
                           '=='  /  '!='  /  '<' ![=<]  /  '>'![=>]  /  '<='               /
                           '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /
                           '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
 
-conditionalExpression <-  infixExpression ('query' expression^ExpressionErr ':'^ColonErr expression^ExpressionErr)*
+conditionalExpression <-  infixExpression ('query' expression^ExpressionErr8 ':'^ColonErr5 expression^ExpressionErr9)*
 
 assignmentExpression  <-  assignment  /  conditionalExpression
 
-assignment            <-  leftHandSide AssignmentOperator expression^ExpressionErr
+assignment            <-  leftHandSide AssignmentOperator expression^ExpressionErr10
 
 leftHandSide          <-  primary  /  qualIdent
 
@@ -426,7 +425,7 @@ lambdaParameters      <-  Identifier                          /
                           '(' formalParameterList? ')'       /
                           '(' inferredFormalParameterList ')'
 
-inferredFormalParameterList  <-  Identifier (',' Identifier^IdErr22)*
+inferredFormalParameterList  <-  Identifier (',' Identifier^IdErr16)*
 
 lambdaBody            <-  expression  /  block
 
@@ -512,6 +511,7 @@ COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 
 local p = coder.makeg(tree, rules)
 
+print ">>> Testing correct programs..."
 local dir = lfs.currentdir() .. '/test/java18/test/yes/'	
 for file in lfs.dir(dir) do
 	if file ~= '.' and file ~= '..' and string.sub(file, #file - 3) == 'java' then
@@ -526,4 +526,21 @@ for file in lfs.dir(dir) do
 		end
 		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
 	end
+end
+
+print ">>> Testing labels with incorrect programs..."
+dir = lfs.currentdir() .. '/test/java18/test/no/'
+for file in lfs.dir(dir) do
+  if file ~= '.' and file ~= '..' and string.sub(file, #file - 3) == 'java' then
+    print("file = ", file)
+    local f = io.open(dir .. file)
+    local s = f:read('a')
+    f:close()
+    local r, lab, pos = p:match(s)
+    local line, col = '', ''
+    if not r then
+      line, col = re.calcline(s, pos)
+    end
+    assert(r == nil and tostring(lab) .. '.java' == file, file .. ': Label: ' .. tostring(lab or 'The program is correct!') .. '  Line: ' .. line .. ' Col: ' .. col)
+  end
 end

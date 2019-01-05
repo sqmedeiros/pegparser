@@ -1,0 +1,3 @@
+public @interface -IdErr6 {
+
+}
