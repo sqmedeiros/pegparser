@@ -1,0 +1,395 @@
+Java 8:
+
+* Gramática anotada manualmente:
+	- 180 labels anotadas
+
+* Algoritmo Regular:
+	- 181 labels anotadas
+		. 38 labels não anotadas
+		. 39 labels adicionadas
+			-> 10 corretas
+			-> 19 incorretas
+		. 142 labels anotadas igualmente
+
+* Algoritmo Conservativo (Hard)
+	- 56 labels anotadas
+		. 133 labels não anotadas
+		. 9 labels adicionadas
+			-> 5 corretas
+			-> 4 incorretas
+		. 45 labels anotadas igualmente
+
+* Algoritmo Conservativo (Soft)
+	- 80 labels anotadas
+		. 116 labels não anotadas
+		. 16 labels adicionadas
+			-> 6 corretas
+			-> 10 incorretas
+		. 64 labels anotadas igualmente
+
+* Labels:
+	- Algoritmo Regular:
+		Anotado a mais:
+			Err_001 Fail
+			Err_002 Fail
+			Err_003 Fail
+			Err_004 Ok
+			Err_006 Fail
+			Err_007 Fail
+			Err_026 Fail
+			Err_027 Fail
+			Err_030 Fail
+			Err_032 Fail
+			Err_038 Fail
+			Err_040 Fail
+			Err_041 Fail
+			Err_049 Fail
+			Err_061 Fail
+			Err_072 Fail 
+			Err_073 Fail
+			Err_074 Fail
+			Err_076 Fail
+			Err_079 Fail
+			Err_085 Fail
+			Err_115 Fail
+			Err_120 Ok: Parênteses abrindo do for, sem necessidade
+			Err_121 Ok
+			Err_122 Ok
+			Err_141 Ok
+			Err_149 Ok
+			Err_150 Ok
+			Err_152 Fail
+			Err_156 Fail
+			Err_158 Ok
+			Err_161 Ok
+			Err_163 Fail
+			Err_172 Fail
+			Err_173 Fail
+			Err_175 Fail
+			Err_177 Fail
+			Err_179 Ok
+			Err_180 Fail
+
+		Não anotado:
+			EndErr
+			EqAvaliableErr1
+			CommaAvaliableErr
+			SemiErr3
+			SemiErr4
+			SUPERErr1
+			ArgumentsErr1
+			SemiErr5
+			EqAvaliableErr2
+			ElementValueErr3
+			StatementErr2
+			SemiErr15
+			EqVerticalBarAvaliableErr
+			EqAvaliableErr3
+			RBrackErr1
+			ClassCreatorErr1
+			IdErr10
+			ArgumentsErr3
+			IdErr11
+			ArgumentsErr4
+			IdErr12
+			ArgumentsErr5
+			RBrackErr2
+			IdErr13
+			RBrackErr3
+			CLASSErr2
+			NEWErr1
+			DotAvaliableErr
+			EqualPlusErr
+			MinusEqualGreaterErr
+			EqualAmpersandErr
+			RParErr11
+			UnaryExpressionErr5
+			UnaryExpressionErr6
+			ReferenceTypeErr3
+			ExpressionErr8
+			ColonErr5
+			ExpressionErr9
+
+	- Algoritmo Conservativo (Hard)
+		Anotado a mais:
+			Err_001 Ok
+			Err_014 Fail
+			Err_015 Fail
+			Err_031 Fail
+			Err_042 Ok
+			Err_050 Ok
+			Err_051 Ok
+			Err_055 Ok
+			Err_056 Fail
+
+		Não anotado:
+			EndErr
+			ClassTypeErr1
+			IdErr1
+			IdErr2
+			SemiErr1
+			QualIdentErr1
+			AsteriskErr
+			SemiErr2
+			IdErr3
+			ClassBodyErr
+			VariableInitializerErr1
+			MethodBodyErr1
+			FormalParameterErr
+			VariableDeclaratorIdErr1
+			CommaAvaliableErr
+			BlockErr1
+			ConstructorBodyErr
+			SemiErr3
+			SemiErr4
+			SUPERErr1
+			ArgumentsErr1
+			SemiErr5
+			SUPERErr2
+			ArgumentsErr2
+			SemiErr6
+			IdErr4
+			EnumBodyErr
+			IdErr5
+			InterfaceBodyErr
+			VariableDeclaratorListErr
+			MethodBodyErr2
+			InterfaceWordErr
+			IdErr6
+			AnnotationTypeBodyErr
+			IdErr7
+			LParErr3
+			RParErr3
+			SemiErr7
+			EqAvaliableErr2
+			CurRBrackErr6
+			ElementValueErr3
+			ElementValueErr4
+			RParErr4
+			CurRBrackErr7
+			CurRBrackErr8
+			SemiErr8
+			ParExpressionErr1
+			StatementErr1
+			StatementErr2
+			ParExpressionErr2
+			StatementErr3
+			StatementErr4
+			WHILEErr
+			ParExpressionErr3
+			SemiErr9
+			ParExpressionErr4
+			SwitchBlockErr
+			ParExpressionErr5
+			BlockErr2
+			SemiErr10
+			ExpressionErr1
+			SemiErr11
+			SemiErr12
+			SemiErr13
+			ExpressionErr2
+			ExpressionErr3
+			SemiErr14
+			SemiErr15
+			ColonErr1
+			StatementErr5
+			AfterIteratorSymbolErr
+			CurRBrackErr9
+			BlockStatementsErr
+			LParErr4
+			SemiErr16
+			RParErr5
+			StatementErr6
+			StatementExpressionErr
+			ColonErr4
+			ExpressionErr4
+			RParErr6
+			StatementErr7
+			AfterBlockErr
+			BlockErr3
+			AfterTryErr
+			LParErr5
+			CatchFormalParameterErr
+			RParErr7
+			BlockErr4
+			EqVerticalBarAvaliableErr
+			BlockErr5
+			EqAvaliableErr3
+			RBrackErr1
+			ClassCreatorErr1
+			IdErr10
+			ArgumentsErr3
+			IdErr11
+			ArgumentsErr4
+			IdErr12
+			ArgumentsErr5
+			RBrackErr2
+			IdErr13
+			RBrackErr3
+			CLASSErr2
+			NEWErr1
+			ClassCreatorErr2
+			ExpressionErr6
+			RBrackErr4
+			IdErr14
+			RParErr9
+			DotAvaliableErr
+			ArrayInitializerErr
+			RBrackErr5
+			RParErr10
+			PrimaryQualIdentErr
+			EqualPlusErr
+			UnaryExpressionErr1
+			MinusEqualGreaterErr
+			UnaryExpressionErr2
+			UnaryExpressionErr3
+			EqualAmpersandErr
+			UnaryExpressionErr4
+			RParErr11
+			UnaryExpressionErr5
+			UnaryExpressionNotPlusMinusErr
+			UnaryExpressionErr6
+			ReferenceTypeErr3
+			ExpressionErr8
+			ColonErr5
+			ExpressionErr9
+			ExpressionErr10
+			LambdaBodyErr
+			IdErr16
+
+	- Algoritmo Conservativo (Soft)
+		Anotado a mais:
+			Err_001 Fail 
+			Err_002 Ok
+			Err_016 Fail
+			Err_017 Fail
+			Err_023 Fail
+			Err_025 Fail
+			Err_026 Fail
+			Err_044 Fail
+			Err_058 Ok
+			Err_066 Ok
+			Err_067 Ok
+			Err_070 Ok
+			Err_075 Fail
+			Err_076 Fail
+			Err_078 Ok
+			Err_079 Fail
+
+		Não anotado:
+			EndErr
+			IdErr1
+			IdErr2
+			SemiErr1
+			QualIdentErr1
+			AsteriskErr
+			SemiErr2
+			IdErr3
+			ClassBodyErr
+			EqAvaliableErr1
+			MethodBodyErr1
+			CommaAvaliableErr
+			SemiErr3
+			SemiErr4
+			SUPERErr1
+			ArgumentsErr1
+			SemiErr5
+			SUPERErr2
+			ArgumentsErr2
+			SemiErr6
+			IdErr4
+			EnumBodyErr
+			IdErr5
+			InterfaceBodyErr
+			VariableDeclaratorListErr
+			MethodBodyErr2
+			InterfaceWordErr
+			IdErr6
+			AnnotationTypeBodyErr
+			EqAvaliableErr2
+			CurRBrackErr6
+			ElementValueErr3
+			ElementValueErr4
+			RParErr4
+			CurRBrackErr8
+			ParExpressionErr1
+			StatementErr1
+			StatementErr2
+			ParExpressionErr2
+			StatementErr3
+			StatementErr4
+			WHILEErr
+			ParExpressionErr3
+			SemiErr9
+			ParExpressionErr4
+			SwitchBlockErr
+			ParExpressionErr5
+			BlockErr2
+			SemiErr10
+			ExpressionErr1
+			SemiErr11
+			SemiErr12
+			SemiErr13
+			ExpressionErr2
+			ExpressionErr3
+			SemiErr14
+			SemiErr15
+			ColonErr1
+			StatementErr5
+			AfterIteratorSymbolErr
+			CurRBrackErr9
+			BlockStatementsErr
+			LParErr4
+			SemiErr16
+			RParErr5
+			StatementErr6
+			ColonErr4
+			ExpressionErr4
+			RParErr6
+			StatementErr7
+			AfterBlockErr
+			BlockErr3
+			AfterTryErr
+			LParErr5
+			CatchFormalParameterErr
+			RParErr7
+			BlockErr4
+			EqVerticalBarAvaliableErr
+			BlockErr5
+			EqAvaliableErr3
+			RBrackErr1
+			ClassCreatorErr1
+			IdErr10
+			ArgumentsErr3
+			IdErr11
+			ArgumentsErr4
+			IdErr12
+			ArgumentsErr5
+			RBrackErr2
+			IdErr13
+			RBrackErr3
+			CLASSErr2
+			NEWErr1
+			ClassCreatorErr2
+			ExpressionErr6
+			RBrackErr4
+			IdErr14
+			RParErr9
+			DotAvaliableErr
+			RBrackErr5
+			RParErr10
+			PrimaryQualIdentErr
+			EqualPlusErr
+			UnaryExpressionErr1
+			MinusEqualGreaterErr
+			UnaryExpressionErr2
+			EqualAmpersandErr
+			RParErr11
+			UnaryExpressionErr5
+			UnaryExpressionErr6
+			ReferenceTypeErr3
+			ExpressionErr8
+			ColonErr5
+			ExpressionErr9
+			ExpressionErr10
+			LambdaBodyErr

@@ -1,5 +1,5 @@
 public class SemiErr5 {
-	SemiErr5() {
-		(26).super()
-	}
+    SemiErr5() {
+        (26).super()
+    }
 }

@@ -46,7 +46,7 @@ typeParameter        <-  typeParameterModifier* Identifier typeBound?
 
 typeParameterModifier  <-  annotation
 
-typeBound            <-  'extends' (classType additionalBound*  /  typeVariable)
+typeBound            <-  'extends' (classType additionalBound*  /  typeVariable)^Err_001
 
 additionalBound      <-  'and' classType^ClassTypeErr1
 
@@ -326,7 +326,7 @@ resourceSpecification <-  '(' resourceList^ResourceListErr ';'? ')'^RParErr8
 
 resourceList          <-  resource (',' resource^ResourceErr)*
 
-resource              <-  variableModifier* unannType variableDeclaratorId^VariableDeclaratorIdErr3 '=' (!'=')^EqAvaliableErr3 expression^ExpressionErr5
+resource              <-  variableModifier* unannType variableDeclaratorId^VariableDeclaratorIdErr3 '='^Err_042 (!'=')^EqAvaliableErr3 expression^ExpressionErr5
 
 
 -- JLS 15 Expressions
@@ -355,7 +355,7 @@ primaryBase           <-  'this'
                        /  'void' '.'^DotErr1 'class'^CLASSErr1
                        /  basicType ('[' ']'^RBrackErr3)* '.' 'class'^CLASSErr2
                        /  referenceType '::' typeArguments? 'new'^NEWErr1
-                       /  arrayType '::' 'new'
+                       /  arrayType '::'^Err_050 'new'^Err_051
 
 primaryRest           <-  '.' ( typeArguments? Identifier arguments
                               / Identifier
@@ -423,7 +423,7 @@ lambdaExpression      <-  lambdaParameters '->' lambdaBody^LambdaBodyErr
 
 lambdaParameters      <-  Identifier                          /
                           '(' formalParameterList? ')'       /
-                          '(' inferredFormalParameterList ')'
+                          '(' inferredFormalParameterList^Err_055 ')'
 
 inferredFormalParameterList  <-  Identifier (',' Identifier^IdErr16)*
 

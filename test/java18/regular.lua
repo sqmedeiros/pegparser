@@ -46,7 +46,7 @@ typeParameter        <-  typeParameterModifier* Identifier typeBound?
 
 typeParameterModifier  <-  annotation
 
-typeBound            <-  'extends' (classType additionalBound*  /  typeVariable)
+typeBound            <-  'extends' (classType additionalBound*  /  typeVariable)^Err_004
 
 additionalBound      <-  'and' classType^ClassTypeErr1
 
@@ -308,7 +308,7 @@ forUpdate             <-  statementExpressionList
 
 statementExpressionList  <-  statementExpression (',' statementExpression^StatementExpressionErr)*
 
-enhancedForStatement  <-  'for' '(' variableModifier* unannType variableDeclaratorId ':'^ColonErr4
+enhancedForStatement  <-  'for' '('^Err_120 variableModifier* unannType^Err_121 variableDeclaratorId^Err_122 ':'^ColonErr4
                             expression^ExpressionErr4 ')'^RParErr6 statement^StatementErr7
 
 tryStatement          <-  'try' ( block (catchClause* finally  /  catchClause+)^AfterBlockErr
@@ -326,7 +326,7 @@ resourceSpecification <-  '(' resourceList^ResourceListErr ';'? ')'^RParErr8
 
 resourceList          <-  resource (',' resource^ResourceErr)*
 
-resource              <-  variableModifier* unannType variableDeclaratorId^VariableDeclaratorIdErr3 '=' (!'=')^EqAvaliableErr3 expression^ExpressionErr5
+resource              <-  variableModifier* unannType variableDeclaratorId^VariableDeclaratorIdErr3 '='^Err_141 (!'=')^EqAvaliableErr3 expression^ExpressionErr5
 
 
 -- JLS 15 Expressions
@@ -355,7 +355,7 @@ primaryBase           <-  'this'
                        /  'void' '.'^DotErr1 'class'^CLASSErr1
                        /  basicType ('[' ']'^RBrackErr3)* '.' 'class'^CLASSErr2
                        /  referenceType '::' typeArguments? 'new'^NEWErr1
-                       /  arrayType '::' 'new'
+                       /  arrayType '::'^Err_149 'new'^Err_150
 
 primaryRest           <-  '.' ( typeArguments? Identifier arguments
                               / Identifier
@@ -368,14 +368,14 @@ parExpression         <-  '(' expression ')'^RParErr9
 -- Commented out: ClassInstanceCreationExpression
 
 classCreator          <-  typeArguments? annotation* classTypeWithDiamond
-                            arguments classBody?
+                            arguments^Err_158 classBody?
 
 classTypeWithDiamond  <-  annotation* Identifier typeArgumentsOrDiamond?
                             ('.' annotation* Identifier^IdErr15 typeArgumentsOrDiamond?)*
 
 typeArgumentsOrDiamond  <-  typeArguments  /  '<' '>'^GreaterErr1 (!'.')^DotAvaliableErr
 
-arrayCreator          <-  type dimExpr+ dim*  /  type dim+ arrayInitializer^ArrayInitializerErr
+arrayCreator          <-  type dimExpr+ dim*  /  type (dim+)^Err_161 arrayInitializer^ArrayInitializerErr
 
 dimExpr               <-  annotation* '[' expression ']'^RBrackErr5
 
@@ -423,7 +423,7 @@ lambdaExpression      <-  lambdaParameters '->' lambdaBody^LambdaBodyErr
 
 lambdaParameters      <-  Identifier                          /
                           '(' formalParameterList? ')'       /
-                          '(' inferredFormalParameterList ')'
+                          '(' inferredFormalParameterList^Err_179 ')'
 
 inferredFormalParameterList  <-  Identifier (',' Identifier^IdErr16)*
 
