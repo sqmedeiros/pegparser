@@ -122,7 +122,7 @@ Total de labels: Manual 88 x 23 Algoritmo
 
 
 Com o uso do algoritmo 'soft' pra banir: (também passando nos testes 'yes')
-Total de labels: Manual 88 x 27 Algoritmo
+Total de labels: Manual 88 x 27 (63) Algoritmo
 
 Anotações extras nas regras: struct_decl, param_type_list, id_list, logical_or_exp 
 
@@ -145,7 +145,7 @@ Resumo:
   - 4 anotações novas corretas em relação à anotação manual
 
 * Algoritmo Conservativo Soft
-   - Em direct_declarator: tirar rótulos 004, 005 pois dependem do semântico
+  - Em direct_declarator: tirar rótulos 004, 005 pois dependem do semântico
   - Adicionou 65 rótulos
   - Baniu 16 variáveis
   - Zero regra rotulada erroneamente:

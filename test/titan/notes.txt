@@ -1,8 +1,15 @@
 * Gramática Titan anotada manualmente:
-  - 
+  - 50 regras sintáticas (de 'program' a 'fielsep', sem contar 'op1'..'op12')
+  - 36 regras com anotações
+  - 87 rótulos
 
 * Algoritmo SBLP
-  - Adicionou 79 rótulos
+  - 33 regras com anotações
+  - Adicionou 79 rótulos:
+    . Iguais à anotação manual: 
+    . Novos incorretos: 0 
+    . Novos corretos: 1
+    . Ausentes em relação à anotação manual:  ('type' em castexp, 
   - 2 regras rotuladas erronemante:
     . toplevelvar (1 rótulo errado em '='): usada em 'program' em uma escolha não LL(1)
     . import (1 rótulo errado em 'import'): usada em 'program' em uma escolha não LL(1)

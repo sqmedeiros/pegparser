@@ -1,4 +1,63 @@
 program         <-  SKIP* (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
+toplevelfunc    <-  localopt 'function' NAME '(' paramlist ')' rettypeopt block 'end'
+toplevelvar     <-  localopt decl '=' exp
+toplevelrecord  <-  'record' NAME recordfields 'end'
+localopt        <-  'local'?
+import          <-  'local' NAME '=' 'import' ('(' STRINGLIT ')'  /  STRINGLIT)
+foreign         <-  'local' NAME '=' 'foreign' ('(' STRINGLIT ')'  /  STRINGLIT)
+rettypeopt      <-  (':' rettype)?
+paramlist       <-  (param (',' param)*)?
+param           <-  NAME ':' type
+decl            <-  NAME (':' type)?
+decllist        <-  decl (',' decl)*
+simpletype      <-  'nil'  /  'boolean'  /  'integer'  /  'float'  /  'string'  /  'value'  /  NAME  /  '{' type '}'
+typelist        <-  '(' (type (',' type)*)? ')'
+rettype         <-  typelist '->' rettype  /  simpletype '->' rettype  /  typelist  /  simpletype
+type            <-  typelist '->' rettype  /  simpletype '->' rettype  /  simpletype
+recordfields    <-  recordfield+
+recordfield     <-  NAME ':' type ';'?
+block           <-  statement* returnstat?
+statement       <-  ';'  /  'do' block 'end'  /  'while' exp 'do' block 'end'  /  'repeat' block 'until' exp  /  'if' exp 'then' block elseifstats elseopt 'end'  /  'for' decl '=' exp ',' exp (',' exp)? 'do' block 'end'  /  'local' decllist '=' explist  /  varlist '=' explist  /  suffixedexp
+elseifstats     <-  elseifstat*
+elseifstat      <-  'elseif' exp 'then' block
+elseopt         <-  ('else' block)?
+returnstat      <-  'return' explist? ';'?
+exp             <-  e1
+e1              <-  e2 ('or' e2)*
+e2              <-  e3 ('and' e3)*
+e3              <-  e4 (('=='  /  '~='  /  '<'  /  '>'  /  '<='  /  '>=') e4)*
+e4              <-  e5 ('|' e5)*
+e5              <-  e6 ('~' e6)*
+e6              <-  e7 ('&' e7)*
+e7              <-  e8 (('<<'  /  '>>') e8)*
+e8              <-  e9 ('..' e8)?
+e9              <-  e10 (('+'  /  '-') e10)*
+e10             <-  e11 (('*'  /  '%%'  /  '/'  /  '//') e11)*
+e11             <-  ('not'  /  '#'  /  '-'  /  '~')* e12
+e12             <-  castexp ('^' e11)?
+suffixedexp     <-  prefixexp expsuffix+
+expsuffix       <-  funcargs  /  ':' NAME funcargs  /  '[' exp ']'  /  '.' NAME
+prefixexp       <-  NAME  /  '(' exp ')'
+castexp         <-  simpleexp 'as' type  /  simpleexp
+simpleexp       <-  'nil'  /  'false'  /  'true'  /  NUMBER  /  STRINGLIT  /  initlist  /  suffixedexp  /  prefixexp
+var             <-  suffixedexp  /  NAME !expsuffix
+varlist         <-  var (',' var)*
+funcargs        <-  '(' explist? ')'  /  initlist  /  STRINGLIT
+explist         <-  exp (',' exp)*
+initlist        <-  '{' fieldlist? '}'
+fieldlist       <-  field (fieldsep field)* fieldsep?
+field           <-  (NAME '=')? exp
+fieldsep        <-  ';'  /  ','
+STRINGLIT       <-  '"' (!'"' .)* '"'
+RESERVED        <-  'repeat'
+NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
+NUMBER          <-  [0-9]+
+SKIP            <-  [ 	
+]*
+
+Regular Annotation
+Banned (0): 
+program         <-  SKIP* (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
 toplevelfunc    <-  localopt 'function' [NAME]^Err_001 ['(']^Err_002 paramlist [')']^Err_003 rettypeopt block ['end']^Err_004
 toplevelvar     <-  localopt decl ['=']^Err_005 [exp]^Err_006
 toplevelrecord  <-  'record' [NAME]^Err_007 [recordfields]^Err_008 ['end']^Err_009
@@ -48,88 +107,198 @@ initlist        <-  '{' fieldlist? ['}']^Err_079
 fieldlist       <-  field (fieldsep field)* fieldsep?
 field           <-  (NAME '=')? exp
 fieldsep        <-  ';'  /  ','
-STRINGLIT       <-  '"' (!'"' .)* ['"']^Err_080
+STRINGLIT       <-  '"' (!'"' .)* '"'
 RESERVED        <-  'repeat'
-NAME            <-  !RESERVED 'X' ('a'  /  'b'  /  'c'  /  NUMBER)*
-NUMBER          <-  ('0'  /  '1'  /  '2'  /  '3'  /  '4'  /  '5'  /  '6'  /  '7'  /  '8'  /  '9')+
-SKIP            <-  ' '
-Err_001         <-  (!'(' .)*
-Err_002         <-  (!('X'  /  ')') .)*
-Err_003         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  'X'  /  ';'  /  ':'  /  '(') .)*
-Err_004         <-  (!('record'  /  'local'  /  'function'  /  'X'  /  '$') .)*
-Err_005         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'X'  /  '9'  /  '8'  /  '7'  /  '6'  /  '5'  /  '4'  /  '3'  /  '2'  /  '1'  /  '0'  /  '-'  /  '('  /  '#'  /  '"') .)*
-Err_006         <-  (!('record'  /  'local'  /  'function'  /  'X'  /  '$') .)*
-Err_007         <-  (!'X' .)*
-Err_008         <-  (!'end' .)*
-Err_009         <-  (!('record'  /  'local'  /  'function'  /  'X'  /  '$') .)*
-Err_010         <-  (!'=' .)*
-Err_011         <-  (!'import' .)*
-Err_012         <-  (!('('  /  '"') .)*
-Err_013         <-  (!')' .)*
-Err_014         <-  (!('record'  /  'local'  /  'function'  /  'X'  /  '$') .)*
-Err_015         <-  (!('record'  /  'local'  /  'function'  /  'X'  /  '$') .)*
-Err_016         <-  (!'=' .)*
-Err_017         <-  (!'foreign' .)*
-Err_018         <-  (!('('  /  '"') .)*
-Err_019         <-  (!')' .)*
-Err_020         <-  (!('record'  /  'local'  /  'function'  /  'X'  /  '$') .)*
-Err_021         <-  (!('record'  /  'local'  /  'function'  /  'X'  /  '$') .)*
-Err_022         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_023         <-  (!')' .)*
-Err_024         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  'X'  /  '(') .)*
-Err_025         <-  (!(','  /  ')') .)*
-Err_026         <-  (!('='  /  ',') .)*
-Err_027         <-  (!'=' .)*
-Err_028         <-  (!'}' .)*
-Err_029         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  '^'  /  ']'  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$') .)*
-Err_030         <-  (!')' .)*
-Err_031         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  '^'  /  ']'  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$') .)*
-Err_032         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  'X'  /  '(') .)*
-Err_033         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  '^'  /  ']'  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$') .)*
-Err_034         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  'X'  /  '(') .)*
-Err_035         <-  (!('end'  /  'X'  /  ';') .)*
-Err_036         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_037         <-  (!'do' .)*
-Err_038         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_039         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_040         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'X'  /  '9'  /  '8'  /  '7'  /  '6'  /  '5'  /  '4'  /  '3'  /  '2'  /  '1'  /  '0'  /  '-'  /  '('  /  '#'  /  '"') .)*
-Err_041         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_042         <-  (!'then' .)*
-Err_043         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_044         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_045         <-  (!'=' .)*
-Err_046         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'X'  /  '9'  /  '8'  /  '7'  /  '6'  /  '5'  /  '4'  /  '3'  /  '2'  /  '1'  /  '0'  /  '-'  /  '('  /  '#'  /  '"') .)*
-Err_047         <-  (!',' .)*
-Err_048         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'X'  /  '9'  /  '8'  /  '7'  /  '6'  /  '5'  /  '4'  /  '3'  /  '2'  /  '1'  /  '0'  /  '-'  /  '('  /  '#'  /  '"') .)*
-Err_049         <-  (!('do'  /  ',') .)*
-Err_050         <-  (!'do' .)*
-Err_051         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_052         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_053         <-  (!'=' .)*
-Err_054         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'X'  /  '9'  /  '8'  /  '7'  /  '6'  /  '5'  /  '4'  /  '3'  /  '2'  /  '1'  /  '0'  /  '-'  /  '('  /  '#'  /  '"') .)*
-Err_055         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_056         <-  (!'then' .)*
-Err_057         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  '(') .)*
-Err_058         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  ']'  /  'X'  /  ';'  /  ','  /  ')'  /  '('  /  '$') .)*
-Err_059         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  ']'  /  'X'  /  ';'  /  ','  /  ')'  /  '('  /  '$') .)*
-Err_060         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  ';'  /  ','  /  ')'  /  '('  /  '$') .)*
-Err_061         <-  (!('~='  /  '}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '$') .)*
-Err_062         <-  (!('~='  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '$') .)*
-Err_063         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '$') .)*
-Err_064         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  '$') .)*
-Err_065         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  '$') .)*
-Err_066         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '..'  /  ','  /  ')'  /  '('  /  '&'  /  '$') .)*
-Err_067         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '..'  /  '-'  /  ','  /  '+'  /  ')'  /  '('  /  '&'  /  '$') .)*
-Err_068         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$') .)*
-Err_069         <-  (!('{'  /  '('  /  '"') .)*
-Err_070         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$'  /  '"') .)*
-Err_071         <-  (!']' .)*
-Err_072         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$'  /  '"') .)*
-Err_073         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$'  /  '"') .)*
-Err_074         <-  (!')' .)*
-Err_075         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$'  /  '"') .)*
-Err_076         <-  (!'=' .)*
-Err_077         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$'  /  '"') .)*
-Err_078         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'X'  /  ';'  /  ')'  /  '(') .)*
-Err_079         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$'  /  '"') .)*
-Err_080         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'X'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '$'  /  '"') .)*
+NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
+NUMBER          <-  [0-9]+
+SKIP            <-  [ 	
+]*
+
+Conservative Annotation (Hard)
+Banned (18): NAME, explist, expsuffix, field, fieldsep, foreign, import, prefixexp, rettype, simpleexp, simpletype, suffixedexp, toplevelfunc, toplevelrecord, toplevelvar, type, typelist, varlist, 
+program         <-  SKIP* (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
+toplevelfunc    <-  localopt 'function' NAME '(' paramlist ')' rettypeopt block 'end'
+toplevelvar     <-  localopt decl '=' exp
+toplevelrecord  <-  'record' NAME recordfields 'end'
+localopt        <-  'local'?
+import          <-  'local' NAME '=' 'import' ('(' STRINGLIT ')'  /  STRINGLIT)
+foreign         <-  'local' NAME '=' 'foreign' ('(' STRINGLIT ')'  /  STRINGLIT)
+rettypeopt      <-  (':' [rettype]^Err_001)?
+paramlist       <-  (param (',' [param]^Err_002)*)?
+param           <-  NAME [':']^Err_003 [type]^Err_004
+decl            <-  NAME (':' [type]^Err_005)?
+decllist        <-  decl (',' [decl]^Err_006)*
+simpletype      <-  'nil'  /  'boolean'  /  'integer'  /  'float'  /  'string'  /  'value'  /  NAME  /  '{' type '}'
+typelist        <-  '(' (type (',' type)*)? ')'
+rettype         <-  typelist '->' rettype  /  simpletype '->' rettype  /  typelist  /  simpletype
+type            <-  typelist '->' rettype  /  simpletype '->' rettype  /  simpletype
+recordfields    <-  recordfield+
+recordfield     <-  NAME [':']^Err_007 [type]^Err_008 ';'?
+block           <-  statement* returnstat?
+statement       <-  ';'  /  'do' block ['end']^Err_009  /  'while' [exp]^Err_010 ['do']^Err_011 block ['end']^Err_012  /  'repeat' block ['until']^Err_013 [exp]^Err_014  /  'if' [exp]^Err_015 ['then']^Err_016 block elseifstats elseopt ['end']^Err_017  /  'for' [decl]^Err_018 ['=']^Err_019 [exp]^Err_020 [',']^Err_021 [exp]^Err_022 (',' [exp]^Err_023)? ['do']^Err_024 block ['end']^Err_025  /  'local' [decllist]^Err_026 ['=']^Err_027 [explist]^Err_028  /  varlist '=' explist  /  suffixedexp
+elseifstats     <-  elseifstat*
+elseifstat      <-  'elseif' [exp]^Err_029 ['then']^Err_030 block
+elseopt         <-  ('else' block)?
+returnstat      <-  'return' explist? ';'?
+exp             <-  e1
+e1              <-  e2 ('or' [e2]^Err_031)*
+e2              <-  e3 ('and' [e3]^Err_032)*
+e3              <-  e4 (('=='  /  '~='  /  '<'  /  '>'  /  '<='  /  '>=') [e4]^Err_033)*
+e4              <-  e5 ('|' [e5]^Err_034)*
+e5              <-  e6 ('~' [e6]^Err_035)*
+e6              <-  e7 ('&' [e7]^Err_036)*
+e7              <-  e8 (('<<'  /  '>>') [e8]^Err_037)*
+e8              <-  e9 ('..' [e8]^Err_038)?
+e9              <-  e10 (('+'  /  '-') [e10]^Err_039)*
+e10             <-  e11 (('*'  /  '%%'  /  '/'  /  '//') [e11]^Err_040)*
+e11             <-  ('not'  /  '#'  /  '-'  /  '~')* e12
+e12             <-  castexp ('^' [e11]^Err_041)?
+suffixedexp     <-  prefixexp expsuffix+
+expsuffix       <-  funcargs  /  ':' NAME funcargs  /  '[' exp ']'  /  '.' NAME
+prefixexp       <-  NAME  /  '(' exp ')'
+castexp         <-  simpleexp 'as' type  /  simpleexp
+simpleexp       <-  'nil'  /  'false'  /  'true'  /  NUMBER  /  STRINGLIT  /  initlist  /  suffixedexp  /  prefixexp
+var             <-  suffixedexp  /  NAME !expsuffix
+varlist         <-  var (',' var)*
+funcargs        <-  '(' explist? [')']^Err_042  /  initlist  /  STRINGLIT
+explist         <-  exp (',' exp)*
+initlist        <-  '{' fieldlist? ['}']^Err_043
+fieldlist       <-  field (fieldsep field)* fieldsep?
+field           <-  (NAME '=')? exp
+fieldsep        <-  ';'  /  ','
+STRINGLIT       <-  '"' (!'"' .)* '"'
+RESERVED        <-  'repeat'
+NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
+NUMBER          <-  [0-9]+
+SKIP            <-  [ 	
+]*
+
+Conservative Annotation (Soft)
+Banned (7): NAME, expsuffix, field, fieldsep, suffixedexp, toplevelfunc, toplevelvar, 
+program         <-  SKIP* (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
+toplevelfunc    <-  localopt 'function' NAME '(' paramlist ')' rettypeopt block 'end'
+toplevelvar     <-  localopt decl '=' exp
+toplevelrecord  <-  'record' [NAME]^Err_001 [recordfields]^Err_002 ['end']^Err_003
+localopt        <-  'local'?
+import          <-  'local' [NAME]^Err_004 ['=']^Err_005 ['import']^Err_006 ['(' [STRINGLIT]^Err_007 [')']^Err_008  /  STRINGLIT]^Err_009
+foreign         <-  'local' [NAME]^Err_010 ['=']^Err_011 ['foreign']^Err_012 ['(' [STRINGLIT]^Err_013 [')']^Err_014  /  STRINGLIT]^Err_015
+rettypeopt      <-  (':' [rettype]^Err_016)?
+paramlist       <-  (param (',' [param]^Err_017)*)?
+param           <-  NAME [':']^Err_018 [type]^Err_019
+decl            <-  NAME (':' [type]^Err_020)?
+decllist        <-  decl (',' [decl]^Err_021)*
+simpletype      <-  'nil'  /  'boolean'  /  'integer'  /  'float'  /  'string'  /  'value'  /  NAME  /  '{' [type]^Err_022 ['}']^Err_023
+typelist        <-  '(' (type (',' [type]^Err_024)*)? [')']^Err_025
+rettype         <-  typelist '->' rettype  /  simpletype '->' rettype  /  typelist  /  simpletype
+type            <-  typelist ['->']^Err_026 [rettype]^Err_027  /  simpletype '->' rettype  /  simpletype
+recordfields    <-  recordfield+
+recordfield     <-  NAME [':']^Err_028 [type]^Err_029 ';'?
+block           <-  statement* returnstat?
+statement       <-  ';'  /  'do' block ['end']^Err_030  /  'while' [exp]^Err_031 ['do']^Err_032 block ['end']^Err_033  /  'repeat' block ['until']^Err_034 [exp]^Err_035  /  'if' [exp]^Err_036 ['then']^Err_037 block elseifstats elseopt ['end']^Err_038  /  'for' [decl]^Err_039 ['=']^Err_040 [exp]^Err_041 [',']^Err_042 [exp]^Err_043 (',' [exp]^Err_044)? ['do']^Err_045 block ['end']^Err_046  /  'local' [decllist]^Err_047 ['=']^Err_048 [explist]^Err_049  /  varlist '=' explist  /  suffixedexp
+elseifstats     <-  elseifstat*
+elseifstat      <-  'elseif' [exp]^Err_050 ['then']^Err_051 block
+elseopt         <-  ('else' block)?
+returnstat      <-  'return' explist? ';'?
+exp             <-  e1
+e1              <-  e2 ('or' [e2]^Err_052)*
+e2              <-  e3 ('and' [e3]^Err_053)*
+e3              <-  e4 (('=='  /  '~='  /  '<'  /  '>'  /  '<='  /  '>=') [e4]^Err_054)*
+e4              <-  e5 ('|' [e5]^Err_055)*
+e5              <-  e6 ('~' [e6]^Err_056)*
+e6              <-  e7 ('&' [e7]^Err_057)*
+e7              <-  e8 (('<<'  /  '>>') [e8]^Err_058)*
+e8              <-  e9 ('..' [e8]^Err_059)?
+e9              <-  e10 (('+'  /  '-') [e10]^Err_060)*
+e10             <-  e11 (('*'  /  '%%'  /  '/'  /  '//') [e11]^Err_061)*
+e11             <-  ('not'  /  '#'  /  '-'  /  '~')* e12
+e12             <-  castexp ('^' [e11]^Err_062)?
+suffixedexp     <-  prefixexp expsuffix+
+expsuffix       <-  funcargs  /  ':' NAME funcargs  /  '[' exp ']'  /  '.' NAME
+prefixexp       <-  NAME  /  '(' [exp]^Err_063 [')']^Err_064
+castexp         <-  simpleexp 'as' type  /  simpleexp
+simpleexp       <-  'nil'  /  'false'  /  'true'  /  NUMBER  /  STRINGLIT  /  initlist  /  suffixedexp  /  prefixexp
+var             <-  suffixedexp  /  NAME !expsuffix
+varlist         <-  var (',' [var]^Err_065)*
+funcargs        <-  '(' explist? [')']^Err_066  /  initlist  /  STRINGLIT
+explist         <-  exp (',' [exp]^Err_067)*
+initlist        <-  '{' fieldlist? ['}']^Err_068
+fieldlist       <-  field (fieldsep field)* fieldsep?
+field           <-  (NAME '=')? exp
+fieldsep        <-  ';'  /  ','
+STRINGLIT       <-  '"' (!'"' .)* '"'
+RESERVED        <-  'repeat'
+NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
+NUMBER          <-  [0-9]+
+SKIP            <-  [ 	
+]*
+Token           <-  'while'  /  '~'  /  '{'  /  '|'  /  'RESERVED'  /  'end'  /  'boolean'  /  '>='  /  '=='  /  '<='  /  '%%'  /  'function'  /  'local'  /  '^'  /  '['  /  '->'  /  'integer'  /  'record'  /  'false'  /  '>>'  /  'not'  /  '..'  /  'float'  /  '='  /  '>'  /  ':'  /  'import'  /  '<'  /  'then'  /  'if'  /  '-'  /  'value'  /  '/'  /  ')'  /  '~='  /  '+'  /  ','  /  '&'  /  '//'  /  '('  /  'repeat'  /  '#'  /  'do'  /  'until'  /  ' '  /  'elseif'  /  'NUMBER'  /  'for'  /  '}'  /  'return'  /  'NAME'  /  'STRINGLIT'  /  '<<'  /  ';'  /  '"'  /  'true'  /  'as'  /  '.'  /  'else'  /  ']'  /  'foreign'  /  'string'  /  'SKIP'  /  'nil'  /  'or'  /  '*'  /  'and'
+EatToken        <-  (Token  /  (!SKIP .)+) SKIP
+Err_001         <-  (!'NAME' EatToken)*
+Err_002         <-  (!'end' EatToken)*
+Err_003         <-  (!('record'  /  'local'  /  'function'  /  'NAME'  /  !.) EatToken)*
+Err_004         <-  (!'=' EatToken)*
+Err_005         <-  (!'import' EatToken)*
+Err_006         <-  (!('STRINGLIT'  /  '(') EatToken)*
+Err_007         <-  (!')' EatToken)*
+Err_008         <-  (!('record'  /  'local'  /  'function'  /  'NAME'  /  !.) EatToken)*
+Err_009         <-  (!('record'  /  'local'  /  'function'  /  'NAME'  /  !.) EatToken)*
+Err_010         <-  (!'=' EatToken)*
+Err_011         <-  (!'foreign' EatToken)*
+Err_012         <-  (!('STRINGLIT'  /  '(') EatToken)*
+Err_013         <-  (!')' EatToken)*
+Err_014         <-  (!('record'  /  'local'  /  'function'  /  'NAME'  /  !.) EatToken)*
+Err_015         <-  (!('record'  /  'local'  /  'function'  /  'NAME'  /  !.) EatToken)*
+Err_016         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_017         <-  (!')' EatToken)*
+Err_018         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  'NAME'  /  '(') EatToken)*
+Err_019         <-  (!(','  /  ')') EatToken)*
+Err_020         <-  (!('='  /  ',') EatToken)*
+Err_021         <-  (!'=' EatToken)*
+Err_022         <-  (!'}' EatToken)*
+Err_023         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  '^'  /  ']'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_024         <-  (!')' EatToken)*
+Err_025         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  '^'  /  ']'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_026         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  'NAME'  /  '(') EatToken)*
+Err_027         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  '^'  /  ']'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_028         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  'NAME'  /  '(') EatToken)*
+Err_029         <-  (!('end'  /  'NAME'  /  ';') EatToken)*
+Err_030         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_031         <-  (!'do' EatToken)*
+Err_032         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_033         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_034         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'STRINGLIT'  /  'NUMBER'  /  'NAME'  /  '-'  /  '('  /  '#') EatToken)*
+Err_035         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_036         <-  (!'then' EatToken)*
+Err_037         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_038         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_039         <-  (!'=' EatToken)*
+Err_040         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'STRINGLIT'  /  'NUMBER'  /  'NAME'  /  '-'  /  '('  /  '#') EatToken)*
+Err_041         <-  (!',' EatToken)*
+Err_042         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'STRINGLIT'  /  'NUMBER'  /  'NAME'  /  '-'  /  '('  /  '#') EatToken)*
+Err_043         <-  (!('do'  /  ',') EatToken)*
+Err_044         <-  (!'do' EatToken)*
+Err_045         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_046         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_047         <-  (!'=' EatToken)*
+Err_048         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  'STRINGLIT'  /  'NUMBER'  /  'NAME'  /  '-'  /  '('  /  '#') EatToken)*
+Err_049         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_050         <-  (!'then' EatToken)*
+Err_051         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  '(') EatToken)*
+Err_052         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  ']'  /  'NAME'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_053         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  ']'  /  'NAME'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_054         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_055         <-  (!('~='  /  '}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_056         <-  (!('~='  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_057         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_058         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_059         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_060         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '..'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_061         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '..'  /  '-'  /  ','  /  '+'  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_062         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  ']'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_063         <-  (!')' EatToken)*
+Err_064         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'STRINGLIT'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_065         <-  (!'=' EatToken)*
+Err_066         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'STRINGLIT'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_067         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'NAME'  /  ';'  /  ')'  /  '(') EatToken)*
+Err_068         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  '^'  /  ']'  /  '['  /  'STRINGLIT'  /  'NAME'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+

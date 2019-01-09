@@ -42,7 +42,7 @@ end
 
 local function notannotate (g, p, flw, flag)
 	if p.tag == 'var' then
-		if flag and not banned[p.p1] then
+		if flag and not banned[p.p1] and not g.lex[p.p1] then
 			banned[p.p1] = true
 		end
 	elseif p.tag == 'ord' then
@@ -70,7 +70,7 @@ end
 local function notannotateSoft (g, p, flw, flag, v)
   --print("soft v tag", v, p.tag, p.p1 )
 	if p.tag == 'var' then
-		if flag and not banned[p.p1] then
+		if flag and not banned[p.p1] and not g.lex[p.p1] then
 			banned[p.p1] = true
 			changedBan = true
 		end
