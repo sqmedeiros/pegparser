@@ -1,4 +1,4 @@
-bool f(){ return true; }
+int f(  ){ return 1; }
 
 int main(){
     int x;
