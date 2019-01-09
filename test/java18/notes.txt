@@ -17,7 +17,7 @@ Java 8:
 		. 9 labels adicionadas
 			-> 5 corretas
 			-> 4 incorretas
-		. 45 labels anotadas igualmente
+		. 47 labels anotadas igualmente
 
 * Algoritmo Conservativo (Soft)
 	- 80 labels anotadas
