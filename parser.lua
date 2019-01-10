@@ -5,6 +5,7 @@ local predef = require 'predef'
 
 local g = {}
 local defs = {}
+local lasttk = {}
 
 local newNode = function (tag, p1, p2)
 	return { tag = tag, p1 = p1, p2 = p2 } 
@@ -12,6 +13,7 @@ end
 
 defs.newString = function (v)
 	g.tokens[v] = true
+	lasttk[v] = true
 	return newNode('char', v)
 end
 
@@ -131,8 +133,11 @@ defs.newRule = function (k, v)
 	g.plist[#g.plist + 1] = k
 	if isLexRule(k) then
 		g.lex[k] = true
-		g.tokens[k] = true
+		for k, v in pairs(lasttk) do
+			g.tokens[k] = nil
+		end
 	end
+	lasttk = {}
 end
 
 defs.isSimpleExp = function (p)

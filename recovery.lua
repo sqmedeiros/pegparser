@@ -114,10 +114,12 @@ local function notannotateSoft (g, p, flw, flag, v)
 end
 
 
-local function getTokenRules (g)
+local function getLexRules (g, withSkip)
 	local t = {}
 	for k, _ in pairs(g.lex) do
-		table.insert(t, newNode('var', k))
+		if k ~= 'SKIP' or (k == 'SKIP' and withSkip) then
+			t['__' .. k] = true
+		end
 	end
 	return t
 end
@@ -225,11 +227,11 @@ local function addlab (g, rec, flagBanned)
 
 	if flagRecovery then
 		local unpack = unpack or table.unpack
-		local t = unpack(getTokenRules(g))
+		local t = getLexRules(g)
 		for k, v in pairs(g.tokens) do
-			table.insert(t, newNode('char', k))
+			t[k] = v
 		end
-		local p = newOrd(unpack(t))
+		local p = first.set2choice(t)
 		newg.prules['Token'] = p
 		table.insert(newg.plist, 'Token')
 		

@@ -6,6 +6,7 @@ local empty = '__empty'
 local any = '__any'
 local calcf
 local newString = parser.newString
+local newNode = parser.newNode
 local newOrd = parser.newOrd
 local printfirst, printsymbols, calcfirst, calck
 
@@ -70,8 +71,8 @@ end
 
 
 local function getElem (v)
-	if type(v) == 'table' then
-		return v
+	if string.sub(v, 1, 2) == '__' then
+		return newNode('var', string.sub(v, 3))
 	elseif v == '$' then
 		return parser.newNot(parser.newAny())
 	else
@@ -154,9 +155,7 @@ function calcfirst (g, p)
 		end
 	elseif p.tag == 'var' then
 		if g.lex[p.p1] then
-			local t = {}
-			t[p.p1] = true
-			return t
+			return { ['__' .. p.p1] = true }
 		end
 		return FIRST[p.p1]
 	elseif p.tag == 'throw' then
@@ -204,9 +203,7 @@ function calck (g, p, k)
 		return calck(g, p.p1, k2)
 	elseif p.tag == 'var' then
 		if g.lex[p.p1] then
-			local t = {}
-			t[p.p1] = true
-			return t
+			return { ['__' .. p.p1] = true }
 		end
     if parser.matchEmpty(p) then
 			return union(FIRST[p.p1], k, true)

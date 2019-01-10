@@ -190,8 +190,6 @@ KEYWORDS              <-  ('auto'  /  'double'  /  'int'  /  'struct'  /
                           'continue'  /  'for'  /  'signed'  /  'void'  /
                           'default'  /  'goto'  /  'sizeof'  /  'volatile'  /
                           'do'  /  'if'  /  'static'  /  'while')
-   
-Token                 <-  KEYWORDS  /  ID  /  STRING  /  constant  /  . 
 ]] 
 
                         
