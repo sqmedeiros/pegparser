@@ -1,0 +1,3 @@
+function foo(): nil
+	if 20 then else end
+end

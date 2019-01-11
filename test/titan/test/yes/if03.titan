@@ -1,0 +1,3 @@
+function foo(): nil
+	if 30 then elseif 40 then end
+end

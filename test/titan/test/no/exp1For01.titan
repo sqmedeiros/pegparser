@@ -1,0 +1,4 @@
+function foo(): nil
+	for x = , 10 do
+	end
+end

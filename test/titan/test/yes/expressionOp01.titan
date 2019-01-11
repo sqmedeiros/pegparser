@@ -1,0 +1,3 @@
+function foo(): nil
+	x = not 1 or 2 and 3 and 4
+end

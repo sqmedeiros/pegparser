@@ -1,0 +1,3 @@
+function foo(): nil
+	local = 3
+end

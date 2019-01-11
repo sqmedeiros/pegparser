@@ -1,0 +1,3 @@
+function foo(): nil
+	x = a.b[1].c as integer
+end

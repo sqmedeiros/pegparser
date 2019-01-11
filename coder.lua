@@ -120,9 +120,9 @@ local function makeg (g)
 	local peg = { [1] = g.plist[1] }
 	for i, v in ipairs(g.plist) do
 		--print("makeg", v)
-		if v == 'COMMENT' then
-			print(pretty.printp(g.prules[v]))
-		end
+		--if v == 'COMMENT' then
+		--	print(pretty.printp(g.prules[v]))
+		--end
 		if v ~= 'SKIP' and v ~= 'COMMENT' then
 			local p = g.prules[v]
 			if not g.lex[v] then

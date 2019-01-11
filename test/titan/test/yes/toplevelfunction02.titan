@@ -1,0 +1,2 @@
+local function fB(x:int): nil
+end

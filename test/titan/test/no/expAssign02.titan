@@ -1,0 +1,3 @@
+function foo(): nil
+	x = integer.new(10)
+end

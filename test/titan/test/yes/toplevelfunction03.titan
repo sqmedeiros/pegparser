@@ -1,0 +1,2 @@
+local function fC(x:int, y:int): nil
+end

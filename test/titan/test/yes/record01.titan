@@ -1,0 +1,4 @@
+record Point
+	x: float
+	y: float
+end

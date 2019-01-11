@@ -1,0 +1,3 @@
+function foo(): nil
+	x = -x .. -y .. -z
+end

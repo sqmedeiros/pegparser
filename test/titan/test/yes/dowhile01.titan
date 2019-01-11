@@ -1,0 +1,6 @@
+function foo(): nil
+	do
+		local x = 10; x = 11
+		print("Hello", "World")
+	end
+end

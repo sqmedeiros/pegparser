@@ -1,0 +1,3 @@
+function foo(): nil
+	if 50 then elseif 60 then else end
+end

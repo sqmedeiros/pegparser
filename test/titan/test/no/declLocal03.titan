@@ -1,0 +1,3 @@
+function f()
+	local integer: integer = 10
+end

@@ -1,0 +1,4 @@
+function foo(): nil
+	return 10
+	return 11
+end

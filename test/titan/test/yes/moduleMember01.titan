@@ -1,0 +1,5 @@
+function foo(): nil
+	foo.bar = 50
+	print(foo.bar)
+	foo.write(a, b, c)
+end

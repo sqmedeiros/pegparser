@@ -1,0 +1,3 @@
+function foo(): nil
+	x = { p = {}, next = nil }
+end

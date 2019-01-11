@@ -1,0 +1,3 @@
+function foo(): nil
+	local x, y = 10,
+end

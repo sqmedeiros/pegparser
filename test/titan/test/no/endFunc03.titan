@@ -1,0 +1,3 @@
+function foo () : int
+	local x = 3
+	return x

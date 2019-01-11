@@ -1,0 +1,3 @@
+function foo(): nil
+	x = foo as { integer }
+end

@@ -1,0 +1,3 @@
+function foo(): nil
+	while true do end
+end

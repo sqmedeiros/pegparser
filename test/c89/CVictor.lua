@@ -216,7 +216,7 @@ local p = coder.makeg(g)
 
 local dir = lfs.currentdir() .. '/test/c89/test/yes/'	
 for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
+	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'c' + 1) == 'c' then
 		print("Yes: ", file)
 		local f = io.open(dir .. file)
 		local s = f:read('a')
@@ -232,16 +232,19 @@ end
 
 local dir = lfs.currentdir() .. '/test/c89/test/no/'	
 for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
+	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'c' + 1) == 'c' then
 		print("No: ", file)
 		local f = io.open(dir .. file)
 		local s = f:read('a')
 		f:close()
 		local r, lab, pos = p:match(s)
+		io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
 		local line, col = '', ''
 		if not r then
 			line, col = re.calcline(s, pos)
+			io.write(' line: ' .. line .. ' col: ' .. col)
 		end
+		io.write('\n')
 		assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
 	end
 end

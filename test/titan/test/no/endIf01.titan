@@ -1,0 +1,6 @@
+function foo(): nil
+	if x > 10 then
+		x = x - 1
+		return 42
+	return 41
+end

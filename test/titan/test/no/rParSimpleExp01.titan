@@ -1,0 +1,3 @@
+function foo(): nil
+	x = (42
+end

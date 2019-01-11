@@ -1,0 +1,3 @@
+function foo(): nil
+	x, foo.bar, z[2] = 20, 30, "foo"
+end

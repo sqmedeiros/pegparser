@@ -1,0 +1,4 @@
+record List
+	p: {Point}
+	next: List
+end

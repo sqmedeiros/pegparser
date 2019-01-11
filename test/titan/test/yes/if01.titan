@@ -1,0 +1,3 @@
+function foo(): nil
+	if 10 then end
+end

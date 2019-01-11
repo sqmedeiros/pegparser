@@ -1,0 +1,6 @@
+function foo(): nil
+	if x > 1 then
+		x = x - 1
+	elseif then
+	end
+end
