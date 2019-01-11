@@ -113,12 +113,13 @@ for file in lfs.dir(dir) do
 		local s = f:read('a')
 		f:close()
 		local r, lab, pos = p:match(s)
-		print('r = ', r, ' lab = ', lab)
+		io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
 		local line, col = '', ''
 		if not r then
 			line, col = re.calcline(s, pos)
-			print('line: ', line, ' col: ', col)
+			io.write(' line: ' .. line .. ' col: ' .. col)
 		end
+		io.write('\n')
 		assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
 	end
 end

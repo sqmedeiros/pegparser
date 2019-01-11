@@ -136,7 +136,7 @@ Resumo:
 
 * Algoritmo SBLP
   - Adicionou 75 rótulos (até 'primary_exp')
-  - ?? regras rotuladas erronemante:
+  - 1 regras rotuladas erronemante (Err_001: rotulou function_def em function_def)
 
 * Algoritmo Conservativo Hard
   - Adicionou 23 rótulos (até 'primary_exp')
