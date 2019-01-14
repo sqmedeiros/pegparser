@@ -500,18 +500,18 @@ COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 local g = m.match(g)
 
 print("Regular Annotation")
-local glab = recovery.addlab(g, true, false)
+local glab = recovery.addlab(g, false, false)
 print(pretty.printg(glab))
 print("\n\n\n")
 
 
 print("Conservative Annotation (Hard)")
-local glab = recovery.addlab(g, true, true)
+local glab = recovery.addlab(g, false, true)
 print(pretty.printg(glab))
 print("\n\n\n")
 
 
 print("Conservative Annotation (Soft)")
-local glab = recovery.addlab(g, true, 'soft')
+local glab = recovery.addlab(g, false, 'soft')
 print(pretty.printg(glab))
 print()
