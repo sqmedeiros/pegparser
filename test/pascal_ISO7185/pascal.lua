@@ -102,7 +102,7 @@ g = [[
 	RPar 					<- ')' Sp
 	Semi 					<- ';' Sp
 	Sign 					<- ('+'/'-') Sp
-	Sp						<- (%s / %nl / Comments)*
+	Sp						<- (' ' / %nl / Comments)*
 	String					<- "'" [^']* "'" Sp
 	UInt 					<- [0-9]+ Sp
 	UNumber 				<- UReal / UInt
@@ -198,18 +198,18 @@ g = [[
 local g = m.match(g)
 
 print("Regular Annotation")
-local glab = recovery.addlab(g, false, false)
+local glab = recovery.addlab(g, true, false)
 print(pretty.printg(glab))
 print("\n\n\n")
 
 
 print("Conservative Annotation (Hard)")
-local glab = recovery.addlab(g, false, true)
+local glab = recovery.addlab(g, true, true)
 print(pretty.printg(glab))
 print("\n\n\n")
 
 
 print("Conservative Annotation (Soft)")
-local glab = recovery.addlab(g, false, 'soft')
+local glab = recovery.addlab(g, true, 'soft')
 print(pretty.printg(glab))
 print()

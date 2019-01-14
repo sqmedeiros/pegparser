@@ -282,7 +282,7 @@ statement            <-  block                                             /
                          'assert' expression^ExpressionErr2 (':' expression^ExpressionErr3)? ';'^SemiErr14 /
                          ';'                                                 /
                          statementExpression ';'^SemiErr15                   /
-                         Identifier ':'^ColonErr1 statement^StatementErr5
+                         Identifier ':'!':'^ColonErr1 statement^StatementErr5
 
 statementExpression   <-  assignment                           /
                           ('++' / '--') (primary / qualIdent)^AfterIteratorSymbolErr  /
