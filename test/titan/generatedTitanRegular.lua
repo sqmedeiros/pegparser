@@ -7,7 +7,7 @@ local recovery = require 'recovery'
 local lfs = require'lfs'
 local re = require'relabel'
 
--- Tirar Err_006 (em toplevelvar), Err_012 (em import)
+-- Tirar Err_006 ('exp' em toplevelvar), Err_012 ('import' em import)
 
 g = [[
 program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
