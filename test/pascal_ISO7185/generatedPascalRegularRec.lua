@@ -161,23 +161,156 @@ W               <-  'w'  /  'W'
 X               <-  'x'  /  'X'
 Y               <-  'y'  /  'Y'
 Z               <-  'z'  /  'Z'
+Token           <-  Z  /  Y  /  X  /  WITH  /  WHILE  /  W  /  VAR  /  V  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  U  /  TYPE  /  TO  /  THEN  /  T  /  String  /  Sp  /  Sign  /  Semi  /  SET  /  S  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  R  /  Q  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  P  /  OpenComment  /  OR  /  OF  /  O  /  NOT  /  NIL  /  N  /  MultOp  /  MOD  /  M  /  LPar  /  LBrack  /  LABEL  /  L  /  K  /  J  /  Id  /  IN  /  IF  /  I  /  H  /  GOTO  /  G  /  FUNCTION  /  FOR  /  FILE  /  F  /  Eq  /  END  /  ELSE  /  E  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  D  /  Comments  /  Comma  /  Colon  /  CloseComment  /  CONST  /  CASE  /  C  /  BodyId  /  BEGIN  /  B  /  Assign  /  AddOp  /  ARRAY  /  AND  /  A
+EatToken        <-  (Token  /  (!SKIP .)+) SKIP
+Err_001         <-  (!Dot EatToken)*
+Err_002         <-  (!(!.) EatToken)*
+Err_003         <-  (!(Semi  /  LPar) EatToken)*
+Err_004         <-  (!RPar EatToken)*
+Err_005         <-  (!Semi EatToken)*
+Err_006         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_007         <-  (!(RPar  /  Colon) EatToken)*
+Err_008         <-  (!Semi EatToken)*
+Err_009         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_010         <-  (!Semi EatToken)*
+Err_011         <-  (!Semi EatToken)*
+Err_012         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_013         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
+Err_014         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
+Err_015         <-  (!Semi EatToken)*
+Err_016         <-  (!Semi EatToken)*
+Err_017         <-  (!(VAR  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_018         <-  (!(VAR  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
+Err_019         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_020         <-  (!Semi EatToken)*
+Err_021         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_022         <-  (!RPar EatToken)*
+Err_023         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
+Err_024         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
+Err_025         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
+Err_026         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
+Err_027         <-  (!(RBrack  /  Comma) EatToken)*
+Err_028         <-  (!RBrack EatToken)*
+Err_029         <-  (!OF EatToken)*
+Err_030         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_031         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_032         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_033         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
+Err_034         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_035         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_036         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_037         <-  (!(OF  /  Colon) EatToken)*
+Err_038         <-  (!OF EatToken)*
+Err_039         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
+Err_040         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_041         <-  (!LPar EatToken)*
+Err_042         <-  (!(RPar  /  Id  /  CASE) EatToken)*
+Err_043         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_044         <-  (!Colon EatToken)*
+Err_045         <-  (!Semi EatToken)*
+Err_046         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_047         <-  (!(PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
+Err_048         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_049         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_050         <-  (!BEGIN EatToken)*
+Err_051         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_052         <-  (!Semi EatToken)*
+Err_053         <-  (!(Semi  /  RPar  /  LPar) EatToken)*
+Err_054         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_055         <-  (!Semi EatToken)*
+Err_056         <-  (!(LPar  /  Colon) EatToken)*
+Err_057         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_058         <-  (!(Semi  /  RPar) EatToken)*
+Err_059         <-  (!(Semi  /  RPar) EatToken)*
+Err_060         <-  (!RPar EatToken)*
+Err_061         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
+Err_062         <-  (!Id EatToken)*
+Err_063         <-  (!(Semi  /  RPar) EatToken)*
+Err_064         <-  (!(UNTIL  /  Semi  /  END  /  ELSE  /  Dot) EatToken)*
+Err_065         <-  (!(WITH  /  WHILE  /  UNTIL  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_066         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_067         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_068         <-  (!(RBrack  /  Comma) EatToken)*
+Err_069         <-  (!RBrack EatToken)*
+Err_070         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
+Err_071         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
+Err_072         <-  (!RPar EatToken)*
+Err_073         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_074         <-  (!(RPar  /  Comma) EatToken)*
+Err_075         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_076         <-  (!THEN EatToken)*
+Err_077         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_078         <-  (!OF EatToken)*
+Err_079         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
+Err_080         <-  (!(Semi  /  END) EatToken)*
+Err_081         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_082         <-  (!(WITH  /  WHILE  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  CASE  /  BEGIN) EatToken)*
+Err_083         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_084         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_085         <-  (!DO EatToken)*
+Err_086         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_087         <-  (!Assign EatToken)*
+Err_088         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_089         <-  (!(TO  /  DOWNTO) EatToken)*
+Err_090         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_091         <-  (!DO EatToken)*
+Err_092         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_093         <-  (!(DO  /  Comma) EatToken)*
+Err_094         <-  (!DO EatToken)*
+Err_095         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_096         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
+Err_097         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
+Err_098         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_099         <-  (!RPar EatToken)*
+Err_100         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_101         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_102         <-  (!RBrack EatToken)*
+Err_103         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_104         <-  (!(RBrack  /  Comma) EatToken)*
 ]]
 
-local g, l = m.match(g)
+local g = m.match(g)
 
-print("Regular Annotation")
-local glab = recovery.addlab(g, true, false)
-print(pretty.printg(glab))
-print("\n\n\n")
+local p = coder.makeg(g)
 
+local dir = lfs.currentdir() .. '/test/titan/test/yes/'	
+for file in lfs.dir(dir) do
+	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'titan' + 1) == 'titan' then
+		print("Yes: ", file)
+		local f = io.open(dir .. file)
+		local s = f:read('a')
+		f:close()
+		local r, lab, pos = p:match(s)
+		local line, col = '', ''
+		if not r then
+			line, col = re.calcline(s, pos)
+		end
+		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
+	end
+end
 
-print("Conservative Annotation (Hard)")
-local glab = recovery.addlab(g, true, true)
-print(pretty.printg(glab))
-print("\n\n\n")
+local dir = lfs.currentdir() .. '/test/titan/test/no/'	
+local irec, ifail = 0, 0
+for file in lfs.dir(dir) do
+	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'titan' + 1) == 'titan' then
+		print("No: ", file)
+		local f = io.open(dir .. file)
+		local s = f:read('a')
+		f:close()
+		local r, lab, pos = p:match(s)
+		io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
+		local line, col = '', ''
+		if not r then
+			line, col = re.calcline(s, pos)
+			io.write(' line: ' .. line .. ' col: ' .. col)
+      ifail = ifail + 1
+		else
+			irec = irec + 1
+		end
+		io.write('\n')
+		--assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
+	end
+end
 
+print('irec: ', irec, ' ifail: ', ifail) 
 
-print("Conservative Annotation (Soft)")
-local glab = recovery.addlab(g, true, 'soft')
-print(pretty.printg(glab))
-print()
