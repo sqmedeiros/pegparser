@@ -61,7 +61,7 @@ fieldlist       <-  field (fieldsep field)* fieldsep?
 field           <-  (NAME '=')? exp
 fieldsep        <-  ';'  /  ','
 STRINGLIT       <-  '"' (!'"' .)* '"'  /  "'" (!"'" .)* "'"
-RESERVED        <-  ('and'  /  'as'  /  'boolean'  /  'break'  /  'do'  /  'else'  /  'elseif'  /  'end'  /  'float'  /  'foreign'  /  'for'  /  'false'  /  'function'  /  'goto'  /  'if'  /  'import'  /  'integer'  /  'in'  /  'local'  /  'nil'  /  'not'  /  'or'  /  'record'  /  'repeat'  /  'return'  /  'string'  /  'then'  /  'true'  /  'until'  /  'value'  /  'while') ![a-zA-Z_0-9]
+RESERVED        <-  ('and'  /  'as'  /  'boolean'  /  'break'  /  'do'  /  'elseif'  /  'else'  /  'end'  /  'float'  /  'foreign'  /  'for'  /  'false'  /  'function'  /  'goto'  /  'if'  /  'import'  /  'integer'  /  'in'  /  'local'  /  'nil'  /  'not'  /  'or'  /  'record'  /  'repeat'  /  'return'  /  'string'  /  'then'  /  'true'  /  'until'  /  'value'  /  'while') ![a-zA-Z_0-9]
 NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
 NUMBER          <-  [0-9]+ ('.' !'.' [0-9]*)?
 COMMENT         <-  '--' (!%nl .)*

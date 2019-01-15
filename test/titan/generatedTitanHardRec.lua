@@ -61,7 +61,7 @@ fieldlist       <-  field (fieldsep field)* fieldsep?
 field           <-  (NAME '=')? exp
 fieldsep        <-  ';'  /  ','
 STRINGLIT       <-  '"' (!'"' .)* '"'  /  "'" (!"'" .)* "'"
-RESERVED        <-  ('and'  /  'as'  /  'boolean'  /  'break'  /  'do'  /  'else'  /  'elseif'  /  'end'  /  'float'  /  'foreign'  /  'for'  /  'false'  /  'function'  /  'goto'  /  'if'  /  'import'  /  'integer'  /  'in'  /  'local'  /  'nil'  /  'not'  /  'or'  /  'record'  /  'repeat'  /  'return'  /  'string'  /  'then'  /  'true'  /  'until'  /  'value'  /  'while') ![a-zA-Z_0-9]
+RESERVED        <-  ('and'  /  'as'  /  'boolean'  /  'break'  /  'do'  /  'elseif'  /  'else'  /  'end'  /  'float'  /  'foreign'  /  'for'  /  'false'  /  'function'  /  'goto'  /  'if'  /  'import'  /  'integer'  /  'in'  /  'local'  /  'nil'  /  'not'  /  'or'  /  'record'  /  'repeat'  /  'return'  /  'string'  /  'then'  /  'true'  /  'until'  /  'value'  /  'while') ![a-zA-Z_0-9]
 NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
 NUMBER          <-  [0-9]+ ('.' !'.' [0-9]*)?
 COMMENT         <-  '--' (!%nl .)*
@@ -149,6 +149,8 @@ end
 
 local dir = lfs.currentdir() .. '/test/titan/test/no/'	
 local irec, ifail = 0, 0
+local tfail = {}
+
 for file in lfs.dir(dir) do
 	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'titan' + 1) == 'titan' then
 		print("No: ", file)
@@ -162,6 +164,7 @@ for file in lfs.dir(dir) do
 			line, col = re.calcline(s, pos)
 			io.write(' line: ' .. line .. ' col: ' .. col)
       ifail = ifail + 1
+			tfail[ifail] = { file = file, lab = lab, line = line, col = col }
 		else
 			irec = irec + 1
 		end
@@ -170,5 +173,8 @@ for file in lfs.dir(dir) do
 	end
 end
 
-print('irec: ', irec, ' ifail: ', ifail) 
+print('irec: ', irec, ' ifail: ', ifail)
+for i, v in ipairs(tfail) do
+	print(v.file, v.lab, 'line: ', v.line, 'col: ', v.col)
+end
 
