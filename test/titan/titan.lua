@@ -20,7 +20,7 @@ g = [[
   --import          <-  'local' <NAME> '=' !'foreign' 'import' ('(' <STRINGLIT> ')' / <STRINGLIT>)
   ..[[
   import          <-  'local' NAME '=' 'import' ('(' STRINGLIT ')' / STRINGLIT)
-  foreign         <-  'local' NAME '=' 'foreign' ('(' STRINGLIT ')' / STRINGLIT)
+  foreign         <-  'local' NAME '=' 'foreign' 'import' ('(' STRINGLIT ')' / STRINGLIT)
   rettypeopt      <-  (':' rettype)?
   paramlist       <-  (param (',' param)*)?
   param           <-  NAME ':' type
@@ -67,7 +67,7 @@ g = [[
   field           <-  (NAME '=')? exp
   fieldsep        <-  ';' / ','
   STRINGLIT       <-  '"' (!'"' .)* '"'  /  "'" (!"'" .)* "'"
-  RESERVED        <-  ('and'  / 'as' / 'boolean' / 'break' / 'do' / 'else' / 'elseif' / 'end' / 'float' / 'foreign' / 'for' / 'false'
+  RESERVED        <-  ('and'  / 'as' / 'boolean' / 'break' / 'do' / 'elseif' / 'else' / 'end' / 'float' / 'foreign' / 'for' / 'false'
                      / 'function' / 'goto' / 'if' / 'import' / 'integer' / 'in' / 'local' / 'nil' / 'not' / 'or'
                      / 'record' / 'repeat' / 'return' / 'string' / 'then' / 'true' / 'until' / 'value' / 'while') ![a-zA-Z_0-9]
   NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
