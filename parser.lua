@@ -11,10 +11,10 @@ local newNode = function (tag, p1, p2)
 	return { tag = tag, p1 = p1, p2 = p2 } 
 end
 
-defs.newString = function (v)
+defs.newString = function (v, quote)
 	g.tokens[v] = true
 	lasttk[v] = true
-	return newNode('char', v)
+	return newNode('char', v, quote or "'")
 end
 
 defs.newAny = function (v)
@@ -234,8 +234,8 @@ local peg = [[
                       '{'  S                           '}'^RCurCap  S      -> newPosCap
 
 
-  string        <-   ("'" {(!"'"  .)*} "'"^SingQuote  S  /
-                      '"' {(!'"'  .)*} '"'^DoubQuote  S) -> newString
+  string        <-   ("'" {(!"'"  .)*} {"'"}^SingQuote  S  /
+                      '"' {(!'"'  .)*} {'"'}^DoubQuote  S) -> newString
 
 	class         <-   '[' {| (({(.'-'.)} / (!']' {.}))+)^EmptyClass |} -> newClass ']'^RBraClass S
 

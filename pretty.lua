@@ -6,7 +6,7 @@ local function printp (p, flag)
 	if p.tag == 'empty' then
 		return "''"
 	elseif p.tag == 'char' then
-		return "'" .. p.p1 .. "'"
+		return p.p2 .. p.p1 .. p.p2
 	elseif p.tag == 'any' then
 		return "."
 	elseif p.tag == 'set' then
