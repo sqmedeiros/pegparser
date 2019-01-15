@@ -16,7 +16,7 @@ toplevelvar     <-  localopt decl '=' exp
 toplevelrecord  <-  'record' NAME recordfields 'end'
 localopt        <-  'local'?
 import          <-  'local' NAME '=' 'import' ('(' STRINGLIT ')'  /  STRINGLIT)
-foreign         <-  'local' NAME '=' 'foreign' ('(' STRINGLIT ')'  /  STRINGLIT)
+foreign         <-  'local' NAME '=' 'foreign' 'import' ('(' STRINGLIT ')'  /  STRINGLIT)
 rettypeopt      <-  (':' rettype^Err_001)?
 paramlist       <-  (param (',' param^Err_002)*)?
 param           <-  NAME ':'^Err_003 type^Err_004

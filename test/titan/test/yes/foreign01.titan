@@ -1,1 +1,1 @@
-local foo = foreign "module.foo"
+local foo = foreign import "module.foo"
