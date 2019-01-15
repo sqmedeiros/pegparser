@@ -214,6 +214,8 @@ function calck (g, p, k)
 		return k
 	elseif p.tag == 'any' then
 		return { ['.']=true }
+	elseif p.tag == 'and' then
+		return { [empty] = true }
 	elseif p.tag == 'not' then
 		return k 
 	elseif p.tag == 'opt' then
