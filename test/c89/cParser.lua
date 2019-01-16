@@ -56,7 +56,7 @@ spec_qualifier_list   <-  (type_spec  /  type_qualifier)+
 
 spec_qualifier        <-  type_spec  /  type_qualifier
 
-struct_declarator     <-  declarator? ';' const_exp  /  declarator
+struct_declarator     <-  declarator? ':' const_exp  /  declarator
  
 enumerator            <-  ID '=' const_exp  /  ID
 

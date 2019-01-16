@@ -13,7 +13,7 @@ init_declarator <-  declarator '=' initializer  /  declarator
 struct_decl     <-  spec_qualifier struct_declarator (',' struct_declarator)* ';'  /  spec_qualifier struct_decl
 spec_qualifier_list <-  (type_spec  /  type_qualifier)+
 spec_qualifier  <-  type_spec  /  type_qualifier
-struct_declarator <-  declarator? ';' const_exp  /  declarator
+struct_declarator <-  declarator? ':' const_exp  /  declarator
 enumerator      <-  ID '=' const_exp  /  ID
 declarator      <-  pointer? direct_declarator
 direct_declarator <-  (ID  /  '(' declarator ')') ('[' const_exp? ']'  /  '(' param_type_list ')'  /  '(' id_list? ')')*
@@ -54,9 +54,9 @@ INT_CONST       <-  ('0' [xX] XDIGIT+  /  !'0' DIGIT DIGIT*  /  '0' [0-8]*) ([uU
 FLOAT_CONST     <-  '0x' (('.'  /  XDIGIT+  /  XDIGIT+  /  '.') ([eE] [-+]? XDIGIT+)? [lLfF]?  /  XDIGIT+ [eE] [-+]? XDIGIT+ [lLfF]?)  /  ('.'  /  DIGIT+  /  DIGIT+  /  '.') ([eE] [-+]? DIGIT+)? [lLfF]?  /  DIGIT+ [eE] [-+]? DIGIT+ [lLfF]?
 XDIGIT          <-  [0-9a-fA-F]
 DIGIT           <-  [0-9]
-CHAR_CONST      <-  ''' (%nl  /  !''' .) '''
+CHAR_CONST      <-  "'" (%nl  /  !"'" .) "'"
 STRING          <-  '"' (%nl  /  !'"' .)* '"'
-ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  '''  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
+ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  "'"  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
 ENUMERATION_CONST <-  ID
 ID              <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]*
 KEYWORDS        <-  'auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  'else'  /  'long'  /  'switch'  /  'case'  /  'enum'  /  'register'  /  'typedef'  /  'char'  /  'extern'  /  'return'  /  'union'  /  'const'  /  'float'  /  'short'  /  'unsigned'  /  'continue'  /  'for'  /  'signed'  /  'void'  /  'default'  /  'goto'  /  'sizeof'  /  'volatile'  /  'do'  /  'if'  /  'static'  /  'while'
@@ -79,7 +79,7 @@ init_declarator <-  declarator '=' initializer  /  declarator
 struct_decl     <-  spec_qualifier struct_declarator (',' struct_declarator)* ';'  /  spec_qualifier struct_decl^Err_006
 spec_qualifier_list <-  (type_spec  /  type_qualifier)+
 spec_qualifier  <-  type_spec  /  type_qualifier
-struct_declarator <-  declarator? ';' const_exp  /  declarator
+struct_declarator <-  declarator? ':' const_exp  /  declarator
 enumerator      <-  ID '=' const_exp  /  ID
 declarator      <-  pointer? direct_declarator
 direct_declarator <-  (ID  /  '(' declarator^Err_007 ')'^Err_008) ('[' const_exp? ']'^Err_009  /  '(' param_type_list ')'  /  '(' id_list? ')'^Err_010)*
@@ -120,9 +120,9 @@ INT_CONST       <-  ('0' [xX] XDIGIT+  /  !'0' DIGIT DIGIT*  /  '0' [0-8]*) ([uU
 FLOAT_CONST     <-  '0x' (('.'  /  XDIGIT+  /  XDIGIT+  /  '.') ([eE] [-+]? XDIGIT+)? [lLfF]?  /  XDIGIT+ [eE] [-+]? XDIGIT+ [lLfF]?)  /  ('.'  /  DIGIT+  /  DIGIT+  /  '.') ([eE] [-+]? DIGIT+)? [lLfF]?  /  DIGIT+ [eE] [-+]? DIGIT+ [lLfF]?
 XDIGIT          <-  [0-9a-fA-F]
 DIGIT           <-  [0-9]
-CHAR_CONST      <-  ''' (%nl  /  !''' .) '''
+CHAR_CONST      <-  "'" (%nl  /  !"'" .) "'"
 STRING          <-  '"' (%nl  /  !'"' .)* '"'
-ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  '''  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
+ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  "'"  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
 ENUMERATION_CONST <-  ID
 ID              <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]*
 KEYWORDS        <-  'auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  'else'  /  'long'  /  'switch'  /  'case'  /  'enum'  /  'register'  /  'typedef'  /  'char'  /  'extern'  /  'return'  /  'union'  /  'const'  /  'float'  /  'short'  /  'unsigned'  /  'continue'  /  'for'  /  'signed'  /  'void'  /  'default'  /  'goto'  /  'sizeof'  /  'volatile'  /  'do'  /  'if'  /  'static'  /  'while'
@@ -137,9 +137,9 @@ Err_004         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  
 Err_005         <-  (!';' EatToken)*
 Err_006         <-  (!('}'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'struct'  /  'signed'  /  'short'  /  'long'  /  'int'  /  'float'  /  'enum'  /  'double'  /  'const'  /  'char'  /  ID) EatToken)*
 Err_007         <-  (!')' EatToken)*
-Err_008         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ','  /  ')'  /  '(') EatToken)*
-Err_009         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
-Err_010         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
+Err_008         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ':'  /  ','  /  ')'  /  '(') EatToken)*
+Err_009         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
+Err_010         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_011         <-  (!')' EatToken)*
 Err_012         <-  (!')' EatToken)*
 Err_013         <-  (!('}'  /  ',') EatToken)*
@@ -222,7 +222,7 @@ init_declarator <-  declarator '=' initializer  /  declarator
 struct_decl     <-  spec_qualifier struct_declarator (',' struct_declarator)* ';'  /  spec_qualifier struct_decl
 spec_qualifier_list <-  (type_spec  /  type_qualifier)+
 spec_qualifier  <-  type_spec  /  type_qualifier
-struct_declarator <-  declarator? ';' const_exp  /  declarator
+struct_declarator <-  declarator? ':' const_exp  /  declarator
 enumerator      <-  ID '=' const_exp  /  ID
 declarator      <-  pointer? direct_declarator
 direct_declarator <-  (ID  /  '(' declarator^Err_003 ')'^Err_004) ('[' const_exp? ']'^Err_005  /  '(' param_type_list ')'  /  '(' id_list? ')'^Err_006)*
@@ -263,9 +263,9 @@ INT_CONST       <-  ('0' [xX] XDIGIT+  /  !'0' DIGIT DIGIT*  /  '0' [0-8]*) ([uU
 FLOAT_CONST     <-  '0x' (('.'  /  XDIGIT+  /  XDIGIT+  /  '.') ([eE] [-+]? XDIGIT+)? [lLfF]?  /  XDIGIT+ [eE] [-+]? XDIGIT+ [lLfF]?)  /  ('.'  /  DIGIT+  /  DIGIT+  /  '.') ([eE] [-+]? DIGIT+)? [lLfF]?  /  DIGIT+ [eE] [-+]? DIGIT+ [lLfF]?
 XDIGIT          <-  [0-9a-fA-F]
 DIGIT           <-  [0-9]
-CHAR_CONST      <-  ''' (%nl  /  !''' .) '''
+CHAR_CONST      <-  "'" (%nl  /  !"'" .) "'"
 STRING          <-  '"' (%nl  /  !'"' .)* '"'
-ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  '''  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
+ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  "'"  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
 ENUMERATION_CONST <-  ID
 ID              <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]*
 KEYWORDS        <-  'auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  'else'  /  'long'  /  'switch'  /  'case'  /  'enum'  /  'register'  /  'typedef'  /  'char'  /  'extern'  /  'return'  /  'union'  /  'const'  /  'float'  /  'short'  /  'unsigned'  /  'continue'  /  'for'  /  'signed'  /  'void'  /  'default'  /  'goto'  /  'sizeof'  /  'volatile'  /  'do'  /  'if'  /  'static'  /  'while'
@@ -276,9 +276,9 @@ EatToken        <-  (Token  /  (!SKIP .)+) SKIP
 Err_001         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '^='  /  '^'  /  ']'  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '-='  /  '-'  /  ','  /  '+='  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*
 Err_002         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '^='  /  '^'  /  ']'  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '-='  /  '-'  /  ','  /  '+='  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*
 Err_003         <-  (!')' EatToken)*
-Err_004         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ','  /  ')'  /  '(') EatToken)*
-Err_005         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
-Err_006         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
+Err_004         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ':'  /  ','  /  ')'  /  '(') EatToken)*
+Err_005         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
+Err_006         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_007         <-  (!('}'  /  '||'  /  ']'  /  '?'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_008         <-  (!('}'  /  '||'  /  ']'  /  '?'  /  ';'  /  ':'  /  ','  /  ')'  /  '&&') EatToken)*
 Err_009         <-  (!('}'  /  '||'  /  '|'  /  ']'  /  '?'  /  ';'  /  ':'  /  ','  /  ')'  /  '&&') EatToken)*
@@ -313,7 +313,7 @@ init_declarator <-  declarator '=' initializer  /  declarator
 struct_decl     <-  spec_qualifier struct_declarator (',' struct_declarator)* ';'  /  spec_qualifier struct_decl^Err_003
 spec_qualifier_list <-  (type_spec  /  type_qualifier)+
 spec_qualifier  <-  type_spec  /  type_qualifier
-struct_declarator <-  declarator? ';' const_exp  /  declarator
+struct_declarator <-  declarator? ':' const_exp  /  declarator
 enumerator      <-  ID '=' const_exp  /  ID
 declarator      <-  pointer? direct_declarator
 direct_declarator <-  (ID  /  '(' declarator^Err_004 ')'^Err_005) ('[' const_exp? ']'^Err_006  /  '(' param_type_list ')'  /  '(' id_list? ')'^Err_007)*
@@ -354,9 +354,9 @@ INT_CONST       <-  ('0' [xX] XDIGIT+  /  !'0' DIGIT DIGIT*  /  '0' [0-8]*) ([uU
 FLOAT_CONST     <-  '0x' (('.'  /  XDIGIT+  /  XDIGIT+  /  '.') ([eE] [-+]? XDIGIT+)? [lLfF]?  /  XDIGIT+ [eE] [-+]? XDIGIT+ [lLfF]?)  /  ('.'  /  DIGIT+  /  DIGIT+  /  '.') ([eE] [-+]? DIGIT+)? [lLfF]?  /  DIGIT+ [eE] [-+]? DIGIT+ [lLfF]?
 XDIGIT          <-  [0-9a-fA-F]
 DIGIT           <-  [0-9]
-CHAR_CONST      <-  ''' (%nl  /  !''' .) '''
+CHAR_CONST      <-  "'" (%nl  /  !"'" .) "'"
 STRING          <-  '"' (%nl  /  !'"' .)* '"'
-ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  '''  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
+ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  "'"  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
 ENUMERATION_CONST <-  ID
 ID              <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]*
 KEYWORDS        <-  'auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  'else'  /  'long'  /  'switch'  /  'case'  /  'enum'  /  'register'  /  'typedef'  /  'char'  /  'extern'  /  'return'  /  'union'  /  'const'  /  'float'  /  'short'  /  'unsigned'  /  'continue'  /  'for'  /  'signed'  /  'void'  /  'default'  /  'goto'  /  'sizeof'  /  'volatile'  /  'do'  /  'if'  /  'static'  /  'while'
@@ -368,9 +368,9 @@ Err_001         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  
 Err_002         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '^='  /  '^'  /  ']'  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '-='  /  '-'  /  ','  /  '+='  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*
 Err_003         <-  (!('}'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'struct'  /  'signed'  /  'short'  /  'long'  /  'int'  /  'float'  /  'enum'  /  'double'  /  'const'  /  'char'  /  ID) EatToken)*
 Err_004         <-  (!')' EatToken)*
-Err_005         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ','  /  ')'  /  '(') EatToken)*
-Err_006         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
-Err_007         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
+Err_005         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ':'  /  ','  /  ')'  /  '(') EatToken)*
+Err_006         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
+Err_007         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_008         <-  (!')' EatToken)*
 Err_009         <-  (!')' EatToken)*
 Err_010         <-  (!':' EatToken)*
@@ -430,7 +430,6 @@ Err_063         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  '^='  /  '^'  /  ']'  /
 Err_064         <-  (!')' EatToken)*
 Err_065         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  '^='  /  '^'  /  ']'  /  '['  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '.'  /  '->'  /  '-='  /  '--'  /  '-'  /  ','  /  '+='  /  '++'  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*	
 
-'/*' (!'*/' .)* '*/'
 Yes: 	ternary01.c
 Yes: 	main02.c
 Yes: 	main01.c
@@ -477,62 +476,122 @@ Yes: 	if01.c
 Yes: 	enum01.c
 Yes: 	expor.c
 No: 	invalidExpr01.c
+r = nil lab = fail line: 4 col: 1
 No: 	multEnumeratorBraces01.c
-No: 	identifer02.c
+r = nil lab = fail line: 6 col: 9
 No: 	brackWhile02.c
+r = nil lab = fail line: 6 col: 11
 No: 	semicolon01.c
+r = nil lab = fail line: 2 col: 24
 No: 	invalidExprUnary01.c
+r = nil lab = fail line: 5 col: 10
 No: 	multStat01.c
+r = nil lab = fail line: 10 col: 5
 No: 	brack03.c
+r = nil lab = fail line: 5 col: 9
 No: 	colon02.c
+r = nil lab = fail line: 4 col: 43
 No: 	while01.c
+r = nil lab = fail line: 6 col: 1
+No: 	identifier01.c
+r = nil lab = fail line: 4 col: 9
 No: 	multExpr01.c
+r = nil lab = fail line: 9 col: 13
+No: 	stat03.c
+r = nil lab = fail line: 6 col: 1
 No: 	invalidExpr10.c
+r = nil lab = fail line: 8 col: 17
 No: 	invalidSizeof01.c
-No: 	invalidStmt01.c
+r = nil lab = fail line: 4 col: 26
 No: 	multExpr02.c
+r = nil lab = fail line: 9 col: 9
 No: 	invalidExpr07.c
+r = nil lab = fail line: 6 col: 11
 No: 	multiSemicolon01.c
+r = nil lab = fail line: 8 col: 23
 No: 	brackIf01.c
+r = nil lab = fail line: 4 col: 8
 No: 	braces02.c
+r = nil lab = fail line: 2 col: 25
 No: 	exprLogOr01.c
+r = nil lab = fail line: 4 col: 15
 No: 	statCase01.c
+r = nil lab = fail line: 7 col: 5
 No: 	invalidExpr03.c
+r = nil lab = fail line: 6 col: 14
 No: 	exprAnd01.c
+r = nil lab = fail line: 4 col: 13
 No: 	stat01.c
+r = nil lab = fail line: 5 col: 1
 No: 	enumeratorComma01.c
+r = nil lab = fail line: 2 col: 12
 No: 	brackWhile01.c
+r = nil lab = fail line: 4 col: 11
 No: 	invalidExpr06.c
+r = nil lab = fail line: 4 col: 11
 No: 	stat02.c
+r = nil lab = fail line: 6 col: 1
 No: 	sqBrack01.c
+r = nil lab = fail line: 4 col: 13
 No: 	invalidExprCond201.c
+r = nil lab = fail line: 4 col: 24
 No: 	invalidExpr04.c
+r = nil lab = fail line: 4 col: 8
 No: 	exprComma01.c
+r = nil lab = fail line: 5 col: 45
 No: 	semicolon05.c
+r = nil lab = fail line: 7 col: 5
 No: 	semicolon03.c
+r = nil lab = fail line: 7 col: 1
 No: 	exprLogAnd01.c
+r = nil lab = fail line: 4 col: 14
 No: 	multExprBraces01.c
+r = nil lab = fail line: 8 col: 9
 No: 	invalidDecl01.c
+r = nil lab = fail line: 3 col: 1
 No: 	invalidExpr08.c
+r = nil lab = fail line: 5 col: 10
 No: 	exprExcOr01.c
+r = nil lab = fail line: 4 col: 14
 No: 	exprIncOr01.c
+r = nil lab = fail line: 4 col: 14
 No: 	declAfterComma01.c
+r = nil lab = fail line: 2 col: 11
 No: 	brackSwitch01.c
+r = nil lab = fail line: 5 col: 12
 No: 	brack01.c
-No: 	identifer01.c
+r = nil lab = fail line: 4 col: 1
 No: 	invalidExprInc01.c
+r = nil lab = fail line: 5 col: 7
 No: 	invalidExpr09.c
+r = nil lab = fail line: 5 col: 22
 No: 	semicolon04.c
+r = nil lab = fail line: 5 col: 1
 No: 	colon01.c
+r = nil lab = fail line: 8 col: 13
 No: 	invalidExpr05.c
+r = nil lab = fail line: 5 col: 12
 No: 	zeroDecl01.c
+r = nil lab = fail line: 4 col: 1
 No: 	statDefault01.c
+r = nil lab = fail line: 7 col: 5
 No: 	multBrack01.c
+r = nil lab = fail line: 9 col: 27
 No: 	invalidExpr02.c
+r = nil lab = fail line: 7 col: 14
 No: 	brack02.c
+r = nil lab = fail line: 4 col: 15
+No: 	identifier03.c
+r = nil lab = fail line: 6 col: 23
 No: 	braces01.c
+r = nil lab = fail line: 2 col: 10
+No: 	identifier02.c
+r = nil lab = fail line: 6 col: 22
 No: 	braces03.c
+r = nil lab = fail line: 3 col: 17
 No: 	semicolon02.c
+r = nil lab = fail line: 5 col: 23
 No: 	invalidExprCond101.c
+r = nil lab = fail line: 4 col: 20
 No: 	endComment01.c
-No: 	identifer03.c
+r = nil lab = fail line: 7 col: 1

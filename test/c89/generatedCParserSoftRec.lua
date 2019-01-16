@@ -20,7 +20,8 @@ local function assertOk(p, s)
   assert(r == #s + 1, "Matched until " .. r)
 end
 
---tirar 004
+-- Does not need to remove labels manually
+-- Disable rule typedef_name, because its correct matching depends on semantic actions
 
 local g =  m.match[[
 translation_unit <-  SKIP external_decl+ !.
@@ -37,7 +38,7 @@ init_declarator <-  declarator '=' initializer  /  declarator
 struct_decl     <-  spec_qualifier struct_declarator (',' struct_declarator)* ';'  /  spec_qualifier struct_decl^Err_003
 spec_qualifier_list <-  (type_spec  /  type_qualifier)+
 spec_qualifier  <-  type_spec  /  type_qualifier
-struct_declarator <-  declarator? ';' const_exp  /  declarator
+struct_declarator <-  declarator? ':' const_exp  /  declarator
 enumerator      <-  ID '=' const_exp  /  ID
 declarator      <-  pointer? direct_declarator
 direct_declarator <-  (ID  /  '(' declarator^Err_004 ')'^Err_005) ('[' const_exp? ']'^Err_006  /  '(' param_type_list ')'  /  '(' id_list? ')'^Err_007)*
@@ -90,9 +91,10 @@ Err_001         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  
 Err_002         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '^='  /  '^'  /  ']'  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '-='  /  '-'  /  ','  /  '+='  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*
 Err_003         <-  (!('}'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'struct'  /  'signed'  /  'short'  /  'long'  /  'int'  /  'float'  /  'enum'  /  'double'  /  'const'  /  'char'  /  ID) EatToken)*
 Err_004         <-  (!')' EatToken)*
-Err_005         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ','  /  ')'  /  '(') EatToken)*
-Err_006         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
-Err_007         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
+Err_005         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ':'  /  ','  /  ')'  /  '(') EatToken)*
+Err_006         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
+Err_007         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
+
 Err_008         <-  (!')' EatToken)*
 Err_009         <-  (!')' EatToken)*
 Err_010         <-  (!':' EatToken)*
@@ -174,8 +176,10 @@ end
 
 local dir = lfs.currentdir() .. '/test/c89/test/no/'	
 local irec, ifail = 0, 0
+local tfail = {}
+
 for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
+	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'c' + 1) == 'c' then
 		print("No: ", file)
 		local f = io.open(dir .. file)
 		local s = f:read('a')
@@ -187,6 +191,7 @@ for file in lfs.dir(dir) do
 			line, col = re.calcline(s, pos)
 			io.write(' line: ' .. line .. ' col: ' .. col)
       ifail = ifail + 1
+			tfail[ifail] = { file = file, lab = lab, line = line, col = col }
 		else
 			irec = irec + 1
 		end
@@ -195,4 +200,8 @@ for file in lfs.dir(dir) do
 	end
 end
 
-print('irec: ', irec, ' ifail: ', ifail) 
+print('irec: ', irec, ' ifail: ', ifail)
+for i, v in ipairs(tfail) do
+	print(v.file, v.lab, 'line: ', v.line, 'col: ', v.col)
+end
+

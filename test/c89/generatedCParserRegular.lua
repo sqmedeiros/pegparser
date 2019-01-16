@@ -20,7 +20,8 @@ local function assertOk(p, s)
   assert(r == #s + 1, "Matched until " .. r)
 end
 
---tirar 004
+-- Remove Err_001 ('function_def' in rule function_def)
+-- Disable rule typedef_name, because its correct matching depends on semantic actions
 
 local g =  m.match[[
 translation_unit <-  SKIP external_decl+ !.
@@ -37,7 +38,7 @@ init_declarator <-  declarator '=' initializer  /  declarator
 struct_decl     <-  spec_qualifier struct_declarator (',' struct_declarator)* ';'  /  spec_qualifier struct_decl^Err_006
 spec_qualifier_list <-  (type_spec  /  type_qualifier)+
 spec_qualifier  <-  type_spec  /  type_qualifier
-struct_declarator <-  declarator? ';' const_exp  /  declarator
+struct_declarator <-  declarator? ':' const_exp  /  declarator
 enumerator      <-  ID '=' const_exp  /  ID
 declarator      <-  pointer? direct_declarator
 direct_declarator <-  (ID  /  '(' declarator^Err_007 ')'^Err_008) ('[' const_exp? ']'^Err_009  /  '(' param_type_list ')'  /  '(' id_list? ')'^Err_010)*

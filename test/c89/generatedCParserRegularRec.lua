@@ -20,7 +20,8 @@ local function assertOk(p, s)
   assert(r == #s + 1, "Matched until " .. r)
 end
 
---tirar 004
+-- Remove Err_001 ('function_def' in rule function_def)
+-- Disable rule typedef_name, because its correct matching depends on semantic actions
 
 local g =  m.match[[
 translation_unit <-  SKIP external_decl+ !.
@@ -37,7 +38,7 @@ init_declarator <-  declarator '=' initializer  /  declarator
 struct_decl     <-  spec_qualifier struct_declarator (',' struct_declarator)* ';'  /  spec_qualifier struct_decl^Err_006
 spec_qualifier_list <-  (type_spec  /  type_qualifier)+
 spec_qualifier  <-  type_spec  /  type_qualifier
-struct_declarator <-  declarator? ';' const_exp  /  declarator
+struct_declarator <-  declarator? ':' const_exp  /  declarator
 enumerator      <-  ID '=' const_exp  /  ID
 declarator      <-  pointer? direct_declarator
 direct_declarator <-  (ID  /  '(' declarator^Err_007 ')'^Err_008) ('[' const_exp? ']'^Err_009  /  '(' param_type_list ')'  /  '(' id_list? ')'^Err_010)*
@@ -93,9 +94,9 @@ Err_004         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  
 Err_005         <-  (!';' EatToken)*
 Err_006         <-  (!('}'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'struct'  /  'signed'  /  'short'  /  'long'  /  'int'  /  'float'  /  'enum'  /  'double'  /  'const'  /  'char'  /  ID) EatToken)*
 Err_007         <-  (!')' EatToken)*
-Err_008         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ','  /  ')'  /  '(') EatToken)*
-Err_009         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
-Err_010         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ','  /  ')') EatToken)*
+Err_008         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '['  /  '='  /  ';'  /  ':'  /  ','  /  ')'  /  '(') EatToken)*
+Err_009         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
+Err_010         <-  (!('{'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '='  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_011         <-  (!')' EatToken)*
 Err_012         <-  (!')' EatToken)*
 Err_013         <-  (!('}'  /  ',') EatToken)*
@@ -168,7 +169,7 @@ local p = coder.makeg(g)
 
 local dir = lfs.currentdir() .. '/test/c89/test/yes/'	
 for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
+	if file ~= '.' and file ~= '..' and string.sub(file, #file - #'c' + 1) == 'c' then
 		print("Yes: ", file)
 		local f = io.open(dir .. file)
 		local s = f:read('a')
@@ -184,8 +185,10 @@ end
 
 local dir = lfs.currentdir() .. '/test/c89/test/no/'	
 local irec, ifail = 0, 0
+local tfail = {}
+
 for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
+	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'c' + 1) == 'c' then
 		print("No: ", file)
 		local f = io.open(dir .. file)
 		local s = f:read('a')
@@ -197,6 +200,7 @@ for file in lfs.dir(dir) do
 			line, col = re.calcline(s, pos)
 			io.write(' line: ' .. line .. ' col: ' .. col)
       ifail = ifail + 1
+			tfail[ifail] = { file = file, lab = lab, line = line, col = col }
 		else
 			irec = irec + 1
 		end
@@ -205,4 +209,8 @@ for file in lfs.dir(dir) do
 	end
 end
 
-print('irec: ', irec, ' ifail: ', ifail) 
+print('irec: ', irec, ' ifail: ', ifail)
+for i, v in ipairs(tfail) do
+	print(v.file, v.lab, 'line: ', v.line, 'col: ', v.col)
+end
+
