@@ -1,12 +1,16 @@
 * C Grammar by Victor
 
 * Changes from the original Victor's grammar
+  - It is necessary to disable rule 'typedef_name', whose correct matching depending on semantic actions,
+    othewise it will match incorrectly and fail some tests (e.g., yes/switch01.c)
+  - In rule 'initializer', it seems wrong to associate label 'InvalidExpr' with 'assignemnt_exp'.
+    This causes a fail when matching file yes/array02.c. I removed this label.
   - In rule 'param_decl': ( V"declarator" + V"abstract_declarator"^-1 ) should be ( V"declarator" + V"abstract_declarator" )^-1
   - In rule 'relational_exp', I changed the order of the relational operators to '<=' / '>=' / '<' / '>'
 
-* Got 'generatedCParser.lua' from 'testCParserVictor.lua' with the following changes:
+* Got 'generatedCParser.lua' from 'cParser.lua' with the following changes:
   - Fixed expressions of the form ''' in char_const, string and esc_char. Simplified char_const and string, ignoring esc_char
-    
+
 * Removed labels after running conservative algorithm:
   - Rule direct_declarator: label associated with 'declarator' and with the following ')'
     . Both labels do not seem wrong, but depends on semantic actions to correctly match 'typedef_name',
