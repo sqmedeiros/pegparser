@@ -24,7 +24,7 @@ end
 -- Disable rule typedef_name, because its correct matching depends on semantic actions
 
 local g =  m.match[[
-translation_unit <-  SKIP external_decl+ !.
+translation_unit <-  SKIP external_decl+^Err_ExtDecl (!.)^Err_EOF
 external_decl   <-  function_def  /  decl
 function_def    <-  declarator decl* compound_stat  /  decl_spec function_def
 decl_spec       <-  storage_class_spec  /  type_spec  /  type_qualifier
@@ -87,6 +87,8 @@ ID              <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]*
 KEYWORDS        <-  'auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  'else'  /  'long'  /  'switch'  /  'case'  /  'enum'  /  'register'  /  'typedef'  /  'char'  /  'extern'  /  'return'  /  'union'  /  'const'  /  'float'  /  'short'  /  'unsigned'  /  'continue'  /  'for'  /  'signed'  /  'void'  /  'default'  /  'goto'  /  'sizeof'  /  'volatile'  /  'do'  /  'if'  /  'static'  /  'while'
 Token           <-  '~'  /  '}'  /  '||'  /  '|='  /  '|'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'switch'  /  'struct'  /  'static'  /  'sizeof'  /  'signed'  /  'short'  /  'return'  /  'register'  /  'long'  /  'int'  /  'if'  /  'goto'  /  'for'  /  'float'  /  'extern'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'const'  /  'char'  /  'case'  /  'break'  /  'auto'  /  XDIGIT  /  STRING  /  KEYWORDS  /  INT_CONST  /  ID  /  FLOAT_CONST  /  ESC_CHAR  /  ENUMERATION_CONST  /  DIGIT  /  COMMENT  /  CHAR_CONST  /  '^='  /  '^'  /  ']'  /  '['  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '...'  /  '.'  /  '->'  /  '-='  /  '--'  /  '-'  /  ','  /  '+='  /  '++'  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!='  /  '!'
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
+Err_EOF         <-  (!!. EatToken)*
+Err_ExtDecl     <-  (!!. EatToken)*
 Err_001         <-  (!('volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '*'  /  '('  /  !.) EatToken)*
 Err_002         <-  (!('~'  /  '}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'switch'  /  'struct'  /  'static'  /  'sizeof'  /  'signed'  /  'short'  /  'return'  /  'register'  /  'long'  /  'int'  /  'if'  /  'goto'  /  'for'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'const'  /  'char'  /  'case'  /  'break'  /  'auto'  /  STRING  /  INT_CONST  /  ID  /  FLOAT_CONST  /  ENUMERATION_CONST  /  CHAR_CONST  /  ';'  /  '--'  /  '-'  /  '++'  /  '+'  /  '*'  /  '('  /  '&'  /  !.  /  '!') EatToken)*
 Err_003         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  'volatile'  /  'void'  /  'unsigned'  /  'union'  /  'typedef'  /  'struct'  /  'static'  /  'signed'  /  'short'  /  'register'  /  'long'  /  'int'  /  'float'  /  'extern'  /  'enum'  /  'double'  /  'const'  /  'char'  /  'auto'  /  ID  /  '^='  /  '^'  /  ']'  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '-='  /  '-'  /  ','  /  '+='  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*
@@ -208,8 +210,6 @@ for file in lfs.dir(dir) do
 		--assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
 	end
 end
-
-table.sort(tfail, function(x, y) return x.file < y.file end)
 
 print('irec: ', irec, ' ifail: ', ifail)
 for i, v in ipairs(tfail) do
