@@ -2,6 +2,7 @@ local m = require'lpeglabel'
 local parser = require 'parser'
 local pretty = require 'pretty'
 local predef = require 'predef'
+local ast = require 'ast'
 
 local sp = predef.space^0
 
@@ -32,6 +33,8 @@ local function makep (p)
 		return m.S(unfoldset(p.p1))
 	elseif p.tag == 'any' then
 		return m.P(1)
+	elseif p.tag == 'constCap' then
+		return m.Cc(p.p1)
 	elseif p.tag == 'posCap' then
 		return m.Cp()
 	elseif p.tag == 'simpCap' then
@@ -39,7 +42,7 @@ local function makep (p)
 	elseif p.tag == 'tabCap' then
 		return m.Ct(makep(p.p1))
 	elseif p.tag == 'nameCap' then
-		return m.Cg(makep(p.p1), makep(p.p2))
+		return m.Cg(makep(p.p2), p.p1)
 	elseif p.tag == 'anonCap' then
 		return m.Cg(makep(p.p1))
 	elseif p.tag == 'var' then
@@ -87,14 +90,16 @@ local function autoskip (p, g)
 	if p.tag == 'empty' or p.tag == 'char' or p.tag == 'set' or
      p.tag == 'any' then
 		return matchskip(p)
+	elseif p.tag == 'constCap' then
+		return p
 	elseif p.tag == 'posCap' then
 		return p
 	elseif p.tag == 'simpCap' then
 		return matchskip(p)  --TODO: see if this is ok
 	elseif p.tag == 'tabCap' then
-		return matchskip(p)
+		return parser.newNode(p.tag, autoskip(p.p1, g))
 	elseif p.tag == 'nameCap' then
-		return matchskip(p)
+		return parser.newNode(p.tag, p.p1, autoskip(p.p2, g))
 	elseif p.tag == 'anonCap' then
 		return matchskip(p)
 	elseif p.tag == 'var' then
@@ -116,7 +121,13 @@ local function autoskip (p, g)
 end
 
 
-local function makeg (g)
+local function makeg (g, tree)
+	local g = g
+	if tree then
+		g = ast.buildAST(g)
+		print("Coder: New grammar with annotations to build AST")
+		print(pretty.printg(g), '\n')
+	end
 	local peg = { [1] = g.plist[1] }
 	for i, v in ipairs(g.plist) do
 		--print("makeg", v)
@@ -125,7 +136,7 @@ local function makeg (g)
 		--end
 		if v ~= 'SKIP' and v ~= 'COMMENT' then
 			local p = g.prules[v]
-			if not g.lex[v] then
+			if not parser.isLexRule(v) then
 				p = autoskip(p, g)
 			end
 			peg[v] = makep(p)

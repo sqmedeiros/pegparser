@@ -81,6 +81,10 @@ defs.newThrow = function (lab)
 	return newNode('throw', lab)
 end
 
+defs.newConstCap = function (p)
+	return newNode('constCap', p)
+end
+
 defs.newPosCap = function ()
 	return newNode('posCap')
 end
@@ -123,15 +127,19 @@ defs.newSuffix = function (p, ...)
 	return p
 end 
 
-local function isLexRule (s)
+defs.isLexRule = function (s)
 	local ch = string.sub(s, 1, 1)
 	return ch >= 'A' and ch <= 'Z'
+end
+
+defs.isErrRule = function (s)
+	return string.find(s, 'Err_')
 end
 
 defs.newRule = function (k, v)
 	g.prules[k] = v
 	g.plist[#g.plist + 1] = k
-	if isLexRule(k) then
+	if defs.isLexRule(k) then
 		g.lex[k] = true
 		for k, v in pairs(lasttk) do
 			g.tokens[k] = nil

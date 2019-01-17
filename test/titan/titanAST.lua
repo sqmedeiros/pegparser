@@ -84,19 +84,7 @@ local gast = ast.buildAST(g)
 print("With annotations to build AST")
 print(pretty.printg(gast), '\n')
 
-print("Regular Annotation (SBLP paper)")
-local glabRegular = recovery.addlab(g, true, false)
-print(pretty.printg(glabRegular, true), '\n')
-
-print("Conservative Annotation (Hard)")
-local glabHard = recovery.addlab(g, true, true)
-print(pretty.printg(glabHard, true), '\n')
-
-print("Conservative Annotation (Soft)")
-local glabSoft = recovery.addlab(g, true, 'soft')
-print(pretty.printg(glabSoft, true), '\n')
-
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'	
 for file in lfs.dir(dir) do
@@ -111,6 +99,8 @@ for file in lfs.dir(dir) do
 			line, col = re.calcline(s, pos)
 		end
 		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
+		ast.printAST(r)
+		print()
 	end
 end
 

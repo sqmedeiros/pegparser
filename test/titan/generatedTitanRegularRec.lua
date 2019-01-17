@@ -6,6 +6,7 @@ local first = require 'first'
 local recovery = require 'recovery'
 local lfs = require'lfs'
 local re = require'relabel'
+local ast = require'ast'
 
 -- Remove Err_006 ('exp' in rule toplevelvar), Err_012 ('import' in rule import)
 
@@ -166,7 +167,7 @@ print("Conservative Annotation (Soft)")
 local glabSoft = recovery.addlab(g, true, 'soft')
 print(pretty.printg(glabSoft, true), '\n')
 
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'	
 for file in lfs.dir(dir) do
@@ -204,6 +205,7 @@ for file in lfs.dir(dir) do
 			tfail[ifail] = { file = file, lab = lab, line = line, col = col }
 		else
 			irec = irec + 1
+			ast.printAST(r)
 		end
 		io.write('\n')
 		--assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)

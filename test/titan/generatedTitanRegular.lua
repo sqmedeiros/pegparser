@@ -84,7 +84,7 @@ print("Conservative Annotation (Soft)")
 local glabSoft = recovery.addlab(g, true, 'soft')
 print(pretty.printg(glabSoft, true), '\n')
 
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'	
 for file in lfs.dir(dir) do
@@ -98,6 +98,7 @@ for file in lfs.dir(dir) do
 		if not r then
 			line, col = re.calcline(s, pos)
 		end
+		print("r = ", r)
 		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
 	end
 end

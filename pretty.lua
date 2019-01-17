@@ -11,6 +11,8 @@ local function printp (p, flag)
 		return "."
 	elseif p.tag == 'set' then
 		return "[" .. table.concat(p.p1) .. "]"
+	elseif p.tag == 'constCap' then
+		return '{:const ' .. p.p1 .. '}'
 	elseif p.tag == 'posCap' then
 		return '{}'
 	elseif p.tag == 'simpCap' then
@@ -18,7 +20,7 @@ local function printp (p, flag)
 	elseif p.tag == 'tabCap' then
 		return '{|' .. printp(p.p1, flag) .. '|}'
 	elseif p.tag == 'nameCap' then
-		return '{:' .. printp(p.p1, flag) .. ': ' .. printp(p.p2, flag) .. ':}'
+		return '{:' .. p.p1 .. ': ' .. printp(p.p2, flag) .. ':}'
 	elseif p.tag == 'anonCap' then
 		return '{:' .. printp(p.p1, flag) .. ':}'
 	elseif p.tag == 'var' then
