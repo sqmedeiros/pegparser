@@ -1,26 +1,13 @@
 local m = require 'init'
-local recovery = require 'recovery'
+local errinfo = require 'syntax_errors'
 local pretty = require 'pretty'
 local coder = require 'coder'
-local lfs = require 'lfs'
-local re = require 'relabel'
-local first = require'first'
+local first = require 'first'
+local recovery = require 'recovery'
+local lfs = require'lfs'
+local re = require'relabel'
 
-local function assertErr (p, s, lab)
-  local r, l, pos = p:match(s)
-  assert(not r, "Did not fail: r = " .. tostring(r))
-  if lab then
-    assert(l == lab, "Expected label '" .. tostring(lab) .. "' but got " .. tostring(l))
-  end
-end
-
-local function assertOk(p, s)
-  local r, l, pos = p:match(s)
-  assert(r, 'Failed: label = ' .. tostring(l) .. ', pos = ' .. tostring(pos))
-  assert(r == #s + 1, "Matched until " .. r)
-end
-
-local tree, rules =  m.match[[
+g = [[
 compilation           <-  SKIP compilationUnit (!.)^EndErr
 
 -- JLS 4 Types, Values and Variables
@@ -232,7 +219,7 @@ normalAnnotation      <-  qualIdent '(' elementValuePairList* ')'
 
 elementValuePairList  <-  elementValuePair (',' elementValuePair^ElementValuePairErr)*
 
-elementValuePair      <-  Identifier '=' (!'=')^EqAvaliableErr2 elementValue^ElementValueErr2
+elementValuePair      <-  Identifier '=' !'=' elementValue^ElementValueErr2
 
 elementValue          <-  conditionalExpression         /
                           elementValueArrayInitializer  /
@@ -240,7 +227,7 @@ elementValue          <-  conditionalExpression         /
 
 elementValueArrayInitializer  <-  '{' elementValueList? ','? '}'^CurRBrackErr6
 
-elementValueList      <-  elementValue (',' elementValue^ElementValueErr3)*
+elementValueList      <-  elementValue (',' elementValue)*
 
 markerAnnotation      <-  qualIdent
 
@@ -282,7 +269,7 @@ statement            <-  block                                             /
                          'assert' expression^ExpressionErr2 (':' expression^ExpressionErr3)? ';'^SemiErr14 /
                          ';'                                                 /
                          statementExpression ';'^SemiErr15                   /
-                         Identifier ':'!':'^ColonErr1 statement^StatementErr5
+                         Identifier ':'^ColonErr1 statement^StatementErr5
 
 statementExpression   <-  assignment                           /
                           ('++' / '--') (primary / qualIdent)^AfterIteratorSymbolErr  /
@@ -291,7 +278,7 @@ statementExpression   <-  assignment                           /
 
 switchBlock           <-  '{' switchBlockStatementGroup* switchLabel* '}'^CurRBrackErr9
 
-switchBlockStatementGroup  <-  switchLabels blockStatements^BlockStatementsErr
+switchBlockStatementGroup  <-  switchLabels blockStatements
 
 switchLabels          <-  switchLabel switchLabel*
 
@@ -346,8 +333,8 @@ primaryBase           <-  'this'
                                     / '.' ( 'this'
                                           / 'new' classCreator^ClassCreatorErr1
                                           / typeArguments Identifier^IdErr10 arguments^ArgumentsErr3
-                                          / 'super' '.' typeArguments? Identifier^IdErr11 arguments^ArgumentsErr4
-                                          / 'super' '.' Identifier
+                                          / 'super' '.' typeArguments? Identifier arguments
+                                          / 'super' '.' Identifier^IdErr11
                                           / 'super' '::' typeArguments? Identifier^IdErr12 arguments^ArgumentsErr5
                                           )
                                     / ('[' ']'^RBrackErr2)* '.' 'class'
@@ -397,7 +384,7 @@ unaryExpressionNotPlusMinus  <-  '~' unaryExpression^UnaryExpressionErr3        
 
 castExpression        <-  '(' primitiveType ')'^RParErr11 unaryExpression^UnaryExpressionErr5 /
                           '(' referenceType additionalBound* ')' lambdaExpression /
-                          '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus^UnaryExpressionNotPlusMinusErr
+                          '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
 
 infixExpression       <-  unaryExpression ((InfixOperator unaryExpression^UnaryExpressionErr6) /
                                            ('instanceof' referenceType^ReferenceTypeErr3))*
@@ -509,30 +496,13 @@ Token                <-  keywords  /  Identifier  /  Literal  /  .
 COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]]
 
-local p = coder.makeg(tree, rules)
+local g = m.match(g)
+local p = coder.makeg(g)
 
-print ">>> Testing correct programs..."
-local dir = lfs.currentdir() .. '/test/java18/test/yes/'	
+local dir = lfs.currentdir() .. '/test/java18/test/yes/' 
 for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file - 3) == 'java' then
-		print("file = ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-		end
-		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
-
-print ">>> Testing labels with incorrect programs..."
-dir = lfs.currentdir() .. '/test/java18/test/no/'
-for file in lfs.dir(dir) do
-  if file ~= '.' and file ~= '..' and string.sub(file, #file - 3) == 'java' then
-    print("file = ", file)
+  if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'java' + 1) == 'java' then
+    print("Yes: ", file)
     local f = io.open(dir .. file)
     local s = f:read('a')
     f:close()
@@ -541,6 +511,29 @@ for file in lfs.dir(dir) do
     if not r then
       line, col = re.calcline(s, pos)
     end
-    assert(r == nil and tostring(lab) .. '.java' == file, file .. ': Label: ' .. tostring(lab or 'The program is correct!') .. '  Line: ' .. line .. ' Col: ' .. col)
+    assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
+  end
+end
+
+local function matchlabel (s1, s2)
+  return string.match(string.lower(s1), string.lower(s2))
+end
+
+local dir = lfs.currentdir() .. '/test/java18/test/no/'  
+for file in lfs.dir(dir) do
+  if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'java' + 1) == 'java' then
+    print("No: ", file)
+    local f = io.open(dir .. file)
+    local s = f:read('a')
+    f:close()
+    local r, lab, pos = p:match(s)
+    io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
+    local line, col = '', ''
+    if not r then
+      line, col = re.calcline(s, pos)
+      io.write(' line: ' .. line .. ' col: ' .. col)
+    end
+    io.write('\n')
+    assert(r == nil and (matchlabel(file, lab) or matchlabel(file, 'AssignAssign')), file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
   end
 end

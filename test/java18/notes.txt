@@ -1,7 +1,12 @@
 Java 8:
 
 * Gramática anotada manualmente:
-	- 180 labels anotadas
+	- 175 labels anotadas
+		Removi BlockStatementsErr na regra switchBlockStatementGroup
+		Removi ArgumentsErr4 na regra primaryBase
+		Removi UnaryExpressionNotPlusMinusErr na regra castExpression
+		Removi ElementValueErr3 na regra elementValueList
+		Removi EqAvaliableErr2 na regra elementValuePair
 
 * Algoritmo Regular:
 	- 181 labels anotadas
