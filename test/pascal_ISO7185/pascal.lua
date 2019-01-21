@@ -6,8 +6,8 @@ local first = require 'first'
 local recovery = require 'recovery'
 
 g = [[
-	program 				<- head decs block Dot (!.)
-	head					<- Sp PROGRAM Id (LPar ids RPar)? Semi
+	program 				<- SKIP head decs block Dot (!.)
+	head					<- PROGRAM Id (LPar ids RPar)? Semi
 	decs 					<- labelDecs constDefs typeDefs varDecs procAndFuncDecs
 	ids			 			<- Id (Comma Id)*
 
@@ -81,32 +81,31 @@ g = [[
 	setConstructor 			<- LBrack (memberDesignator (Comma memberDesignator)*)? RBrack
 	memberDesignator 		<- expr (DotDot expr)?
 
-	AddOp					<- ('+' / '-'/ OR) Sp
-	Assign 					<- ':=' Sp
-	Dot						<- '.' Sp
-	DotDot 					<- '..' Sp
+	AddOp					<- ('+' / '-'/ OR)
+	Assign 					<- ':='
+	Dot						<- '.'
+	DotDot 					<- '..'
 	CloseComment 			<- '*)' / '}'
-	Colon			 		<- ':' Sp
-	Comma					<- ',' Sp
-	Comments 				<- OpenComment (!CloseComment .)* CloseComment
-	Eq 						<- '=' Sp
+	Colon			 		<- ':'
+	Comma					<- ','
+	COMMENT 				<- OpenComment (!CloseComment .)* CloseComment
+	Eq 						<- '='
 	BodyId 					<- [a-zA-Z0-9]
-	Id						<- !Reserved [a-zA-Z][a-zA-Z0-9]* Sp
-	LBrack 					<- '[' Sp
-	LPar					<- '(' Sp
-	MultOp 					<- ('*' / '/' / DIV / MOD / AND) Sp
+	Id						<- !Reserved [a-zA-Z][a-zA-Z0-9]*
+	LBrack 					<- '['
+	LPar					<- '('
+	MultOp 					<- ('*' / '/' / DIV / MOD / AND)
 	OpenComment 			<- '(*' / '{'
-	Pointer 			 	<- '^' Sp
-	RBrack 					<- ']' Sp
-	RelOp 					<- ('<=' / '=' / '<>' / '>=' / '>' / '<' / IN) Sp
-	RPar 					<- ')' Sp
-	Semi 					<- ';' Sp
-	Sign 					<- ('+'/'-') Sp
-	Sp						<- (' ' / %nl / Comments)*
-	String					<- "'" [^']* "'" Sp
-	UInt 					<- [0-9]+ Sp
+	Pointer 			 	<- '^'
+	RBrack 					<- ']'
+	RelOp 					<- ('<=' / '=' / '<>' / '>=' / '>' / '<' / IN)
+	RPar 					<- ')'
+	Semi 					<- ';'
+	Sign 					<- ('+'/'-')
+	String					<- "'" (!"'" .)* "'"
+	UInt 					<- [0-9]+
 	UNumber 				<- UReal / UInt
-	UReal 					<- [0-9]+ ('.' [0-9]+ (E ('+'/'-') [0-9]+)? / E ('+'/'-') [0-9]+) Sp
+	UReal 					<- [0-9]+ ('.' [0-9]+ (E ('+'/'-') [0-9]+)? / E ('+'/'-') [0-9]+)
 
 	Reserved <- (
 		AND / ARRAY /
@@ -131,41 +130,41 @@ g = [[
 		WHILE / WITH
 	)
 
-	AND 			<- A N D 				!BodyId Sp
-	ARRAY 			<- A R R A Y 			!BodyId Sp
-	BEGIN 			<- B E G I N 			!BodyId Sp
-	CASE 			<- C A S E 				!BodyId Sp
-	CONST 			<- C O N S T 			!BodyId Sp
-	DIV 			<- D I V 				!BodyId Sp
-	DO 				<- D O 					!BodyId Sp
-	DOWNTO 			<- D O W N T O 			!BodyId Sp
-	ELSE			<- E L S E 				!BodyId Sp
-	END				<- E N D 				!BodyId Sp
-	FILE 			<- F I L E 				!BodyId Sp
-	FOR 			<- F O R 				!BodyId Sp
-	FUNCTION 		<- F U N C T I O N 		!BodyId Sp
-	GOTO 			<- G O T O 				!BodyId Sp
-	IF 				<- I F 					!BodyId Sp
-	IN 				<- I N 					!BodyId Sp
-	LABEL 			<- L A B E L 			!BodyId Sp
-	MOD 			<- M O D 				!BodyId Sp
-	NIL 			<- N I L 				!BodyId Sp
-	NOT 			<- N O T 				!BodyId Sp
-	OF 				<- O F 					!BodyId	Sp
-	OR 				<- O R 					!BodyId Sp
-	PACKED 			<- P A C K E D 			!BodyId Sp
-	PROCEDURE 		<- P R O C E D U R E 	!BodyId Sp
-	PROGRAM 		<- P R O G R A M 		!BodyId Sp
-	RECORD 			<- R E C O R D 			!BodyId Sp
-	REPEAT 			<- R E P E A T 			!BodyId Sp
-	SET 			<- S E T 				!BodyId Sp
-	THEN 			<- T H E N 				!BodyId Sp
-	TO 				<- T O 					!BodyId Sp
-	TYPE 			<- T Y P E 				!BodyId Sp
-	UNTIL 			<- U N T I L 			!BodyId Sp
-	VAR 			<- V A R 				!BodyId Sp
-	WHILE 			<- W H I L E 			!BodyId Sp
-	WITH 			<- W I T H 				!BodyId Sp
+	AND 			<- A N D 				!BodyId
+	ARRAY 			<- A R R A Y 			!BodyId
+	BEGIN 			<- B E G I N 			!BodyId
+	CASE 			<- C A S E 				!BodyId
+	CONST 			<- C O N S T 			!BodyId
+	DIV 			<- D I V 				!BodyId
+	DO 				<- D O 					!BodyId
+	DOWNTO 			<- D O W N T O 			!BodyId
+	ELSE			<- E L S E 				!BodyId
+	END				<- E N D 				!BodyId
+	FILE 			<- F I L E 				!BodyId
+	FOR 			<- F O R 				!BodyId
+	FUNCTION 		<- F U N C T I O N 		!BodyId
+	GOTO 			<- G O T O 				!BodyId
+	IF 				<- I F 					!BodyId
+	IN 				<- I N 					!BodyId
+	LABEL 			<- L A B E L 			!BodyId
+	MOD 			<- M O D 				!BodyId
+	NIL 			<- N I L 				!BodyId
+	NOT 			<- N O T 				!BodyId
+	OF 				<- O F 					!BodyId
+	OR 				<- O R 					!BodyId
+	PACKED 			<- P A C K E D 			!BodyId
+	PROCEDURE 		<- P R O C E D U R E 	!BodyId
+	PROGRAM 		<- P R O G R A M 		!BodyId
+	RECORD 			<- R E C O R D 			!BodyId
+	REPEAT 			<- R E P E A T 			!BodyId
+	SET 			<- S E T 				!BodyId
+	THEN 			<- T H E N 				!BodyId
+	TO 				<- T O 					!BodyId
+	TYPE 			<- T Y P E 				!BodyId
+	UNTIL 			<- U N T I L 			!BodyId
+	VAR 			<- V A R 				!BodyId
+	WHILE 			<- W H I L E 			!BodyId
+	WITH 			<- W I T H 				!BodyId
 	
 	A			<- 'a' / 'A'
 	B			<- 'b' / 'B'

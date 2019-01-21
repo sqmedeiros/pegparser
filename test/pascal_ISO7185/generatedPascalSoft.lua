@@ -10,16 +10,12 @@ local re = require'relabel'
 --[[
 	Removed:
 		- Err_024 (DotDot in rule subrangeType)
-		- Err_066 (Assign in rule assignStmt)
-		- Err_073 (RPar in rule params)
-		- Err_064 (END in rule block)
-		- Err_001 (block in rule program)
-		- Err_101 (params in rule funcCall)
-
+    - Err_056 (Assign in rule assignStmt)
+    - Err_089 (params in rule funcCall)
 ]]
 
 g = [[
-program         <-  SKIP head decs block Dot^Err_002 !.
+program         <-  SKIP head decs block^Err_001 Dot^Err_002 !.
 head            <-  PROGRAM Id^Err_003 (LPar ids^Err_004 RPar^Err_005)? Semi^Err_006
 decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
 ids             <-  Id (Comma Id^Err_007)*
@@ -46,46 +42,46 @@ fileType        <-  FILE OF^Err_035 type^Err_036
 ordinalType     <-  newOrdinalType  /  Id
 fieldList       <-  ((fixedPart (Semi variantPart)?  /  variantPart) Semi?)?
 fixedPart       <-  varDec (Semi varDec)*
-variantPart     <-  CASE Id^Err_037 (Colon Id^Err_038)? OF^Err_039 variant^Err_040 (Semi variant)*
-variant         <-  consts Colon^Err_041 LPar^Err_042 fieldList RPar^Err_043
-consts          <-  const (Comma const^Err_044)*
-varDecs         <-  (VAR varDec^Err_045 Semi^Err_046 (varDec Semi^Err_047)*)?
-varDec          <-  ids Colon^Err_048 type^Err_049
-procAndFuncDecs <-  ((procDec  /  funcDec) Semi^Err_050)*
-procDec         <-  procHeading Semi^Err_051 (decs block  /  Id)^Err_052
-procHeading     <-  PROCEDURE Id^Err_053 formalParams?
-funcDec         <-  funcHeading Semi^Err_054 (decs block  /  Id)^Err_055
-funcHeading     <-  FUNCTION Id^Err_056 formalParams? Colon^Err_057 type^Err_058
-formalParams    <-  LPar formalParamsSection^Err_059 (Semi formalParamsSection^Err_060)* RPar^Err_061
-formalParamsSection <-  VAR? ids Colon^Err_062 Id^Err_063  /  procHeading  /  funcHeading
-block           <-  BEGIN stmts END
+variantPart     <-  CASE Id (Colon Id)? OF variant (Semi variant)*
+variant         <-  consts Colon LPar fieldList RPar
+consts          <-  const (Comma const^Err_037)*
+varDecs         <-  (VAR varDec^Err_038 Semi^Err_039 (varDec Semi^Err_040)*)?
+varDec          <-  ids Colon type
+procAndFuncDecs <-  ((procDec  /  funcDec) Semi^Err_041)*
+procDec         <-  procHeading Semi^Err_042 (decs block  /  Id)^Err_043
+procHeading     <-  PROCEDURE Id^Err_044 formalParams?
+funcDec         <-  funcHeading Semi^Err_045 (decs block  /  Id)^Err_046
+funcHeading     <-  FUNCTION Id^Err_047 formalParams? Colon^Err_048 type^Err_049
+formalParams    <-  LPar formalParamsSection^Err_050 (Semi formalParamsSection^Err_051)* RPar^Err_052
+formalParamsSection <-  VAR? ids Colon^Err_053 Id^Err_054  /  procHeading  /  funcHeading
+block           <-  BEGIN stmts END^Err_055
 stmts           <-  stmt (Semi stmt)*
-stmt            <-  (label Colon^Err_065)? (simpleStmt  /  structuredStmt)?
+stmt            <-  (label Colon)? (simpleStmt  /  structuredStmt)?
 simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
-assignStmt      <-  var Assign expr^Err_067
-var             <-  Id (LBrack expr^Err_068 (Comma expr^Err_069)* RBrack^Err_070  /  Dot Id^Err_071  /  Pointer)*
+assignStmt      <-  var Assign expr^Err_057
+var             <-  Id (LBrack expr^Err_058 (Comma expr^Err_059)* RBrack^Err_060  /  Dot Id^Err_061  /  Pointer)*
 procStmt        <-  Id params?
-params          <-  LPar (param (Comma param^Err_072)*)? RPar
-param           <-  expr (Colon expr)? (Colon expr^Err_074)?
-gotoStmt        <-  GOTO label^Err_075
+params          <-  LPar (param (Comma param^Err_062)*)? RPar^Err_063
+param           <-  expr (Colon expr)? (Colon expr^Err_064)?
+gotoStmt        <-  GOTO label^Err_065
 structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
 conditionalStmt <-  ifStmt  /  caseStmt
-ifStmt          <-  IF expr^Err_076 THEN^Err_077 stmt (ELSE stmt)?
-caseStmt        <-  CASE expr^Err_078 OF^Err_079 caseListElement^Err_080 (Semi caseListElement)* Semi? END^Err_081
-caseListElement <-  consts Colon^Err_082 stmt
+ifStmt          <-  IF expr^Err_066 THEN^Err_067 stmt (ELSE stmt)?
+caseStmt        <-  CASE expr^Err_068 OF^Err_069 caseListElement^Err_070 (Semi caseListElement)* Semi? END^Err_071
+caseListElement <-  consts Colon stmt
 repetitiveStmt  <-  repeatStmt  /  whileStmt  /  forStmt
-repeatStmt      <-  REPEAT stmts UNTIL^Err_083 expr^Err_084
-whileStmt       <-  WHILE expr^Err_085 DO^Err_086 stmt
-forStmt         <-  FOR Id^Err_087 Assign^Err_088 expr^Err_089 (TO  /  DOWNTO)^Err_090 expr^Err_091 DO^Err_092 stmt
-withStmt        <-  WITH var^Err_093 (Comma var^Err_094)* DO^Err_095 stmt
-expr            <-  simpleExpr (RelOp simpleExpr^Err_096)?
-simpleExpr      <-  Sign? term (AddOp term^Err_097)*
-term            <-  factor (MultOp factor^Err_098)*
-factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar expr^Err_099 RPar^Err_100)
+repeatStmt      <-  REPEAT stmts UNTIL^Err_072 expr^Err_073
+whileStmt       <-  WHILE expr^Err_074 DO^Err_075 stmt
+forStmt         <-  FOR Id^Err_076 Assign^Err_077 expr^Err_078 (TO  /  DOWNTO)^Err_079 expr^Err_080 DO^Err_081 stmt
+withStmt        <-  WITH var^Err_082 (Comma var^Err_083)* DO^Err_084 stmt
+expr            <-  simpleExpr (RelOp simpleExpr)?
+simpleExpr      <-  Sign? term (AddOp term^Err_085)*
+term            <-  factor (MultOp factor^Err_086)*
+factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar expr^Err_087 RPar^Err_088)
 unsignedConst   <-  UNumber  /  String  /  Id  /  NIL
 funcCall        <-  Id params
-setConstructor  <-  LBrack (memberDesignator (Comma memberDesignator^Err_102)*)? RBrack^Err_103
-memberDesignator <-  expr (DotDot expr^Err_104)?
+setConstructor  <-  LBrack (memberDesignator (Comma memberDesignator^Err_090)*)? RBrack^Err_091
+memberDesignator <-  expr (DotDot expr^Err_092)?
 AddOp           <-  '+'  /  '-'  /  OR
 Assign          <-  ':='
 Dot             <-  '.'
@@ -93,7 +89,7 @@ DotDot          <-  '..'
 CloseComment    <-  '*)'  /  '}'
 Colon           <-  ':'
 Comma           <-  ','
-COMMENT        	<-  OpenComment (!CloseComment .)* CloseComment
+COMMENT         <-  OpenComment (!CloseComment .)* CloseComment
 Eq              <-  '='
 BodyId          <-  [a-zA-Z0-9]
 Id              <-  !Reserved [a-zA-Z] [a-zA-Z0-9]*
@@ -176,6 +172,8 @@ Z               <-  'z'  /  'Z'
 ]]
 
 local g = m.match(g)
+
+
 
 local p = coder.makeg(g)
 

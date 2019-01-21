@@ -11,16 +11,12 @@ local ast = require'ast'
 --[[
 	Removed:
 		- Err_024 (DotDot in rule subrangeType)
-		- Err_066 (Assign in rule assignStmt)
-		- Err_073 (RPar in rule params)
-		- Err_064 (END in rule block)
-		- Err_001 (block in rule program)
-		- Err_101 (params in rule funcCall)
-
+    - Err_056 (Assign in rule assignStmt)
+    - Err_089 (params in rule funcCall)
 ]]
 
 g = [[
-program         <-  SKIP head decs block Dot^Err_002 !.
+program         <-  SKIP head decs block^Err_001 Dot^Err_002 !.
 head            <-  PROGRAM Id^Err_003 (LPar ids^Err_004 RPar^Err_005)? Semi^Err_006
 decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
 ids             <-  Id (Comma Id^Err_007)*
@@ -47,46 +43,46 @@ fileType        <-  FILE OF^Err_035 type^Err_036
 ordinalType     <-  newOrdinalType  /  Id
 fieldList       <-  ((fixedPart (Semi variantPart)?  /  variantPart) Semi?)?
 fixedPart       <-  varDec (Semi varDec)*
-variantPart     <-  CASE Id^Err_037 (Colon Id^Err_038)? OF^Err_039 variant^Err_040 (Semi variant)*
-variant         <-  consts Colon^Err_041 LPar^Err_042 fieldList RPar^Err_043
-consts          <-  const (Comma const^Err_044)*
-varDecs         <-  (VAR varDec^Err_045 Semi^Err_046 (varDec Semi^Err_047)*)?
-varDec          <-  ids Colon^Err_048 type^Err_049
-procAndFuncDecs <-  ((procDec  /  funcDec) Semi^Err_050)*
-procDec         <-  procHeading Semi^Err_051 (decs block  /  Id)^Err_052
-procHeading     <-  PROCEDURE Id^Err_053 formalParams?
-funcDec         <-  funcHeading Semi^Err_054 (decs block  /  Id)^Err_055
-funcHeading     <-  FUNCTION Id^Err_056 formalParams? Colon^Err_057 type^Err_058
-formalParams    <-  LPar formalParamsSection^Err_059 (Semi formalParamsSection^Err_060)* RPar^Err_061
-formalParamsSection <-  VAR? ids Colon^Err_062 Id^Err_063  /  procHeading  /  funcHeading
-block           <-  BEGIN stmts END
+variantPart     <-  CASE Id (Colon Id)? OF variant (Semi variant)*
+variant         <-  consts Colon LPar fieldList RPar
+consts          <-  const (Comma const^Err_037)*
+varDecs         <-  (VAR varDec^Err_038 Semi^Err_039 (varDec Semi^Err_040)*)?
+varDec          <-  ids Colon type
+procAndFuncDecs <-  ((procDec  /  funcDec) Semi^Err_041)*
+procDec         <-  procHeading Semi^Err_042 (decs block  /  Id)^Err_043
+procHeading     <-  PROCEDURE Id^Err_044 formalParams?
+funcDec         <-  funcHeading Semi^Err_045 (decs block  /  Id)^Err_046
+funcHeading     <-  FUNCTION Id^Err_047 formalParams? Colon^Err_048 type^Err_049
+formalParams    <-  LPar formalParamsSection^Err_050 (Semi formalParamsSection^Err_051)* RPar^Err_052
+formalParamsSection <-  VAR? ids Colon^Err_053 Id^Err_054  /  procHeading  /  funcHeading
+block           <-  BEGIN stmts END^Err_055
 stmts           <-  stmt (Semi stmt)*
-stmt            <-  (label Colon^Err_065)? (simpleStmt  /  structuredStmt)?
+stmt            <-  (label Colon)? (simpleStmt  /  structuredStmt)?
 simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
-assignStmt      <-  var Assign expr^Err_067
-var             <-  Id (LBrack expr^Err_068 (Comma expr^Err_069)* RBrack^Err_070  /  Dot Id^Err_071  /  Pointer)*
+assignStmt      <-  var Assign expr^Err_057
+var             <-  Id (LBrack expr^Err_058 (Comma expr^Err_059)* RBrack^Err_060  /  Dot Id^Err_061  /  Pointer)*
 procStmt        <-  Id params?
-params          <-  LPar (param (Comma param^Err_072)*)? RPar
-param           <-  expr (Colon expr)? (Colon expr^Err_074)?
-gotoStmt        <-  GOTO label^Err_075
+params          <-  LPar (param (Comma param^Err_062)*)? RPar^Err_063
+param           <-  expr (Colon expr)? (Colon expr^Err_064)?
+gotoStmt        <-  GOTO label^Err_065
 structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
 conditionalStmt <-  ifStmt  /  caseStmt
-ifStmt          <-  IF expr^Err_076 THEN^Err_077 stmt (ELSE stmt)?
-caseStmt        <-  CASE expr^Err_078 OF^Err_079 caseListElement^Err_080 (Semi caseListElement)* Semi? END^Err_081
-caseListElement <-  consts Colon^Err_082 stmt
+ifStmt          <-  IF expr^Err_066 THEN^Err_067 stmt (ELSE stmt)?
+caseStmt        <-  CASE expr^Err_068 OF^Err_069 caseListElement^Err_070 (Semi caseListElement)* Semi? END^Err_071
+caseListElement <-  consts Colon stmt
 repetitiveStmt  <-  repeatStmt  /  whileStmt  /  forStmt
-repeatStmt      <-  REPEAT stmts UNTIL^Err_083 expr^Err_084
-whileStmt       <-  WHILE expr^Err_085 DO^Err_086 stmt
-forStmt         <-  FOR Id^Err_087 Assign^Err_088 expr^Err_089 (TO  /  DOWNTO)^Err_090 expr^Err_091 DO^Err_092 stmt
-withStmt        <-  WITH var^Err_093 (Comma var^Err_094)* DO^Err_095 stmt
-expr            <-  simpleExpr (RelOp simpleExpr^Err_096)?
-simpleExpr      <-  Sign? term (AddOp term^Err_097)*
-term            <-  factor (MultOp factor^Err_098)*
-factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar expr^Err_099 RPar^Err_100)
+repeatStmt      <-  REPEAT stmts UNTIL^Err_072 expr^Err_073
+whileStmt       <-  WHILE expr^Err_074 DO^Err_075 stmt
+forStmt         <-  FOR Id^Err_076 Assign^Err_077 expr^Err_078 (TO  /  DOWNTO)^Err_079 expr^Err_080 DO^Err_081 stmt
+withStmt        <-  WITH var^Err_082 (Comma var^Err_083)* DO^Err_084 stmt
+expr            <-  simpleExpr (RelOp simpleExpr)?
+simpleExpr      <-  Sign? term (AddOp term^Err_085)*
+term            <-  factor (MultOp factor^Err_086)*
+factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar expr^Err_087 RPar^Err_088)
 unsignedConst   <-  UNumber  /  String  /  Id  /  NIL
 funcCall        <-  Id params
-setConstructor  <-  LBrack (memberDesignator (Comma memberDesignator^Err_102)*)? RBrack^Err_103
-memberDesignator <-  expr (DotDot expr^Err_104)?
+setConstructor  <-  LBrack (memberDesignator (Comma memberDesignator^Err_090)*)? RBrack^Err_091
+memberDesignator <-  expr (DotDot expr^Err_092)?
 AddOp           <-  '+'  /  '-'  /  OR
 Assign          <-  ':='
 Dot             <-  '.'
@@ -94,7 +90,7 @@ DotDot          <-  '..'
 CloseComment    <-  '*)'  /  '}'
 Colon           <-  ':'
 Comma           <-  ','
-COMMENT        	<-  OpenComment (!CloseComment .)* CloseComment
+COMMENT         <-  OpenComment (!CloseComment .)* CloseComment
 Eq              <-  '='
 BodyId          <-  [a-zA-Z0-9]
 Id              <-  !Reserved [a-zA-Z] [a-zA-Z0-9]*
@@ -176,6 +172,7 @@ Y               <-  'y'  /  'Y'
 Z               <-  'z'  /  'Z'
 Token           <-  Z  /  Y  /  X  /  WITH  /  WHILE  /  W  /  VAR  /  V  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  U  /  TYPE  /  TO  /  THEN  /  T  /  String  /  Sign  /  Semi  /  SET  /  S  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  R  /  Q  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  P  /  OpenComment  /  OR  /  OF  /  O  /  NOT  /  NIL  /  N  /  MultOp  /  MOD  /  M  /  LPar  /  LBrack  /  LABEL  /  L  /  K  /  J  /  Id  /  IN  /  IF  /  I  /  H  /  GOTO  /  G  /  FUNCTION  /  FOR  /  FILE  /  F  /  Eq  /  END  /  ELSE  /  E  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  D  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  C  /  BodyId  /  BEGIN  /  B  /  Assign  /  AddOp  /  ARRAY  /  AND  /  A
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
+Err_001         <-  (!Dot EatToken)*
 Err_002         <-  (!(!.) EatToken)*
 Err_003         <-  (!(Semi  /  LPar) EatToken)*
 Err_004         <-  (!RPar EatToken)*
@@ -210,73 +207,65 @@ Err_033         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
 Err_034         <-  (!(Semi  /  RPar  /  END) EatToken)*
 Err_035         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
 Err_036         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_037         <-  (!(OF  /  Colon) EatToken)*
-Err_038         <-  (!OF EatToken)*
-Err_039         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_040         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_041         <-  (!LPar EatToken)*
-Err_042         <-  (!(RPar  /  Id  /  CASE) EatToken)*
-Err_043         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_044         <-  (!Colon EatToken)*
-Err_045         <-  (!Semi EatToken)*
-Err_046         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_047         <-  (!(PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
+Err_037         <-  (!Colon EatToken)*
+Err_038         <-  (!Semi EatToken)*
+Err_039         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_040         <-  (!(PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
+Err_041         <-  (!BEGIN EatToken)*
+Err_042         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_043         <-  (!Semi EatToken)*
+Err_044         <-  (!(Semi  /  RPar  /  LPar) EatToken)*
+Err_045         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_046         <-  (!Semi EatToken)*
+Err_047         <-  (!(LPar  /  Colon) EatToken)*
 Err_048         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_049         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_050         <-  (!BEGIN EatToken)*
-Err_051         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_052         <-  (!Semi EatToken)*
-Err_053         <-  (!(Semi  /  RPar  /  LPar) EatToken)*
-Err_054         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_055         <-  (!Semi EatToken)*
-Err_056         <-  (!(LPar  /  Colon) EatToken)*
-Err_057         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_058         <-  (!(Semi  /  RPar) EatToken)*
-Err_059         <-  (!(Semi  /  RPar) EatToken)*
-Err_060         <-  (!RPar EatToken)*
-Err_061         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
-Err_062         <-  (!Id EatToken)*
-Err_063         <-  (!(Semi  /  RPar) EatToken)*
-Err_065         <-  (!(WITH  /  WHILE  /  UNTIL  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_067         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_068         <-  (!(RBrack  /  Comma) EatToken)*
-Err_069         <-  (!RBrack EatToken)*
-Err_070         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
-Err_071         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
-Err_072         <-  (!RPar EatToken)*
-Err_074         <-  (!(RPar  /  Comma) EatToken)*
-Err_075         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_076         <-  (!THEN EatToken)*
-Err_077         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_078         <-  (!OF EatToken)*
-Err_079         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_080         <-  (!(Semi  /  END) EatToken)*
-Err_081         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_082         <-  (!(WITH  /  WHILE  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  CASE  /  BEGIN) EatToken)*
-Err_083         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_084         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_085         <-  (!DO EatToken)*
-Err_086         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_087         <-  (!Assign EatToken)*
-Err_088         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_089         <-  (!(TO  /  DOWNTO) EatToken)*
-Err_090         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_091         <-  (!DO EatToken)*
-Err_092         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_093         <-  (!(DO  /  Comma) EatToken)*
-Err_094         <-  (!DO EatToken)*
-Err_095         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_096         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
-Err_097         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
-Err_098         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_099         <-  (!RPar EatToken)*
-Err_100         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_102         <-  (!RBrack EatToken)*
-Err_103         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_104         <-  (!(RBrack  /  Comma) EatToken)*
+Err_049         <-  (!(Semi  /  RPar) EatToken)*
+Err_050         <-  (!(Semi  /  RPar) EatToken)*
+Err_051         <-  (!RPar EatToken)*
+Err_052         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
+Err_053         <-  (!Id EatToken)*
+Err_054         <-  (!(Semi  /  RPar) EatToken)*
+Err_055         <-  (!(UNTIL  /  Semi  /  END  /  ELSE  /  Dot) EatToken)*
+Err_057         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_058         <-  (!(RBrack  /  Comma) EatToken)*
+Err_059         <-  (!RBrack EatToken)*
+Err_060         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
+Err_061         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
+Err_062         <-  (!RPar EatToken)*
+Err_063         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_064         <-  (!(RPar  /  Comma) EatToken)*
+Err_065         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_066         <-  (!THEN EatToken)*
+Err_067         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_068         <-  (!OF EatToken)*
+Err_069         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
+Err_070         <-  (!(Semi  /  END) EatToken)*
+Err_071         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_072         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_073         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_074         <-  (!DO EatToken)*
+Err_075         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_076         <-  (!Assign EatToken)*
+Err_077         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_078         <-  (!(TO  /  DOWNTO) EatToken)*
+Err_079         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_080         <-  (!DO EatToken)*
+Err_081         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_082         <-  (!(DO  /  Comma) EatToken)*
+Err_083         <-  (!DO EatToken)*
+Err_084         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_085         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
+Err_086         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_087         <-  (!RPar EatToken)*
+Err_088         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_090         <-  (!RBrack EatToken)*
+Err_091         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_092         <-  (!(RBrack  /  Comma) EatToken)*
 ]]
 
 local g = m.match(g)
+
+
 
 local p = coder.makeg(g)
 

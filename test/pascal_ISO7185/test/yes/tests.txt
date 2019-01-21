@@ -1,0 +1,16 @@
+aprovado.pas
+bubble.pas
+cubo.pas
+gasolina.pas
+HelloWorld.pas
+maior.pas
+operators.pas
+PlayingWithDice.pas
+posneg.pas
+quadrado.pas
+quick.pas
+retangulo.pas
+sched.pas
+somaEProduto.pas
+somaParImpar.pas
+triangulo.pas
