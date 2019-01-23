@@ -491,8 +491,6 @@ StringLiteral        <-  '"' (%nl  /  !'"' .)* '"'
 
 NullLiteral          <-  'null'
 
-Token                <-  keywords  /  Identifier  /  Literal  /  .
-
 COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]]
 

@@ -19,6 +19,7 @@ local re = require'relabel'
     - Err_044 ('=' in rule elementValuePair)
     - Err_017 (methodDeclarator in rule methodHeader)
     - Err_016 (Identifier in rule unannClassType)
+    - Err_077 (unaryExpressionNotPlusMinus in rule castExpression)
 ]]
 
 g = [[
@@ -157,7 +158,7 @@ arguments       <-  '(' argumentList? ')'
 argumentList    <-  expression (',' expression^Err_072)*
 unaryExpression <-  ('++'  /  '--') (primary  /  qualIdent)  /  '+' ![=+] unaryExpression  /  '-' ![-=>] unaryExpression  /  unaryExpressionNotPlusMinus
 unaryExpressionNotPlusMinus <-  '~' unaryExpression^Err_073  /  '!' ![=&] unaryExpression^Err_074  /  castExpression  /  (primary  /  qualIdent) ('++'  /  '--')?
-castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus^Err_077
+castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
 infixExpression <-  unaryExpression (InfixOperator unaryExpression  /  'instanceof' referenceType)*
 InfixOperator   <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]  /  '=='  /  '!='  /  '<' ![=<]  /  '>' ![=>]  /  '<='  /  '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /  '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
 conditionalExpression <-  infixExpression ('query' expression ':' expression)*
@@ -191,7 +192,6 @@ BooleanLiteral  <-  'true'  /  'false'
 CharLiteral     <-  "'" (%nl  /  !"'" .) "'"
 StringLiteral   <-  '"' (%nl  /  !'"' .)* '"'
 NullLiteral     <-  'null'
-Token           <-  keywords  /  Identifier  /  Literal  /  .
 COMMENT         <-  '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]]
 

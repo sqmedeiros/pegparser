@@ -10,15 +10,15 @@ Java 8:
 
 * Algoritmo Regular:
 	- 181 labels anotadas
-		. 38 labels não anotadas
-		. 39 labels adicionadas
+		. 35 labels não anotadas
+		. 41 labels adicionadas
 			-> 10 corretas
-			-> 19 incorretas
-		. 142 labels anotadas igualmente
+			-> 31 incorretas
+		. 140 labels anotadas igualmente
 
 * Algoritmo Conservativo (Hard)
 	- 56 labels anotadas
-		. 133 labels não anotadas
+		. 128 labels não anotadas
 		. 9 labels adicionadas
 			-> 5 corretas
 			-> 4 incorretas
@@ -26,11 +26,11 @@ Java 8:
 
 * Algoritmo Conservativo (Soft)
 	- 80 labels anotadas
-		. 116 labels não anotadas
-		. 16 labels adicionadas
+		. 112 labels não anotadas
+		. 17 labels adicionadas
 			-> 6 corretas
-			-> 10 incorretas
-		. 64 labels anotadas igualmente
+			-> 11 incorretas
+		. 63 labels anotadas igualmente
 
 * Labels:
 	- Algoritmo Regular:

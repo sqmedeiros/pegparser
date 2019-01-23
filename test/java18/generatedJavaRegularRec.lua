@@ -38,6 +38,8 @@ local ast = require'ast'
     - Err_072 (sorted choose in rule annotation)
     - Err_061 (';' in rule constantDeclaration)
     - Err_163 (expression in rule dimExpr)
+    - Err_110 (blockStatements in rule switchBlockStatementGroup)
+    - Err_174 (unaryExpressionNotPlusMinus in rule castExpression)
 ]]
 
 g = [[
@@ -145,7 +147,7 @@ localVariableDeclaration <-  variableModifier* unannType variableDeclaratorList
 statement       <-  block  /  'if' parExpression^Err_086 statement^Err_087 ('else' statement)?  /  basicForStatement  /  enhancedForStatement  /  'while' parExpression^Err_088 statement^Err_089  /  'do' statement^Err_090 'while'^Err_091 parExpression^Err_092 ';'^Err_093  /  tryStatement  /  'switch' parExpression^Err_094 switchBlock^Err_095  /  'synchronized' parExpression^Err_096 block^Err_097  /  'return' expression? ';'^Err_098  /  'throw' expression^Err_099 ';'^Err_100  /  'break' Identifier? ';'^Err_101  /  'continue' Identifier? ';'^Err_102  /  'assert' expression^Err_103 (':' expression^Err_104)? ';'^Err_105  /  ';'  /  statementExpression ';'  /  Identifier ':'^Err_106 statement^Err_107
 statementExpression <-  assignment  /  ('++'  /  '--') (primary  /  qualIdent)^Err_108  /  (primary  /  qualIdent) ('++'  /  '--')  /  primary
 switchBlock     <-  '{' switchBlockStatementGroup* switchLabel* '}'^Err_109
-switchBlockStatementGroup <-  switchLabels blockStatements^Err_110
+switchBlockStatementGroup <-  switchLabels blockStatements
 switchLabels    <-  switchLabel switchLabel*
 switchLabel     <-  'case' (constantExpression  /  enumConstantName)^Err_111 ':'^Err_112  /  'default' ':'^Err_113
 enumConstantName <-  Identifier
@@ -176,7 +178,7 @@ arguments       <-  '(' argumentList? ')'^Err_165
 argumentList    <-  expression (',' expression^Err_166)*
 unaryExpression <-  ('++'  /  '--') (primary  /  qualIdent)^Err_167  /  '+' ![=+] unaryExpression^Err_168  /  '-' ![-=>] unaryExpression^Err_169  /  unaryExpressionNotPlusMinus
 unaryExpressionNotPlusMinus <-  '~' unaryExpression^Err_170  /  '!' ![=&] unaryExpression^Err_171  /  castExpression  /  (primary  /  qualIdent) ('++'  /  '--')?
-castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus^Err_174
+castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
 infixExpression <-  unaryExpression (InfixOperator unaryExpression  /  'instanceof' referenceType)*
 InfixOperator   <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]  /  '=='  /  '!='  /  '<' ![=<]  /  '>' ![=>]  /  '<='  /  '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /  '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
 conditionalExpression <-  infixExpression ('query' expression ':' expression)*
@@ -210,9 +212,8 @@ BooleanLiteral  <-  'true'  /  'false'
 CharLiteral     <-  "'" (%nl  /  !"'" .) "'"
 StringLiteral   <-  '"' (%nl  /  !'"' .)* '"'
 NullLiteral     <-  'null'
-Token           <-  keywords  /  Identifier  /  Literal  /  .
 COMMENT         <-  '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
-Token           <-  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throws'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'query'  /  'public'  /  'protected'  /  'private'  /  'package'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'instanceof'  /  'import'  /  'implements'  /  'if'  /  'goto'  /  'for'  /  'float'  /  'finally'  /  'final'  /  'extends'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'const'  /  'class'  /  'char'  /  'catch'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'and'  /  'abstract'  /  Token  /  StringLiteral  /  OctalNumeral  /  NullLiteral  /  Literal  /  IntegerLiteral  /  InfixOperator  /  Identifier  /  HexaDecimalFloatingPointLiteral  /  HexSignificand  /  HexNumeral  /  HexDigits  /  HexDigit  /  FloatLiteral  /  Exponent  /  Digits  /  DecimalNumeral  /  DecimalFloatingPointLiteral  /  CharLiteral  /  COMMENT  /  BooleanLiteral  /  BinaryNumeral  /  BinaryExponent  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '?'  /  '>'  /  '='  /  '<'  /  ';'  /  '::'  /  ':'  /  '...'  /  '.'  /  '->'  /  '--'  /  '-'  /  ','  /  '++'  /  '+'  /  ')'  /  '('  /  '!'
+Token           <-  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throws'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'query'  /  'public'  /  'protected'  /  'private'  /  'package'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'instanceof'  /  'import'  /  'implements'  /  'if'  /  'goto'  /  'for'  /  'float'  /  'finally'  /  'final'  /  'extends'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'const'  /  'class'  /  'char'  /  'catch'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'and'  /  'abstract'  /  StringLiteral  /  OctalNumeral  /  NullLiteral  /  Literal  /  IntegerLiteral  /  InfixOperator  /  Identifier  /  HexaDecimalFloatingPointLiteral  /  HexSignificand  /  HexNumeral  /  HexDigits  /  HexDigit  /  FloatLiteral  /  Exponent  /  Digits  /  DecimalNumeral  /  DecimalFloatingPointLiteral  /  CharLiteral  /  COMMENT  /  BooleanLiteral  /  BinaryNumeral  /  BinaryExponent  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '?'  /  '>'  /  '='  /  '<'  /  ';'  /  '::'  /  ':'  /  '...'  /  '.'  /  '->'  /  '--'  /  '-'  /  ','  /  '++'  /  '+'  /  ')'  /  '('  /  '!'
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
 Err_004         <-  (!('>'  /  ',') EatToken)*
 Err_005         <-  (!('and'  /  '>'  /  ','  /  ')') EatToken)*
@@ -304,7 +305,6 @@ Err_106         <-  (!('{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'thi
 Err_107         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
 Err_108         <-  (!(';'  /  ','  /  ')') EatToken)*
 Err_109         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
-Err_110         <-  (!('}'  /  'default'  /  'case') EatToken)*
 Err_111         <-  (!':' EatToken)*
 Err_112         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
 Err_113         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
@@ -362,7 +362,6 @@ Err_168         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Id
 Err_169         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_170         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_171         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_174         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_176         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_178         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_179         <-  (!')' EatToken)*

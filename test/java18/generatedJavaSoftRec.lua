@@ -20,6 +20,7 @@ local ast = require'ast'
     - Err_044 ('=' in rule elementValuePair)
     - Err_017 (methodDeclarator in rule methodHeader)
     - Err_016 (Identifier in rule unannClassType)
+    - Err_077 (unaryExpressionNotPlusMinus in rule castExpression)
 ]]
 
 g = [[
@@ -158,7 +159,7 @@ arguments       <-  '(' argumentList? ')'
 argumentList    <-  expression (',' expression^Err_072)*
 unaryExpression <-  ('++'  /  '--') (primary  /  qualIdent)  /  '+' ![=+] unaryExpression  /  '-' ![-=>] unaryExpression  /  unaryExpressionNotPlusMinus
 unaryExpressionNotPlusMinus <-  '~' unaryExpression^Err_073  /  '!' ![=&] unaryExpression^Err_074  /  castExpression  /  (primary  /  qualIdent) ('++'  /  '--')?
-castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus^Err_077
+castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
 infixExpression <-  unaryExpression (InfixOperator unaryExpression  /  'instanceof' referenceType)*
 InfixOperator   <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]  /  '=='  /  '!='  /  '<' ![=<]  /  '>' ![=>]  /  '<='  /  '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /  '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
 conditionalExpression <-  infixExpression ('query' expression ':' expression)*
@@ -192,7 +193,7 @@ BooleanLiteral  <-  'true'  /  'false'
 CharLiteral     <-  "'" (%nl  /  !"'" .) "'"
 StringLiteral   <-  '"' (%nl  /  !'"' .)* '"'
 NullLiteral     <-  'null'
-Token           <-  keywords  /  Identifier  /  Literal  /  .
+Token           <-  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throws'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'query'  /  'public'  /  'protected'  /  'private'  /  'package'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'instanceof'  /  'import'  /  'implements'  /  'if'  /  'goto'  /  'for'  /  'float'  /  'finally'  /  'final'  /  'extends'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'const'  /  'class'  /  'char'  /  'catch'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'and'  /  'abstract'  /  StringLiteral  /  OctalNumeral  /  NullLiteral  /  Literal  /  IntegerLiteral  /  InfixOperator  /  Identifier  /  HexaDecimalFloatingPointLiteral  /  HexSignificand  /  HexNumeral  /  HexDigits  /  HexDigit  /  FloatLiteral  /  Exponent  /  Digits  /  DecimalNumeral  /  DecimalFloatingPointLiteral  /  CharLiteral  /  COMMENT  /  BooleanLiteral  /  BinaryNumeral  /  BinaryExponent  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '?'  /  '>'  /  '='  /  '<'  /  ';'  /  '::'  /  ':'  /  '...'  /  '.'  /  '->'  /  '--'  /  '-'  /  ','  /  '++'  /  '+'  /  ')'  /  '('  /  '!'
 COMMENT         <-  '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
 Err_002         <-  (!('>'  /  ',') EatToken)*
@@ -262,7 +263,6 @@ Err_071         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Id
 Err_072         <-  (!')' EatToken)*
 Err_073         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_074         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_077         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_078         <-  (!')' EatToken)*
 Err_080         <-  (!')' EatToken)*
 ]]
@@ -271,7 +271,7 @@ local g = m.match(g)
 
 local p = coder.makeg(g)
 
-local dir = lfs.currentdir() .. '/test/java18/test/yes/' 
+local dir = lfs.currentdir() .. '/test/java18/test/yes/'
 for file in lfs.dir(dir) do
   if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'java' + 1) == 'java' then
     print("Yes: ", file)
