@@ -3,7 +3,7 @@ Java 8:
 * Gramática anotada manualmente:
 	- 175 labels anotadas
 		Removi BlockStatementsErr na regra switchBlockStatementGroup
-		Removi ArgumentsErr4 na regra primaryBase
+		Removi ArgumentsErr4 na regra primaryBase 						// Explicar no analysis
 		Removi UnaryExpressionNotPlusMinusErr na regra castExpression
 		Removi ElementValueErr3 na regra elementValueList
 		Removi EqAvaliableErr2 na regra elementValuePair
