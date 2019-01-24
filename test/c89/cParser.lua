@@ -189,7 +189,7 @@ KEYWORDS              <-  ('auto'  /  'double'  /  'int'  /  'struct'  /
                           'const'  /  'float'  /  'short'  /  'unsigned'  /
                           'continue'  /  'for'  /  'signed'  /  'void'  /
                           'default'  /  'goto'  /  'sizeof'  /  'volatile'  /
-                          'do'  /  'if'  /  'static'  /  'while')
+                          'do'  /  'if'  /  'static'  /  'while') ![a-zA-Z_0-9]
 ]] 
 
                         
@@ -212,7 +212,7 @@ print("Conservative Annotation (Soft)")
 local glabSoft = recovery.addlab(g, true, 'soft')
 print(pretty.printg(glabSoft, true), '\n')
 
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/c89/test/yes/'	
 for file in lfs.dir(dir) do
