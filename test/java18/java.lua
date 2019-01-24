@@ -4,6 +4,8 @@ local pretty = require 'pretty'
 local coder = require 'coder'
 local first = require 'first'
 local recovery = require 'recovery'
+local lfs = require 'lfs'
+local re = require 'relabel'
 
 g = [[
 compilation           <-  SKIP compilationUnit !.
@@ -421,10 +423,10 @@ constantExpression    <-  expression
 
 
 -- JLS 3.8 Identifiers
-Identifier            <-  !keywords [a-zA-Z_] [a-zA-Z_$0-9]*
+Identifier            <-  !Keywords [a-zA-Z_] [a-zA-Z_$0-9]*
 
 -- JLS 3.9 Keywords
-keywords              <- 'abstract'  /  'assert'  /  'boolean'  /  'break'  /
+Keywords              <- ('abstract'  /  'assert'  /  'boolean'  /  'break'  /
                          'byte'  /  'case'  /  'catch'  /  'char'  /
                          'class'  /  'const'  /  'continue'  /  'default'  /
                          'double'  /  'do'  /  'else'  /  'enum'  /
@@ -436,7 +438,7 @@ keywords              <- 'abstract'  /  'assert'  /  'boolean'  /  'break'  /
                          'public'  /  'return'  /  'short'  /  'static'  /
                          'strictfp'  /  'super'  /  'switch'  /  'synchronized'  /
                          'this'  /  'throws'  /  'throw'  /  'transient'  /
-                         'true'  /  'try'  /  'void'  /  'volatile'  /  'while'
+                         'true'  /  'try'  /  'void'  /  'volatile'  /  'while') ![a-zA-Z_$0-9]
    
  
 -- JLS 3.10 Literals
@@ -513,3 +515,40 @@ print("Conservative Annotation (Soft)")
 local glab = recovery.addlab(g, true, 'soft')
 print(pretty.printg(glab))
 print()
+
+local p = coder.makeg(g, 'ast')
+
+local dir = lfs.currentdir() .. '/test/java18/test/yes/' 
+for file in lfs.dir(dir) do
+  if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'java' + 1) == 'java' then
+    print("Yes: ", file)
+    local f = io.open(dir .. file)
+    local s = f:read('a')
+    f:close()
+    local r, lab, pos = p:match(s)
+    local line, col = '', ''
+    if not r then
+      line, col = re.calcline(s, pos)
+    end
+    assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
+  end
+end
+
+local dir = lfs.currentdir() .. '/test/java18/test/no/'  
+for file in lfs.dir(dir) do
+  if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'java' + 1) == 'java' then
+    print("No: ", file)
+    local f = io.open(dir .. file)
+    local s = f:read('a')
+    f:close()
+    local r, lab, pos = p:match(s)
+    io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
+    local line, col = '', ''
+    if not r then
+      line, col = re.calcline(s, pos)
+      io.write(' line: ' .. line .. ' col: ' .. col)
+    end
+    io.write('\n')
+    assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
+  end
+end
