@@ -215,7 +215,7 @@ local glab = recovery.addlab(g, true, 'soft')
 print(pretty.printg(glab))
 print()
 
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/yes/'	
 for file in lfs.dir(dir) do

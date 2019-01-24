@@ -69,21 +69,6 @@ COMMENT         <-  '--' (!%nl .)*
 
 
 local g = m.match(g)
-print("Original Grammar")
-print(pretty.printg(g), '\n')
-
-print("Regular Annotation (SBLP paper)")
-local glabRegular = recovery.addlab(g, true, false)
-print(pretty.printg(glabRegular, true), '\n')
-
-print("Conservative Annotation (Hard)")
-local glabHard = recovery.addlab(g, true, true)
-print(pretty.printg(glabHard, true), '\n')
-
-print("Conservative Annotation (Soft)")
-local glabSoft = recovery.addlab(g, true, 'soft')
-print(pretty.printg(glabSoft, true), '\n')
-
 local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'	

@@ -19,7 +19,7 @@ local re = require'relabel'
 ]]
 
 g = [[
-program         <-  SKIP head decs block Dot^Err_002 !.
+program         <-  SKIP head decs block^Err_001 Dot^Err_002 !.
 head            <-  PROGRAM Id^Err_003 (LPar ids^Err_004 RPar^Err_005)? Semi^Err_006
 decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
 ids             <-  Id (Comma Id^Err_007)*
@@ -177,7 +177,7 @@ Z               <-  'z'  /  'Z'
 
 local g = m.match(g)
 
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/yes/' 
 for file in lfs.dir(dir) do

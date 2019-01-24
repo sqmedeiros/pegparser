@@ -267,7 +267,7 @@ local g = m.match(g)
 
 
 
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/yes/' 
 for file in lfs.dir(dir) do
@@ -304,6 +304,7 @@ for file in lfs.dir(dir) do
             tfail[ifail] = { file = file, lab = lab, line = line, col = col }
         else
             irec = irec + 1
+						io.write('\n')
             ast.printAST(r)
         end
         io.write('\n')

@@ -9,6 +9,11 @@ local re = require'relabel'
 local ast = require'ast'
 
 --[[
+  To be able to circumvent the limit imposed by MAXRULES,
+  changed label Err_011 to Err_010 in rule 'constDefs',
+  and commented out rule Err_011. The recovery rules
+  Err_010 and Err_011 have the same right-hand side.
+
 	Removed:
 		- Err_024 (DotDot in rule subrangeType)
 		- Err_066 (Assign in rule assignStmt)
@@ -20,14 +25,14 @@ local ast = require'ast'
 ]]
 
 g = [[
-program         <-  SKIP head decs block Dot^Err_002 !.
+program         <-  SKIP head decs block^Err_001 Dot^Err_002 !.
 head            <-  PROGRAM Id^Err_003 (LPar ids^Err_004 RPar^Err_005)? Semi^Err_006
 decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
 ids             <-  Id (Comma Id^Err_007)*
 labelDecs       <-  (LABEL labels^Err_008 Semi^Err_009)?
 labels          <-  label (Comma label^Err_010)*
 label           <-  UInt
-constDefs       <-  (CONST constDef^Err_011 Semi^Err_012 (constDef Semi^Err_013)*)?
+constDefs       <-  (CONST constDef^Err_010 Semi^Err_012 (constDef Semi^Err_013)*)?
 constDef        <-  Id Eq^Err_014 const^Err_015
 const           <-  Sign? (UNumber  /  Id)  /  String
 typeDefs        <-  (TYPE typeDef^Err_016 Semi^Err_017 (typeDef Semi^Err_018)*)?
@@ -176,6 +181,7 @@ Y               <-  'y'  /  'Y'
 Z               <-  'z'  /  'Z'
 Token           <-  Z  /  Y  /  X  /  WITH  /  WHILE  /  W  /  VAR  /  V  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  U  /  TYPE  /  TO  /  THEN  /  T  /  String  /  Sign  /  Semi  /  SET  /  S  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  R  /  Q  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  P  /  OpenComment  /  OR  /  OF  /  O  /  NOT  /  NIL  /  N  /  MultOp  /  MOD  /  M  /  LPar  /  LBrack  /  LABEL  /  L  /  K  /  J  /  Id  /  IN  /  IF  /  I  /  H  /  GOTO  /  G  /  FUNCTION  /  FOR  /  FILE  /  F  /  Eq  /  END  /  ELSE  /  E  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  D  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  C  /  BodyId  /  BEGIN  /  B  /  Assign  /  AddOp  /  ARRAY  /  AND  /  A
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
+Err_001         <-  (!Dot EatToken)*
 Err_002         <-  (!(!.) EatToken)*
 Err_003         <-  (!(Semi  /  LPar) EatToken)*
 Err_004         <-  (!RPar EatToken)*
@@ -185,7 +191,7 @@ Err_007         <-  (!(RPar  /  Colon) EatToken)*
 Err_008         <-  (!Semi EatToken)*
 Err_009         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
 Err_010         <-  (!Semi EatToken)*
-Err_011         <-  (!Semi EatToken)*
+--Err_011         <-  (!Semi EatToken)*
 Err_012         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
 Err_013         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
 Err_014         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
@@ -315,6 +321,7 @@ for file in lfs.dir(dir) do
             tfail[ifail] = { file = file, lab = lab, line = line, col = col }
         else
             irec = irec + 1
+						io.write('\n')
             ast.printAST(r)
         end
         io.write('\n')

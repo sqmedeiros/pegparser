@@ -175,7 +175,7 @@ local g = m.match(g)
 
 
 
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/yes/' 
 for file in lfs.dir(dir) do
