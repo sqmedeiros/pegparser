@@ -275,10 +275,7 @@ local function calcFlwAux (g, p, flw)
   elseif p.tag == 'con' then
     calcFlwAux(g, p.p2, flw)
     local k = calcfirst(g, p.p2)
-    --TODO: temporary IF, check later why failed with SKIP for titan
-		if not p.p2.p1 == 'SKIP' then
-    	assert(not k[empty] == not parser.matchEmpty(p.p2), tostring(k[empty]) .. ' ' .. tostring(parser.matchEmpty(p.p2)) .. ' ' .. pretty.printp(p.p2))
-		end
+    assert(not k[empty] == not parser.matchEmpty(p.p2), tostring(k[empty]) .. ' ' .. tostring(parser.matchEmpty(p.p2)) .. ' ' .. pretty.printp(p.p2))
     if parser.matchEmpty(p.p2) then
     --if k[empty] then
       calcFlwAux(g, p.p1, union(k, flw, true))
