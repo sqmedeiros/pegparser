@@ -3,9 +3,10 @@ local coder = require 'coder'
 local util = require'util'
 
 -- Remove Err_006 ('import' in rule import)
+-- Add label Err_EOF and the corresponding recovery rule
 
 g = [[
-program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
+program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* (!.)^Err_EOF
 toplevelfunc    <-  localopt 'function' NAME '(' paramlist ')' rettypeopt block 'end'
 toplevelvar     <-  localopt decl '=' exp
 toplevelrecord  <-  'record' NAME^Err_001 recordfields^Err_002 'end'^Err_003
@@ -64,6 +65,7 @@ SKIP            <-  ([
 ]  /  COMMENT)*
 Token           <-  '~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'value'  /  'until'  /  'true'  /  'then'  /  'string'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'not'  /  'nil'  /  'local'  /  'integer'  /  'import'  /  'if'  /  'function'  /  'foreign'  /  'for'  /  'float'  /  'false'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'boolean'  /  'as'  /  'and'  /  STRINGLIT  /  RESERVED  /  NUMBER  /  NAME  /  COMMENT  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '#'
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
+Err_EOF         <-  (!(!.) EatToken)*
 Err_001         <-  (!NAME EatToken)*
 Err_002         <-  (!'end' EatToken)*
 Err_003         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*

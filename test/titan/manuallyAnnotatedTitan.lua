@@ -1,11 +1,7 @@
 local m = require 'init'
-local errinfo = require 'syntax_errors'
 local pretty = require 'pretty'
 local coder = require 'coder'
-local first = require 'first'
-local recovery = require 'recovery'
-local lfs = require'lfs'
-local re = require'relabel'
+local util = require'util'
 
 -- Removed label 'AssignAssign' in rule statement because the correct matching
 -- of varlist depends on a semantic action in rule var
@@ -77,61 +73,16 @@ g = [[
 
 
 local g = m.match(g)
-print("Original Grammar")
+print("Manually Annotated Grammar")
 print(pretty.printg(g), '\n')
 
-print("Regular Annotation (SBLP paper)")
-local glabRegular = recovery.addlab(g, true, false)
-print(pretty.printg(glabRegular, true), '\n')
-
-print("Conservative Annotation (Hard)")
-local glabHard = recovery.addlab(g, true, true)
-print(pretty.printg(glabHard, true), '\n')
-
-print("Conservative Annotation (Soft)")
-local glabSoft = recovery.addlab(g, true, 'soft')
-print(pretty.printg(glabSoft, true), '\n')
-
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'	
---local tmp = { 'moduleMember01.titan' }
-for file in lfs.dir(dir) do
---for _, file in ipairs(tmp) do
-	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'titan' + 1) == 'titan' then
-		print("Yes: ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-		end
-		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
-
-local function matchlabel (s1, s2)
-	return string.match(string.lower(s1), string.lower(s2))
-end
+util.testYes(dir, 'titan', p)
 
 local dir = lfs.currentdir() .. '/test/titan/test/no/'	
-for file in lfs.dir(dir) do
-	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'titan' + 1) == 'titan' then
-		print("No: ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-			io.write(' line: ' .. line .. ' col: ' .. col)
-		end
-		io.write('\n')
-		assert(r == nil and (matchlabel(file, lab) or matchlabel(file, 'AssignAssign')), file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
+util.testNo(dir, 'titan', p, 'strict', 'AssignAssign')
+
+
 

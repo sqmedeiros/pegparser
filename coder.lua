@@ -125,15 +125,11 @@ local function makeg (g, tree)
 	local g = g
 	if tree then
 		g = ast.buildAST(g)
-		print("Coder: New grammar with annotations to build AST")
-		print(pretty.printg(g), '\n')
+		--print("Coder: New grammar with annotations to build AST")
+		--print(pretty.printg(g), '\n')
 	end
 	local peg = { [1] = g.plist[1] }
 	for i, v in ipairs(g.plist) do
-		--print("makeg", v)
-		--if v == 'COMMENT' then
-		--	print(pretty.printp(g.prules[v]))
-		--end
 		if v ~= 'SKIP' and v ~= 'COMMENT' then
 			local p = g.prules[v]
 			if not parser.isLexRule(v) then

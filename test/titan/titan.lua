@@ -1,12 +1,9 @@
 local m = require 'init'
-local errinfo = require 'syntax_errors'
 local pretty = require 'pretty'
 local coder = require 'coder'
-local first = require 'first'
 local recovery = require 'recovery'
-local lfs = require'lfs'
-local re = require'relabel'
 local ast = require'ast'
+local util = require'util'
 
 g = [[
   program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import / foreign)* !.
@@ -96,40 +93,11 @@ print("Conservative Annotation (Soft)")
 local glabSoft = recovery.addlab(g, true, 'soft')
 print(pretty.printg(glabSoft, true), '\n')
 
-local p = coder.makeg(g)
+local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/titan/test/yes/'	
-for file in lfs.dir(dir) do
-	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'titan' + 1) == 'titan' then
-		print("Yes: ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-		end
-		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
+local dir = lfs.currentdir() .. '/test/titan/test/yes/'
+util.testYes(dir, 'titan', p)
 
-local dir = lfs.currentdir() .. '/test/titan/test/no/'	
-for file in lfs.dir(dir) do
-	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'titan' + 1) == 'titan' then
-		print("No: ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-			io.write(' line: ' .. line .. ' col: ' .. col)
-		end
-		io.write('\n')
-		assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
+local dir = lfs.currentdir() .. '/test/titan/test/no/'
+util.testNo(dir, 'titan', p)
 
