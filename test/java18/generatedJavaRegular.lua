@@ -24,21 +24,23 @@ local re = require'relabel'
     - Err_173 (')' in rule castExpression)
     - Err_003 (']' in rule dim)
     - Err_006 (typeArgumentList in rule typeArguments)
+    - Err_110 (blockStatements in rule switchBlockStatementGroup)
     - Err_172 (referenceType in rule castExpression)
+    - Err_030 (Identifier in rule unannClassType)
     - Err_115 (';' in rule basicForStatement)
     - Err_076 ('=' in rule elementValuePair)
     - Err_074 (')' in rule normalAnnotation)
     - Err_026 (variableDeclaratorList in rule fieldDeclaration)
+    - Err_032 (methodDeclarator in rule methodHeader)
+    - Err_174 (unaryExpressionNotPlusMinus in rule castExpression)
     - Err_049 ('.' in rule explicitConstructorInvocation)
     - Err_001 (Identifier in rule classType)
-    - Err_030 (Identifier in rule unannClassType)
     - Err_152 (sorted choose in rule primaryRest)
+    - Err_179 (inferredFormalParameterList in rule lambdaParameters)
     - Err_156 (expression in rule parExpression)
     - Err_072 (sorted choose in rule annotation)
     - Err_061 (';' in rule constantDeclaration)
     - Err_163 (expression in rule dimExpr)
-    - Err_110 (blockStatements in rule switchBlockStatementGroup)
-    - Err_174 (unaryExpressionNotPlusMinus in rule castExpression)
 ]]
 
 g = [[
@@ -186,12 +188,12 @@ assignment      <-  leftHandSide AssignmentOperator expression^Err_176
 leftHandSide    <-  primary  /  qualIdent
 AssignmentOperator <-  '=' ![=]  /  '*='  /  '/='  /  '%='  /  '+='  /  '-='  /  '<<='  /  '>>='  /  '>>>='  /  '&='  /  '^='  /  '|='
 lambdaExpression <-  lambdaParameters '->' lambdaBody^Err_178
-lambdaParameters <-  Identifier  /  '(' formalParameterList? ')'  /  '(' inferredFormalParameterList^Err_179 ')'
+lambdaParameters <-  Identifier  /  '(' formalParameterList? ')'  /  '(' inferredFormalParameterList ')'
 inferredFormalParameterList <-  Identifier (',' Identifier^Err_181)*
 lambdaBody      <-  expression  /  block
 constantExpression <-  expression
-Identifier      <-  !keywords [a-zA-Z_] [a-zA-Z_$0-9]*
-keywords        <-  'abstract'  /  'assert'  /  'boolean'  /  'break'  /  'byte'  /  'case'  /  'catch'  /  'char'  /  'class'  /  'const'  /  'continue'  /  'default'  /  'double'  /  'do'  /  'else'  /  'enum'  /  'extends'  /  'false'  /  'finally'  /  'final'  /  'float'  /  'for'  /  'goto'  /  'if'  /  'implements'  /  'import'  /  'interface'  /  'int'  /  'instanceof'  /  'long'  /  'native'  /  'new'  /  'null'  /  'package'  /  'private'  /  'protected'  /  'public'  /  'return'  /  'short'  /  'static'  /  'strictfp'  /  'super'  /  'switch'  /  'synchronized'  /  'this'  /  'throws'  /  'throw'  /  'transient'  /  'true'  /  'try'  /  'void'  /  'volatile'  /  'while'
+Identifier      <-  !Keywords [a-zA-Z_] [a-zA-Z_$0-9]*
+Keywords        <-  ('abstract'  /  'assert'  /  'boolean'  /  'break'  /  'byte'  /  'case'  /  'catch'  /  'char'  /  'class'  /  'const'  /  'continue'  /  'default'  /  'double'  /  'do'  /  'else'  /  'enum'  /  'extends'  /  'false'  /  'finally'  /  'final'  /  'float'  /  'for'  /  'goto'  /  'if'  /  'implements'  /  'import'  /  'interface'  /  'int'  /  'instanceof'  /  'long'  /  'native'  /  'new'  /  'null'  /  'package'  /  'private'  /  'protected'  /  'public'  /  'return'  /  'short'  /  'static'  /  'strictfp'  /  'super'  /  'switch'  /  'synchronized'  /  'this'  /  'throws'  /  'throw'  /  'transient'  /  'true'  /  'try'  /  'void'  /  'volatile'  /  'while') ![a-zA-Z_$0-9]
 Literal         <-  FloatLiteral  /  IntegerLiteral  /  BooleanLiteral  /  CharLiteral  /  StringLiteral  /  NullLiteral
 IntegerLiteral  <-  (HexNumeral  /  BinaryNumeral  /  OctalNumeral  /  DecimalNumeral) [lL]?
 DecimalNumeral  <-  '0'  /  [1-9] ([_]* [0-9])*
