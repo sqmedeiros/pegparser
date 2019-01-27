@@ -91,72 +91,46 @@ Sign            <-  '+'  /  '-'
 String          <-  "'" (!"'" .)* "'"
 UInt            <-  [0-9]+
 UNumber         <-  UReal  /  UInt
-UReal           <-  [0-9]+ ('.' [0-9]+ (E ('+'  /  '-') [0-9]+)?  /  E ('+'  /  '-') [0-9]+)
+UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
 Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
-AND             <-  A N D !BodyId
-ARRAY           <-  A R R A Y !BodyId
-BEGIN           <-  B E G I N !BodyId
-CASE            <-  C A S E !BodyId
-CONST           <-  C O N S T !BodyId
-DIV             <-  D I V !BodyId
-DO              <-  D O !BodyId
-DOWNTO          <-  D O W N T O !BodyId
-ELSE            <-  E L S E !BodyId
-END             <-  E N D !BodyId
-FILE            <-  F I L E !BodyId
-FOR             <-  F O R !BodyId
-FUNCTION        <-  F U N C T I O N !BodyId
-GOTO            <-  G O T O !BodyId
-IF              <-  I F !BodyId
-IN              <-  I N !BodyId
-LABEL           <-  L A B E L !BodyId
-MOD             <-  M O D !BodyId
-NIL             <-  N I L !BodyId
-NOT             <-  N O T !BodyId
-OF              <-  O F !BodyId
-OR              <-  O R !BodyId
-PACKED          <-  P A C K E D !BodyId
-PROCEDURE       <-  P R O C E D U R E !BodyId
-PROGRAM         <-  P R O G R A M !BodyId
-RECORD          <-  R E C O R D !BodyId
-REPEAT          <-  R E P E A T !BodyId
-SET             <-  S E T !BodyId
-THEN            <-  T H E N !BodyId
-TO              <-  T O !BodyId
-TYPE            <-  T Y P E !BodyId
-UNTIL           <-  U N T I L !BodyId
-VAR             <-  V A R !BodyId
-WHILE           <-  W H I L E !BodyId
-WITH            <-  W I T H !BodyId
-A               <-  'a'  /  'A'
-B               <-  'b'  /  'B'
-C               <-  'c'  /  'C'
-D               <-  'd'  /  'D'
-E               <-  'e'  /  'E'
-F               <-  'f'  /  'F'
-G               <-  'g'  /  'G'
-H               <-  'h'  /  'H'
-I               <-  'i'  /  'I'
-J               <-  'j'  /  'J'
-K               <-  'k'  /  'K'
-L               <-  'l'  /  'L'
-M               <-  'm'  /  'M'
-N               <-  'n'  /  'N'
-O               <-  'o'  /  'O'
-P               <-  'p'  /  'P'
-Q               <-  'q'  /  'Q'
-R               <-  'r'  /  'R'
-S               <-  's'  /  'S'
-T               <-  't'  /  'T'
-U               <-  'u'  /  'U'
-V               <-  'v'  /  'V'
-W               <-  'w'  /  'W'
-X               <-  'x'  /  'X'
-Y               <-  'y'  /  'Y'
-Z               <-  'z'  /  'Z'
+AND             <-  [Aa] [Nn] [Dd] !BodyId
+ARRAY           <-  [Aa] [Rr] [Rr] [Aa] [Yy] !BodyId
+BEGIN           <-  [Bb] [Ee] [Gg] [Ii] [Nn] !BodyId
+CASE            <-  [Cc] [Aa] [Ss] [Ee] !BodyId
+CONST           <-  [Cc] [Oo] [Nn] [Ss] [Tt] !BodyId
+DIV             <-  [Dd] [Ii] [Vv] !BodyId
+DO              <-  [Dd] [Oo] !BodyId
+DOWNTO          <-  [Dd] [Oo] [Ww] [Nn] [Tt] [Oo] !BodyId
+ELSE            <-  [Ee] [Ll] [Ss] [Ee] !BodyId
+END             <-  [Ee] [Nn] [Dd] !BodyId
+FILE            <-  [Ff] [Ii] [Ll] [Ee] !BodyId
+FOR             <-  [Ff] [Oo] [Rr] !BodyId
+FUNCTION        <-  [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn] !BodyId
+GOTO            <-  [Gg] [Oo] [Tt] [Oo] !BodyId
+IF              <-  [Ii] [Ff] !BodyId
+IN              <-  [Ii] [Nn] !BodyId
+LABEL           <-  [Ll] [Aa] [Bb] [Ee] [Ll] !BodyId
+MOD             <-  [Mm] [Oo] [Dd] !BodyId
+NIL             <-  [Nn] [Ii] [Ll] !BodyId
+NOT             <-  [Nn] [Oo] [Tt] !BodyId
+OF              <-  [Oo] [Ff] !BodyId
+OR              <-  [Oo] [Rr] !BodyId
+PACKED          <-  [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] !BodyId
+PROCEDURE       <-  [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
+PROGRAM         <-  [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] !BodyId
+RECORD          <-  [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] !BodyId
+REPEAT          <-  [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] !BodyId
+SET             <-  [Ss] [Ee] [Tt] !BodyId
+THEN            <-  [Tt] [Hh] [Ee] [Nn] !BodyId
+TO              <-  [Tt] [Oo] !BodyId
+TYPE            <-  [Tt] [Yy] [Pp] [Ee] !BodyId
+UNTIL           <-  [Uu] [Nn] [Tt] [Ii] [Ll] !BodyId
+VAR             <-  [Vv] [Aa] [Rr] !BodyId
+WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
+WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
 SKIP            <-  ([ 	
 ]  /  COMMENT)*
-Token           <-  Z  /  Y  /  X  /  WITH  /  WHILE  /  W  /  VAR  /  V  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  U  /  TYPE  /  TO  /  THEN  /  T  /  String  /  Sign  /  Semi  /  SET  /  S  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  R  /  Q  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  P  /  OpenComment  /  OR  /  OF  /  O  /  NOT  /  NIL  /  N  /  MultOp  /  MOD  /  M  /  LPar  /  LBrack  /  LABEL  /  L  /  K  /  J  /  Id  /  IN  /  IF  /  I  /  H  /  GOTO  /  G  /  FUNCTION  /  FOR  /  FILE  /  F  /  Eq  /  END  /  ELSE  /  E  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  D  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  C  /  BodyId  /  BEGIN  /  B  /  Assign  /  AddOp  /  ARRAY  /  AND  /  A
+Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
 Err_001         <-  (!Dot EatToken)*
 Err_002         <-  (!(!.) EatToken)*
@@ -359,72 +333,46 @@ Sign            <-  '+'  /  '-'
 String          <-  "'" (!"'" .)* "'"
 UInt            <-  [0-9]+
 UNumber         <-  UReal  /  UInt
-UReal           <-  [0-9]+ ('.' [0-9]+ (E ('+'  /  '-') [0-9]+)?  /  E ('+'  /  '-') [0-9]+)
+UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
 Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
-AND             <-  A N D !BodyId
-ARRAY           <-  A R R A Y !BodyId
-BEGIN           <-  B E G I N !BodyId
-CASE            <-  C A S E !BodyId
-CONST           <-  C O N S T !BodyId
-DIV             <-  D I V !BodyId
-DO              <-  D O !BodyId
-DOWNTO          <-  D O W N T O !BodyId
-ELSE            <-  E L S E !BodyId
-END             <-  E N D !BodyId
-FILE            <-  F I L E !BodyId
-FOR             <-  F O R !BodyId
-FUNCTION        <-  F U N C T I O N !BodyId
-GOTO            <-  G O T O !BodyId
-IF              <-  I F !BodyId
-IN              <-  I N !BodyId
-LABEL           <-  L A B E L !BodyId
-MOD             <-  M O D !BodyId
-NIL             <-  N I L !BodyId
-NOT             <-  N O T !BodyId
-OF              <-  O F !BodyId
-OR              <-  O R !BodyId
-PACKED          <-  P A C K E D !BodyId
-PROCEDURE       <-  P R O C E D U R E !BodyId
-PROGRAM         <-  P R O G R A M !BodyId
-RECORD          <-  R E C O R D !BodyId
-REPEAT          <-  R E P E A T !BodyId
-SET             <-  S E T !BodyId
-THEN            <-  T H E N !BodyId
-TO              <-  T O !BodyId
-TYPE            <-  T Y P E !BodyId
-UNTIL           <-  U N T I L !BodyId
-VAR             <-  V A R !BodyId
-WHILE           <-  W H I L E !BodyId
-WITH            <-  W I T H !BodyId
-A               <-  'a'  /  'A'
-B               <-  'b'  /  'B'
-C               <-  'c'  /  'C'
-D               <-  'd'  /  'D'
-E               <-  'e'  /  'E'
-F               <-  'f'  /  'F'
-G               <-  'g'  /  'G'
-H               <-  'h'  /  'H'
-I               <-  'i'  /  'I'
-J               <-  'j'  /  'J'
-K               <-  'k'  /  'K'
-L               <-  'l'  /  'L'
-M               <-  'm'  /  'M'
-N               <-  'n'  /  'N'
-O               <-  'o'  /  'O'
-P               <-  'p'  /  'P'
-Q               <-  'q'  /  'Q'
-R               <-  'r'  /  'R'
-S               <-  's'  /  'S'
-T               <-  't'  /  'T'
-U               <-  'u'  /  'U'
-V               <-  'v'  /  'V'
-W               <-  'w'  /  'W'
-X               <-  'x'  /  'X'
-Y               <-  'y'  /  'Y'
-Z               <-  'z'  /  'Z'
+AND             <-  [Aa] [Nn] [Dd] !BodyId
+ARRAY           <-  [Aa] [Rr] [Rr] [Aa] [Yy] !BodyId
+BEGIN           <-  [Bb] [Ee] [Gg] [Ii] [Nn] !BodyId
+CASE            <-  [Cc] [Aa] [Ss] [Ee] !BodyId
+CONST           <-  [Cc] [Oo] [Nn] [Ss] [Tt] !BodyId
+DIV             <-  [Dd] [Ii] [Vv] !BodyId
+DO              <-  [Dd] [Oo] !BodyId
+DOWNTO          <-  [Dd] [Oo] [Ww] [Nn] [Tt] [Oo] !BodyId
+ELSE            <-  [Ee] [Ll] [Ss] [Ee] !BodyId
+END             <-  [Ee] [Nn] [Dd] !BodyId
+FILE            <-  [Ff] [Ii] [Ll] [Ee] !BodyId
+FOR             <-  [Ff] [Oo] [Rr] !BodyId
+FUNCTION        <-  [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn] !BodyId
+GOTO            <-  [Gg] [Oo] [Tt] [Oo] !BodyId
+IF              <-  [Ii] [Ff] !BodyId
+IN              <-  [Ii] [Nn] !BodyId
+LABEL           <-  [Ll] [Aa] [Bb] [Ee] [Ll] !BodyId
+MOD             <-  [Mm] [Oo] [Dd] !BodyId
+NIL             <-  [Nn] [Ii] [Ll] !BodyId
+NOT             <-  [Nn] [Oo] [Tt] !BodyId
+OF              <-  [Oo] [Ff] !BodyId
+OR              <-  [Oo] [Rr] !BodyId
+PACKED          <-  [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] !BodyId
+PROCEDURE       <-  [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
+PROGRAM         <-  [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] !BodyId
+RECORD          <-  [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] !BodyId
+REPEAT          <-  [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] !BodyId
+SET             <-  [Ss] [Ee] [Tt] !BodyId
+THEN            <-  [Tt] [Hh] [Ee] [Nn] !BodyId
+TO              <-  [Tt] [Oo] !BodyId
+TYPE            <-  [Tt] [Yy] [Pp] [Ee] !BodyId
+UNTIL           <-  [Uu] [Nn] [Tt] [Ii] [Ll] !BodyId
+VAR             <-  [Vv] [Aa] [Rr] !BodyId
+WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
+WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
 SKIP            <-  ([ 	
 ]  /  COMMENT)*
-Token           <-  Z  /  Y  /  X  /  WITH  /  WHILE  /  W  /  VAR  /  V  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  U  /  TYPE  /  TO  /  THEN  /  T  /  String  /  Sign  /  Semi  /  SET  /  S  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  R  /  Q  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  P  /  OpenComment  /  OR  /  OF  /  O  /  NOT  /  NIL  /  N  /  MultOp  /  MOD  /  M  /  LPar  /  LBrack  /  LABEL  /  L  /  K  /  J  /  Id  /  IN  /  IF  /  I  /  H  /  GOTO  /  G  /  FUNCTION  /  FOR  /  FILE  /  F  /  Eq  /  END  /  ELSE  /  E  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  D  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  C  /  BodyId  /  BEGIN  /  B  /  Assign  /  AddOp  /  ARRAY  /  AND  /  A
+Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
 Err_001         <-  (!Dot EatToken)*
 Err_002         <-  (!(!.) EatToken)*
@@ -605,72 +553,46 @@ Sign            <-  '+'  /  '-'
 String          <-  "'" (!"'" .)* "'"
 UInt            <-  [0-9]+
 UNumber         <-  UReal  /  UInt
-UReal           <-  [0-9]+ ('.' [0-9]+ (E ('+'  /  '-') [0-9]+)?  /  E ('+'  /  '-') [0-9]+)
+UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
 Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
-AND             <-  A N D !BodyId
-ARRAY           <-  A R R A Y !BodyId
-BEGIN           <-  B E G I N !BodyId
-CASE            <-  C A S E !BodyId
-CONST           <-  C O N S T !BodyId
-DIV             <-  D I V !BodyId
-DO              <-  D O !BodyId
-DOWNTO          <-  D O W N T O !BodyId
-ELSE            <-  E L S E !BodyId
-END             <-  E N D !BodyId
-FILE            <-  F I L E !BodyId
-FOR             <-  F O R !BodyId
-FUNCTION        <-  F U N C T I O N !BodyId
-GOTO            <-  G O T O !BodyId
-IF              <-  I F !BodyId
-IN              <-  I N !BodyId
-LABEL           <-  L A B E L !BodyId
-MOD             <-  M O D !BodyId
-NIL             <-  N I L !BodyId
-NOT             <-  N O T !BodyId
-OF              <-  O F !BodyId
-OR              <-  O R !BodyId
-PACKED          <-  P A C K E D !BodyId
-PROCEDURE       <-  P R O C E D U R E !BodyId
-PROGRAM         <-  P R O G R A M !BodyId
-RECORD          <-  R E C O R D !BodyId
-REPEAT          <-  R E P E A T !BodyId
-SET             <-  S E T !BodyId
-THEN            <-  T H E N !BodyId
-TO              <-  T O !BodyId
-TYPE            <-  T Y P E !BodyId
-UNTIL           <-  U N T I L !BodyId
-VAR             <-  V A R !BodyId
-WHILE           <-  W H I L E !BodyId
-WITH            <-  W I T H !BodyId
-A               <-  'a'  /  'A'
-B               <-  'b'  /  'B'
-C               <-  'c'  /  'C'
-D               <-  'd'  /  'D'
-E               <-  'e'  /  'E'
-F               <-  'f'  /  'F'
-G               <-  'g'  /  'G'
-H               <-  'h'  /  'H'
-I               <-  'i'  /  'I'
-J               <-  'j'  /  'J'
-K               <-  'k'  /  'K'
-L               <-  'l'  /  'L'
-M               <-  'm'  /  'M'
-N               <-  'n'  /  'N'
-O               <-  'o'  /  'O'
-P               <-  'p'  /  'P'
-Q               <-  'q'  /  'Q'
-R               <-  'r'  /  'R'
-S               <-  's'  /  'S'
-T               <-  't'  /  'T'
-U               <-  'u'  /  'U'
-V               <-  'v'  /  'V'
-W               <-  'w'  /  'W'
-X               <-  'x'  /  'X'
-Y               <-  'y'  /  'Y'
-Z               <-  'z'  /  'Z'
+AND             <-  [Aa] [Nn] [Dd] !BodyId
+ARRAY           <-  [Aa] [Rr] [Rr] [Aa] [Yy] !BodyId
+BEGIN           <-  [Bb] [Ee] [Gg] [Ii] [Nn] !BodyId
+CASE            <-  [Cc] [Aa] [Ss] [Ee] !BodyId
+CONST           <-  [Cc] [Oo] [Nn] [Ss] [Tt] !BodyId
+DIV             <-  [Dd] [Ii] [Vv] !BodyId
+DO              <-  [Dd] [Oo] !BodyId
+DOWNTO          <-  [Dd] [Oo] [Ww] [Nn] [Tt] [Oo] !BodyId
+ELSE            <-  [Ee] [Ll] [Ss] [Ee] !BodyId
+END             <-  [Ee] [Nn] [Dd] !BodyId
+FILE            <-  [Ff] [Ii] [Ll] [Ee] !BodyId
+FOR             <-  [Ff] [Oo] [Rr] !BodyId
+FUNCTION        <-  [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn] !BodyId
+GOTO            <-  [Gg] [Oo] [Tt] [Oo] !BodyId
+IF              <-  [Ii] [Ff] !BodyId
+IN              <-  [Ii] [Nn] !BodyId
+LABEL           <-  [Ll] [Aa] [Bb] [Ee] [Ll] !BodyId
+MOD             <-  [Mm] [Oo] [Dd] !BodyId
+NIL             <-  [Nn] [Ii] [Ll] !BodyId
+NOT             <-  [Nn] [Oo] [Tt] !BodyId
+OF              <-  [Oo] [Ff] !BodyId
+OR              <-  [Oo] [Rr] !BodyId
+PACKED          <-  [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] !BodyId
+PROCEDURE       <-  [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
+PROGRAM         <-  [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] !BodyId
+RECORD          <-  [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] !BodyId
+REPEAT          <-  [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] !BodyId
+SET             <-  [Ss] [Ee] [Tt] !BodyId
+THEN            <-  [Tt] [Hh] [Ee] [Nn] !BodyId
+TO              <-  [Tt] [Oo] !BodyId
+TYPE            <-  [Tt] [Yy] [Pp] [Ee] !BodyId
+UNTIL           <-  [Uu] [Nn] [Tt] [Ii] [Ll] !BodyId
+VAR             <-  [Vv] [Aa] [Rr] !BodyId
+WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
+WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
 SKIP            <-  ([ 	
 ]  /  COMMENT)*
-Token           <-  Z  /  Y  /  X  /  WITH  /  WHILE  /  W  /  VAR  /  V  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  U  /  TYPE  /  TO  /  THEN  /  T  /  String  /  Sign  /  Semi  /  SET  /  S  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  R  /  Q  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  P  /  OpenComment  /  OR  /  OF  /  O  /  NOT  /  NIL  /  N  /  MultOp  /  MOD  /  M  /  LPar  /  LBrack  /  LABEL  /  L  /  K  /  J  /  Id  /  IN  /  IF  /  I  /  H  /  GOTO  /  G  /  FUNCTION  /  FOR  /  FILE  /  F  /  Eq  /  END  /  ELSE  /  E  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  D  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  C  /  BodyId  /  BEGIN  /  B  /  Assign  /  AddOp  /  ARRAY  /  AND  /  A
+Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
 Err_001         <-  (!Dot EatToken)*
 Err_002         <-  (!(!.) EatToken)*
@@ -765,3 +687,222 @@ Err_090         <-  (!RBrack EatToken)*
 Err_091         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
 Err_092         <-  (!(RBrack  /  Comma) EatToken)*
 
+Yes: 	Teste.pas
+Yes: 	somaParImpar.pas
+Yes: 	HelloWorld.pas
+Yes: 	posneg.pas
+Yes: 	aprovado.pas
+Yes: 	quadrado.pas
+Yes: 	quick.pas
+Yes: 	sched.pas
+Yes: 	operators.pas
+Yes: 	cubo.pas
+Yes: 	gasolina.pas
+Yes: 	somaEProduto.pas
+Yes: 	PlayingWithDice.pas
+Yes: 	bubble.pas
+Yes: 	triangulo.pas
+Yes: 	maior.pas
+Yes: 	retangulo.pas
+No: 	EndInputErr.pas
+r = nil lab = fail line: 7 col: 1
+No: 	LabelErr1.pas
+r = nil lab = fail line: 4 col: 2
+No: 	ExprErr13.pas
+r = nil lab = fail line: 4 col: 14
+No: 	ConstErr2.pas
+r = nil lab = fail line: 4 col: 13
+No: 	LBrackErr.pas
+r = nil lab = fail line: 4 col: 12
+No: 	ConstErr3.pas
+r = nil lab = fail line: 4 col: 31
+No: 	RParErr4.pas
+r = nil lab = fail line: 3 col: 20
+No: 	OfErr1.pas
+r = nil lab = fail line: 4 col: 19
+No: 	IdErr6.pas
+r = nil lab = fail line: 4 col: 22
+No: 	ExprErr5.pas
+r = nil lab = fail line: 4 col: 5
+No: 	FactorErr.pas
+r = nil lab = fail line: 4 col: 11
+No: 	TypeErr2.pas
+r = nil lab = fail line: 4 col: 23
+No: 	ExprErr6.pas
+r = nil lab = fail line: 4 col: 7
+No: 	IdErr3.pas
+r = nil lab = fail line: 4 col: 2
+No: 	EndErr3.pas
+r = nil lab = fail line: 7 col: 1
+No: 	ConstErr5.pas
+r = nil lab = fail line: 5 col: 3
+No: 	SimpleExprErr.pas
+r = nil lab = fail line: 5 col: 1
+No: 	OfErr2.pas
+r = nil lab = fail line: 4 col: 10
+No: 	LabelErr3.pas
+r = nil lab = fail line: 4 col: 7
+No: 	RParErr6.pas
+r = nil lab = fail line: 4 col: 19
+No: 	ProcBodyErr.pas
+r = nil lab = fail line: 3 col: 14
+No: 	FormalParamErr1.pas
+r = nil lab = fail line: 3 col: 13
+No: 	IdErr12.pas
+r = nil lab = fail line: 4 col: 6
+No: 	SemiErr9.pas
+r = nil lab = fail line: 8 col: 1
+No: 	RBrackErr3.pas
+r = nil lab = fail line: 4 col: 12
+No: 	ColonErr4.pas
+r = nil lab = fail line: 3 col: 15
+No: 	ProgNameErr.pas
+r = nil lab = fail line: 1 col: 9
+No: 	TypeErr5.pas
+r = nil lab = fail line: 3 col: 15
+No: 	DotErr.pas
+r = nil lab = fail line: 5 col: 3
+No: 	OrdinalTypeErr3.pas
+r = nil lab = fail line: 4 col: 14
+No: 	ConstErr1.pas
+r = nil lab = fail line: 4 col: 7
+No: 	IdErr11.pas
+r = nil lab = fail line: 4 col: 4
+No: 	SemiErr6.pas
+r = nil lab = fail line: 7 col: 1
+No: 	IdErr8.pas
+r = nil lab = fail line: 3 col: 11
+No: 	SemiErr3.pas
+r = nil lab = fail line: 6 col: 1
+No: 	ThenErr.pas
+r = nil lab = fail line: 5 col: 1
+No: 	ConstErr4.pas
+r = nil lab = fail line: 4 col: 34
+No: 	DoErr3.pas
+r = nil lab = fail line: 4 col: 9
+No: 	ExprErr7.pas
+r = nil lab = fail line: 6 col: 8
+No: 	IdErr7.pas
+r = nil lab = fail line: 4 col: 26
+No: 	IdErr1.pas
+r = nil lab = fail line: 1 col: 22
+No: 	SemiErr11.pas
+r = nil lab = fail line: 4 col: 1
+No: 	RBrackErr2.pas
+r = nil lab = fail line: 4 col: 9
+No: 	ToDownToErr.pas
+r = nil lab = fail line: 4 col: 14
+No: 	ExprErr12.pas
+r = nil lab = fail line: 4 col: 11
+No: 	ColonErr6.pas
+r = nil lab = fail line: 5 col: 5
+No: 	AssignErr.pas
+r = nil lab = fail line: 4 col: 8
+No: 	TypeErr3.pas
+r = nil lab = fail line: 4 col: 18
+No: 	ColonErr2.pas
+r = nil lab = fail line: 4 col: 7
+No: 	ExprErr11.pas
+r = nil lab = fail line: 4 col: 12
+No: 	SemiErr5.pas
+r = nil lab = fail line: 5 col: 2
+No: 	OfErr4.pas
+r = nil lab = fail line: 4 col: 29
+No: 	UntilErr.pas
+r = nil lab = fail line: 6 col: 6
+No: 	BeginErr.pas
+r = nil lab = fail line: 4 col: 1
+No: 	VarErr1.pas
+r = nil lab = fail line: 4 col: 7
+No: 	ExprErr8.pas
+r = nil lab = fail line: 4 col: 8
+No: 	RParErr2.pas
+r = nil lab = fail line: 4 col: 18
+No: 	RealParamErr.pas
+r = nil lab = fail line: 4 col: 12
+No: 	IdErr4.pas
+r = nil lab = fail line: 4 col: 2
+No: 	SemiErr1.pas
+r = nil lab = fail line: 3 col: 1
+No: 	SemiErr8.pas
+r = nil lab = fail line: 6 col: 1
+No: 	IdErr9.pas
+r = nil lab = fail line: 3 col: 10
+No: 	ExprErr4.pas
+r = nil lab = fail line: 4 col: 12
+No: 	EndErr2.pas
+r = nil lab = fail line: 5 col: 4
+No: 	TermErr.pas
+r = nil lab = fail line: 4 col: 11
+No: 	ExprErr3.pas
+r = nil lab = fail line: 4 col: 7
+No: 	RBrackErr1.pas
+r = nil lab = fail line: 4 col: 18
+No: 	SemiErr10.pas
+r = nil lab = fail line: 4 col: 1
+No: 	DoErr1.pas
+r = nil lab = fail line: 5 col: 3
+No: 	IdErr2.pas
+r = nil lab = fail line: 4 col: 2
+No: 	ExprErr9.pas
+r = nil lab = fail line: 4 col: 11
+No: 	TypeErr1.pas
+r = nil lab = fail line: 4 col: 10
+No: 	VarErr2.pas
+r = nil lab = fail line: 4 col: 10
+No: 	ProgErr.pas
+r = nil lab = fail line: 1 col: 5
+No: 	SemiErr2.pas
+r = nil lab = fail line: 6 col: 1
+No: 	OrdinalTypeErr2.pas
+r = nil lab = fail line: 4 col: 19
+No: 	ColonErr5.pas
+r = nil lab = fail line: 4 col: 4
+No: 	OfErr3.pas
+r = nil lab = fail line: 4 col: 11
+No: 	RParErr5.pas
+r = nil lab = fail line: 5 col: 1
+No: 	EqErr2.pas
+r = nil lab = fail line: 4 col: 4
+No: 	RParErr3.pas
+r = nil lab = fail line: 7 col: 5
+No: 	RParErr1.pas
+r = nil lab = fail line: 1 col: 27
+No: 	ColonErr1.pas
+r = nil lab = fail line: 4 col: 33
+No: 	OrdinalTypeErr1.pas
+r = nil lab = fail line: 4 col: 13
+No: 	DoErr2.pas
+r = nil lab = fail line: 5 col: 1
+No: 	IdErr10.pas
+r = nil lab = fail line: 3 col: 17
+No: 	SemiErr4.pas
+r = nil lab = fail line: 7 col: 1
+No: 	EndErr1.pas
+r = nil lab = fail line: 4 col: 27
+No: 	ExprErr10.pas
+r = nil lab = fail line: 4 col: 16
+No: 	OfErr5.pas
+r = nil lab = fail line: 4 col: 11
+No: 	IdErr5.pas
+r = nil lab = fail line: 4 col: 11
+No: 	LabelErr2.pas
+r = nil lab = fail line: 4 col: 5
+No: 	LParErr.pas
+r = nil lab = fail line: 7 col: 12
+No: 	ColonErr3.pas
+r = nil lab = fail line: 3 col: 12
+No: 	EqErr1.pas
+r = nil lab = fail line: 4 col: 4
+No: 	ExprErr2.pas
+r = nil lab = fail line: 4 col: 4
+No: 	FormalParamErr2.pas
+r = nil lab = fail line: 3 col: 23
+No: 	SemiErr7.pas
+r = nil lab = fail line: 4 col: 9
+No: 	TypeErr4.pas
+r = nil lab = fail line: 4 col: 7
+No: 	ExprErr1.pas
+r = nil lab = fail line: 4 col: 7
+No: 	FuncBodyErr.pas
+r = nil lab = fail line: 3 col: 19

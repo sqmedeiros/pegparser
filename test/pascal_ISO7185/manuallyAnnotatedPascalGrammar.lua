@@ -1,6 +1,16 @@
+local m = require 'init'
+local errinfo = require 'syntax_errors'
+local pretty = require 'pretty'
+local coder = require 'coder'
+local first = require 'first'
+local recovery = require 'recovery'
+local lfs = require'lfs'
+local re = require'relabel'
+local util = require'util'
+
 g = [[
-	program 				<- head decs block^BeginErr Dot^DotErr (!.)^EndInputErr
-	head					<- Sp PROGRAM^ProgErr Id^ProgNameErr (LPar ids RPar^RParErr)? Semi^SemiErr
+	program 				<- SKIP head decs block^BeginErr Dot^DotErr (!.)^EndInputErr
+	head					<- PROGRAM^ProgErr Id^ProgNameErr (LPar ids RPar^RParErr)? Semi^SemiErr
 	decs 					<- labelDecs constDefs typeDefs varDecs procAndFuncDecs
 	ids			 			<- Id (Comma Id^IdErr)*
 
@@ -74,32 +84,31 @@ g = [[
 	setConstructor 			<- LBrack (memberDesignator (Comma memberDesignator^ExprErr)*)? RBrack^RBrackErr
 	memberDesignator 		<- expr (DotDot expr^ExprErr)?
 
-	AddOp					<- ('+' / '-'/ OR) Sp
-	Assign 					<- ':=' Sp
-	Dot						<- '.' Sp
-	DotDot 					<- '..' Sp
+	AddOp					<- ('+' / '-'/ OR)
+	Assign 					<- ':='
+	Dot						<- '.'
+	DotDot 					<- '..'
 	CloseComment 			<- '*)' / '}'
-	Colon			 		<- ':' Sp
-	Comma					<- ',' Sp
-	Comments 				<- OpenComment (!CloseComment .)* CloseComment
-	Eq 						<- '=' Sp
+	Colon			 		<- ':'
+	Comma					<- ','
+	COMMENT 				<- OpenComment (!CloseComment .)* CloseComment
+	Eq 						<- '='
 	BodyId 					<- [a-zA-Z0-9]
-	Id						<- !Reserved [a-zA-Z][a-zA-Z0-9]* Sp
-	LBrack 					<- '[' Sp
-	LPar					<- '(' Sp
-	MultOp 					<- ('*' / '/' / DIV / MOD / AND) Sp
+	Id						<- !Reserved [a-zA-Z][a-zA-Z0-9]*
+	LBrack 					<- '['
+	LPar					<- '('
+	MultOp 					<- ('*' / '/' / DIV / MOD / AND)
 	OpenComment 			<- '(*' / '{'
-	Pointer 			 	<- '^' Sp
-	RBrack 					<- ']' Sp
-	RelOp 					<- ('<=' / '=' / '<>' / '>=' / '>' / '<' / IN) Sp
-	RPar 					<- ')' Sp
-	Semi 					<- ';' Sp
-	Sign 					<- ('+'/'-') Sp
-	Sp						<- (%s / %nl / Comments)*
-	String					<- "'" [^']* "'" Sp
-	UInt 					<- [0-9]+ Sp
+	Pointer 			 	<- '^'
+	RBrack 					<- ']'
+	RelOp 					<- ('<=' / '=' / '<>' / '>=' / '>' / '<' / IN)
+	RPar 					<- ')'
+	Semi 					<- ';'
+	Sign 					<- ('+'/'-')
+	String					<- "'" (!"'" .)* "'"
+	UInt 					<- [0-9]+
 	UNumber 				<- UReal / UInt
-	UReal 					<- [0-9]+ ('.' [0-9]+ (E ('+'/'-') [0-9]+)? / E ('+'/'-') [0-9]+) Sp
+	UReal 					<- [0-9]+ ('.' [0-9]+ ([Ee] ('+'/'-') [0-9]+)? / [Ee] ('+'/'-') [0-9]+)
 
 	Reserved <- (
 		AND / ARRAY /
@@ -124,66 +133,48 @@ g = [[
 		WHILE / WITH
 	)
 
-	AND 			<- A N D 				!BodyId Sp
-	ARRAY 			<- A R R A Y 			!BodyId Sp
-	BEGIN 			<- B E G I N 			!BodyId Sp
-	CASE 			<- C A S E 				!BodyId Sp
-	CONST 			<- C O N S T 			!BodyId Sp
-	DIV 			<- D I V 				!BodyId Sp
-	DO 				<- D O 					!BodyId Sp
-	DOWNTO 			<- D O W N T O 			!BodyId Sp
-	ELSE			<- E L S E 				!BodyId Sp
-	END				<- E N D 				!BodyId Sp
-	FILE 			<- F I L E 				!BodyId Sp
-	FOR 			<- F O R 				!BodyId Sp
-	FUNCTION 		<- F U N C T I O N 		!BodyId Sp
-	GOTO 			<- G O T O 				!BodyId Sp
-	IF 				<- I F 					!BodyId Sp
-	IN 				<- I N 					!BodyId Sp
-	LABEL 			<- L A B E L 			!BodyId Sp
-	MOD 			<- M O D 				!BodyId Sp
-	NIL 			<- N I L 				!BodyId Sp
-	NOT 			<- N O T 				!BodyId Sp
-	OF 				<- O F 					!BodyId	Sp
-	OR 				<- O R 					!BodyId Sp
-	PACKED 			<- P A C K E D 			!BodyId Sp
-	PROCEDURE 		<- P R O C E D U R E 	!BodyId Sp
-	PROGRAM 		<- P R O G R A M 		!BodyId Sp
-	RECORD 			<- R E C O R D 			!BodyId Sp
-	REPEAT 			<- R E P E A T 			!BodyId Sp
-	SET 			<- S E T 				!BodyId Sp
-	THEN 			<- T H E N 				!BodyId Sp
-	TO 				<- T O 					!BodyId Sp
-	TYPE 			<- T Y P E 				!BodyId Sp
-	UNTIL 			<- U N T I L 			!BodyId Sp
-	VAR 			<- V A R 				!BodyId Sp
-	WHILE 			<- W H I L E 			!BodyId Sp
-	WITH 			<- W I T H 				!BodyId Sp
-	
-	A			<- 'a' / 'A'
-	B			<- 'b' / 'B'
-	C			<- 'c' / 'C'
-	D			<- 'd' / 'D'
-	E			<- 'e' / 'E'
-	F			<- 'f' / 'F'
-	G			<- 'g' / 'G'
-	H			<- 'h' / 'H'
-	I			<- 'i' / 'I'
-	J			<- 'j' / 'J'
-	K			<- 'k' / 'K'
-	L			<- 'l' / 'L'
-	M			<- 'm' / 'M'
-	N			<- 'n' / 'N'
-	O			<- 'o' / 'O'
-	P			<- 'p' / 'P'
-	Q			<- 'q' / 'Q'
-	R			<- 'r' / 'R'
-	S			<- 's' / 'S'
-	T			<- 't' / 'T'
-	U			<- 'u' / 'U'
-	V			<- 'v' / 'V'
-	W			<- 'w' / 'W'
-	X			<- 'x' / 'X'
-	Y			<- 'y' / 'Y'
-	Z			<- 'z' / 'Z'
+	AND 			<- [Aa] [Nn] [Dd]								!BodyId
+	ARRAY 			<- [Aa] [Rr] [Rr] [Aa] [Yy]						!BodyId
+	BEGIN 			<- [Bb] [Ee] [Gg] [Ii] [Nn]						!BodyId
+	CASE 			<- [Cc] [Aa] [Ss] [Ee] 							!BodyId
+	CONST 			<- [Cc] [Oo] [Nn] [Ss] [Tt] 					!BodyId
+	DIV 			<- [Dd] [Ii] [Vv] 								!BodyId
+	DO 				<- [Dd] [Oo] 									!BodyId
+	DOWNTO 			<- [Dd] [Oo] [Ww] [Nn] [Tt] [Oo]				!BodyId
+	ELSE			<- [Ee] [Ll] [Ss] [Ee] 							!BodyId
+	END				<- [Ee] [Nn] [Dd] 								!BodyId
+	FILE 			<- [Ff] [Ii] [Ll] [Ee] 							!BodyId
+	FOR 			<- [Ff] [Oo] [Rr] 								!BodyId
+	FUNCTION 		<- [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn]		!BodyId
+	GOTO 			<- [Gg] [Oo] [Tt] [Oo] 							!BodyId
+	IF 				<- [Ii] [Ff] 									!BodyId
+	IN 				<- [Ii] [Nn] 									!BodyId
+	LABEL 			<- [Ll] [Aa] [Bb] [Ee] [Ll] 					!BodyId
+	MOD 			<- [Mm] [Oo] [Dd]								!BodyId
+	NIL 			<- [Nn] [Ii] [Ll] 								!BodyId
+	NOT 			<- [Nn] [Oo] [Tt] 								!BodyId
+	OF 				<- [Oo] [Ff] 									!BodyId
+	OR 				<- [Oo] [Rr] 									!BodyId
+	PACKED 			<- [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] 				!BodyId
+	PROCEDURE 		<- [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee]	!BodyId
+	PROGRAM 		<- [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] 			!BodyId
+	RECORD 			<- [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] 				!BodyId
+	REPEAT 			<- [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] 				!BodyId
+	SET 			<- [Ss] [Ee] [Tt]				 				!BodyId
+	THEN 			<- [Tt] [Hh] [Ee] [Nn]			 				!BodyId
+	TO 				<- [Tt] [Oo]				 					!BodyId
+	TYPE 			<- [Tt] [Yy] [Pp] [Ee] 							!BodyId
+	UNTIL 			<- [Uu] [Nn] [Tt] [Ii] [Ll]			 			!BodyId
+	VAR 			<- [Vv] [Aa] [Rr] 								!BodyId
+	WHILE 			<- [Ww] [Hh] [Ii] [Ll] [Ee] 					!BodyId
+	WITH 			<- [Ww] [Ii] [Tt] [Hh]			 				!BodyId
 ]]
+
+local g = m.match(g)
+local p = coder.makeg(g, 'ast')
+
+local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/yes/'
+util.testYes(dir, 'pas', p)
+
+local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/no/'
+util.testNo(dir, 'pas', p)

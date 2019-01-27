@@ -7,21 +7,18 @@ local recovery = require 'recovery'
 local lfs = require'lfs'
 local re = require'relabel'
 local ast = require'ast'
+local util = require'util'
 
 --[[
-  To be able to circumvent the limit imposed by MAXRULES,
-  changed label Err_011 to Err_010 in rule 'constDefs',
-  and commented out rule Err_011. The recovery rules
-  Err_010 and Err_011 have the same right-hand side.
+  	To be able to circumvent the limit imposed by MAXRULES,
+  	changed label Err_011 to Err_010 in rule 'constDefs', 
+  	and commented out rule Err_011. The recovery rules Err_010
+  	and Err_011 have the same right-hand side.
 
 	Removed:
 		- Err_024 (DotDot in rule subrangeType)
 		- Err_066 (Assign in rule assignStmt)
-		- Err_073 (RPar in rule params)
-		- Err_064 (END in rule block)
-		- Err_001 (block in rule program)
-		- Err_101 (params in rule funcCall)
-
+    	- Err_101 (params in rule funcCall)
 ]]
 
 g = [[
@@ -32,7 +29,7 @@ ids             <-  Id (Comma Id^Err_007)*
 labelDecs       <-  (LABEL labels^Err_008 Semi^Err_009)?
 labels          <-  label (Comma label^Err_010)*
 label           <-  UInt
-constDefs       <-  (CONST constDef^Err_010 Semi^Err_012 (constDef Semi^Err_013)*)?
+constDefs       <-  (CONST constDef^Err_011 Semi^Err_012 (constDef Semi^Err_013)*)?
 constDef        <-  Id Eq^Err_014 const^Err_015
 const           <-  Sign? (UNumber  /  Id)  /  String
 typeDefs        <-  (TYPE typeDef^Err_016 Semi^Err_017 (typeDef Semi^Err_018)*)?
@@ -64,14 +61,14 @@ funcDec         <-  funcHeading Semi^Err_054 (decs block  /  Id)^Err_055
 funcHeading     <-  FUNCTION Id^Err_056 formalParams? Colon^Err_057 type^Err_058
 formalParams    <-  LPar formalParamsSection^Err_059 (Semi formalParamsSection^Err_060)* RPar^Err_061
 formalParamsSection <-  VAR? ids Colon^Err_062 Id^Err_063  /  procHeading  /  funcHeading
-block           <-  BEGIN stmts END
+block           <-  BEGIN stmts END^Err_064
 stmts           <-  stmt (Semi stmt)*
 stmt            <-  (label Colon^Err_065)? (simpleStmt  /  structuredStmt)?
 simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
 assignStmt      <-  var Assign expr^Err_067
 var             <-  Id (LBrack expr^Err_068 (Comma expr^Err_069)* RBrack^Err_070  /  Dot Id^Err_071  /  Pointer)*
 procStmt        <-  Id params?
-params          <-  LPar (param (Comma param^Err_072)*)? RPar
+params          <-  LPar (param (Comma param^Err_072)*)? RPar^Err_073
 param           <-  expr (Colon expr)? (Colon expr^Err_074)?
 gotoStmt        <-  GOTO label^Err_075
 structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
@@ -99,7 +96,7 @@ DotDot          <-  '..'
 CloseComment    <-  '*)'  /  '}'
 Colon           <-  ':'
 Comma           <-  ','
-COMMENT        	<-  OpenComment (!CloseComment .)* CloseComment
+COMMENT         <-  OpenComment (!CloseComment .)* CloseComment
 Eq              <-  '='
 BodyId          <-  [a-zA-Z0-9]
 Id              <-  !Reserved [a-zA-Z] [a-zA-Z0-9]*
@@ -116,70 +113,44 @@ Sign            <-  '+'  /  '-'
 String          <-  "'" (!"'" .)* "'"
 UInt            <-  [0-9]+
 UNumber         <-  UReal  /  UInt
-UReal           <-  [0-9]+ ('.' [0-9]+ (E ('+'  /  '-') [0-9]+)?  /  E ('+'  /  '-') [0-9]+)
+UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
 Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
-AND             <-  A N D !BodyId
-ARRAY           <-  A R R A Y !BodyId
-BEGIN           <-  B E G I N !BodyId
-CASE            <-  C A S E !BodyId
-CONST           <-  C O N S T !BodyId
-DIV             <-  D I V !BodyId
-DO              <-  D O !BodyId
-DOWNTO          <-  D O W N T O !BodyId
-ELSE            <-  E L S E !BodyId
-END             <-  E N D !BodyId
-FILE            <-  F I L E !BodyId
-FOR             <-  F O R !BodyId
-FUNCTION        <-  F U N C T I O N !BodyId
-GOTO            <-  G O T O !BodyId
-IF              <-  I F !BodyId
-IN              <-  I N !BodyId
-LABEL           <-  L A B E L !BodyId
-MOD             <-  M O D !BodyId
-NIL             <-  N I L !BodyId
-NOT             <-  N O T !BodyId
-OF              <-  O F !BodyId
-OR              <-  O R !BodyId
-PACKED          <-  P A C K E D !BodyId
-PROCEDURE       <-  P R O C E D U R E !BodyId
-PROGRAM         <-  P R O G R A M !BodyId
-RECORD          <-  R E C O R D !BodyId
-REPEAT          <-  R E P E A T !BodyId
-SET             <-  S E T !BodyId
-THEN            <-  T H E N !BodyId
-TO              <-  T O !BodyId
-TYPE            <-  T Y P E !BodyId
-UNTIL           <-  U N T I L !BodyId
-VAR             <-  V A R !BodyId
-WHILE           <-  W H I L E !BodyId
-WITH            <-  W I T H !BodyId
-A               <-  'a'  /  'A'
-B               <-  'b'  /  'B'
-C               <-  'c'  /  'C'
-D               <-  'd'  /  'D'
-E               <-  'e'  /  'E'
-F               <-  'f'  /  'F'
-G               <-  'g'  /  'G'
-H               <-  'h'  /  'H'
-I               <-  'i'  /  'I'
-J               <-  'j'  /  'J'
-K               <-  'k'  /  'K'
-L               <-  'l'  /  'L'
-M               <-  'm'  /  'M'
-N               <-  'n'  /  'N'
-O               <-  'o'  /  'O'
-P               <-  'p'  /  'P'
-Q               <-  'q'  /  'Q'
-R               <-  'r'  /  'R'
-S               <-  's'  /  'S'
-T               <-  't'  /  'T'
-U               <-  'u'  /  'U'
-V               <-  'v'  /  'V'
-W               <-  'w'  /  'W'
-X               <-  'x'  /  'X'
-Y               <-  'y'  /  'Y'
-Z               <-  'z'  /  'Z'
-Token           <-  Z  /  Y  /  X  /  WITH  /  WHILE  /  W  /  VAR  /  V  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  U  /  TYPE  /  TO  /  THEN  /  T  /  String  /  Sign  /  Semi  /  SET  /  S  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  R  /  Q  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  P  /  OpenComment  /  OR  /  OF  /  O  /  NOT  /  NIL  /  N  /  MultOp  /  MOD  /  M  /  LPar  /  LBrack  /  LABEL  /  L  /  K  /  J  /  Id  /  IN  /  IF  /  I  /  H  /  GOTO  /  G  /  FUNCTION  /  FOR  /  FILE  /  F  /  Eq  /  END  /  ELSE  /  E  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  D  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  C  /  BodyId  /  BEGIN  /  B  /  Assign  /  AddOp  /  ARRAY  /  AND  /  A
+AND       <- [Aa] [Nn] [Dd]               !BodyId
+ARRAY       <- [Aa] [Rr] [Rr] [Aa] [Yy]           !BodyId
+BEGIN       <- [Bb] [Ee] [Gg] [Ii] [Nn]           !BodyId
+CASE      <- [Cc] [Aa] [Ss] [Ee]              !BodyId
+CONST       <- [Cc] [Oo] [Nn] [Ss] [Tt]           !BodyId
+DIV       <- [Dd] [Ii] [Vv]                 !BodyId
+DO        <- [Dd] [Oo]                  !BodyId
+DOWNTO      <- [Dd] [Oo] [Ww] [Nn] [Tt] [Oo]        !BodyId
+ELSE      <- [Ee] [Ll] [Ss] [Ee]              !BodyId
+END       <- [Ee] [Nn] [Dd]                 !BodyId
+FILE      <- [Ff] [Ii] [Ll] [Ee]              !BodyId
+FOR       <- [Ff] [Oo] [Rr]                 !BodyId
+FUNCTION    <- [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn]    !BodyId
+GOTO      <- [Gg] [Oo] [Tt] [Oo]              !BodyId
+IF        <- [Ii] [Ff]                  !BodyId
+IN        <- [Ii] [Nn]                  !BodyId
+LABEL       <- [Ll] [Aa] [Bb] [Ee] [Ll]           !BodyId
+MOD       <- [Mm] [Oo] [Dd]               !BodyId
+NIL       <- [Nn] [Ii] [Ll]                 !BodyId
+NOT       <- [Nn] [Oo] [Tt]                 !BodyId
+OF        <- [Oo] [Ff]                  !BodyId
+OR        <- [Oo] [Rr]                  !BodyId
+PACKED      <- [Pp] [Aa] [Cc] [Kk] [Ee] [Dd]        !BodyId
+PROCEDURE     <- [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
+PROGRAM     <- [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm]       !BodyId
+RECORD      <- [Rr] [Ee] [Cc] [Oo] [Rr] [Dd]        !BodyId
+REPEAT      <- [Rr] [Ee] [Pp] [Ee] [Aa] [Tt]        !BodyId
+SET       <- [Ss] [Ee] [Tt]               !BodyId
+THEN      <- [Tt] [Hh] [Ee] [Nn]              !BodyId
+TO        <- [Tt] [Oo]                  !BodyId
+TYPE      <- [Tt] [Yy] [Pp] [Ee]              !BodyId
+UNTIL       <- [Uu] [Nn] [Tt] [Ii] [Ll]           !BodyId
+VAR       <- [Vv] [Aa] [Rr]                 !BodyId
+WHILE       <- [Ww] [Hh] [Ii] [Ll] [Ee]           !BodyId
+WITH      <- [Ww] [Ii] [Tt] [Hh]              !BodyId
+Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
 Err_001         <-  (!Dot EatToken)*
 Err_002         <-  (!(!.) EatToken)*
@@ -191,7 +162,7 @@ Err_007         <-  (!(RPar  /  Colon) EatToken)*
 Err_008         <-  (!Semi EatToken)*
 Err_009         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
 Err_010         <-  (!Semi EatToken)*
---Err_011         <-  (!Semi EatToken)*
+Err_011         <-  (!Semi EatToken)*
 Err_012         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
 Err_013         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
 Err_014         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
@@ -243,6 +214,7 @@ Err_060         <-  (!RPar EatToken)*
 Err_061         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
 Err_062         <-  (!Id EatToken)*
 Err_063         <-  (!(Semi  /  RPar) EatToken)*
+Err_064         <-  (!(UNTIL  /  Semi  /  END  /  ELSE  /  Dot) EatToken)*
 Err_065         <-  (!(WITH  /  WHILE  /  UNTIL  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
 Err_067         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
 Err_068         <-  (!(RBrack  /  Comma) EatToken)*
@@ -250,6 +222,7 @@ Err_069         <-  (!RBrack EatToken)*
 Err_070         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
 Err_071         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
 Err_072         <-  (!RPar EatToken)*
+Err_073         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
 Err_074         <-  (!(RPar  /  Comma) EatToken)*
 Err_075         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
 Err_076         <-  (!THEN EatToken)*
@@ -283,52 +256,10 @@ Err_104         <-  (!(RBrack  /  Comma) EatToken)*
 ]]
 
 local g = m.match(g)
-
 local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/yes/' 
-for file in lfs.dir(dir) do
-  if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'pas' + 1) == 'pas' then
-    print("Yes: ", file)
-    local f = io.open(dir .. file)
-    local s = f:read('a')
-    f:close()
-    local r, lab, pos = p:match(s)
-    local line, col = '', ''
-    if not r then
-      line, col = re.calcline(s, pos)
-    end
-    assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-  end
-end
+util.testYes(dir, 'pas', p)
 
-local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/no/'
-local irec, ifail = 0, 0
-local tfail = {}
-for file in lfs.dir(dir) do
-    if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'pas' + 1) == 'pas' then
-        print("No: ", file)
-        local f = io.open(dir .. file)
-        local s = f:read('a')
-        f:close()
-        local r, lab, pos = p:match(s)
-        io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
-        local line, col = '', ''
-        if not r then
-            line, col = re.calcline(s, pos)
-            io.write(' line: ' .. line .. ' col: ' .. col)
-            ifail = ifail + 1
-            tfail[ifail] = { file = file, lab = lab, line = line, col = col }
-        else
-            irec = irec + 1
-						io.write('\n')
-            ast.printAST(r)
-        end
-        io.write('\n')
-    end
-end
-
-print('irec: ', irec, ' ifail: ', ifail)
-for i, v in ipairs(tfail) do
-    print(v.file, v.lab, 'line: ', v.line, 'col: ', v.col)
-end
+local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/no/' 
+util.testNoRec(dir, 'pas', p)
