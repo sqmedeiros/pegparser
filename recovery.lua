@@ -85,7 +85,7 @@ local function notannotateSoft (g, p, flw, flag, v)
 			local firstp1 = calcfirst(g, p.p1)
 			--print("soft v disjoint", v, disjoint(calcfirst(g, p.p1), k))
 			if not disjoint(calcfirst(g, p.p1), k) then
-				if not banned[v] and first.issubset(firstp1, k) then
+				if not banned[v] and first.issubset(k, firstp1) then --TODO: ver a ordem
 					notannotateSoft(g, p.p1, flw, false, v)
 					notannotateSoft(g, p.p2, flw, false, v)
 				elseif not banned[v] then
