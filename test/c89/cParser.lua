@@ -1,10 +1,9 @@
 local m = require 'init'
-local recovery = require 'recovery'
 local pretty = require 'pretty'
 local coder = require 'coder'
-local lfs = require 'lfs'
-local re = require 'relabel'
-local first = require'first'
+local recovery = require 'recovery'
+local ast = require'ast'
+local util = require'util'
 
 local function assertErr (p, s, lab)
   local r, l, pos = p:match(s)
@@ -21,7 +20,7 @@ local function assertOk(p, s)
 end
 
 
-local g =  m.match[[
+local g = [[
 translation_unit      <-  SKIP external_decl+ !.
 
 external_decl         <-  function_def  /  decl
@@ -192,13 +191,14 @@ KEYWORDS              <-  ('auto'  /  'double'  /  'int'  /  'struct'  /
                           'do'  /  'if'  /  'static'  /  'while') ![a-zA-Z_0-9]
 ]] 
 
-                        
---first.calcFst(g)
---first.calcFlw(g)
---first.printfirst(g)
-
+                 
+local g = m.match(g)
 print("Original Grammar")
 print(pretty.printg(g), '\n')
+
+local gast = ast.buildAST(g)
+print("With annotations to build AST")
+print(pretty.printg(gast), '\n')
 
 print("Regular Annotation (SBLP paper)")
 local glabRegular = recovery.addlab(g, true, false)
@@ -214,37 +214,9 @@ print(pretty.printg(glabSoft, true), '\n')
 
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/c89/test/yes/'	
-for file in lfs.dir(dir) do
-	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'c' + 1) == 'c' then
-		print("Yes: ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-		end
-		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
+local dir = lfs.currentdir() .. '/test/c89/test/yes/'
+util.testYes(dir, 'c', p)
 
-local dir = lfs.currentdir() .. '/test/c89/test/no/'	
-for file in lfs.dir(dir) do
-	if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'c' + 1) == 'c' then
-		print("No: ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-			io.write(' line: ' .. line .. ' col: ' .. col)
-		end
-		io.write('\n')
-		assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
+local dir = lfs.currentdir() .. '/test/c89/test/no/'
+util.testNo(dir, 'c', p)
+

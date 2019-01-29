@@ -1,29 +1,11 @@
 local m = require 'init'
-local recovery = require 'recovery'
-local pretty = require 'pretty'
 local coder = require 'coder'
-local lfs = require 'lfs'
-local re = require 'relabel'
-local first = require'first'
-
-local function assertErr (p, s, lab)
-  local r, l, pos = p:match(s)
-  assert(not r, "Did not fail: r = " .. tostring(r))
-  if lab then
-    assert(l == lab, "Expected label '" .. tostring(lab) .. "' but got " .. tostring(l))
-  end
-end
-
-local function assertOk(p, s)
-  local r, l, pos = p:match(s)
-  assert(r, 'Failed: label = ' .. tostring(l) .. ', pos = ' .. tostring(pos))
-  assert(r == #s + 1, "Matched until " .. r)
-end
+local util = require'util'
 
 -- Does not need to remove labels manually
 -- Disable rule typedef_name, because its correct matching depends on semantic actions
 
-local g =  m.match[[
+local g = [[
 translation_unit <-  SKIP external_decl+ !.
 external_decl   <-  function_def  /  decl
 function_def    <-  declarator decl* compound_stat  /  decl_spec function_def
@@ -84,43 +66,15 @@ STRING          <-  '"' (%nl  /  !'"' .)* '"'
 ESC_CHAR        <-  '\\' ('n'  /  't'  /  'v'  /  'b'  /  'r'  /  'f'  /  'a'  /  '\\'  /  '?'  /  "'"  /  '"'  /  [01234567] [01234567]? [01234567]?  /  'x' XDIGIT)
 ENUMERATION_CONST <-  ID
 ID              <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]*
-KEYWORDS        <-  'auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  'else'  /  'long'  /  'switch'  /  'case'  /  'enum'  /  'register'  /  'typedef'  /  'char'  /  'extern'  /  'return'  /  'union'  /  'const'  /  'float'  /  'short'  /  'unsigned'  /  'continue'  /  'for'  /  'signed'  /  'void'  /  'default'  /  'goto'  /  'sizeof'  /  'volatile'  /  'do'  /  'if'  /  'static'  /  'while'
+KEYWORDS        <-  ('auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  'else'  /  'long'  /  'switch'  /  'case'  /  'enum'  /  'register'  /  'typedef'  /  'char'  /  'extern'  /  'return'  /  'union'  /  'const'  /  'float'  /  'short'  /  'unsigned'  /  'continue'  /  'for'  /  'signed'  /  'void'  /  'default'  /  'goto'  /  'sizeof'  /  'volatile'  /  'do'  /  'if'  /  'static'  /  'while') ![a-zA-Z_0-9]
 ]] 
 
 
-local p = coder.makeg(g)
+local g = m.match(g)
+local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/c89/test/yes/'	
-for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
-		print("Yes: ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-		end
-		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
+local dir = lfs.currentdir() .. '/test/c89/test/yes/'
+util.testYes(dir, 'c', p)
 
-local dir = lfs.currentdir() .. '/test/c89/test/no/'	
-for file in lfs.dir(dir) do
-	if file ~= '.' and file ~= '..' and string.sub(file, #file) == 'c' then
-		print("No: ", file)
-		local f = io.open(dir .. file)
-		local s = f:read('a')
-		f:close()
-		local r, lab, pos = p:match(s)
-		io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
-		local line, col = '', ''
-		if not r then
-			line, col = re.calcline(s, pos)
-			io.write(' line: ' .. line .. ' col: ' .. col)
-		end
-		io.write('\n')
-		assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-	end
-end
+local dir = lfs.currentdir() .. '/test/c89/test/no/'
+util.testNo(dir, 'c', p)
