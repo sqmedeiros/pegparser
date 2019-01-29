@@ -66,8 +66,6 @@ COMMENT         <-  '--' (!%nl .)*
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local p = coder.makeg(g, 'ast')
-
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'
 util.testYes(dir, 'titan', p)
 

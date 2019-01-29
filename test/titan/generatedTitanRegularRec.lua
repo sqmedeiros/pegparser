@@ -151,5 +151,6 @@ local p = coder.makeg(g, 'ast')
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'
 util.testYes(dir, 'titan', p)
 
+util.setVerbose(true)
 local dir = lfs.currentdir() .. '/test/titan/test/no/'
 util.testNoRec(dir, 'titan', p)
