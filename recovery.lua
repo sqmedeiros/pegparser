@@ -117,7 +117,7 @@ end
 local function getLexRules (g, withSkip)
 	local t = {}
 	for k, _ in pairs(g.lex) do
-		if k ~= 'SKIP' or (k == 'SKIP' and withSkip) then
+		if (k ~= 'SKIP' and k ~= 'SPACE') or ((k == 'SKIP' or k == 'SPACE') and withSkip) then
 			t['__' .. k] = true
 		end
 	end
@@ -239,7 +239,7 @@ local function addlab (g, rec, flagBanned)
 		-- (!FOLLOW(p) eatToken space)*
 		-- eatToken  <-  token / (!space .)+
 		local tk = newNode('var', 'Token')
-		local notspace = newNot(newNode('var', 'SKIP'))
+		local notspace = newNot(newNode('var', 'SPACE'))
 		local eatToken = newOrd(tk, newNode('plus', newSeq(notspace, newAny())))
 		newg.prules['EatToken'] = newSeq(eatToken, newNode('var', 'SKIP'))
 		table.insert(newg.plist, 'EatToken')

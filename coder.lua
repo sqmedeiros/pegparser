@@ -103,7 +103,7 @@ local function autoskip (p, g)
 	elseif p.tag == 'anonCap' then
 		return matchskip(p)
 	elseif p.tag == 'var' then
-		if p.p1 ~= 'SKIP' and g.lex[p.p1] then
+		if p.p1 ~= 'SKIP' and p.p1 ~= 'SPACE' and g.lex[p.p1] then
 			return matchskip(p)
 		else
 			return p
@@ -130,7 +130,7 @@ local function makeg (g, tree)
 	end
 	local peg = { [1] = g.plist[1] }
 	for i, v in ipairs(g.plist) do
-		if v ~= 'SKIP' and v ~= 'COMMENT' then
+		if v ~= 'SKIP' and v ~= 'SPACE' and v ~= 'COMMENT' then
 			local p = g.prules[v]
 			if not parser.isLexRule(v) then
 				p = autoskip(p, g)

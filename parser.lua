@@ -205,12 +205,19 @@ defs.matchEmpty = function (p)
 end
 
 local function setSkip (g)
-	local skip = defs.newClass{' ','\t','\n','\v','\f','\r'}
+	local space = defs.newClass{' ','\t','\n','\v','\f','\r'}
 	if g.prules['COMMENT'] then
-		skip = 	defs.newSuffix(defs.newOrd(skip, defs.newVar('COMMENT')), '*')
-	else
-		skip = defs.newSuffix(skip, '*')
+		space =	defs.newOrd(space, defs.newVar('COMMENT'))
 	end
+	local skip = defs.newSuffix(space, '*')
+
+	local s = 'SPACE'
+	if not g.prules[s] then
+		g.plist[#g.plist+1] = s
+		g.lex[s] = true
+	end
+	g.prules[s] = space
+
 	local s = 'SKIP'
 	if not g.prules[s] then
 		g.plist[#g.plist+1] = s
