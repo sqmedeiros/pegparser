@@ -1,6 +1,6 @@
 program DoErr1;
 
 begin
-	with a 
+	while a 
 		a := 1;
 end.

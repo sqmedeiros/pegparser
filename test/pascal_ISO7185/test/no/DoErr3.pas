@@ -1,4 +1,4 @@
-program VarErr1;
+program DoErr3;
 
 begin
 	with a od
