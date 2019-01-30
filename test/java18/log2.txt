@@ -600,7 +600,7 @@ Err_056         <-  (!'->' EatToken)*
 
 
 Conservative Annotation (Soft)
-Banned (53): annotation, annotationTypeDeclaration, arguments, assignment, assignmentExpression, basicForStatement, block, catchClause, classCreator, classDeclaration, classMemberDeclaration, classType, conditionalExpression, constantDeclaration, constantExpression, dim, dimExpr, elementValue, elementValueArrayInitializer, enhancedForStatement, enumConstant, enumDeclaration, explicitConstructorInvocation, expression, fieldDeclaration, finally, importDeclaration, interfaceDeclaration, interfaceMethodDeclaration, interfaceModifier, lambdaExpression, localVariableDeclaration, markerAnnotation, methodDeclaration, normalAnnotation, normalClassDeclaration, normalInterfaceDeclaration, packageDeclaration, parExpression, primary, primaryRest, primitiveType, qualIdent, referenceType, singleElementAnnotation, statement, statementExpression, switchBlock, switchBlockStatementGroup, tryStatement, typeArguments, unaryExpression, variableInitializer, 
+Banned (58): additionalBound, annotation, annotationTypeDeclaration, annotationTypeElementDeclaration, arguments, assignment, assignmentExpression, basicForStatement, basicType, block, castExpression, catchClause, classCreator, classDeclaration, classMemberDeclaration, classType, conditionalExpression, constantDeclaration, dim, dimExpr, elementValue, elementValueArrayInitializer, enhancedForStatement, enumConstant, enumDeclaration, explicitConstructorInvocation, expression, fieldDeclaration, finally, importDeclaration, interfaceDeclaration, interfaceMethodDeclaration, interfaceModifier, lambdaExpression, localVariableDeclaration, localVariableDeclarationStatement, markerAnnotation, methodDeclaration, normalAnnotation, normalClassDeclaration, normalInterfaceDeclaration, packageDeclaration, parExpression, primary, primaryRest, primitiveType, qualIdent, referenceType, singleElementAnnotation, statement, statementExpression, switchBlock, switchBlockStatementGroup, tryStatement, typeArguments, unaryExpression, unaryExpressionNotPlusMinus, variableInitializer, 
 compilation     <-  SKIP compilationUnit !.
 basicType       <-  'byte'  /  'short'  /  'int'  /  'long'  /  'char'  /  'float'  /  'double'  /  'boolean'
 primitiveType   <-  annotation* basicType
@@ -613,12 +613,12 @@ dim             <-  annotation* '[' ']'
 typeParameter   <-  typeParameterModifier* Identifier typeBound?
 typeParameterModifier <-  annotation
 typeBound       <-  'extends' [classType additionalBound*  /  typeVariable]^Err_002
-additionalBound <-  'and' [classType]^Err_003
+additionalBound <-  'and' classType
 typeArguments   <-  '<' typeArgumentList '>'
-typeArgumentList <-  typeArgument (',' [typeArgument]^Err_004)*
+typeArgumentList <-  typeArgument (',' [typeArgument]^Err_003)*
 typeArgument    <-  referenceType  /  wildcard
 wildcard        <-  annotation* '?' wildcardBounds?
-wildcardBounds  <-  'extends' [referenceType]^Err_005  /  'super' [referenceType]^Err_006
+wildcardBounds  <-  'extends' [referenceType]^Err_004  /  'super' [referenceType]^Err_005
 qualIdent       <-  Identifier ('.' Identifier)*
 compilationUnit <-  packageDeclaration? importDeclaration* typeDeclaration*
 packageDeclaration <-  packageModifier* 'package' Identifier ('.' Identifier)* ';'
@@ -628,44 +628,44 @@ typeDeclaration <-  classDeclaration  /  interfaceDeclaration  /  ';'
 classDeclaration <-  normalClassDeclaration  /  enumDeclaration
 normalClassDeclaration <-  classModifier* 'class' Identifier typeParameters? superclass? superinterfaces? classBody
 classModifier   <-  annotation  /  'public'  /  'protected'  /  'private'  /  'abstract'  /  'static'  /  'final'  /  'strictfp'
-typeParameters  <-  '<' [typeParameterList]^Err_007 ['>']^Err_008
-typeParameterList <-  typeParameter (',' [typeParameter]^Err_009)*
-superclass      <-  'extends' [classType]^Err_010
-superinterfaces <-  'implements' [interfaceTypeList]^Err_011
-interfaceTypeList <-  classType (',' [classType]^Err_012)*
-classBody       <-  '{' classBodyDeclaration* ['}']^Err_013
+typeParameters  <-  '<' [typeParameterList]^Err_006 ['>']^Err_007
+typeParameterList <-  typeParameter (',' [typeParameter]^Err_008)*
+superclass      <-  'extends' [classType]^Err_009
+superinterfaces <-  'implements' [interfaceTypeList]^Err_010
+interfaceTypeList <-  classType (',' [classType]^Err_011)*
+classBody       <-  '{' classBodyDeclaration* ['}']^Err_012
 classBodyDeclaration <-  classMemberDeclaration  /  instanceInitializer  /  staticInitializer  /  constructorDeclaration
 classMemberDeclaration <-  fieldDeclaration  /  methodDeclaration  /  classDeclaration  /  interfaceDeclaration  /  ';'
 fieldDeclaration <-  fieldModifier* unannType variableDeclaratorList ';'
-variableDeclaratorList <-  variableDeclarator (',' [variableDeclarator]^Err_014)*
-variableDeclarator <-  variableDeclaratorId ('=' !'=' [variableInitializer]^Err_015)?
+variableDeclaratorList <-  variableDeclarator (',' [variableDeclarator]^Err_013)*
+variableDeclarator <-  variableDeclaratorId ('=' !'=' [variableInitializer]^Err_014)?
 variableDeclaratorId <-  Identifier dim*
 variableInitializer <-  expression  /  arrayInitializer
-unannClassType  <-  Identifier typeArguments? ('.' annotation* [Identifier]^Err_016 typeArguments?)*
+unannClassType  <-  Identifier typeArguments? ('.' annotation* [Identifier]^Err_015 typeArguments?)*
 unannType       <-  basicType dim*  /  unannClassType dim*
 fieldModifier   <-  annotation  /  'public'  /  'protected'  /  'private'  /  'static'  /  'final'  /  'transient'  /  'volatile'
 methodDeclaration <-  methodModifier* methodHeader methodBody
-methodHeader    <-  result [methodDeclarator]^Err_017 throws?  /  typeParameters annotation* [result]^Err_018 [methodDeclarator]^Err_019 throws?
-methodDeclarator <-  Identifier ['(']^Err_020 formalParameterList? [')']^Err_021 dim*
-formalParameterList <-  (receiverParameter  /  formalParameter) (',' [formalParameter]^Err_022)*
-formalParameter <-  variableModifier* unannType variableDeclaratorId  /  variableModifier* unannType annotation* ['...']^Err_023 [variableDeclaratorId]^Err_024 !','
+methodHeader    <-  result [methodDeclarator]^Err_016 throws?  /  typeParameters annotation* [result]^Err_017 [methodDeclarator]^Err_018 throws?
+methodDeclarator <-  Identifier ['(']^Err_019 formalParameterList? [')']^Err_020 dim*
+formalParameterList <-  (receiverParameter  /  formalParameter) (',' [formalParameter]^Err_021)*
+formalParameter <-  variableModifier* unannType variableDeclaratorId  /  variableModifier* unannType annotation* ['...']^Err_022 [variableDeclaratorId]^Err_023 !','
 variableModifier <-  annotation  /  'final'
-receiverParameter <-  variableModifier* unannType (Identifier ['.']^Err_025)? ['this']^Err_026
+receiverParameter <-  variableModifier* unannType (Identifier ['.']^Err_024)? ['this']^Err_025
 result          <-  unannType  /  'void'
 methodModifier  <-  annotation  /  'public'  /  'protected'  /  'private'  /  'abstract'  /  'static'  /  'final'  /  'synchronized'  /  'native'  /  'stictfp'
-throws          <-  'throws' [exceptionTypeList]^Err_027
-exceptionTypeList <-  exceptionType (',' [exceptionType]^Err_028)*
+throws          <-  'throws' [exceptionTypeList]^Err_026
+exceptionTypeList <-  exceptionType (',' [exceptionType]^Err_027)*
 exceptionType   <-  classType  /  typeVariable
 methodBody      <-  block  /  ';'
 instanceInitializer <-  block
-staticInitializer <-  'static' [block]^Err_029
-constructorDeclaration <-  constructorModifier* constructorDeclarator throws? [constructorBody]^Err_030
-constructorDeclarator <-  typeParameters? Identifier ['(']^Err_031 formalParameterList? [')']^Err_032
+staticInitializer <-  'static' [block]^Err_028
+constructorDeclaration <-  constructorModifier* constructorDeclarator throws? [constructorBody]^Err_029
+constructorDeclarator <-  typeParameters? Identifier ['(']^Err_030 formalParameterList? [')']^Err_031
 constructorModifier <-  annotation  /  'public'  /  'protected'  /  'private'
-constructorBody <-  '{' explicitConstructorInvocation? blockStatements? ['}']^Err_033
+constructorBody <-  '{' explicitConstructorInvocation? blockStatements? ['}']^Err_032
 explicitConstructorInvocation <-  typeArguments? 'this' arguments ';'  /  typeArguments? 'super' arguments ';'  /  primary '.' typeArguments? 'super' arguments ';'  /  qualIdent '.' typeArguments? 'super' arguments ';'
 enumDeclaration <-  classModifier* 'enum' Identifier superinterfaces? enumBody
-enumBody        <-  '{' enumConstantList? ','? enumBodyDeclarations? ['}']^Err_034
+enumBody        <-  '{' enumConstantList? ','? enumBodyDeclarations? ['}']^Err_033
 enumConstantList <-  enumConstant (',' enumConstant)*
 enumConstant    <-  enumConstantModifier* Identifier arguments? classBody?
 enumConstantModifier <-  annotation
@@ -673,70 +673,70 @@ enumBodyDeclarations <-  ';' classBodyDeclaration*
 interfaceDeclaration <-  normalInterfaceDeclaration  /  annotationTypeDeclaration
 normalInterfaceDeclaration <-  interfaceModifier* 'interface' Identifier typeParameters? extendsInterfaces? interfaceBody
 interfaceModifier <-  annotation  /  'public'  /  'protected'  /  'private'  /  'abstract'  /  'static'  /  'strictfp'
-extendsInterfaces <-  'extends' [interfaceTypeList]^Err_035
-interfaceBody   <-  '{' interfaceMemberDeclaration* ['}']^Err_036
+extendsInterfaces <-  'extends' [interfaceTypeList]^Err_034
+interfaceBody   <-  '{' interfaceMemberDeclaration* ['}']^Err_035
 interfaceMemberDeclaration <-  constantDeclaration  /  interfaceMethodDeclaration  /  classDeclaration  /  interfaceDeclaration  /  ';'
 constantDeclaration <-  constantModifier* unannType variableDeclaratorList ';'
 constantModifier <-  annotation  /  'public'  /  'static'  /  'final'
 interfaceMethodDeclaration <-  interfaceMethodModifier* methodHeader methodBody
 interfaceMethodModifier <-  annotation  /  'public'  /  'abstract'  /  'default'  /  'static'  /  'strictfp'
 annotationTypeDeclaration <-  interfaceModifier* '@' 'interface' Identifier annotationTypeBody
-annotationTypeBody <-  '{' annotationTypeMemberDeclaration* ['}']^Err_037
+annotationTypeBody <-  '{' annotationTypeMemberDeclaration* ['}']^Err_036
 annotationTypeMemberDeclaration <-  annotationTypeElementDeclaration  /  constantDeclaration  /  classDeclaration  /  interfaceDeclaration  /  ';'
-annotationTypeElementDeclaration <-  annotationTypeElementModifier* unannType [Identifier]^Err_038 ['(']^Err_039 [')']^Err_040 dim* defaultValue? [';']^Err_041
+annotationTypeElementDeclaration <-  annotationTypeElementModifier* unannType Identifier '(' ')' dim* defaultValue? ';'
 annotationTypeElementModifier <-  annotation  /  'public'  /  'abstract'
-defaultValue    <-  'default' [elementValue]^Err_042
+defaultValue    <-  'default' [elementValue]^Err_037
 annotation      <-  '@' (normalAnnotation  /  singleElementAnnotation  /  markerAnnotation)
 normalAnnotation <-  qualIdent '(' elementValuePairList* ')'
-elementValuePairList <-  elementValuePair (',' [elementValuePair]^Err_043)*
-elementValuePair <-  Identifier ['=']^Err_044 !'=' [elementValue]^Err_045
+elementValuePairList <-  elementValuePair (',' [elementValuePair]^Err_038)*
+elementValuePair <-  Identifier ['=']^Err_039 !'=' [elementValue]^Err_040
 elementValue    <-  conditionalExpression  /  elementValueArrayInitializer  /  annotation
 elementValueArrayInitializer <-  '{' elementValueList? ','? '}'
 elementValueList <-  elementValue (',' elementValue)*
 markerAnnotation <-  qualIdent
 singleElementAnnotation <-  qualIdent '(' elementValue ')'
-arrayInitializer <-  '{' variableInitializerList? ','? ['}']^Err_046
+arrayInitializer <-  '{' variableInitializerList? ','? ['}']^Err_041
 variableInitializerList <-  variableInitializer (',' variableInitializer)*
 block           <-  '{' blockStatements? '}'
 blockStatements <-  blockStatement blockStatement*
 blockStatement  <-  localVariableDeclarationStatement  /  classDeclaration  /  statement
-localVariableDeclarationStatement <-  localVariableDeclaration [';']^Err_047
+localVariableDeclarationStatement <-  localVariableDeclaration ';'
 localVariableDeclaration <-  variableModifier* unannType variableDeclaratorList
 statement       <-  block  /  'if' parExpression statement ('else' statement)?  /  basicForStatement  /  enhancedForStatement  /  'while' parExpression statement  /  'do' statement 'while' parExpression ';'  /  tryStatement  /  'switch' parExpression switchBlock  /  'synchronized' parExpression block  /  'return' expression? ';'  /  'throw' expression ';'  /  'break' Identifier? ';'  /  'continue' Identifier? ';'  /  'assert' expression (':' expression)? ';'  /  ';'  /  statementExpression ';'  /  Identifier ':' statement
 statementExpression <-  assignment  /  ('++'  /  '--') (primary  /  qualIdent)  /  (primary  /  qualIdent) ('++'  /  '--')  /  primary
 switchBlock     <-  '{' switchBlockStatementGroup* switchLabel* '}'
 switchBlockStatementGroup <-  switchLabels blockStatements
 switchLabels    <-  switchLabel switchLabel*
-switchLabel     <-  'case' [constantExpression  /  enumConstantName]^Err_048 [':']^Err_049  /  'default' [':']^Err_050
+switchLabel     <-  'case' [constantExpression  /  enumConstantName]^Err_042 [':']^Err_043  /  'default' [':']^Err_044
 enumConstantName <-  Identifier
 basicForStatement <-  'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
 forInit         <-  localVariableDeclaration  /  statementExpressionList
 forUpdate       <-  statementExpressionList
-statementExpressionList <-  statementExpression (',' [statementExpression]^Err_051)*
+statementExpressionList <-  statementExpression (',' [statementExpression]^Err_045)*
 enhancedForStatement <-  'for' '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statement
 tryStatement    <-  'try' (block (catchClause* finally  /  catchClause+)  /  resourceSpecification block catchClause* finally?)
 catchClause     <-  'catch' '(' catchFormalParameter ')' block
-catchFormalParameter <-  variableModifier* catchType [variableDeclaratorId]^Err_052
-catchType       <-  unannClassType ('|' ![=|] [classType]^Err_053)*
+catchFormalParameter <-  variableModifier* catchType [variableDeclaratorId]^Err_046
+catchType       <-  unannClassType ('|' ![=|] [classType]^Err_047)*
 finally         <-  'finally' block
-resourceSpecification <-  '(' [resourceList]^Err_054 ';'? [')']^Err_055
-resourceList    <-  resource (',' [resource]^Err_056)*
-resource        <-  variableModifier* unannType [variableDeclaratorId]^Err_057 ['=']^Err_058 !'=' [expression]^Err_059
+resourceSpecification <-  '(' [resourceList]^Err_048 ';'? [')']^Err_049
+resourceList    <-  resource (',' [resource]^Err_050)*
+resource        <-  variableModifier* unannType [variableDeclaratorId]^Err_051 ['=']^Err_052 !'=' [expression]^Err_053
 expression      <-  lambdaExpression  /  assignmentExpression
 primary         <-  primaryBase primaryRest*
-primaryBase     <-  'this'  /  Literal  /  parExpression  /  'super' ['.' typeArguments? Identifier arguments  /  '.' [Identifier]^Err_060  /  '::' typeArguments? [Identifier]^Err_061]^Err_062  /  'new' [classCreator  /  arrayCreator]^Err_063  /  qualIdent ('[' expression ']'  /  arguments  /  '.' ('this'  /  'new' classCreator  /  typeArguments Identifier arguments  /  'super' '.' typeArguments? Identifier arguments  /  'super' '.' Identifier  /  'super' '::' typeArguments? Identifier arguments)  /  ('[' ']')* '.' 'class'  /  '::' typeArguments? Identifier)  /  'void' ['.']^Err_064 ['class']^Err_065  /  basicType ('[' ']')* '.' 'class'  /  referenceType '::' typeArguments? 'new'  /  arrayType ['::']^Err_066 ['new']^Err_067
+primaryBase     <-  'this'  /  Literal  /  parExpression  /  'super' ['.' typeArguments? Identifier arguments  /  '.' [Identifier]^Err_054  /  '::' typeArguments? [Identifier]^Err_055]^Err_056  /  'new' [classCreator  /  arrayCreator]^Err_057  /  qualIdent ('[' expression ']'  /  arguments  /  '.' ('this'  /  'new' classCreator  /  typeArguments Identifier arguments  /  'super' '.' typeArguments? Identifier arguments  /  'super' '.' Identifier  /  'super' '::' typeArguments? Identifier arguments)  /  ('[' ']')* '.' 'class'  /  '::' typeArguments? Identifier)  /  'void' ['.']^Err_058 ['class']^Err_059  /  basicType ('[' ']')* '.' 'class'  /  referenceType '::' typeArguments? 'new'  /  arrayType ['::']^Err_060 ['new']^Err_061
 primaryRest     <-  '.' (typeArguments? Identifier arguments  /  Identifier  /  'new' classCreator)  /  '[' expression ']'  /  '::' typeArguments? Identifier
 parExpression   <-  '(' expression ')'
 classCreator    <-  typeArguments? annotation* classTypeWithDiamond arguments classBody?
-classTypeWithDiamond <-  annotation* Identifier typeArgumentsOrDiamond? ('.' annotation* [Identifier]^Err_068 typeArgumentsOrDiamond?)*
-typeArgumentsOrDiamond <-  typeArguments  /  '<' ['>']^Err_069 !'.'
-arrayCreator    <-  type dimExpr+ dim*  /  type [dim+]^Err_070 [arrayInitializer]^Err_071
+classTypeWithDiamond <-  annotation* Identifier typeArgumentsOrDiamond? ('.' annotation* [Identifier]^Err_062 typeArgumentsOrDiamond?)*
+typeArgumentsOrDiamond <-  typeArguments  /  '<' ['>']^Err_063 !'.'
+arrayCreator    <-  type dimExpr+ dim*  /  type [dim+]^Err_064 [arrayInitializer]^Err_065
 dimExpr         <-  annotation* '[' expression ']'
 arguments       <-  '(' argumentList? ')'
-argumentList    <-  expression (',' [expression]^Err_072)*
+argumentList    <-  expression (',' [expression]^Err_066)*
 unaryExpression <-  ('++'  /  '--') (primary  /  qualIdent)  /  '+' ![=+] unaryExpression  /  '-' ![-=>] unaryExpression  /  unaryExpressionNotPlusMinus
-unaryExpressionNotPlusMinus <-  '~' [unaryExpression]^Err_073  /  '!' ![=&] [unaryExpression]^Err_074  /  castExpression  /  (primary  /  qualIdent) ('++'  /  '--')?
-castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' [referenceType]^Err_075 additionalBound* [')']^Err_076 [unaryExpressionNotPlusMinus]^Err_077
+unaryExpressionNotPlusMinus <-  '~' unaryExpression  /  '!' ![=&] unaryExpression  /  castExpression  /  (primary  /  qualIdent) ('++'  /  '--')?
+castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
 infixExpression <-  unaryExpression (InfixOperator unaryExpression  /  'instanceof' referenceType)*
 InfixOperator   <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]  /  '=='  /  '!='  /  '<' ![=<]  /  '>' ![=>]  /  '<='  /  '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /  '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
 conditionalExpression <-  infixExpression ('query' expression ':' expression)*
@@ -745,8 +745,8 @@ assignment      <-  leftHandSide AssignmentOperator expression
 leftHandSide    <-  primary  /  qualIdent
 AssignmentOperator <-  '=' ![=]  /  '*='  /  '/='  /  '%='  /  '+='  /  '-='  /  '<<='  /  '>>='  /  '>>>='  /  '&='  /  '^='  /  '|='
 lambdaExpression <-  lambdaParameters '->' lambdaBody
-lambdaParameters <-  Identifier  /  '(' formalParameterList? ')'  /  '(' [inferredFormalParameterList]^Err_078 [')']^Err_079
-inferredFormalParameterList <-  Identifier (',' [Identifier]^Err_080)*
+lambdaParameters <-  Identifier  /  '(' formalParameterList? ')'  /  '(' [inferredFormalParameterList]^Err_067 [')']^Err_068
+inferredFormalParameterList <-  Identifier (',' [Identifier]^Err_069)*
 lambdaBody      <-  expression  /  block
 constantExpression <-  expression
 Identifier      <-  !Keywords [a-zA-Z_] [a-zA-Z_$0-9]*
@@ -779,84 +779,73 @@ Token           <-  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'volatile'  /  '
 EatToken        <-  (Token  /  (!SPACE .)+) SKIP
 Err_001         <-  (!'::' EatToken)*
 Err_002         <-  (!('>'  /  ',') EatToken)*
-Err_003         <-  (!('and'  /  '>'  /  ','  /  ')') EatToken)*
-Err_004         <-  (!'>' EatToken)*
+Err_003         <-  (!'>' EatToken)*
+Err_004         <-  (!('>'  /  ',') EatToken)*
 Err_005         <-  (!('>'  /  ',') EatToken)*
-Err_006         <-  (!('>'  /  ',') EatToken)*
-Err_007         <-  (!'>' EatToken)*
-Err_008         <-  (!('{'  /  'void'  /  'short'  /  'long'  /  'int'  /  'implements'  /  'float'  /  'extends'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Identifier  /  '@') EatToken)*
-Err_009         <-  (!'>' EatToken)*
-Err_010         <-  (!('{'  /  'implements') EatToken)*
+Err_006         <-  (!'>' EatToken)*
+Err_007         <-  (!('{'  /  'void'  /  'short'  /  'long'  /  'int'  /  'implements'  /  'float'  /  'extends'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Identifier  /  '@') EatToken)*
+Err_008         <-  (!'>' EatToken)*
+Err_009         <-  (!('{'  /  'implements') EatToken)*
+Err_010         <-  (!'{' EatToken)*
 Err_011         <-  (!'{' EatToken)*
-Err_012         <-  (!'{' EatToken)*
-Err_013         <-  (!('}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'query'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'instanceof'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '<'  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')'  /  '('  /  !.) EatToken)*
-Err_014         <-  (!';' EatToken)*
-Err_015         <-  (!(';'  /  ',') EatToken)*
-Err_016         <-  (!('|'  /  'this'  /  Identifier  /  '['  /  '@'  /  '<'  /  '...') EatToken)*
-Err_017         <-  (!('{'  /  'throws'  /  ';') EatToken)*
-Err_018         <-  (!Identifier EatToken)*
-Err_019         <-  (!('{'  /  'throws'  /  ';') EatToken)*
-Err_020         <-  (!('short'  /  'long'  /  'int'  /  'float'  /  'final'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Identifier  /  '@'  /  ')') EatToken)*
-Err_021         <-  (!('{'  /  'throws'  /  '['  /  '@'  /  ';') EatToken)*
-Err_022         <-  (!')' EatToken)*
-Err_023         <-  (!Identifier EatToken)*
-Err_024         <-  (!(','  /  ')') EatToken)*
-Err_025         <-  (!'this' EatToken)*
-Err_026         <-  (!(','  /  ')') EatToken)*
+Err_012         <-  (!('}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'query'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'instanceof'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '<'  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')'  /  '('  /  !.) EatToken)*
+Err_013         <-  (!';' EatToken)*
+Err_014         <-  (!(';'  /  ',') EatToken)*
+Err_015         <-  (!('|'  /  'this'  /  Identifier  /  '['  /  '@'  /  '<'  /  '...') EatToken)*
+Err_016         <-  (!('{'  /  'throws'  /  ';') EatToken)*
+Err_017         <-  (!Identifier EatToken)*
+Err_018         <-  (!('{'  /  'throws'  /  ';') EatToken)*
+Err_019         <-  (!('short'  /  'long'  /  'int'  /  'float'  /  'final'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Identifier  /  '@'  /  ')') EatToken)*
+Err_020         <-  (!('{'  /  'throws'  /  '['  /  '@'  /  ';') EatToken)*
+Err_021         <-  (!')' EatToken)*
+Err_022         <-  (!Identifier EatToken)*
+Err_023         <-  (!(','  /  ')') EatToken)*
+Err_024         <-  (!'this' EatToken)*
+Err_025         <-  (!(','  /  ')') EatToken)*
+Err_026         <-  (!('{'  /  ';') EatToken)*
 Err_027         <-  (!('{'  /  ';') EatToken)*
-Err_028         <-  (!('{'  /  ';') EatToken)*
+Err_028         <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';') EatToken)*
 Err_029         <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';') EatToken)*
-Err_030         <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';') EatToken)*
-Err_031         <-  (!('short'  /  'long'  /  'int'  /  'float'  /  'final'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Identifier  /  '@'  /  ')') EatToken)*
-Err_032         <-  (!('{'  /  'throws') EatToken)*
-Err_033         <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';') EatToken)*
-Err_034         <-  (!('}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  '<'  /  ';'  /  '--'  /  '++'  /  '('  /  !.) EatToken)*
-Err_035         <-  (!'{' EatToken)*
+Err_030         <-  (!('short'  /  'long'  /  'int'  /  'float'  /  'final'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Identifier  /  '@'  /  ')') EatToken)*
+Err_031         <-  (!('{'  /  'throws') EatToken)*
+Err_032         <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';') EatToken)*
+Err_033         <-  (!('}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  '<'  /  ';'  /  '--'  /  '++'  /  '('  /  !.) EatToken)*
+Err_034         <-  (!'{' EatToken)*
+Err_035         <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'default'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';'  /  !.) EatToken)*
 Err_036         <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'default'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';'  /  !.) EatToken)*
-Err_037         <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'default'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';'  /  !.) EatToken)*
-Err_038         <-  (!'(' EatToken)*
-Err_039         <-  (!')' EatToken)*
-Err_040         <-  (!('default'  /  '['  /  '@'  /  ';') EatToken)*
-Err_041         <-  (!('}'  /  'strictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  ';') EatToken)*
-Err_042         <-  (!';' EatToken)*
-Err_043         <-  (!(Identifier  /  ')') EatToken)*
-Err_044         <-  (!('~'  /  '{'  /  'void'  /  'this'  /  'super'  /  'short'  /  'new'  /  'long'  /  'int'  /  'float'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Literal  /  Identifier  /  '@'  /  '--'  /  '-'  /  '++'  /  '+'  /  '('  /  '!') EatToken)*
-Err_045         <-  (!(Identifier  /  ','  /  ')') EatToken)*
-Err_046         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
-Err_047         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
-Err_048         <-  (!':' EatToken)*
-Err_049         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
-Err_050         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
-Err_051         <-  (!(';'  /  ')') EatToken)*
-Err_052         <-  (!')' EatToken)*
-Err_053         <-  (!Identifier EatToken)*
-Err_054         <-  (!(';'  /  ')') EatToken)*
-Err_055         <-  (!'{' EatToken)*
-Err_056         <-  (!(';'  /  ')') EatToken)*
-Err_057         <-  (!'=' EatToken)*
-Err_058         <-  (!('~'  /  'void'  /  'this'  /  'super'  /  'short'  /  'new'  /  'long'  /  'int'  /  'float'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Literal  /  Identifier  /  '@'  /  '--'  /  '-'  /  '++'  /  '+'  /  '('  /  '!') EatToken)*
-Err_059         <-  (!(';'  /  ','  /  ')') EatToken)*
-Err_060         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
+Err_037         <-  (!';' EatToken)*
+Err_038         <-  (!(Identifier  /  ')') EatToken)*
+Err_039         <-  (!('~'  /  '{'  /  'void'  /  'this'  /  'super'  /  'short'  /  'new'  /  'long'  /  'int'  /  'float'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Literal  /  Identifier  /  '@'  /  '--'  /  '-'  /  '++'  /  '+'  /  '('  /  '!') EatToken)*
+Err_040         <-  (!(Identifier  /  ','  /  ')') EatToken)*
+Err_041         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
+Err_042         <-  (!':' EatToken)*
+Err_043         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
+Err_044         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
+Err_045         <-  (!(';'  /  ')') EatToken)*
+Err_046         <-  (!')' EatToken)*
+Err_047         <-  (!Identifier EatToken)*
+Err_048         <-  (!(';'  /  ')') EatToken)*
+Err_049         <-  (!'{' EatToken)*
+Err_050         <-  (!(';'  /  ')') EatToken)*
+Err_051         <-  (!'=' EatToken)*
+Err_052         <-  (!('~'  /  'void'  /  'this'  /  'super'  /  'short'  /  'new'  /  'long'  /  'int'  /  'float'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Literal  /  Identifier  /  '@'  /  '--'  /  '-'  /  '++'  /  '+'  /  '('  /  '!') EatToken)*
+Err_053         <-  (!(';'  /  ','  /  ')') EatToken)*
+Err_054         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
+Err_055         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
+Err_056         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
+Err_057         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
+Err_058         <-  (!'class' EatToken)*
+Err_059         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
+Err_060         <-  (!'new' EatToken)*
 Err_061         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
-Err_062         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
-Err_063         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
-Err_064         <-  (!'class' EatToken)*
+Err_062         <-  (!('<'  /  '(') EatToken)*
+Err_063         <-  (!('.'  /  '(') EatToken)*
+Err_064         <-  (!'{' EatToken)*
 Err_065         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
-Err_066         <-  (!'new' EatToken)*
-Err_067         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
-Err_068         <-  (!('<'  /  '(') EatToken)*
-Err_069         <-  (!('.'  /  '(') EatToken)*
-Err_070         <-  (!'{' EatToken)*
-Err_071         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
-Err_072         <-  (!')' EatToken)*
-Err_073         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_074         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_075         <-  (!('and'  /  ')') EatToken)*
-Err_076         <-  (!('~'  /  'void'  /  'this'  /  'super'  /  'short'  /  'new'  /  'long'  /  'int'  /  'float'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Literal  /  Identifier  /  '@'  /  '('  /  '!') EatToken)*
-Err_077         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_078         <-  (!')' EatToken)*
-Err_079         <-  (!'->' EatToken)*
-Err_080         <-  (!')' EatToken)*
+Err_066         <-  (!')' EatToken)*
+Err_067         <-  (!')' EatToken)*
+Err_068         <-  (!'->' EatToken)*
+Err_069         <-  (!')' EatToken)*
 
 Yes: 	UnaryExpressionNotPlusMinusErr.java
 Yes: 	DAOAtividade.java
