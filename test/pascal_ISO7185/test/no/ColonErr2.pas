@@ -1,7 +1,8 @@
 program ColonErr2;
 
 var
-	a, b ; int;
+	a, b = int;
+	c : int;
 
 begin
 	{ Nothing }

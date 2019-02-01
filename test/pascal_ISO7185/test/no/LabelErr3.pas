@@ -1,5 +1,6 @@
 program LabelErr3;
 
 begin
-	goto a
+	goto a;
+	b := 3;
 end. 

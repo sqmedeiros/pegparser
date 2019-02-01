@@ -1,5 +1,5 @@
 program BeginErr;
 
 begi
-	{ Nothing }
+	a := 2
 end.

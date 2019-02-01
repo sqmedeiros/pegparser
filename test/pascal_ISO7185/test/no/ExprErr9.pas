@@ -1,6 +1,6 @@
 program ExprErr9;
 
 begin
-	for i := @ to 32 do
+	for i := ^4 to 32 do
 		a := 2
 end.

@@ -1,5 +1,5 @@
 program RealParamErr;
 
 begin
-	writeln(a,);
+	writeln(a,.b);
 end.

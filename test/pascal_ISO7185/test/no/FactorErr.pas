@@ -1,5 +1,5 @@
 program FactorErr;
 
 begin
-	a := a * ;
+	a := a * .b;
 end.

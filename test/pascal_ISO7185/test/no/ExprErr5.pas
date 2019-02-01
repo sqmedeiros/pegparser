@@ -1,6 +1,6 @@
 program ExprErr5;
 
 begin
-	if @ then
+	if .a < 2 then
 		a := 1
 end.

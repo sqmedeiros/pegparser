@@ -1,7 +1,17 @@
 program ProcBodyErr;
 
-procedure p; 1;
-	
+procedure p;
+	a := 2;
+	b := 3
+end;
+
+procedure p;
 begin
-	{ Nothing }
+	a := 2;
+	b := 3
+end;
+
+begin
+	a := 2;
+	b := 3
 end.

@@ -1,8 +1,8 @@
 program ConstErr2;
 
 type
-	hrs = 0 .. @4;
+	hrs = 0 .. .4;
 
 begin 
-	{ Nothing }
+	a := 2
 end.

@@ -1,8 +1,9 @@
 program ConstErr3;
 
 type
-	turno = record case b : a of @a : () end;
+	turno = record case b : a of .a : () end;
+	float = real;
 
 begin
-	{ Nothing }
+	a := 2
 end.

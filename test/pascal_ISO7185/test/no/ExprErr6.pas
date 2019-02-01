@@ -1,7 +1,7 @@
 program ExprErr6;
 
 begin
-	case @ of
+	case ^a of
 		'str' : a := 2;
 	end
 end.

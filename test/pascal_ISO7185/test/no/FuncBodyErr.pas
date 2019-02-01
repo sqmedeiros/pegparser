@@ -1,7 +1,11 @@
 program FuncBodyErr;
 
-function f : int; 1;
+function f : int; 
+	a := 2;
+	b := 3
+end;
 
 begin
-	{ Nothing }
+	a := 2;
+	b := 3
 end.

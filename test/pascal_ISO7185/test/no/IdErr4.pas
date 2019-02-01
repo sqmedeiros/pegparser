@@ -1,7 +1,8 @@
 program IdErr4;
 
 type
-	1a = ^2real;
+	a = ^2real;
+	b = int;
 
 begin
 	{ Nothing }

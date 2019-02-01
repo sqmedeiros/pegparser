@@ -1,8 +1,8 @@
 program ConstErr4;
 
 type
-	turno = record case b : a of a, @b: () end;
+	turno = record case b : a of a, .b: () end;
 
 begin
-	{ Nothing }
+	a := 2
 end.

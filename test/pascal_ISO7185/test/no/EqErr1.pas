@@ -1,8 +1,8 @@
 program EqErr1;
 
 const
-	a - 2;
+	a := 2;
 
 begin
-	{ Nothing }
+	b := 4
 end.

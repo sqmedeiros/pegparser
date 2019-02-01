@@ -1,6 +1,6 @@
 program VarErr1;
 
 begin
-	with @ do
+	with .a < 3 do
 		a := 1
 end.

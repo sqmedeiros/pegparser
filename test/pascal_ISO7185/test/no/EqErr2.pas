@@ -1,8 +1,8 @@
 program EqErr2;
 
 type
-	a - real;
+	a := real;
 
 begin
-	{ Nothing }
+	b := 4
 end.

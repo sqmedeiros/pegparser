@@ -1,698 +1,3 @@
-Regular Annotation
-Banned (0): 
-program         <-  SKIP head decs [block]^Err_001 [Dot]^Err_002 !.
-head            <-  PROGRAM [Id]^Err_003 (LPar [ids]^Err_004 [RPar]^Err_005)? [Semi]^Err_006
-decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
-ids             <-  Id (Comma [Id]^Err_007)*
-labelDecs       <-  (LABEL [labels]^Err_008 [Semi]^Err_009)?
-labels          <-  label (Comma [label]^Err_010)*
-label           <-  UInt
-constDefs       <-  (CONST [constDef]^Err_011 [Semi]^Err_012 (constDef [Semi]^Err_013)*)?
-constDef        <-  Id [Eq]^Err_014 [const]^Err_015
-const           <-  Sign? (UNumber  /  Id)  /  String
-typeDefs        <-  (TYPE [typeDef]^Err_016 [Semi]^Err_017 (typeDef [Semi]^Err_018)*)?
-typeDef         <-  Id [Eq]^Err_019 [type]^Err_020
-type            <-  newType  /  Id
-newType         <-  newOrdinalType  /  newStructuredType  /  newPointerType
-newOrdinalType  <-  enumType  /  subrangeType
-newStructuredType <-  PACKED? unpackedStructuredType
-newPointerType  <-  Pointer [Id]^Err_021
-enumType        <-  LPar [ids]^Err_022 [RPar]^Err_023
-subrangeType    <-  const [DotDot]^Err_024 [const]^Err_025
-unpackedStructuredType <-  arrayType  /  recordType  /  setType  /  fileType
-arrayType       <-  ARRAY [LBrack]^Err_026 [ordinalType]^Err_027 (Comma [ordinalType]^Err_028)* [RBrack]^Err_029 [OF]^Err_030 [type]^Err_031
-recordType      <-  RECORD fieldList [END]^Err_032
-setType         <-  SET [OF]^Err_033 [ordinalType]^Err_034
-fileType        <-  FILE [OF]^Err_035 [type]^Err_036
-ordinalType     <-  newOrdinalType  /  Id
-fieldList       <-  ((fixedPart (Semi variantPart)?  /  variantPart) Semi?)?
-fixedPart       <-  varDec (Semi varDec)*
-variantPart     <-  CASE [Id]^Err_037 (Colon [Id]^Err_038)? [OF]^Err_039 [variant]^Err_040 (Semi variant)*
-variant         <-  consts [Colon]^Err_041 [LPar]^Err_042 fieldList [RPar]^Err_043
-consts          <-  const (Comma [const]^Err_044)*
-varDecs         <-  (VAR [varDec]^Err_045 [Semi]^Err_046 (varDec [Semi]^Err_047)*)?
-varDec          <-  ids [Colon]^Err_048 [type]^Err_049
-procAndFuncDecs <-  ((procDec  /  funcDec) [Semi]^Err_050)*
-procDec         <-  procHeading [Semi]^Err_051 [decs block  /  Id]^Err_052
-procHeading     <-  PROCEDURE [Id]^Err_053 formalParams?
-funcDec         <-  funcHeading [Semi]^Err_054 [decs block  /  Id]^Err_055
-funcHeading     <-  FUNCTION [Id]^Err_056 formalParams? [Colon]^Err_057 [type]^Err_058
-formalParams    <-  LPar [formalParamsSection]^Err_059 (Semi [formalParamsSection]^Err_060)* [RPar]^Err_061
-formalParamsSection <-  VAR? ids [Colon]^Err_062 [Id]^Err_063  /  procHeading  /  funcHeading
-block           <-  BEGIN stmts [END]^Err_064
-stmts           <-  stmt (Semi stmt)*
-stmt            <-  (label [Colon]^Err_065)? (simpleStmt  /  structuredStmt)?
-simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
-assignStmt      <-  var [Assign]^Err_066 [expr]^Err_067
-var             <-  Id (LBrack [expr]^Err_068 (Comma [expr]^Err_069)* [RBrack]^Err_070  /  Dot [Id]^Err_071  /  Pointer)*
-procStmt        <-  Id params?
-params          <-  LPar (param (Comma [param]^Err_072)*)? [RPar]^Err_073
-param           <-  expr (Colon expr)? (Colon [expr]^Err_074)?
-gotoStmt        <-  GOTO [label]^Err_075
-structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
-conditionalStmt <-  ifStmt  /  caseStmt
-ifStmt          <-  IF [expr]^Err_076 [THEN]^Err_077 stmt (ELSE stmt)?
-caseStmt        <-  CASE [expr]^Err_078 [OF]^Err_079 [caseListElement]^Err_080 (Semi caseListElement)* Semi? [END]^Err_081
-caseListElement <-  consts [Colon]^Err_082 stmt
-repetitiveStmt  <-  repeatStmt  /  whileStmt  /  forStmt
-repeatStmt      <-  REPEAT stmts [UNTIL]^Err_083 [expr]^Err_084
-whileStmt       <-  WHILE [expr]^Err_085 [DO]^Err_086 stmt
-forStmt         <-  FOR [Id]^Err_087 [Assign]^Err_088 [expr]^Err_089 [TO  /  DOWNTO]^Err_090 [expr]^Err_091 [DO]^Err_092 stmt
-withStmt        <-  WITH [var]^Err_093 (Comma [var]^Err_094)* [DO]^Err_095 stmt
-expr            <-  simpleExpr (RelOp [simpleExpr]^Err_096)?
-simpleExpr      <-  Sign? term (AddOp [term]^Err_097)*
-term            <-  factor (MultOp [factor]^Err_098)*
-factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar [expr]^Err_099 [RPar]^Err_100)
-unsignedConst   <-  UNumber  /  String  /  Id  /  NIL
-funcCall        <-  Id [params]^Err_101
-setConstructor  <-  LBrack (memberDesignator (Comma [memberDesignator]^Err_102)*)? [RBrack]^Err_103
-memberDesignator <-  expr (DotDot [expr]^Err_104)?
-AddOp           <-  '+'  /  '-'  /  OR
-Assign          <-  ':='
-Dot             <-  '.'
-DotDot          <-  '..'
-CloseComment    <-  '*)'  /  '}'
-Colon           <-  ':'
-Comma           <-  ','
-COMMENT         <-  OpenComment (!CloseComment .)* CloseComment
-Eq              <-  '='
-BodyId          <-  [a-zA-Z0-9]
-Id              <-  !Reserved [a-zA-Z] [a-zA-Z0-9]*
-LBrack          <-  '['
-LPar            <-  '('
-MultOp          <-  '*'  /  '/'  /  DIV  /  MOD  /  AND
-OpenComment     <-  '(*'  /  '{'
-Pointer         <-  '^'
-RBrack          <-  ']'
-RelOp           <-  '<='  /  '='  /  '<>'  /  '>='  /  '>'  /  '<'  /  IN
-RPar            <-  ')'
-Semi            <-  ';'
-Sign            <-  '+'  /  '-'
-String          <-  "'" (!"'" .)* "'"
-UInt            <-  [0-9]+
-UNumber         <-  UReal  /  UInt
-UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
-Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
-AND             <-  [Aa] [Nn] [Dd] !BodyId
-ARRAY           <-  [Aa] [Rr] [Rr] [Aa] [Yy] !BodyId
-BEGIN           <-  [Bb] [Ee] [Gg] [Ii] [Nn] !BodyId
-CASE            <-  [Cc] [Aa] [Ss] [Ee] !BodyId
-CONST           <-  [Cc] [Oo] [Nn] [Ss] [Tt] !BodyId
-DIV             <-  [Dd] [Ii] [Vv] !BodyId
-DO              <-  [Dd] [Oo] !BodyId
-DOWNTO          <-  [Dd] [Oo] [Ww] [Nn] [Tt] [Oo] !BodyId
-ELSE            <-  [Ee] [Ll] [Ss] [Ee] !BodyId
-END             <-  [Ee] [Nn] [Dd] !BodyId
-FILE            <-  [Ff] [Ii] [Ll] [Ee] !BodyId
-FOR             <-  [Ff] [Oo] [Rr] !BodyId
-FUNCTION        <-  [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn] !BodyId
-GOTO            <-  [Gg] [Oo] [Tt] [Oo] !BodyId
-IF              <-  [Ii] [Ff] !BodyId
-IN              <-  [Ii] [Nn] !BodyId
-LABEL           <-  [Ll] [Aa] [Bb] [Ee] [Ll] !BodyId
-MOD             <-  [Mm] [Oo] [Dd] !BodyId
-NIL             <-  [Nn] [Ii] [Ll] !BodyId
-NOT             <-  [Nn] [Oo] [Tt] !BodyId
-OF              <-  [Oo] [Ff] !BodyId
-OR              <-  [Oo] [Rr] !BodyId
-PACKED          <-  [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] !BodyId
-PROCEDURE       <-  [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
-PROGRAM         <-  [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] !BodyId
-RECORD          <-  [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] !BodyId
-REPEAT          <-  [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] !BodyId
-SET             <-  [Ss] [Ee] [Tt] !BodyId
-THEN            <-  [Tt] [Hh] [Ee] [Nn] !BodyId
-TO              <-  [Tt] [Oo] !BodyId
-TYPE            <-  [Tt] [Yy] [Pp] [Ee] !BodyId
-UNTIL           <-  [Uu] [Nn] [Tt] [Ii] [Ll] !BodyId
-VAR             <-  [Vv] [Aa] [Rr] !BodyId
-WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
-WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
-SPACE           <-  [ 	
-]  /  COMMENT
-SKIP            <-  ([ 	
-]  /  COMMENT)*
-Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
-EatToken        <-  (Token  /  (!SPACE .)+) SKIP
-Err_001         <-  (!Dot EatToken)*
-Err_002         <-  (!(!.) EatToken)*
-Err_003         <-  (!(Semi  /  LPar) EatToken)*
-Err_004         <-  (!RPar EatToken)*
-Err_005         <-  (!Semi EatToken)*
-Err_006         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_007         <-  (!(RPar  /  Colon) EatToken)*
-Err_008         <-  (!Semi EatToken)*
-Err_009         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_010         <-  (!Semi EatToken)*
-Err_011         <-  (!Semi EatToken)*
-Err_012         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_013         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_014         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_015         <-  (!Semi EatToken)*
-Err_016         <-  (!Semi EatToken)*
-Err_017         <-  (!(VAR  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_018         <-  (!(VAR  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_019         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_020         <-  (!Semi EatToken)*
-Err_021         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_022         <-  (!RPar EatToken)*
-Err_023         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
-Err_024         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_025         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
-Err_026         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
-Err_027         <-  (!(RBrack  /  Comma) EatToken)*
-Err_028         <-  (!RBrack EatToken)*
-Err_029         <-  (!OF EatToken)*
-Err_030         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_031         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_032         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_033         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
-Err_034         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_035         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_036         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_037         <-  (!(OF  /  Colon) EatToken)*
-Err_038         <-  (!OF EatToken)*
-Err_039         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_040         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_041         <-  (!LPar EatToken)*
-Err_042         <-  (!(RPar  /  Id  /  CASE) EatToken)*
-Err_043         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_044         <-  (!Colon EatToken)*
-Err_045         <-  (!Semi EatToken)*
-Err_046         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_047         <-  (!(PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_048         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_049         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_050         <-  (!BEGIN EatToken)*
-Err_051         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_052         <-  (!Semi EatToken)*
-Err_053         <-  (!(Semi  /  RPar  /  LPar) EatToken)*
-Err_054         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_055         <-  (!Semi EatToken)*
-Err_056         <-  (!(LPar  /  Colon) EatToken)*
-Err_057         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_058         <-  (!(Semi  /  RPar) EatToken)*
-Err_059         <-  (!(Semi  /  RPar) EatToken)*
-Err_060         <-  (!RPar EatToken)*
-Err_061         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
-Err_062         <-  (!Id EatToken)*
-Err_063         <-  (!(Semi  /  RPar) EatToken)*
-Err_064         <-  (!(UNTIL  /  Semi  /  END  /  ELSE  /  Dot) EatToken)*
-Err_065         <-  (!(WITH  /  WHILE  /  UNTIL  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_066         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_067         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_068         <-  (!(RBrack  /  Comma) EatToken)*
-Err_069         <-  (!RBrack EatToken)*
-Err_070         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
-Err_071         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
-Err_072         <-  (!RPar EatToken)*
-Err_073         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_074         <-  (!(RPar  /  Comma) EatToken)*
-Err_075         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_076         <-  (!THEN EatToken)*
-Err_077         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_078         <-  (!OF EatToken)*
-Err_079         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_080         <-  (!(Semi  /  END) EatToken)*
-Err_081         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_082         <-  (!(WITH  /  WHILE  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  CASE  /  BEGIN) EatToken)*
-Err_083         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_084         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_085         <-  (!DO EatToken)*
-Err_086         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_087         <-  (!Assign EatToken)*
-Err_088         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_089         <-  (!(TO  /  DOWNTO) EatToken)*
-Err_090         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_091         <-  (!DO EatToken)*
-Err_092         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_093         <-  (!(DO  /  Comma) EatToken)*
-Err_094         <-  (!DO EatToken)*
-Err_095         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_096         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
-Err_097         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
-Err_098         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_099         <-  (!RPar EatToken)*
-Err_100         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_101         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_102         <-  (!RBrack EatToken)*
-Err_103         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_104         <-  (!(RBrack  /  Comma) EatToken)*
-
-
-
-
-Conservative Annotation (Hard)
-Banned (15): assignStmt, caseListElement, expr, funcCall, gotoStmt, newOrdinalType, newType, procStmt, setConstructor, stmt, unsignedConst, var, varDec, variant, variantPart, 
-program         <-  SKIP head decs [block]^Err_001 [Dot]^Err_002 !.
-head            <-  PROGRAM [Id]^Err_003 (LPar [ids]^Err_004 [RPar]^Err_005)? [Semi]^Err_006
-decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
-ids             <-  Id (Comma [Id]^Err_007)*
-labelDecs       <-  (LABEL [labels]^Err_008 [Semi]^Err_009)?
-labels          <-  label (Comma [label]^Err_010)*
-label           <-  UInt
-constDefs       <-  (CONST [constDef]^Err_011 [Semi]^Err_012 (constDef [Semi]^Err_013)*)?
-constDef        <-  Id [Eq]^Err_014 [const]^Err_015
-const           <-  Sign? (UNumber  /  Id)  /  String
-typeDefs        <-  (TYPE [typeDef]^Err_016 [Semi]^Err_017 (typeDef [Semi]^Err_018)*)?
-typeDef         <-  Id [Eq]^Err_019 [type]^Err_020
-type            <-  newType  /  Id
-newType         <-  newOrdinalType  /  newStructuredType  /  newPointerType
-newOrdinalType  <-  enumType  /  subrangeType
-newStructuredType <-  PACKED? unpackedStructuredType
-newPointerType  <-  Pointer [Id]^Err_021
-enumType        <-  LPar [ids]^Err_022 [RPar]^Err_023
-subrangeType    <-  const [DotDot]^Err_024 [const]^Err_025
-unpackedStructuredType <-  arrayType  /  recordType  /  setType  /  fileType
-arrayType       <-  ARRAY [LBrack]^Err_026 [ordinalType]^Err_027 (Comma [ordinalType]^Err_028)* [RBrack]^Err_029 [OF]^Err_030 [type]^Err_031
-recordType      <-  RECORD fieldList [END]^Err_032
-setType         <-  SET [OF]^Err_033 [ordinalType]^Err_034
-fileType        <-  FILE [OF]^Err_035 [type]^Err_036
-ordinalType     <-  newOrdinalType  /  Id
-fieldList       <-  ((fixedPart (Semi variantPart)?  /  variantPart) Semi?)?
-fixedPart       <-  varDec (Semi varDec)*
-variantPart     <-  CASE Id (Colon Id)? OF variant (Semi variant)*
-variant         <-  consts Colon LPar fieldList RPar
-consts          <-  const (Comma [const]^Err_037)*
-varDecs         <-  (VAR [varDec]^Err_038 [Semi]^Err_039 (varDec [Semi]^Err_040)*)?
-varDec          <-  ids Colon type
-procAndFuncDecs <-  ((procDec  /  funcDec) [Semi]^Err_041)*
-procDec         <-  procHeading [Semi]^Err_042 [decs block  /  Id]^Err_043
-procHeading     <-  PROCEDURE [Id]^Err_044 formalParams?
-funcDec         <-  funcHeading [Semi]^Err_045 [decs block  /  Id]^Err_046
-funcHeading     <-  FUNCTION [Id]^Err_047 formalParams? [Colon]^Err_048 [type]^Err_049
-formalParams    <-  LPar [formalParamsSection]^Err_050 (Semi [formalParamsSection]^Err_051)* [RPar]^Err_052
-formalParamsSection <-  VAR? ids [Colon]^Err_053 [Id]^Err_054  /  procHeading  /  funcHeading
-block           <-  BEGIN stmts [END]^Err_055
-stmts           <-  stmt (Semi stmt)*
-stmt            <-  (label Colon)? (simpleStmt  /  structuredStmt)?
-simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
-assignStmt      <-  var Assign expr
-var             <-  Id (LBrack expr (Comma expr)* RBrack  /  Dot Id  /  Pointer)*
-procStmt        <-  Id params?
-params          <-  LPar (param (Comma [param]^Err_056)*)? [RPar]^Err_057
-param           <-  expr (Colon expr)? (Colon [expr]^Err_058)?
-gotoStmt        <-  GOTO label
-structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
-conditionalStmt <-  ifStmt  /  caseStmt
-ifStmt          <-  IF [expr]^Err_059 [THEN]^Err_060 stmt (ELSE stmt)?
-caseStmt        <-  CASE [expr]^Err_061 [OF]^Err_062 [caseListElement]^Err_063 (Semi caseListElement)* Semi? [END]^Err_064
-caseListElement <-  consts Colon stmt
-repetitiveStmt  <-  repeatStmt  /  whileStmt  /  forStmt
-repeatStmt      <-  REPEAT stmts [UNTIL]^Err_065 [expr]^Err_066
-whileStmt       <-  WHILE [expr]^Err_067 [DO]^Err_068 stmt
-forStmt         <-  FOR [Id]^Err_069 [Assign]^Err_070 [expr]^Err_071 [TO  /  DOWNTO]^Err_072 [expr]^Err_073 [DO]^Err_074 stmt
-withStmt        <-  WITH [var]^Err_075 (Comma [var]^Err_076)* [DO]^Err_077 stmt
-expr            <-  simpleExpr (RelOp simpleExpr)?
-simpleExpr      <-  Sign? term (AddOp [term]^Err_078)*
-term            <-  factor (MultOp [factor]^Err_079)*
-factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar [expr]^Err_080 [RPar]^Err_081)
-unsignedConst   <-  UNumber  /  String  /  Id  /  NIL
-funcCall        <-  Id params
-setConstructor  <-  LBrack (memberDesignator (Comma memberDesignator)*)? RBrack
-memberDesignator <-  expr (DotDot [expr]^Err_082)?
-AddOp           <-  '+'  /  '-'  /  OR
-Assign          <-  ':='
-Dot             <-  '.'
-DotDot          <-  '..'
-CloseComment    <-  '*)'  /  '}'
-Colon           <-  ':'
-Comma           <-  ','
-COMMENT         <-  OpenComment (!CloseComment .)* CloseComment
-Eq              <-  '='
-BodyId          <-  [a-zA-Z0-9]
-Id              <-  !Reserved [a-zA-Z] [a-zA-Z0-9]*
-LBrack          <-  '['
-LPar            <-  '('
-MultOp          <-  '*'  /  '/'  /  DIV  /  MOD  /  AND
-OpenComment     <-  '(*'  /  '{'
-Pointer         <-  '^'
-RBrack          <-  ']'
-RelOp           <-  '<='  /  '='  /  '<>'  /  '>='  /  '>'  /  '<'  /  IN
-RPar            <-  ')'
-Semi            <-  ';'
-Sign            <-  '+'  /  '-'
-String          <-  "'" (!"'" .)* "'"
-UInt            <-  [0-9]+
-UNumber         <-  UReal  /  UInt
-UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
-Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
-AND             <-  [Aa] [Nn] [Dd] !BodyId
-ARRAY           <-  [Aa] [Rr] [Rr] [Aa] [Yy] !BodyId
-BEGIN           <-  [Bb] [Ee] [Gg] [Ii] [Nn] !BodyId
-CASE            <-  [Cc] [Aa] [Ss] [Ee] !BodyId
-CONST           <-  [Cc] [Oo] [Nn] [Ss] [Tt] !BodyId
-DIV             <-  [Dd] [Ii] [Vv] !BodyId
-DO              <-  [Dd] [Oo] !BodyId
-DOWNTO          <-  [Dd] [Oo] [Ww] [Nn] [Tt] [Oo] !BodyId
-ELSE            <-  [Ee] [Ll] [Ss] [Ee] !BodyId
-END             <-  [Ee] [Nn] [Dd] !BodyId
-FILE            <-  [Ff] [Ii] [Ll] [Ee] !BodyId
-FOR             <-  [Ff] [Oo] [Rr] !BodyId
-FUNCTION        <-  [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn] !BodyId
-GOTO            <-  [Gg] [Oo] [Tt] [Oo] !BodyId
-IF              <-  [Ii] [Ff] !BodyId
-IN              <-  [Ii] [Nn] !BodyId
-LABEL           <-  [Ll] [Aa] [Bb] [Ee] [Ll] !BodyId
-MOD             <-  [Mm] [Oo] [Dd] !BodyId
-NIL             <-  [Nn] [Ii] [Ll] !BodyId
-NOT             <-  [Nn] [Oo] [Tt] !BodyId
-OF              <-  [Oo] [Ff] !BodyId
-OR              <-  [Oo] [Rr] !BodyId
-PACKED          <-  [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] !BodyId
-PROCEDURE       <-  [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
-PROGRAM         <-  [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] !BodyId
-RECORD          <-  [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] !BodyId
-REPEAT          <-  [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] !BodyId
-SET             <-  [Ss] [Ee] [Tt] !BodyId
-THEN            <-  [Tt] [Hh] [Ee] [Nn] !BodyId
-TO              <-  [Tt] [Oo] !BodyId
-TYPE            <-  [Tt] [Yy] [Pp] [Ee] !BodyId
-UNTIL           <-  [Uu] [Nn] [Tt] [Ii] [Ll] !BodyId
-VAR             <-  [Vv] [Aa] [Rr] !BodyId
-WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
-WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
-SPACE           <-  [ 	
-]  /  COMMENT
-SKIP            <-  ([ 	
-]  /  COMMENT)*
-Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
-EatToken        <-  (Token  /  (!SPACE .)+) SKIP
-Err_001         <-  (!Dot EatToken)*
-Err_002         <-  (!(!.) EatToken)*
-Err_003         <-  (!(Semi  /  LPar) EatToken)*
-Err_004         <-  (!RPar EatToken)*
-Err_005         <-  (!Semi EatToken)*
-Err_006         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_007         <-  (!(RPar  /  Colon) EatToken)*
-Err_008         <-  (!Semi EatToken)*
-Err_009         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_010         <-  (!Semi EatToken)*
-Err_011         <-  (!Semi EatToken)*
-Err_012         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_013         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_014         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_015         <-  (!Semi EatToken)*
-Err_016         <-  (!Semi EatToken)*
-Err_017         <-  (!(VAR  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_018         <-  (!(VAR  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_019         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_020         <-  (!Semi EatToken)*
-Err_021         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_022         <-  (!RPar EatToken)*
-Err_023         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
-Err_024         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_025         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
-Err_026         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
-Err_027         <-  (!(RBrack  /  Comma) EatToken)*
-Err_028         <-  (!RBrack EatToken)*
-Err_029         <-  (!OF EatToken)*
-Err_030         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_031         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_032         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_033         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
-Err_034         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_035         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_036         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_037         <-  (!Colon EatToken)*
-Err_038         <-  (!Semi EatToken)*
-Err_039         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_040         <-  (!(PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_041         <-  (!BEGIN EatToken)*
-Err_042         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_043         <-  (!Semi EatToken)*
-Err_044         <-  (!(Semi  /  RPar  /  LPar) EatToken)*
-Err_045         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_046         <-  (!Semi EatToken)*
-Err_047         <-  (!(LPar  /  Colon) EatToken)*
-Err_048         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_049         <-  (!(Semi  /  RPar) EatToken)*
-Err_050         <-  (!(Semi  /  RPar) EatToken)*
-Err_051         <-  (!RPar EatToken)*
-Err_052         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
-Err_053         <-  (!Id EatToken)*
-Err_054         <-  (!(Semi  /  RPar) EatToken)*
-Err_055         <-  (!(UNTIL  /  Semi  /  END  /  ELSE  /  Dot) EatToken)*
-Err_056         <-  (!RPar EatToken)*
-Err_057         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_058         <-  (!(RPar  /  Comma) EatToken)*
-Err_059         <-  (!THEN EatToken)*
-Err_060         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_061         <-  (!OF EatToken)*
-Err_062         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_063         <-  (!(Semi  /  END) EatToken)*
-Err_064         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_065         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_066         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_067         <-  (!DO EatToken)*
-Err_068         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_069         <-  (!Assign EatToken)*
-Err_070         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_071         <-  (!(TO  /  DOWNTO) EatToken)*
-Err_072         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_073         <-  (!DO EatToken)*
-Err_074         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_075         <-  (!(DO  /  Comma) EatToken)*
-Err_076         <-  (!DO EatToken)*
-Err_077         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_078         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
-Err_079         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_080         <-  (!RPar EatToken)*
-Err_081         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_082         <-  (!(RBrack  /  Comma) EatToken)*
-
-
-
-
-Conservative Annotation (Soft)
-Banned (8): caseListElement, expr, newOrdinalType, newType, stmt, varDec, variant, variantPart, 
-program         <-  SKIP head decs [block]^Err_001 [Dot]^Err_002 !.
-head            <-  PROGRAM [Id]^Err_003 (LPar [ids]^Err_004 [RPar]^Err_005)? [Semi]^Err_006
-decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
-ids             <-  Id (Comma [Id]^Err_007)*
-labelDecs       <-  (LABEL [labels]^Err_008 [Semi]^Err_009)?
-labels          <-  label (Comma [label]^Err_010)*
-label           <-  UInt
-constDefs       <-  (CONST [constDef]^Err_011 [Semi]^Err_012 (constDef [Semi]^Err_013)*)?
-constDef        <-  Id [Eq]^Err_014 [const]^Err_015
-const           <-  Sign? (UNumber  /  Id)  /  String
-typeDefs        <-  (TYPE [typeDef]^Err_016 [Semi]^Err_017 (typeDef [Semi]^Err_018)*)?
-typeDef         <-  Id [Eq]^Err_019 [type]^Err_020
-type            <-  newType  /  Id
-newType         <-  newOrdinalType  /  newStructuredType  /  newPointerType
-newOrdinalType  <-  enumType  /  subrangeType
-newStructuredType <-  PACKED? unpackedStructuredType
-newPointerType  <-  Pointer [Id]^Err_021
-enumType        <-  LPar [ids]^Err_022 [RPar]^Err_023
-subrangeType    <-  const [DotDot]^Err_024 [const]^Err_025
-unpackedStructuredType <-  arrayType  /  recordType  /  setType  /  fileType
-arrayType       <-  ARRAY [LBrack]^Err_026 [ordinalType]^Err_027 (Comma [ordinalType]^Err_028)* [RBrack]^Err_029 [OF]^Err_030 [type]^Err_031
-recordType      <-  RECORD fieldList [END]^Err_032
-setType         <-  SET [OF]^Err_033 [ordinalType]^Err_034
-fileType        <-  FILE [OF]^Err_035 [type]^Err_036
-ordinalType     <-  newOrdinalType  /  Id
-fieldList       <-  ((fixedPart (Semi variantPart)?  /  variantPart) Semi?)?
-fixedPart       <-  varDec (Semi varDec)*
-variantPart     <-  CASE Id (Colon Id)? OF variant (Semi variant)*
-variant         <-  consts Colon LPar fieldList RPar
-consts          <-  const (Comma [const]^Err_037)*
-varDecs         <-  (VAR [varDec]^Err_038 [Semi]^Err_039 (varDec [Semi]^Err_040)*)?
-varDec          <-  ids Colon type
-procAndFuncDecs <-  ((procDec  /  funcDec) [Semi]^Err_041)*
-procDec         <-  procHeading [Semi]^Err_042 [decs block  /  Id]^Err_043
-procHeading     <-  PROCEDURE [Id]^Err_044 formalParams?
-funcDec         <-  funcHeading [Semi]^Err_045 [decs block  /  Id]^Err_046
-funcHeading     <-  FUNCTION [Id]^Err_047 formalParams? [Colon]^Err_048 [type]^Err_049
-formalParams    <-  LPar [formalParamsSection]^Err_050 (Semi [formalParamsSection]^Err_051)* [RPar]^Err_052
-formalParamsSection <-  VAR? ids [Colon]^Err_053 [Id]^Err_054  /  procHeading  /  funcHeading
-block           <-  BEGIN stmts [END]^Err_055
-stmts           <-  stmt (Semi stmt)*
-stmt            <-  (label Colon)? (simpleStmt  /  structuredStmt)?
-simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
-assignStmt      <-  var [Assign]^Err_056 [expr]^Err_057
-var             <-  Id (LBrack [expr]^Err_058 (Comma [expr]^Err_059)* [RBrack]^Err_060  /  Dot [Id]^Err_061  /  Pointer)*
-procStmt        <-  Id params?
-params          <-  LPar (param (Comma [param]^Err_062)*)? [RPar]^Err_063
-param           <-  expr (Colon expr)? (Colon [expr]^Err_064)?
-gotoStmt        <-  GOTO [label]^Err_065
-structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
-conditionalStmt <-  ifStmt  /  caseStmt
-ifStmt          <-  IF [expr]^Err_066 [THEN]^Err_067 stmt (ELSE stmt)?
-caseStmt        <-  CASE [expr]^Err_068 [OF]^Err_069 [caseListElement]^Err_070 (Semi caseListElement)* Semi? [END]^Err_071
-caseListElement <-  consts Colon stmt
-repetitiveStmt  <-  repeatStmt  /  whileStmt  /  forStmt
-repeatStmt      <-  REPEAT stmts [UNTIL]^Err_072 [expr]^Err_073
-whileStmt       <-  WHILE [expr]^Err_074 [DO]^Err_075 stmt
-forStmt         <-  FOR [Id]^Err_076 [Assign]^Err_077 [expr]^Err_078 [TO  /  DOWNTO]^Err_079 [expr]^Err_080 [DO]^Err_081 stmt
-withStmt        <-  WITH [var]^Err_082 (Comma [var]^Err_083)* [DO]^Err_084 stmt
-expr            <-  simpleExpr (RelOp simpleExpr)?
-simpleExpr      <-  Sign? term (AddOp [term]^Err_085)*
-term            <-  factor (MultOp [factor]^Err_086)*
-factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar [expr]^Err_087 [RPar]^Err_088)
-unsignedConst   <-  UNumber  /  String  /  Id  /  NIL
-funcCall        <-  Id [params]^Err_089
-setConstructor  <-  LBrack (memberDesignator (Comma [memberDesignator]^Err_090)*)? [RBrack]^Err_091
-memberDesignator <-  expr (DotDot [expr]^Err_092)?
-AddOp           <-  '+'  /  '-'  /  OR
-Assign          <-  ':='
-Dot             <-  '.'
-DotDot          <-  '..'
-CloseComment    <-  '*)'  /  '}'
-Colon           <-  ':'
-Comma           <-  ','
-COMMENT         <-  OpenComment (!CloseComment .)* CloseComment
-Eq              <-  '='
-BodyId          <-  [a-zA-Z0-9]
-Id              <-  !Reserved [a-zA-Z] [a-zA-Z0-9]*
-LBrack          <-  '['
-LPar            <-  '('
-MultOp          <-  '*'  /  '/'  /  DIV  /  MOD  /  AND
-OpenComment     <-  '(*'  /  '{'
-Pointer         <-  '^'
-RBrack          <-  ']'
-RelOp           <-  '<='  /  '='  /  '<>'  /  '>='  /  '>'  /  '<'  /  IN
-RPar            <-  ')'
-Semi            <-  ';'
-Sign            <-  '+'  /  '-'
-String          <-  "'" (!"'" .)* "'"
-UInt            <-  [0-9]+
-UNumber         <-  UReal  /  UInt
-UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
-Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
-AND             <-  [Aa] [Nn] [Dd] !BodyId
-ARRAY           <-  [Aa] [Rr] [Rr] [Aa] [Yy] !BodyId
-BEGIN           <-  [Bb] [Ee] [Gg] [Ii] [Nn] !BodyId
-CASE            <-  [Cc] [Aa] [Ss] [Ee] !BodyId
-CONST           <-  [Cc] [Oo] [Nn] [Ss] [Tt] !BodyId
-DIV             <-  [Dd] [Ii] [Vv] !BodyId
-DO              <-  [Dd] [Oo] !BodyId
-DOWNTO          <-  [Dd] [Oo] [Ww] [Nn] [Tt] [Oo] !BodyId
-ELSE            <-  [Ee] [Ll] [Ss] [Ee] !BodyId
-END             <-  [Ee] [Nn] [Dd] !BodyId
-FILE            <-  [Ff] [Ii] [Ll] [Ee] !BodyId
-FOR             <-  [Ff] [Oo] [Rr] !BodyId
-FUNCTION        <-  [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn] !BodyId
-GOTO            <-  [Gg] [Oo] [Tt] [Oo] !BodyId
-IF              <-  [Ii] [Ff] !BodyId
-IN              <-  [Ii] [Nn] !BodyId
-LABEL           <-  [Ll] [Aa] [Bb] [Ee] [Ll] !BodyId
-MOD             <-  [Mm] [Oo] [Dd] !BodyId
-NIL             <-  [Nn] [Ii] [Ll] !BodyId
-NOT             <-  [Nn] [Oo] [Tt] !BodyId
-OF              <-  [Oo] [Ff] !BodyId
-OR              <-  [Oo] [Rr] !BodyId
-PACKED          <-  [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] !BodyId
-PROCEDURE       <-  [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
-PROGRAM         <-  [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] !BodyId
-RECORD          <-  [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] !BodyId
-REPEAT          <-  [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] !BodyId
-SET             <-  [Ss] [Ee] [Tt] !BodyId
-THEN            <-  [Tt] [Hh] [Ee] [Nn] !BodyId
-TO              <-  [Tt] [Oo] !BodyId
-TYPE            <-  [Tt] [Yy] [Pp] [Ee] !BodyId
-UNTIL           <-  [Uu] [Nn] [Tt] [Ii] [Ll] !BodyId
-VAR             <-  [Vv] [Aa] [Rr] !BodyId
-WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
-WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
-SPACE           <-  [ 	
-]  /  COMMENT
-SKIP            <-  ([ 	
-]  /  COMMENT)*
-Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
-EatToken        <-  (Token  /  (!SPACE .)+) SKIP
-Err_001         <-  (!Dot EatToken)*
-Err_002         <-  (!(!.) EatToken)*
-Err_003         <-  (!(Semi  /  LPar) EatToken)*
-Err_004         <-  (!RPar EatToken)*
-Err_005         <-  (!Semi EatToken)*
-Err_006         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_007         <-  (!(RPar  /  Colon) EatToken)*
-Err_008         <-  (!Semi EatToken)*
-Err_009         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_010         <-  (!Semi EatToken)*
-Err_011         <-  (!Semi EatToken)*
-Err_012         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_013         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_014         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_015         <-  (!Semi EatToken)*
-Err_016         <-  (!Semi EatToken)*
-Err_017         <-  (!(VAR  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_018         <-  (!(VAR  /  PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_019         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_020         <-  (!Semi EatToken)*
-Err_021         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_022         <-  (!RPar EatToken)*
-Err_023         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
-Err_024         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_025         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
-Err_026         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
-Err_027         <-  (!(RBrack  /  Comma) EatToken)*
-Err_028         <-  (!RBrack EatToken)*
-Err_029         <-  (!OF EatToken)*
-Err_030         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_031         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_032         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_033         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
-Err_034         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_035         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_036         <-  (!(Semi  /  RPar  /  END) EatToken)*
-Err_037         <-  (!Colon EatToken)*
-Err_038         <-  (!Semi EatToken)*
-Err_039         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
-Err_040         <-  (!(PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
-Err_041         <-  (!BEGIN EatToken)*
-Err_042         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_043         <-  (!Semi EatToken)*
-Err_044         <-  (!(Semi  /  RPar  /  LPar) EatToken)*
-Err_045         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
-Err_046         <-  (!Semi EatToken)*
-Err_047         <-  (!(LPar  /  Colon) EatToken)*
-Err_048         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
-Err_049         <-  (!(Semi  /  RPar) EatToken)*
-Err_050         <-  (!(Semi  /  RPar) EatToken)*
-Err_051         <-  (!RPar EatToken)*
-Err_052         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
-Err_053         <-  (!Id EatToken)*
-Err_054         <-  (!(Semi  /  RPar) EatToken)*
-Err_055         <-  (!(UNTIL  /  Semi  /  END  /  ELSE  /  Dot) EatToken)*
-Err_056         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_057         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_058         <-  (!(RBrack  /  Comma) EatToken)*
-Err_059         <-  (!RBrack EatToken)*
-Err_060         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
-Err_061         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
-Err_062         <-  (!RPar EatToken)*
-Err_063         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_064         <-  (!(RPar  /  Comma) EatToken)*
-Err_065         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_066         <-  (!THEN EatToken)*
-Err_067         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_068         <-  (!OF EatToken)*
-Err_069         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
-Err_070         <-  (!(Semi  /  END) EatToken)*
-Err_071         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_072         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_073         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
-Err_074         <-  (!DO EatToken)*
-Err_075         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_076         <-  (!Assign EatToken)*
-Err_077         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_078         <-  (!(TO  /  DOWNTO) EatToken)*
-Err_079         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
-Err_080         <-  (!DO EatToken)*
-Err_081         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_082         <-  (!(DO  /  Comma) EatToken)*
-Err_083         <-  (!DO EatToken)*
-Err_084         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
-Err_085         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
-Err_086         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_087         <-  (!RPar EatToken)*
-Err_088         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_089         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_090         <-  (!RBrack EatToken)*
-Err_091         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
-Err_092         <-  (!(RBrack  /  Comma) EatToken)*
-
 Yes: 	HelloWorld.pas
 Yes: 	PlayingWithDice.pas
 Yes: 	Teste.pas
@@ -711,204 +16,1002 @@ Yes: 	somaEProduto.pas
 Yes: 	somaParImpar.pas
 Yes: 	triangulo.pas
 No: 	AssignErr.pas
-r = nil lab = fail line: 4 col: 8
+program AssignErr;
+
+begin
+	for i = 2+3 downto 2 do
+		i := i-1
+end.program{head{"program", "AssignErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", forStmt{"for", "i", "NONE", simpleExpr{unsignedConst{"2", }, "+", unsignedConst{"3", }, }, "downto", unsignedConst{"2", }, "do", assignStmt{var{"i", }, ":=", simpleExpr{var{"i", }, "-", unsignedConst{"1", }, }, }, }, "end", }, ".", }
+
 No: 	BeginErr.pas
-r = nil lab = fail line: 4 col: 1
+program BeginErr;
+
+begi
+	a := 2
+end.program{head{"program", "BeginErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, "NONE", ".", }
+
 No: 	ColonErr1.pas
-r = nil lab = fail line: 4 col: 33
+program ColonErr1;
+
+type
+	turno = record case b : a of a . () end;
+	real = real;
+begin
+	{ Nothing }
+end.program{head{"program", "ColonErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"turno", "=", recordType{"record", variantPart{"case", "b", ":", "a", "of", variant{const{"a", }, "NONE", "(", fieldList{}, ")", }, }, "end", }, }, ";", typeDef{"real", "=", type{"real", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	ColonErr2.pas
-r = nil lab = fail line: 4 col: 7
+program ColonErr2;
+
+var
+	a, b = int;
+	c : int;
+
+begin
+	{ Nothing }
+end.program{head{"program", "ColonErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{"var", varDec{ids{"a", ",", "b", }, "NONE", type{"int", }, }, ";", varDec{ids{"c", }, ":", type{"int", }, }, ";", }, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	ColonErr3.pas
-r = nil lab = fail line: 3 col: 12
+program ColonErr3;
+
+function f ; int;
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "ColonErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{funcDec{funcHeading{"function", "f", "NONE", type{"int", }, }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	ColonErr4.pas
-r = nil lab = fail line: 3 col: 15
+program ColonErr4;
+
+procedure p(a ; int);
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "ColonErr4", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "p", formalParams{"(", formalParamsSection{ids{"a", }, "NONE", "int", }, ")", }, }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	ColonErr5.pas
-r = nil lab = fail line: 4 col: 4
+program ColonErr5;
+
+begin
+	1 ; a;
+	while i < 0 do
+	begin
+		i := i+1
+	end
+end. program{head{"program", "ColonErr5", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{stmt{label{"1", }, "NONE", }, ";", procStmt{"a", }, ";", whileStmt{"while", expr{var{"i", }, "<", unsignedConst{"0", }, }, "do", block{"begin", assignStmt{var{"i", }, ":=", simpleExpr{var{"i", }, "+", unsignedConst{"1", }, }, }, "end", }, }, }, "end", }, ".", }
+
 No: 	ColonErr6.pas
-r = nil lab = fail line: 5 col: 5
+program ColonErr6;
+
+begin
+	case a of
+		a ; a := 2;
+		b : x := 3
+	end
+end.program{head{"program", "ColonErr6", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{caseStmt{"case", var{"a", }, "of", caseListElement{const{"a", }, "NONE", stmt{}, }, ";", caseListElement{const{"a", }, ":", stmt{}, }, "NONE", }, ";", procStmt{"b", }, }, "NONE", }, "NONE", }
+
 No: 	ConstErr1.pas
-r = nil lab = fail line: 4 col: 7
+program ConstErr1;
+
+const
+	a = +;
+
+begin 
+	{ Nothing }
+end.program{head{"program", "ConstErr1", ";", }, decs{labelDecs{}, constDefs{"const", constDef{"a", "=", "NONE", }, ";", }, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	ConstErr2.pas
-r = nil lab = fail line: 4 col: 13
+program ConstErr2;
+
+type
+	hrs = 0 .. .4;
+
+begin 
+	a := 2
+end.program{head{"program", "ConstErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"hrs", "=", subrangeType{const{"0", }, "..", "NONE", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, "end", }, ".", }
+
 No: 	ConstErr3.pas
-r = nil lab = fail line: 4 col: 31
+program ConstErr3;
+
+type
+	turno = record case b : a of .a : () end;
+
+begin
+	a := 2
+end.program{head{"program", "ConstErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"turno", "=", recordType{"record", variantPart{"case", "b", ":", "a", "of", "NONE", }, "NONE", }, }, "NONE", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, "end", }, ".", }
+
 No: 	ConstErr4.pas
-r = nil lab = fail line: 4 col: 34
+program ConstErr4;
+
+type
+	turno = record case b : a of a, .b: () end;
+
+begin
+	a := 2
+end.program{head{"program", "ConstErr4", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"turno", "=", recordType{"record", variantPart{"case", "b", ":", "a", "of", variant{consts{const{"a", }, ",", "NONE", }, ":", "(", fieldList{}, ")", }, }, "end", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, "end", }, ".", }
+
 No: 	ConstErr5.pas
-r = nil lab = fail line: 5 col: 3
+program ConstErr5;
+
+begin
+	case a of
+		.a : a := 2;
+		b : a := 3
+	end
+end.program{head{"program", "ConstErr5", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", caseStmt{"case", var{"a", }, "of", "NONE", ";", caseListElement{const{"b", }, ":", assignStmt{var{"a", }, ":=", unsignedConst{"3", }, }, }, "end", }, "end", }, ".", }
+
 No: 	DoErr1.pas
-r = nil lab = fail line: 5 col: 4
+program DoErr1;
+
+begin
+	while a d
+		a := 1;
+
+	b := 4;
+	c := 5;
+end.program{head{"program", "DoErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", whileStmt{"while", var{"a", }, "NONE", procStmt{"d", }, }, "NONE", }, "NONE", }
+
 No: 	DoErr2.pas
-r = nil lab = fail line: 5 col: 1
+program DoErr2;
+
+begin
+	for a := 1 to 4 di
+		a := a+1;
+	b := 4
+end.program{head{"program", "DoErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", forStmt{"for", "a", ":=", unsignedConst{"1", }, "to", unsignedConst{"4", }, "NONE", procStmt{"di", }, }, "NONE", }, "NONE", }
+
 No: 	DoErr3.pas
-r = nil lab = fail line: 4 col: 9
+program DoErr3;
+
+begin
+	with a od
+		a := 1;
+
+	b := 4;
+	c := 5
+end.program{head{"program", "DoErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", withStmt{"with", var{"a", }, "NONE", procStmt{"od", }, }, "NONE", }, "NONE", }
+
 No: 	DotErr.pas
-r = nil lab = fail line: 5 col: 3
+program DotErr;
+
+begin
+	{ Nothing }
+endprogram{head{"program", "DotErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, "NONE", }
+
 No: 	EndErr1.pas
-r = nil lab = fail line: 4 col: 27
+program EndErr1;
+
+type
+	t = record a : integer ens;
+
+begin
+	{ Nothing }
+end.program{head{"program", "EndErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"t", "=", recordType{"record", varDec{ids{"a", }, ":", type{"integer", }, }, "NONE", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	EndErr2.pas
-r = nil lab = fail line: 5 col: 4
+program EndErr2;
+
+begin
+	{ Nothing }
+and.program{head{"program", "EndErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "NONE", }, ".", }
+
 No: 	EndErr3.pas
-r = nil lab = fail line: 7 col: 1
+program ConstErr5;
+
+begin
+	case a of
+		a : a := 2;
+	and
+
+	a := 2;
+	b := 4
+end.program{head{"program", "ConstErr5", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{caseStmt{"case", var{"a", }, "of", caseListElement{const{"a", }, ":", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, }, ";", "NONE", }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"4", }, }, }, "end", }, ".", }
+
 No: 	EndInputErr.pas
-r = nil lab = fail line: 7 col: 1
+program EndInputErr;
+
+begin
+	{ Nothing }
+end.
+
+xprogram{head{"program", "EndInputErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", "NONE", }
+
 No: 	EqErr1.pas
-r = nil lab = fail line: 4 col: 4
+program EqErr1;
+
+const
+	a := 2;
+
+begin
+	b := 4
+end.
+program{head{"program", "EqErr1", ";", }, decs{labelDecs{}, constDefs{"const", constDef{"a", "NONE", const{"2", }, }, ";", }, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", assignStmt{var{"b", }, ":=", unsignedConst{"4", }, }, "end", }, ".", }
+
 No: 	EqErr2.pas
-r = nil lab = fail line: 4 col: 4
+program EqErr2;
+
+type
+	a := real;
+
+begin
+	b = 4
+end.
+program{head{"program", "EqErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "NONE", type{"real", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", procStmt{"b", }, "NONE", }, "NONE", }
+
 No: 	ExprErr1.pas
-r = nil lab = fail line: 4 col: 7
+program ExprErr1;
+
+begin
+	a := .5;
+	b := 0.4;
+	c := 0.6
+end.program{head{"program", "ExprErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", "NONE", }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"0.4", }, }, ";", assignStmt{var{"c", }, ":=", unsignedConst{"0.6", }, }, }, "end", }, ".", }
+
 No: 	ExprErr10.pas
-r = nil lab = fail line: 4 col: 16
+program ExprErr10;
+
+begin
+	for i := 0 downto .4 do
+		a := 1
+end.program{head{"program", "ExprErr10", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", forStmt{"for", "i", ":=", unsignedConst{"0", }, "downto", "NONE", "do", assignStmt{var{"a", }, ":=", unsignedConst{"1", }, }, }, "end", }, ".", }
+
 No: 	ExprErr11.pas
-r = nil lab = fail line: 4 col: 12
+program ExprErr11;
+
+begin
+	a := a * (.a + 3);
+end.program{head{"program", "ExprErr11", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", term{var{"a", }, "*", factor{"(", "NONE", ")", }, }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	ExprErr12.pas
-r = nil lab = fail line: 4 col: 11
+program ExprErr12;
+
+begin
+	a := [a, .a];
+
+	b := 4;
+	c := 6
+end.
+program{head{"program", "ExprErr12", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", setConstructor{"[", var{"a", }, ",", "NONE", "]", }, }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"4", }, }, ";", assignStmt{var{"c", }, ":=", unsignedConst{"6", }, }, }, "end", }, ".", }
+
 No: 	ExprErr13.pas
-r = nil lab = fail line: 4 col: 14
+program RBrackErr3;
+
+begin
+	a := [2, 2.. .a];
+end.program{head{"program", "RBrackErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", setConstructor{"[", unsignedConst{"2", }, ",", memberDesignator{unsignedConst{"2", }, "..", "NONE", }, "]", }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	ExprErr2.pas
-r = nil lab = fail line: 4 col: 4
+program ExprErr2;
+
+begin
+	a[.1, 2] := 2;
+
+	b := 2;
+	c := 6
+end.program{head{"program", "ExprErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", "[", "NONE", ",", unsignedConst{"2", }, "]", }, ":=", unsignedConst{"2", }, }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"2", }, }, ";", assignStmt{var{"c", }, ":=", unsignedConst{"6", }, }, }, "end", }, ".", }
+
 No: 	ExprErr3.pas
-r = nil lab = fail line: 4 col: 7
+program ExprErr3;
+
+begin
+	a[2, .4] := 2;
+	b := 3;
+	c := 5
+end.program{head{"program", "ExprErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", "[", unsignedConst{"2", }, ",", "NONE", "]", }, ":=", unsignedConst{"2", }, }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"3", }, }, ";", assignStmt{var{"c", }, ":=", unsignedConst{"5", }, }, }, "end", }, ".", }
+
 No: 	ExprErr4.pas
-r = nil lab = fail line: 4 col: 12
+program ExprErr4;
+
+begin
+	write(a:1:.4+3);
+	a := 2
+end.program{head{"program", "ExprErr4", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{procStmt{"write", params{"(", param{var{"a", }, ":", unsignedConst{"1", }, ":", "NONE", }, ")", }, }, ";", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, }, "end", }, ".", }
+
 No: 	ExprErr5.pas
-r = nil lab = fail line: 4 col: 5
+program ExprErr5;
+
+begin
+	if .a < 2 then
+		a := 1
+end.program{head{"program", "ExprErr5", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", ifStmt{"if", "NONE", "then", assignStmt{var{"a", }, ":=", unsignedConst{"1", }, }, }, "end", }, ".", }
+
 No: 	ExprErr6.pas
-r = nil lab = fail line: 4 col: 7
+program ExprErr6;
+
+begin
+	case ^a of
+		'str' : a := 2;
+	end
+end.program{head{"program", "ExprErr6", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", caseStmt{"case", "NONE", "of", caseListElement{const{"'str'", }, ":", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, }, ";", "end", }, "end", }, ".", }
+
 No: 	ExprErr7.pas
-r = nil lab = fail line: 6 col: 8
+program ExprErr7;
+
+begin
+	repeat
+		a := 2
+	until ^l+3;
+	s := 2+1
+end.program{head{"program", "ExprErr7", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{repeatStmt{"repeat", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, "until", "NONE", }, ";", assignStmt{var{"s", }, ":=", simpleExpr{unsignedConst{"2", }, "+", unsignedConst{"1", }, }, }, }, "end", }, ".", }
+
 No: 	ExprErr8.pas
-r = nil lab = fail line: 4 col: 8
+program ExprErr8;
+
+begin
+	while ^a+2 do
+		a := 1
+end.program{head{"program", "ExprErr8", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", whileStmt{"while", "NONE", "do", assignStmt{var{"a", }, ":=", unsignedConst{"1", }, }, }, "end", }, ".", }
+
 No: 	ExprErr9.pas
-r = nil lab = fail line: 4 col: 11
+program ExprErr9;
+
+begin
+	for i := ^4 to 32 do
+		a := 2
+end.program{head{"program", "ExprErr9", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", forStmt{"for", "i", ":=", "NONE", "to", unsignedConst{"32", }, "do", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, }, "end", }, ".", }
+
 No: 	FactorErr.pas
-r = nil lab = fail line: 4 col: 11
+program FactorErr;
+
+begin
+	a := a * .b;
+end.program{head{"program", "FactorErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", term{var{"a", }, "*", "NONE", }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	FormalParamErr1.pas
-r = nil lab = fail line: 3 col: 13
+program FormalParamErr1;
+
+procedure p();
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "FormalParamErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "p", formalParams{"(", "NONE", ")", }, }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	FormalParamErr2.pas
-r = nil lab = fail line: 3 col: 23
+program FormalParamErr2;
+
+procedure p( a : int; );
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "FormalParamErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "p", formalParams{"(", formalParamsSection{ids{"a", }, ":", "int", }, ";", "NONE", ")", }, }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	FuncBodyErr.pas
-r = nil lab = fail line: 3 col: 19
+program FuncBodyErr;
+
+function f : int; 
+	a := 2;
+	b := 3
+end;
+
+begin
+	a := 2;
+	b := 3
+end.program{head{"program", "FuncBodyErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{funcDec{funcHeading{"function", "f", ":", type{"int", }, }, ";", "a", }, "NONE", }, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"3", }, }, }, "end", }, ".", }
+
 No: 	IdErr1.pas
-r = nil lab = fail line: 1 col: 22
+program IdErr1 (id1, ) ;
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr1", "(", ids{"id1", ",", "NONE", }, ")", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr10.pas
-r = nil lab = fail line: 3 col: 17
+program IdErr10;
+
+procedure p(a : 1nt);
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr10", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "p", formalParams{"(", formalParamsSection{ids{"a", }, ":", "NONE", }, ")", }, }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr11.pas
-r = nil lab = fail line: 4 col: 4
+program IdErr11;
+
+begin
+	a.1s := 2;
+	b := 3;
+	c := 4
+end.program{head{"program", "IdErr11", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", ".", "NONE", }, ":=", unsignedConst{"2", }, }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"3", }, }, ";", assignStmt{var{"c", }, ":=", unsignedConst{"4", }, }, }, "end", }, ".", }
+
 No: 	IdErr12.pas
-r = nil lab = fail line: 4 col: 6
+program IdErr12;
+
+begin
+	for 1a := 2 to 4 do
+		a := 4
+end.program{head{"program", "IdErr12", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", forStmt{"for", "NONE", ":=", unsignedConst{"2", }, "to", unsignedConst{"4", }, "do", assignStmt{var{"a", }, ":=", unsignedConst{"4", }, }, }, "end", }, ".", }
+
 No: 	IdErr2.pas
-r = nil lab = fail line: 4 col: 2
+program IdErr2;
+
+const
+	1a = 2;
+	b = 3;
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr2", ";", }, decs{labelDecs{}, constDefs{"const", "NONE", ";", constDef{"b", "=", const{"3", }, }, ";", }, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr3.pas
-r = nil lab = fail line: 4 col: 2
+program IdErr3;
+
+type
+	1a = real;
+	int = integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", "NONE", ";", typeDef{"int", "=", type{"integer", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr4.pas
-r = nil lab = fail line: 4 col: 2
+program IdErr4;
+
+type
+	1a = ^2real;
+	b = int;
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr4", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", "NONE", ";", typeDef{"b", "=", type{"int", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr5.pas
-r = nil lab = fail line: 4 col: 11
+program IdErr5;
+
+type
+	turno = (2M, T, N);
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr5", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"turno", "=", enumType{"(", "NONE", ")", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr6.pas
-r = nil lab = fail line: 4 col: 22
+program IdErr6;
+
+type
+	turno = record case 1a of a : () end;
+	a = integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr6", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"turno", "=", recordType{"record", variantPart{"case", "NONE", "of", variant{const{"a", }, ":", "(", fieldList{}, ")", }, }, "end", }, }, ";", typeDef{"a", "=", type{"integer", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr7.pas
-r = nil lab = fail line: 4 col: 26
+program IdErr7;
+
+type
+	turno = record case b : 1a of a : () end;
+	b = integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr7", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"turno", "=", recordType{"record", variantPart{"case", "b", ":", "NONE", "of", variant{const{"a", }, ":", "(", fieldList{}, ")", }, }, "end", }, }, ";", typeDef{"b", "=", type{"integer", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr8.pas
-r = nil lab = fail line: 3 col: 11
+program IdErr8;
+
+procedure 1p; 
+begin
+	{ Nothing }
+end;
+	
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr8", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "NONE", }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	IdErr9.pas
-r = nil lab = fail line: 3 col: 10
+program IdErr9;
+
+function 1f : int; 
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "IdErr9", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{funcDec{funcHeading{"function", "NONE", ":", type{"int", }, }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	LBrackErr.pas
-r = nil lab = fail line: 4 col: 12
+program LBrackErr;
+
+type
+	a = array 2..3] of integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "LBrackErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", arrayType{"array", "NONE", subrangeType{const{"2", }, "..", const{"3", }, }, "]", "of", type{"integer", }, }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	LParErr.pas
-r = nil lab = fail line: 7 col: 12
+program LParErr;
+
+type
+	a = record
+			case id of
+				1, 2 : (id : int);
+				2, 3 : oi : int);
+		end;
+	b = integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "LParErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", recordType{"record", fieldList{variantPart{"case", "id", "of", variant{consts{const{"1", }, ",", const{"2", }, }, ":", "(", varDec{ids{"id", }, ":", type{"int", }, }, ")", }, ";", variant{consts{const{"2", }, ",", const{"3", }, }, ":", "NONE", varDec{ids{"oi", }, ":", type{"int", }, }, ")", }, }, ";", }, "end", }, }, ";", typeDef{"b", "=", type{"integer", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	LabelErr1.pas
-r = nil lab = fail line: 4 col: 2
+program LabelErr1;
+
+label
+	, 2;
+
+begin
+	{ Nothing }
+end.program{head{"program", "LabelErr1", ";", }, decs{labelDecs{"label", "NONE", ";", }, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	LabelErr2.pas
-r = nil lab = fail line: 4 col: 5
+program LabelErr2;
+
+label
+	1, a;
+begin
+	{ Nothing }
+end. program{head{"program", "LabelErr2", ";", }, decs{labelDecs{"label", labels{label{"1", }, ",", "NONE", }, ";", }, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	LabelErr3.pas
-r = nil lab = fail line: 4 col: 7
+program LabelErr3;
+
+begin
+	goto a;
+	b := 3;
+end. program{head{"program", "LabelErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{gotoStmt{"goto", "NONE", }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"3", }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	OfErr1.pas
-r = nil lab = fail line: 4 col: 19
+program OfErr1;
+
+type
+	a = array [1..2] integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "OfErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", arrayType{"array", "[", subrangeType{const{"1", }, "..", const{"2", }, }, "]", "NONE", type{"integer", }, }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	OfErr2.pas
-r = nil lab = fail line: 4 col: 10
+program OfErr2;
+
+type
+	a = set integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "OfErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", setType{"set", "NONE", ordinalType{"integer", }, }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	OfErr3.pas
-r = nil lab = fail line: 4 col: 11
+program OfErr3;
+
+type
+	a = file integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "OfErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", fileType{"file", "NONE", type{"integer", }, }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	OfErr4.pas
-r = nil lab = fail line: 4 col: 29
+program OfErr4;
+
+type
+	turno = record case b : a odf a : () end;
+	b = integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "OfErr4", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"turno", "=", recordType{"record", variantPart{"case", "b", ":", "a", "NONE", variant{const{"odf", }, "NONE", "(", fieldList{}, ")", }, }, "end", }, }, ";", typeDef{"b", "=", type{"integer", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	OfErr5.pas
-r = nil lab = fail line: 4 col: 11
+program OfErr5;
+
+begin
+	case a ofd
+		'str' : a := 2;
+		'stu' : b := 3;
+	end
+end.program{head{"program", "OfErr5", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", caseStmt{"case", var{"a", }, "NONE", caseListElement{const{"ofd", }, "NONE", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, }, ";", caseListElement{const{"'stu'", }, ":", assignStmt{var{"b", }, ":=", unsignedConst{"3", }, }, }, ";", "end", }, "end", }, ".", }
+
 No: 	OrdinalTypeErr1.pas
-r = nil lab = fail line: 4 col: 13
+program OrdinalTypeErr1;
+
+type
+	a = array [.1 .. 2, 2 .. 20] of int;
+
+begin
+	{ Nothing }
+end.program{head{"program", "OrdinalTypeErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", arrayType{"array", "[", "NONE", ",", subrangeType{const{"2", }, "..", const{"20", }, }, "]", "of", type{"int", }, }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	OrdinalTypeErr2.pas
-r = nil lab = fail line: 4 col: 19
+program OrdinalTypeErr2;
+
+type
+	a = array [2..3, .1 .. 3, 2 .. 20] of int;
+
+begin
+	{ Nothing }
+end.program{head{"program", "OrdinalTypeErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", arrayType{"array", "[", subrangeType{const{"2", }, "..", const{"3", }, }, ",", "NONE", "]", "of", type{"int", }, }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	OrdinalTypeErr3.pas
-r = nil lab = fail line: 4 col: 14
+program OrdinalTypeErr3;
+
+type
+	a = set of 1nt;
+
+begin
+	{ Nothing }
+end.program{head{"program", "OrdinalTypeErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", setType{"set", "of", "NONE", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	ProcBodyErr.pas
-r = nil lab = fail line: 3 col: 14
+program ProcBodyErr;
+
+procedure p;
+	a := 2;
+	b := 3
+end;
+
+begin
+	a := 2;
+	b := 3
+end.program{head{"program", "ProcBodyErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "p", }, ";", "a", }, "NONE", }, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"3", }, }, }, "end", }, ".", }
+
 No: 	ProgErr.pas
-r = nil lab = fail line: 1 col: 5
+prog HelloWorld;
+
+label 2;
+
+begin
+	{ Nothing }
+end.program{"NONE", decs{labelDecs{"label", label{"2", }, ";", }, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	ProgNameErr.pas
-r = nil lab = fail line: 1 col: 9
+program 1p;
+
+begin
+	{ Nothing }
+end.program{head{"program", "NONE", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	RBrackErr1.pas
-r = nil lab = fail line: 4 col: 18
+program RBrackErr1;
+
+type
+	a = array [1..2 of integer;
+
+begin
+	{ Nothing }
+end.program{head{"program", "RBrackErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", arrayType{"array", "[", subrangeType{const{"1", }, "..", const{"2", }, }, "NONE", "of", type{"integer", }, }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	RBrackErr2.pas
-r = nil lab = fail line: 4 col: 9
+program RBrackErr2;
+
+begin
+	a[2, 2 := 2;
+	b := 2;
+	c := 5
+end.program{head{"program", "RBrackErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", "[", unsignedConst{"2", }, ",", unsignedConst{"2", }, "NONE", }, ":=", unsignedConst{"2", }, }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"2", }, }, ";", assignStmt{var{"c", }, ":=", unsignedConst{"5", }, }, }, "end", }, ".", }
+
 No: 	RBrackErr3.pas
-r = nil lab = fail line: 4 col: 12
+program RBrackErr3;
+
+begin
+	a := [2, 2};
+	b := 5;
+	c := 4;
+end.program{head{"program", "RBrackErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", setConstructor{"[", unsignedConst{"2", }, ",", unsignedConst{"2", }, "NONE", }, }, ";", assignStmt{var{"b", }, ":=", unsignedConst{"5", }, }, ";", assignStmt{var{"c", }, ":=", unsignedConst{"4", }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	RParErr1.pas
-r = nil lab = fail line: 1 col: 27
+program RParErr1 (id1, id2;
+
+begin
+	{ Nothing }
+end.program{head{"program", "RParErr1", "(", ids{"id1", ",", "id2", }, "NONE", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	RParErr2.pas
-r = nil lab = fail line: 4 col: 18
+program RParErr2;
+
+type
+	turno = (M, T, N;
+
+begin
+	{ Nothing }
+end.program{head{"program", "RParErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"turno", "=", enumType{"(", ids{"M", ",", "T", ",", "N", }, "NONE", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	RParErr3.pas
-r = nil lab = fail line: 7 col: 5
+program RParErr3;
+
+type
+	a = record
+			case id of
+				1, 2 : (id : int;
+				2, 3 : (oi : int);
+		end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "RParErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", recordType{"record", variantPart{"case", "id", "of", variant{consts{const{"1", }, ",", const{"2", }, }, ":", "(", fieldList{varDec{ids{"id", }, ":", type{"int", }, }, ";", }, "NONE", }, }, "NONE", }, }, "NONE", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	RParErr4.pas
-r = nil lab = fail line: 3 col: 20
+program RParErr3;
+
+procedure p(a : int];
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "RParErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "p", formalParams{"(", formalParamsSection{ids{"a", }, ":", "int", }, "NONE", }, }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	RParErr5.pas
-r = nil lab = fail line: 5 col: 1
+program RParErr5;
+
+begin
+	writeln(a
+end.program{head{"program", "RParErr5", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", procStmt{"writeln", params{"(", var{"a", }, "NONE", }, }, "end", }, ".", }
+
 No: 	RParErr6.pas
-r = nil lab = fail line: 4 col: 19
+program RParErr6;
+
+begin
+	a := (a * (a + 3);
+end.program{head{"program", "RParErr6", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", factor{"(", term{var{"a", }, "*", factor{"(", simpleExpr{var{"a", }, "+", unsignedConst{"3", }, }, ")", }, }, "NONE", }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	RealParamErr.pas
-r = nil lab = fail line: 4 col: 12
+program RealParamErr;
+
+begin
+	writeln(a,.b);
+end.program{head{"program", "RealParamErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{procStmt{"writeln", params{"(", var{"a", }, ",", "NONE", ")", }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	SemiErr1.pas
-r = nil lab = fail line: 3 col: 1
+program SemiErr1 (id1,id2)
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr1", "(", ids{"id1", ",", "id2", }, ")", "NONE", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr10.pas
-r = nil lab = fail line: 4 col: 1
+program SemiErr10;
+
+procedure a
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr10", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "a", }, "NONE", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr11.pas
-r = nil lab = fail line: 4 col: 1
+program SemiErr11;
+
+function f : int
+begin
+	{ Nothing }
+end;
+	
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr11", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{funcDec{funcHeading{"function", "f", ":", type{"int", }, }, "NONE", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr2.pas
-r = nil lab = fail line: 6 col: 1
+program SemiErr2;
+
+label
+	2, 3
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr2", ";", }, decs{labelDecs{"label", labels{label{"2", }, ",", label{"3", }, }, "NONE", }, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr3.pas
-r = nil lab = fail line: 6 col: 1
+program SemiErr3;
+
+const
+	c = 1
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr3", ";", }, decs{labelDecs{}, constDefs{"const", constDef{"c", "=", const{"1", }, }, "NONE", }, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr4.pas
-r = nil lab = fail line: 7 col: 1
+program SemiErr4;
+
+const
+	a = 1;
+	b = 2
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr4", ";", }, decs{labelDecs{}, constDefs{"const", constDef{"a", "=", const{"1", }, }, ";", constDef{"b", "=", const{"2", }, }, "NONE", }, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr5.pas
-r = nil lab = fail line: 5 col: 2
+program SemiErr5;
+
+type
+	a = real
+	b = real;
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr5", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", type{"real", }, }, "NONE", typeDef{"b", "=", type{"real", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr6.pas
-r = nil lab = fail line: 7 col: 1
+program SemiErr6;
+
+type
+	a = real;
+	b = real
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr6", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", type{"real", }, }, ";", typeDef{"b", "=", type{"real", }, }, "NONE", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr7.pas
-r = nil lab = fail line: 4 col: 9
+program SemiErr7;
+
+var
+	a : int,
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr7", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{"var", varDec{ids{"a", }, ":", type{"int", }, }, "NONE", }, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr8.pas
-r = nil lab = fail line: 6 col: 1
+program SemiErr8;
+
+var
+	a : int;
+	b : int.
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr8", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{"var", varDec{ids{"a", }, ":", type{"int", }, }, ";", varDec{ids{"b", }, ":", type{"int", }, }, "NONE", }, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SemiErr9.pas
-r = nil lab = fail line: 8 col: 1
+program SemiErr9;
+
+procedure a;
+begin
+
+end
+
+begin
+	{ Nothing }
+end.program{head{"program", "SemiErr9", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{procDec{procHeading{"procedure", "a", }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, "NONE", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	SimpleExprErr.pas
-r = nil lab = fail line: 5 col: 1
+program SimpleExprErr;
+
+begin
+	if a <> then
+		a := 1;
+end.program{head{"program", "SimpleExprErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{ifStmt{"if", expr{var{"a", }, "<>", "NONE", }, "then", assignStmt{var{"a", }, ":=", unsignedConst{"1", }, }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	TermErr.pas
-r = nil lab = fail line: 4 col: 11
+program TermErr;
+
+begin
+	a := a + ;
+end.program{head{"program", "TermErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{assignStmt{var{"a", }, ":=", simpleExpr{var{"a", }, "+", "NONE", }, }, ";", stmt{}, }, "end", }, ".", }
+
 No: 	ThenErr.pas
-r = nil lab = fail line: 5 col: 1
+program ThenErr;
+
+begin
+	if a = 1 the
+		a := 2;
+
+	b := 3;
+	c := 5
+end.program{head{"program", "ThenErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", ifStmt{"if", expr{var{"a", }, "=", unsignedConst{"1", }, }, "NONE", procStmt{"the", }, }, "NONE", }, "NONE", }
+
 No: 	ToDownToErr.pas
-r = nil lab = fail line: 4 col: 14
+program ToDownToErr;
+
+begin
+	for i := 0 ti 3 do
+		a := 1;
+	while a > 2 do
+	begin
+		writeln('Hi');
+	end
+end.program{head{"program", "ToDownToErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmts{forStmt{"for", "i", ":=", unsignedConst{"0", }, "NONE", var{"ti", }, "NONE", stmt{label{"3", }, "NONE", assignStmt{var{"a", }, ":=", unsignedConst{"1", }, }, }, }, ";", whileStmt{"while", expr{var{"a", }, ">", unsignedConst{"2", }, }, "do", block{"begin", stmts{procStmt{"writeln", params{"(", unsignedConst{"'Hi'", }, ")", }, }, ";", stmt{}, }, "end", }, }, }, "end", }, ".", }
+
 No: 	TypeErr1.pas
-r = nil lab = fail line: 4 col: 10
+program TypeErr1;
+
+type
+	novo = 1;
+
+begin
+	{ Nothing }
+end.program{head{"program", "TypeErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"novo", "=", "NONE", }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	TypeErr2.pas
-r = nil lab = fail line: 4 col: 23
+program TypeErr2;
+
+type
+	a = array [2..3] of 1nt;
+
+begin
+	{ Nothing }
+end.program{head{"program", "TypeErr2", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"a", "=", arrayType{"array", "[", subrangeType{const{"2", }, "..", const{"3", }, }, "]", "of", "NONE", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	TypeErr3.pas
-r = nil lab = fail line: 4 col: 18
+program TypeErr3;
+
+type
+	novo = file of 1nt;
+
+begin
+	{ Nothing }
+end.program{head{"program", "TypeErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{"type", typeDef{"novo", "=", fileType{"file", "of", "NONE", }, }, ";", }, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	TypeErr4.pas
-r = nil lab = fail line: 4 col: 7
+program TypeErr4;
+
+var
+	a : 1nt;
+
+begin
+	{ Nothing }
+end.program{head{"program", "TypeErr4", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{"var", varDec{ids{"a", }, ":", "NONE", }, ";", }, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	TypeErr5.pas
-r = nil lab = fail line: 3 col: 15
+program ColonErr3;
+
+function f : 1nt;
+begin
+	{ Nothing }
+end;
+
+begin
+	{ Nothing }
+end.program{head{"program", "ColonErr3", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{funcDec{funcHeading{"function", "f", ":", "NONE", }, ";", decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", stmt{}, "end", }, }, ";", }, }, block{"begin", stmt{}, "end", }, ".", }
+
 No: 	UntilErr.pas
-r = nil lab = fail line: 6 col: 6
+program UntilErr;
+
+begin
+	repeat
+		a := 2
+	unti 3+3;
+
+	a := 2;
+	b := 3
+end.program{head{"program", "UntilErr", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", repeatStmt{"repeat", assignStmt{var{"a", }, ":=", unsignedConst{"2", }, }, "NONE", var{"unti", }, }, "NONE", }, "NONE", }
+
 No: 	VarErr1.pas
-r = nil lab = fail line: 4 col: 7
+program VarErr1;
+
+begin
+	with .a < 3 do
+		a := 1
+end.program{head{"program", "VarErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", withStmt{"with", "NONE", "do", assignStmt{var{"a", }, ":=", unsignedConst{"1", }, }, }, "end", }, ".", }
+
 No: 	VarErr2.pas
-r = nil lab = fail line: 4 col: 10
+program VarErr1;
+
+begin
+	with a, .b, c do
+		a := 1
+end.program{head{"program", "VarErr1", ";", }, decs{labelDecs{}, constDefs{}, typeDefs{}, varDecs{}, procAndFuncDecs{}, }, block{"begin", withStmt{"with", var{"a", }, ",", "NONE", "do", assignStmt{var{"a", }, ":=", unsignedConst{"1", }, }, }, "end", }, ".", }
+
+irec: 	101	 ifail: 	0
