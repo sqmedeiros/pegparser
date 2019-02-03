@@ -1,5 +1,5 @@
 public class NEWErr1 {
     public static void main(String[] args) {
-        int[]::news = 2;
+        int[]::ne = 2;
     }
 }

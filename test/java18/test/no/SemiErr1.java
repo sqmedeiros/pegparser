@@ -1,1 +1,5 @@
-package test.t @
+package test.t,
+
+public class SemiErr1 {
+	
+}

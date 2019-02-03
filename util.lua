@@ -42,7 +42,7 @@ end
 
 
 local function matchlabel (s1, s2)
-	return string.match(string.lower(s1), string.lower(s2))
+	return string.match(string.lower(tostring(s1)), string.lower(tostring(s2)))
 end
 
 

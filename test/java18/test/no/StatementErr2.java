@@ -4,5 +4,6 @@ public class StatementErr2 {
 			a = -2;
 		else
 			-3;
+		i = i++;
 	}
 }

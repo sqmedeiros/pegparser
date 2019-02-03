@@ -19,7 +19,7 @@ local util = require'util'
 ]]
 
 g = [[
-compilation     <-  SKIP compilationUnit !.
+compilation     <-  SKIP compilationUnit (!.)^Err_EOF
 basicType       <-  'byte'  /  'short'  /  'int'  /  'long'  /  'char'  /  'float'  /  'double'  /  'boolean'
 primitiveType   <-  annotation* basicType
 referenceType   <-  primitiveType dim+  /  classType dim*
@@ -191,6 +191,7 @@ NullLiteral     <-  'null'
 COMMENT         <-  '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 Token           <-  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throws'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'query'  /  'public'  /  'protected'  /  'private'  /  'package'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'instanceof'  /  'import'  /  'implements'  /  'if'  /  'for'  /  'float'  /  'finally'  /  'final'  /  'extends'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'catch'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'and'  /  'abstract'  /  StringLiteral  /  OctalNumeral  /  NullLiteral  /  Literal  /  Keywords  /  IntegerLiteral  /  InfixOperator  /  Identifier  /  HexaDecimalFloatingPointLiteral  /  HexSignificand  /  HexNumeral  /  HexDigits  /  HexDigit  /  FloatLiteral  /  Exponent  /  Digits  /  DecimalNumeral  /  DecimalFloatingPointLiteral  /  CharLiteral  /  COMMENT  /  BooleanLiteral  /  BinaryNumeral  /  BinaryExponent  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '?'  /  '>'  /  '='  /  '<'  /  ';'  /  '::'  /  ':'  /  '...'  /  '.'  /  '->'  /  '--'  /  '-'  /  ','  /  '++'  /  '+'  /  ')'  /  '('  /  '!'
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
+Err_EOF         <-  (!(!.) EatToken)*
 Err_001         <-  (!('>'  /  ',') EatToken)*
 Err_002         <-  (!'>' EatToken)*
 Err_003         <-  (!('>'  /  ',') EatToken)*
@@ -250,5 +251,6 @@ local p = coder.makeg(g, 'ast')
 local dir = lfs.currentdir() .. '/test/java18/test/yes/' 
 util.testYes(dir, 'java', p)
 
+util.setVerbose(true)
 local dir = lfs.currentdir() .. '/test/java18/test/no/' 
 util.testNoRec(dir, 'java', p)

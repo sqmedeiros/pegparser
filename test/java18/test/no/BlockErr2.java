@@ -4,4 +4,8 @@ public class BlockErr2 {
 			System.out.println("Ok\n");
 		}
 	}
+
+	public print() {
+		System.out.println("Hi");
+	}
 }

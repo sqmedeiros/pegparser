@@ -4,5 +4,7 @@ public class AfterTryErr {
 			v[i] = 2;
 		}
 		catch(Expretion e) {}
+
+		i = i+1;
 	}
 }

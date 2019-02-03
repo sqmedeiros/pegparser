@@ -6,6 +6,7 @@ public class CurRBrackErr9 {
 				break;
 			default:
 				/* Nothing */;
-		]}
+		]
+		i = i+1;
 	}
 }

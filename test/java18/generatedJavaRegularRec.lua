@@ -7,6 +7,7 @@ local recovery = require 'recovery'
 local lfs = require'lfs'
 local re = require'relabel'
 local ast = require'ast'
+local util = require'util'
 
 --[[
   Removed labels:
@@ -372,47 +373,9 @@ local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/java18/test/yes/' 
-for file in lfs.dir(dir) do
-  if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'java' + 1) == 'java' then
-    print("Yes: ", file)
-    local f = io.open(dir .. file)
-    local s = f:read('a')
-    f:close()
-    local r, lab, pos = p:match(s)
-    local line, col = '', ''
-    if not r then
-      line, col = re.calcline(s, pos)
-    end
-    assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
-  end
-end
+util.testYes(dir, 'java', p)
 
-local dir = lfs.currentdir() .. '/test/java18/test/no/'  
-local irec, ifail = 0, 0
-local tfail = {}
-for file in lfs.dir(dir) do
-    if string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #'java' + 1) == 'java' then
-        print("No: ", file)
-        local f = io.open(dir .. file)
-        local s = f:read('a')
-        f:close()
-        local r, lab, pos = p:match(s)
-        io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
-        local line, col = '', ''
-        if not r then
-            line, col = re.calcline(s, pos)
-            io.write(' line: ' .. line .. ' col: ' .. col)
-            ifail = ifail + 1
-            tfail[ifail] = { file = file, lab = lab, line = line, col = col }
-        else
-            irec = irec + 1
-            ast.printAST(r)
-        end
-        io.write('\n')
-    end
-end
-
-print('irec: ', irec, ' ifail: ', ifail)
-for i, v in ipairs(tfail) do
-    print(v.file, v.lab, 'line: ', v.line, 'col: ', v.col)
-end
+util.setVerbose(true)
+print""
+local dir = lfs.currentdir() .. '/test/java18/test/no/' 
+util.testNoRec(dir, 'java', p)
