@@ -1,0 +1,218 @@
+Original Grammar
+blockstmt       <-  '{' stmt* '}'
+stmt            <-  ifstmt  /  whilestmt  /  printstmt  /  decstmt  /  assignstmt  /  blockstmt
+ifstmt          <-  'if' '(' exp ')' stmt ('elsee' stmt  /  '')
+whilestmt       <-  'while' '(' exp ')' stmt
+decstmt         <-  'int' NAME ('=' exp  /  '') ';'
+assignstmt      <-  NAME '=' !'=' exp ';'
+printstmt       <-  'System.out.println' '(' exp ')' ';'
+exp             <-  relexp ('==' relexp)*
+relexp          <-  addexp ('<' addexp)*
+addexp          <-  mulexp (ADDOP mulexp)*
+ADDOP           <-  '+'  /  '-'
+mulexp          <-  atomexp (MULOP atomexp)*
+MULOP           <-  '*'  /  '/'
+atomexp         <-  '(' exp ')'  /  NUMBER  /  NAME
+NUMBER          <-  ('-'  /  '') [0-9]+
+KEYWORDS        <-  ('if'  /  'while'  /  'public'  /  'class'  /  'static'  /  'else'  /  'void'  /  'int') !([a-z0-9]*)
+NAME            <-  !KEYWORDS [a-z] [a-z0-9]*
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*	
+
+FIRST
+blockstmt: 	{
+stmt: 	System.out.println, __NAME, if, int, while, {
+ifstmt: 	if
+whilestmt: 	while
+decstmt: 	int
+assignstmt: 	__NAME
+printstmt: 	System.out.println
+exp: 	(, __NAME, __NUMBER
+relexp: 	(, __NAME, __NUMBER
+addexp: 	(, __NAME, __NUMBER
+ADDOP: 	+, -
+mulexp: 	(, __NAME, __NUMBER
+MULOP: 	*, /
+atomexp: 	(, __NAME, __NUMBER
+NUMBER: 	-, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+KEYWORDS: 	class, else, if, int, public, static, void, while
+NAME: 	a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+SPACE: 		, 
+, , , ,  
+SKIP: 		, 
+, , , ,  , __empty
+FOLLOW
+blockstmt: 	$, System.out.println, __NAME, elsee, if, int, while, {, }
+stmt: 	System.out.println, __NAME, elsee, if, int, while, {, }
+ifstmt: 	System.out.println, __NAME, elsee, if, int, while, {, }
+whilestmt: 	System.out.println, __NAME, elsee, if, int, while, {, }
+decstmt: 	System.out.println, __NAME, elsee, if, int, while, {, }
+assignstmt: 	System.out.println, __NAME, elsee, if, int, while, {, }
+printstmt: 	System.out.println, __NAME, elsee, if, int, while, {, }
+exp: 	), ;
+relexp: 	), ;, ==
+addexp: 	), ;, <, ==
+ADDOP: 	(, __NAME, __NUMBER
+mulexp: 	), ;, <, ==, __ADDOP
+MULOP: 	(, __NAME, __NUMBER
+atomexp: 	), ;, <, ==, __ADDOP, __MULOP
+NUMBER: 	), ;, <, ==, __ADDOP, __MULOP
+KEYWORDS: 	
+NAME: 	), ;, <, =, ==, __ADDOP, __MULOP
+SPACE: 	
+SKIP: 	
+Regular Annotation (SBLP paper)
+Banned (0): 
+blockstmt       <-  '{' stmt* '}'^Err_001
+stmt            <-  ifstmt  /  whilestmt  /  printstmt  /  decstmt  /  assignstmt  /  blockstmt
+ifstmt          <-  'if' '('^Err_002 exp^Err_003 ')'^Err_004 stmt^Err_005 ('elsee' stmt  /  '')
+whilestmt       <-  'while' '('^Err_006 exp^Err_007 ')'^Err_008 stmt^Err_009
+decstmt         <-  'int' NAME^Err_010 ('=' exp^Err_011  /  '') ';'^Err_012
+assignstmt      <-  NAME '='^Err_013 !'=' exp^Err_014 ';'^Err_015
+printstmt       <-  'System.out.println' '('^Err_016 exp^Err_017 ')'^Err_018 ';'^Err_019
+exp             <-  relexp ('==' relexp^Err_020)*
+relexp          <-  addexp ('<' addexp^Err_021)*
+addexp          <-  mulexp (ADDOP mulexp^Err_022)*
+ADDOP           <-  '+'  /  '-'
+mulexp          <-  atomexp (MULOP atomexp^Err_023)*
+MULOP           <-  '*'  /  '/'
+atomexp         <-  '(' exp^Err_024 ')'^Err_025  /  NUMBER  /  NAME
+NUMBER          <-  ('-'  /  '') [0-9]+
+KEYWORDS        <-  ('if'  /  'while'  /  'public'  /  'class'  /  'static'  /  'else'  /  'void'  /  'int') !([a-z0-9]*)
+NAME            <-  !KEYWORDS [a-z] [a-z0-9]*
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  '}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NUMBER  /  NAME  /  MULOP  /  KEYWORDS  /  ADDOP  /  'System.out.println'  /  '=='  /  '='  /  '<'  /  ';'  /  ')'  /  '('
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println'  /  !.) EatToken)*
+Err_002         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_003         <-  (!')' EatToken)*
+Err_004         <-  (!('{'  /  'while'  /  'int'  /  'if'  /  NAME  /  'System.out.println') EatToken)*
+Err_005         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_006         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_007         <-  (!')' EatToken)*
+Err_008         <-  (!('{'  /  'while'  /  'int'  /  'if'  /  NAME  /  'System.out.println') EatToken)*
+Err_009         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_010         <-  (!('='  /  ';') EatToken)*
+Err_011         <-  (!';' EatToken)*
+Err_012         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_013         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_014         <-  (!';' EatToken)*
+Err_015         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_016         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_017         <-  (!')' EatToken)*
+Err_018         <-  (!';' EatToken)*
+Err_019         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_020         <-  (!(';'  /  ')') EatToken)*
+Err_021         <-  (!('=='  /  ';'  /  ')') EatToken)*
+Err_022         <-  (!('=='  /  '<'  /  ';'  /  ')') EatToken)*
+Err_023         <-  (!(ADDOP  /  '=='  /  '<'  /  ';'  /  ')') EatToken)*
+Err_024         <-  (!')' EatToken)*
+Err_025         <-  (!(MULOP  /  ADDOP  /  '=='  /  '<'  /  ';'  /  ')') EatToken)*	
+
+Conservative Annotation (Hard)
+Banned (1): stmt, 
+blockstmt       <-  '{' stmt* '}'^Err_001
+stmt            <-  ifstmt  /  whilestmt  /  printstmt  /  decstmt  /  assignstmt  /  blockstmt
+ifstmt          <-  'if' '('^Err_002 exp^Err_003 ')'^Err_004 stmt^Err_005 ('elsee' stmt  /  '')
+whilestmt       <-  'while' '('^Err_006 exp^Err_007 ')'^Err_008 stmt^Err_009
+decstmt         <-  'int' NAME^Err_010 ('=' exp^Err_011  /  '') ';'^Err_012
+assignstmt      <-  NAME '='^Err_013 !'=' exp^Err_014 ';'^Err_015
+printstmt       <-  'System.out.println' '('^Err_016 exp^Err_017 ')'^Err_018 ';'^Err_019
+exp             <-  relexp ('==' relexp^Err_020)*
+relexp          <-  addexp ('<' addexp^Err_021)*
+addexp          <-  mulexp (ADDOP mulexp^Err_022)*
+ADDOP           <-  '+'  /  '-'
+mulexp          <-  atomexp (MULOP atomexp^Err_023)*
+MULOP           <-  '*'  /  '/'
+atomexp         <-  '(' exp^Err_024 ')'^Err_025  /  NUMBER  /  NAME
+NUMBER          <-  ('-'  /  '') [0-9]+
+KEYWORDS        <-  ('if'  /  'while'  /  'public'  /  'class'  /  'static'  /  'else'  /  'void'  /  'int') !([a-z0-9]*)
+NAME            <-  !KEYWORDS [a-z] [a-z0-9]*
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  '}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NUMBER  /  NAME  /  MULOP  /  KEYWORDS  /  ADDOP  /  'System.out.println'  /  '=='  /  '='  /  '<'  /  ';'  /  ')'  /  '('
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println'  /  !.) EatToken)*
+Err_002         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_003         <-  (!')' EatToken)*
+Err_004         <-  (!('{'  /  'while'  /  'int'  /  'if'  /  NAME  /  'System.out.println') EatToken)*
+Err_005         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_006         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_007         <-  (!')' EatToken)*
+Err_008         <-  (!('{'  /  'while'  /  'int'  /  'if'  /  NAME  /  'System.out.println') EatToken)*
+Err_009         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_010         <-  (!('='  /  ';') EatToken)*
+Err_011         <-  (!';' EatToken)*
+Err_012         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_013         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_014         <-  (!';' EatToken)*
+Err_015         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_016         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_017         <-  (!')' EatToken)*
+Err_018         <-  (!';' EatToken)*
+Err_019         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_020         <-  (!(';'  /  ')') EatToken)*
+Err_021         <-  (!('=='  /  ';'  /  ')') EatToken)*
+Err_022         <-  (!('=='  /  '<'  /  ';'  /  ')') EatToken)*
+Err_023         <-  (!(ADDOP  /  '=='  /  '<'  /  ';'  /  ')') EatToken)*
+Err_024         <-  (!')' EatToken)*
+Err_025         <-  (!(MULOP  /  ADDOP  /  '=='  /  '<'  /  ';'  /  ')') EatToken)*	
+
+Conservative Annotation (Soft)
+Banned (1): stmt, 
+blockstmt       <-  '{' stmt* '}'^Err_001
+stmt            <-  ifstmt  /  whilestmt  /  printstmt  /  decstmt  /  assignstmt  /  blockstmt
+ifstmt          <-  'if' '('^Err_002 exp^Err_003 ')'^Err_004 stmt^Err_005 ('elsee' stmt  /  '')
+whilestmt       <-  'while' '('^Err_006 exp^Err_007 ')'^Err_008 stmt^Err_009
+decstmt         <-  'int' NAME^Err_010 ('=' exp^Err_011  /  '') ';'^Err_012
+assignstmt      <-  NAME '='^Err_013 !'=' exp^Err_014 ';'^Err_015
+printstmt       <-  'System.out.println' '('^Err_016 exp^Err_017 ')'^Err_018 ';'^Err_019
+exp             <-  relexp ('==' relexp^Err_020)*
+relexp          <-  addexp ('<' addexp^Err_021)*
+addexp          <-  mulexp (ADDOP mulexp^Err_022)*
+ADDOP           <-  '+'  /  '-'
+mulexp          <-  atomexp (MULOP atomexp^Err_023)*
+MULOP           <-  '*'  /  '/'
+atomexp         <-  '(' exp^Err_024 ')'^Err_025  /  NUMBER  /  NAME
+NUMBER          <-  ('-'  /  '') [0-9]+
+KEYWORDS        <-  ('if'  /  'while'  /  'public'  /  'class'  /  'static'  /  'else'  /  'void'  /  'int') !([a-z0-9]*)
+NAME            <-  !KEYWORDS [a-z] [a-z0-9]*
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  '}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NUMBER  /  NAME  /  MULOP  /  KEYWORDS  /  ADDOP  /  'System.out.println'  /  '=='  /  '='  /  '<'  /  ';'  /  ')'  /  '('
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println'  /  !.) EatToken)*
+Err_002         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_003         <-  (!')' EatToken)*
+Err_004         <-  (!('{'  /  'while'  /  'int'  /  'if'  /  NAME  /  'System.out.println') EatToken)*
+Err_005         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_006         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_007         <-  (!')' EatToken)*
+Err_008         <-  (!('{'  /  'while'  /  'int'  /  'if'  /  NAME  /  'System.out.println') EatToken)*
+Err_009         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_010         <-  (!('='  /  ';') EatToken)*
+Err_011         <-  (!';' EatToken)*
+Err_012         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_013         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_014         <-  (!';' EatToken)*
+Err_015         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_016         <-  (!(NUMBER  /  NAME  /  '(') EatToken)*
+Err_017         <-  (!')' EatToken)*
+Err_018         <-  (!';' EatToken)*
+Err_019         <-  (!('}'  /  '{'  /  'while'  /  'int'  /  'if'  /  'elsee'  /  NAME  /  'System.out.println') EatToken)*
+Err_020         <-  (!(';'  /  ')') EatToken)*
+Err_021         <-  (!('=='  /  ';'  /  ')') EatToken)*
+Err_022         <-  (!('=='  /  '<'  /  ';'  /  ')') EatToken)*
+Err_023         <-  (!(ADDOP  /  '=='  /  '<'  /  ';'  /  ')') EatToken)*
+Err_024         <-  (!')' EatToken)*
+Err_025         <-  (!(MULOP  /  ADDOP  /  '=='  /  '<'  /  ';'  /  ')') EatToken)*	
+
