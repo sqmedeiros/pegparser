@@ -12,6 +12,9 @@ local newNode = function (tag, p1, p2)
 end
 
 defs.newString = function (v, quote)
+	if #v == 0 then
+		return newNode('empty')
+	end
 	g.tokens[v] = true
 	lasttk[v] = true
 	return newNode('char', v, quote or "'")

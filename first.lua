@@ -95,15 +95,15 @@ end
 
 
 
-local function printfollow (r)
-	for i, v in ipairs(r) do
+local function printfollow (g)
+	for i, v in ipairs(g.plist) do
 		print(v .. ': ', table.concat(sortset(FOLLOW[v]), ", "))
 	end
 end
 
-function printfirst (g, r)
-	for i, v in ipairs(r) do
-		print(v .. ': ', table.concat(sortset(calcfirst(g, g[v])), ", "))
+function printfirst (g)
+	for i, v in ipairs(g.plist) do
+		print(v .. ': ', table.concat(sortset(calcfirst(g, g.prules[v])), ", "))
 	end
 end
 
