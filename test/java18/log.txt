@@ -218,6 +218,11 @@ public class CatchFormalParameterErr {
 
 No: 	ClassBodyErr.java
 public class A extends B 
+	private int a;
+
+	int getA() {
+		return a;
+	}
 }compilation{normalClassDeclaration{classModifier{"public", }, "class", "A", superclass{"extends", classType{"B", }, }, "NONE", }, "NONE", }
 
 No: 	ClassCreatorErr1.java
@@ -307,7 +312,7 @@ public class ColonErr5 {
     public static void main(String[] args) {
     	int a = b query a ; b;
     }
-}normalClassDeclaration{classModifier{"public", }, "class", "ColonErr5", classBody{"{", methodDeclaration{methodModifier{"public", }, methodModifier{"static", }, methodHeader{result{"void", }, methodDeclarator{"main", "(", formalParameter{unannType{unannClassType{"String", }, dim{"[", "]", }, }, variableDeclaratorId{"args", }, }, ")", }, }, block{"{", blockStatements{localVariableDeclarationStatement{localVariableDeclaration{basicType{"int", }, variableDeclarator{variableDeclaratorId{"a", }, "=", qualIdent{"b", }, }, }, "NONE", }, localVariableDeclarationStatement{localVariableDeclaration{unannClassType{"query", }, variableDeclaratorId{"a", }, }, ";", }, statement{"b", "NONE", statement{";", }, }, }, "}", }, }, "}", }, }
+}normalClassDeclaration{classModifier{"public", }, "class", "ColonErr5", classBody{"{", methodDeclaration{methodModifier{"public", }, methodModifier{"static", }, methodHeader{result{"void", }, methodDeclarator{"main", "(", formalParameter{unannType{unannClassType{"String", }, dim{"[", "]", }, }, variableDeclaratorId{"args", }, }, ")", }, }, block{"{", blockStatements{localVariableDeclarationStatement{localVariableDeclaration{basicType{"int", }, variableDeclarator{variableDeclaratorId{"a", }, "=", qualIdent{"b", }, }, }, "NONE", }, statement{"a", "NONE", statement{";", }, }, statement{"b", "NONE", statement{";", }, }, }, "}", }, }, "}", }, }
 
 No: 	CommaAvaliableErr.java
 public class CommaAvaliableErr {
@@ -502,9 +507,9 @@ public class ExpressionErr1 {
 No: 	ExpressionErr10.java
 public class ExpressionErr10 {
     public static void main(String[] args) {
-    	a = \b;
+    	a = @;
     }
-}compilation{normalClassDeclaration{classModifier{"public", }, "class", "ExpressionErr10", classBody{"{", methodDeclaration{methodModifier{"public", }, methodModifier{"static", }, methodHeader{result{"void", }, methodDeclarator{"main", "(", formalParameter{unannType{unannClassType{"String", }, dim{"[", "]", }, }, variableDeclaratorId{"args", }, }, ")", }, }, block{"{", statement{"a", "NONE", "NONE", }, "NONE", }, }, "NONE", }, }, "NONE", }
+}normalClassDeclaration{classModifier{"public", }, "class", "ExpressionErr10", classBody{"{", methodDeclaration{methodModifier{"public", }, methodModifier{"static", }, methodHeader{result{"void", }, methodDeclarator{"main", "(", formalParameter{unannType{unannClassType{"String", }, dim{"[", "]", }, }, variableDeclaratorId{"args", }, }, ")", }, }, block{"{", statement{assignment{qualIdent{"a", }, "=", "NONE", }, ";", }, "}", }, }, "}", }, }
 
 No: 	ExpressionErr2.java
 public class ExpressionErr2 {
@@ -556,16 +561,16 @@ public class ExpressionErr7 {
 No: 	ExpressionErr8.java
 public class ExpressionErr8 {
     public static void main(String[] args) {
-    	int a = b query \a : b;
+    	int a = b query @ : b;
     }
-}compilation{normalClassDeclaration{classModifier{"public", }, "class", "ExpressionErr8", classBody{"{", methodDeclaration{methodModifier{"public", }, methodModifier{"static", }, methodHeader{result{"void", }, methodDeclarator{"main", "(", formalParameter{unannType{unannClassType{"String", }, dim{"[", "]", }, }, variableDeclaratorId{"args", }, }, ")", }, }, block{"{", blockStatements{localVariableDeclarationStatement{localVariableDeclaration{basicType{"int", }, variableDeclarator{variableDeclaratorId{"a", }, "=", qualIdent{"b", }, }, }, "NONE", }, statement{"query", "NONE", "NONE", }, }, "NONE", }, }, "NONE", }, }, "NONE", }
+}compilation{normalClassDeclaration{classModifier{"public", }, "class", "ExpressionErr8", classBody{"{", methodDeclaration{methodModifier{"public", }, methodModifier{"static", }, methodHeader{result{"void", }, methodDeclarator{"main", "(", formalParameter{unannType{unannClassType{"String", }, dim{"[", "]", }, }, variableDeclaratorId{"args", }, }, ")", }, }, block{"{", localVariableDeclarationStatement{localVariableDeclaration{basicType{"int", }, variableDeclarator{variableDeclaratorId{"a", }, "=", qualIdent{"b", }, }, }, "NONE", }, "NONE", }, }, annotationTypeDeclaration{"@", "NONE", "b", "NONE", }, classMemberDeclaration{";", }, "}", }, }, "NONE", }
 
 No: 	ExpressionErr9.java
 public class ExpressionErr9 {
     public static void main(String[] args) {
-    	int a = b query a : \b;
+    	int a = b query a : @;
     }
-}compilation{normalClassDeclaration{classModifier{"public", }, "class", "ExpressionErr9", classBody{"{", methodDeclaration{methodModifier{"public", }, methodModifier{"static", }, methodHeader{result{"void", }, methodDeclarator{"main", "(", formalParameter{unannType{unannClassType{"String", }, dim{"[", "]", }, }, variableDeclaratorId{"args", }, }, ")", }, }, block{"{", blockStatements{localVariableDeclarationStatement{localVariableDeclaration{basicType{"int", }, variableDeclarator{variableDeclaratorId{"a", }, "=", qualIdent{"b", }, }, }, "NONE", }, localVariableDeclarationStatement{localVariableDeclaration{unannClassType{"query", }, variableDeclaratorId{"a", }, }, "NONE", }, }, "NONE", }, }, "NONE", }, }, "NONE", }
+}normalClassDeclaration{classModifier{"public", }, "class", "ExpressionErr9", classBody{"{", methodDeclaration{methodModifier{"public", }, methodModifier{"static", }, methodHeader{result{"void", }, methodDeclarator{"main", "(", formalParameter{unannType{unannClassType{"String", }, dim{"[", "]", }, }, variableDeclaratorId{"args", }, }, ")", }, }, block{"{", blockStatements{localVariableDeclarationStatement{localVariableDeclaration{basicType{"int", }, variableDeclarator{variableDeclaratorId{"a", }, "=", qualIdent{"b", }, }, }, "NONE", }, statement{"a", ":", "NONE", }, }, "NONE", }, }, annotationTypeDeclaration{"@", "NONE", "NONE", "NONE", }, "NONE", }, }
 
 No: 	FormalParameterErr.java
 public class FormalParameterErr {
