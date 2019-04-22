@@ -508,14 +508,21 @@ print("\n\n\n")
 
 print("Conservative Annotation (Hard)")
 local glab = recovery.addlab(g, true, true)
-print(pretty.printg(glab))
+print(pretty.printg(glab, true))
 print("\n\n\n")
 
 
-print("Conservative Annotation (Soft)")
-local glab = recovery.addlab(g, true, 'soft')
-print(pretty.printg(glab))
+print("Conservative Annotation Alt)")
+local glab = recovery.addlab(g, true, 'alt')
+print(pretty.printg(glab, true))
 print()
+
+
+print("Conservative Annotation Alt Seq)")
+local glab = recovery.addlab(g, true, 'altseq')
+print(pretty.printg(glab, true))
+print()
+
 
 local p = coder.makeg(g, 'ast')
 

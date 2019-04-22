@@ -35,6 +35,7 @@ local function isequal (s1, s2)
 end
 
 
+-- true in case s1 is a subset of s2
 local function issubset (s1, s2)
   for k, _ in pairs(s1) do
     if not s2[k] then
@@ -42,6 +43,20 @@ local function issubset (s1, s2)
     end
   end
   return true
+end
+
+
+local function inter (s1, s2, notEmpty)
+	local s3 = {}
+	for k, _ in pairs(s1) do
+		if s2[k] then
+			s3[k] = true
+		end
+	end
+  if notEmpty then
+		s3[empty] = nil
+	end	
+	return s3
 end
 
 
@@ -337,5 +352,7 @@ return {
 	isequal = isequal,
 	issubset = issubset,
 	sortset = sortset,
+	inter = inter,
+	union = union,
 }
 
