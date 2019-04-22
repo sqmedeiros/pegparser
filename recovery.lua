@@ -58,9 +58,9 @@ local function banSeq (g, p, notll1, seq)
 		if first.issubset(notll1, first.calck(g, p, {})) then
 			p.ban = true
 			banSeq(g, p.p1, notll1, seq)
-      -- Versao 1
+      -- Versao 1 (parece errada)
 			banSeq(g, p.p2, notll1, seq or matchEmpty(p.p1))
-      -- Versao 2
+      -- Versao 2 (parece a correta)
 			--banSeq(g, p.p2, notll1, seq or not matchEmpty(p.p1))
 		end
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
