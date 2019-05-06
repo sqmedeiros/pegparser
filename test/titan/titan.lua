@@ -89,9 +89,9 @@ print("Conservative Annotation (Hard)")
 local glabHard = recovery.addlab(g, true, true)
 print(pretty.printg(glabHard, true), '\n')
 
-print("Conservative Annotation (Soft)")
-local glabSoft = recovery.addlab(g, true, 'soft')
-print(pretty.printg(glabSoft, true), '\n')
+print("Conservative Annotation Alt)")
+local glab = recovery.addlab(g, true, 'alt')
+print(pretty.printg(glab, true), '\n')
 
 local p = coder.makeg(g, 'ast')
 

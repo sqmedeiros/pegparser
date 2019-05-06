@@ -126,15 +126,16 @@ local function ban (g, p, notll1)
 		ban(g, p.p1, notll1)
 		ban(g, p.p2, notll1)
 	elseif p.tag == 'con' then
-		if first.issubset(notll1, first.calck(g, p, {})) then
+		--if first.issubset(notll1, first.calck(g, p, {})) then
+		if not first.disjoint(notll1, first.calck(g, p, {})) then
 			p.ban = true
 			ban(g, p.p1, notll1)
 			--Versao alt
-			if matchEmpty(p.p1) then
-				ban(g, p.p2, notll1)
-			end	
-			-- Versao alt2
+			--if matchEmpty(p.p1) then
 			--	ban(g, p.p2, notll1)
+			--end	
+			-- Versao alt2
+			ban(g, p.p2, notll1)
 		end
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		ban(g, p.p1, notll1)
