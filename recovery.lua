@@ -111,6 +111,42 @@ local function notannotateAltSeq (g, p, flw, flag, notll1)
 end
 
 
+local function banFixed (g, p, notll1, seq)
+	if p.tag == 'var' then
+		if not g.lex[p.p1] and not first.issubset(notll1, visited[p.p1]) then
+			visited[p.p1] = first.union(visited[p.p1], notll1)
+			p.ban = true
+			print("Bani ", p.p1)
+ 			if not g.lex[p.p1] and not seq then
+				print("Recursive", p.p1, g.prules[p.p1].tag)
+				banFixed(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), seq)
+			end
+		end
+	elseif p.tag == 'ord' then
+		banFixed(g, p.p1, notll1, seq)
+		banFixed(g, p.p2, notll1, seq)
+	elseif p.tag == 'con' then
+		--if first.issubset(notll1, first.calck(g, p, {})) then
+		if not first.disjoint(notll1, first.calck(g, p, {})) then
+			p.ban = true
+			banFixed(g, p.p1, notll1, seq)
+			--Versao alt
+			--if matchEmpty(p.p1) then
+			--	ban(g, p.p2, notll1)
+			--end	
+			-- Versao alt2
+			banFixed(g, p.p2, notll1, seq or not matchEmpty(p.p1))
+		end
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		banFixed(g, p.p1, notll1)
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		banFixed(g, p.p1, notll1)
+	elseif p.tag == 'nameCap' then
+		banFixed(g, p.p2, notll1)
+	end
+end
+
+
 local function ban (g, p, notll1)
 	if p.tag == 'var' then
 		if not g.lex[p.p1] and not first.issubset(notll1, visited[p.p1]) then
@@ -126,6 +162,7 @@ local function ban (g, p, notll1)
 		ban(g, p.p1, notll1)
 		ban(g, p.p2, notll1)
 	elseif p.tag == 'con' then
+    --print('ban con p.p1', p.p1.tag, 'p.p2', p.p2.tag)
 		--if first.issubset(notll1, first.calck(g, p, {})) then
 		if not first.disjoint(notll1, first.calck(g, p, {})) then
 			p.ban = true
@@ -151,6 +188,7 @@ local function notannotateAlt (g, p, flw, flag, notll1)
 	if p.tag == 'var' then
 		if flag then
 			ban(g, p, notll1)
+			--banFixed(g, p.p1, notll1, false)
 		end
 	elseif p.tag == 'ord' then
 		local k = calck(g, p.p2, flw)
@@ -163,6 +201,7 @@ local function notannotateAlt (g, p, flw, flag, notll1)
 			end
 			io.write('\n')
 			ban(g, p.p1, first.inter(firstp1, k))
+			--banFixed(g, p.p1, first.inter(firstp1, k), false)
 		else
 			notannotateAlt(g, p.p1, flw, flag, notll1)
 		end
@@ -174,6 +213,7 @@ local function notannotateAlt (g, p, flw, flag, notll1)
 		local firstp1 = calcfirst(g, p.p1)
 		if not disjoint(firstp1, flw) then
 			ban(g, p.p1, first.inter(firstp1, flw))
+			--banFixed(g, p.p1, first.inter(firstp1, flw), false)
 		else
 			notannotateAlt(g, p.p1, flw, flag, notll1)
 		end
