@@ -6,7 +6,7 @@ local ast = require'ast'
 local util = require'util'
 
 
-local g = [[
+--[==[local g = [[
   blockstmt  <-  '{' stmt* '}'
   stmt       <-  ifstmt / whilestmt / printstmt / decstmt / assignstmt / blockstmt
   ifstmt     <-  'if' '(' exp ')' stmt ('elsee' stmt / '') 
@@ -24,7 +24,13 @@ local g = [[
   NUMBER     <-  ('-' / '') [0-9]+
   KEYWORDS   <-  ('if' / 'while' / 'public' / 'class' / 'static' / 'else' / 'void' / 'int') ![a-z0-9]*
   NAME       <-  !KEYWORDS [a-z][a-z0-9]*]]
+]==]
 
+local g = [[
+	s <- 'a' b  /  'a' c
+  b <- 'b''c'
+  c <- 'b''a'
+]]
 
 local g = m.match(g)
 print("Original Grammar")
@@ -43,12 +49,11 @@ print("Regular Annotation (SBLP paper)")
 local glabRegular = recovery.addlab(g, true, false)
 print(pretty.printg(glabRegular, true), '\n')
 
-print("Conservative Annotation (Hard)")
-local glabHard = recovery.addlab(g, true, true)
-print(pretty.printg(glabHard, true), '\n')
-
-print("Conservative Annotation (Soft)")
-local glabSoft = recovery.addlab(g, true, 'soft')
+print("Conservative Annotation (Alt)")
+local glabSoft = recovery.addlab(g, true, 'alt')
 print(pretty.printg(glabSoft, true), '\n')
 
+print("Conservative Annotation (AltSeq)")
+local glabSoft = recovery.addlab(g, true, 'altseq')
+print(pretty.printg(glabSoft, true), '\n')
 
