@@ -77,9 +77,9 @@ local g = m.match(g)
 print("Original Grammar")
 print(pretty.printg(g), '\n')
 
-local gast = ast.buildAST(g)
-print("With annotations to build AST")
-print(pretty.printg(gast), '\n')
+--local gast = ast.buildAST(g)
+--print("With annotations to build AST")
+--print(pretty.printg(gast), '\n')
 
 print("Regular Annotation (SBLP paper)")
 local glabRegular = recovery.addlab(g, true, false)
@@ -92,6 +92,11 @@ print(pretty.printg(glabHard, true), '\n')
 print("Conservative Annotation Alt)")
 local glab = recovery.addlab(g, true, 'alt')
 print(pretty.printg(glab, true), '\n')
+
+--print("Conservative Annotation AltSeq)")
+--local glab = recovery.addlab(g, true, 'altseq')
+--print(pretty.printg(glab, true), '\n')
+
 
 local p = coder.makeg(g, 'ast')
 
