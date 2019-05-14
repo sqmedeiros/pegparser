@@ -309,6 +309,81 @@ local function addlab_aux (g, p, seq, flw)
 	end
 end
 
+local function matchUnique (p, unique)
+	if p.tag == 'char' then
+		return unique[p.p1]
+	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
+		return unique[p.p1]
+	elseif p.tag == 'con' then
+		return matchUnique(p.p1, unique) or matchUnique(p.p2, unique)
+	elseif p.tag == 'ord' then
+		return matchUnique(p.p1, unique) and matchUnique(p.p2, unique)
+	elseif p.tag == 'plus' then
+		return matchUnique(p.p1, unique)
+	else
+		return false
+	end
+end
+
+local function annotateUniqueAux (g, p, afterU, unique)
+		if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU then
+    return adderror(p, nil)
+	elseif p.tag == 'con' then
+		local p1 = annotateUniqueAux(g, p.p1, afterU, unique)
+		local p2 = annotateUniqueAux(g, p.p2, afterU or matchUnique(p.p1, unique), unique)
+		return newSeq(p1, p2)
+	elseif p.tag == 'ord' then
+		local p1 = annotateUniqueAux(g, p.p1, false, unique)
+		local p2 = annotateUniqueAux(g, p.p2, false, unique)
+		if afterU and not matchEmpty(p) then
+			return adderror(newOrd(p1, p2), nil)
+		else
+      return newOrd(p1, p2)
+		end
+	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then
+		local newp = annotateUniqueAux(g, p.p1, false, unique)
+    if p.tag == 'star' then
+			return newNode('star', newp)
+		elseif p.tag == 'opt' then
+			return newNode('opt', newp)
+    else --plus
+      if afterU then
+				return adderror(newNode('plus', newp), nil)
+			else
+				return newNode('plus', newp)
+			end
+		end
+	else
+		return p
+	end
+end
+
+
+local function annotateUnique (g)
+	local unique = parser.uniqueTk(g)
+	flagRecovery = false
+	ierr = 1
+	local newg = parser.initgrammar()
+	for i, v in ipairs(g.plist) do
+		if not g.lex[v] then
+			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, unique)
+		else
+			newg.prules[v] = g.prules[v]
+		end
+		newg.plist[i] = v
+	end
+
+
+	--for k, v in pairs(g.prules) do
+	--	if not parser.isLexRule(k) then
+	--		newg[k] = annotateUniqueAux(g, v, false, unique)
+	--	end
+	--end
+	return newg
+end
+
+
+
 local function addrecrules (g)
 	for j = 1, ierr - 1 do
   	local s = 'Err_' .. string.format("%03d", j)
@@ -396,4 +471,5 @@ end
 
 return {
 	addlab = addlab,
+	annotateUnique = annotateUnique,
 }

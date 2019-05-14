@@ -207,6 +207,7 @@ defs.matchEmpty = function (p)
 	end
 end
 
+
 local function setSkip (g)
 	local space = defs.newClass{' ','\t','\n','\v','\f','\r'}
 	if g.prules['COMMENT'] then
@@ -284,6 +285,7 @@ defs.initgrammar = function()
 	return g
 end
 
+
 defs.match = function (s)
 	g = defs.initgrammar()
 	local r, lab, pos = ppk:match(s)
@@ -300,6 +302,60 @@ defs.match = function (s)
 		return g 
 	end
 end
+
+
+local function updateCountTk (p, t)
+	local v = p.p1
+	if not t[v] then
+		t[v] = 1
+	else
+		t[v] = t[v] + 1
+	end
+end
+
+
+local function countTk (p, t)
+	if p.tag == 'char' then
+		updateCountTk(p, t)
+	elseif p.tag == 'var' and defs.isLexRule(p.p1) then
+		updateCountTk(p, t)
+	elseif p.tag == 'con' or p.tag == 'ord' then
+		countTk(p.p1, t)
+		countTk(p.p2, t)
+	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
+		countTk(p.p1, t)
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		countTk(p.p1, t)
+	elseif p.tag == 'nameCap' then
+		countTk(p.p2, t)
+	elseif p.tag == 'and' or p.tag == 'not' then
+		--does not count tokens inside a predicate
+		return
+	end
+end
+
+
+defs.uniqueTk = function (g)
+	local t = {}
+	for k, v in pairs(g.prules) do
+		if not defs.isLexRule(k) then
+			print("count ", k)
+			countTk(v, t)
+		end
+	end
+
+	t['SKIP'] = true
+
+	local unique = {}
+	for k, v in pairs(t) do
+		unique[k] = v == 1
+		if v == 1 then
+			print("unique", k)
+		end
+	end
+	return unique
+end
+
 
 defs.newNode = newNode
 return defs

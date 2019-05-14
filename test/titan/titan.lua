@@ -97,6 +97,11 @@ print(pretty.printg(glab, true), '\n')
 --local glab = recovery.addlab(g, true, 'altseq')
 --print(pretty.printg(glab, true), '\n')
 
+print("Unique Labels")
+m.uniqueTk(g)
+local gunique = recovery.annotateUnique(g)
+print(pretty.printg(gunique, true), '\n')
+print("End Unique")
 
 local p = coder.makeg(g, 'ast')
 
