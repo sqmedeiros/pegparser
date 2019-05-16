@@ -40,9 +40,9 @@ end
 
 local function uniqueTk (g)
 	local t = {}
-	for k, v in pairs(g.prules) do
-		if not parser.isLexRule(k) then
-			countTk(v, t)
+	for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			countTk(g.prules[v], t)
 		end
 	end
 
@@ -95,11 +95,11 @@ end
 
 local function varUsage (g)
 	g.varUsage = {}
-	for k, v in pairs(g.prules) do
-		if not g.varUsage[k] then
-			g.varUsage[k] = {}
+	for i, v in ipairs(g.plist) do
+		if not g.varUsage[v] then
+			g.varUsage[v] = {}
 		end
-		countUsage(g, v)
+		countUsage(g, g.prules[v])
 	end
 end
 
@@ -173,9 +173,9 @@ local function calcUniquePath (g)
 	changeUnique = true
 	while changeUnique do
 		changeUnique = false
-		for k, v in pairs(g.prules) do
-			if not parser.isLexRule(k) then
-				uniquePath(g, v, g.uniqueVar[k], flw[k])
+		for i, v in ipairs(g.plist) do
+			if not parser.isLexRule(v) then
+				uniquePath(g, g.prules[v], g.uniqueVar[v], flw[v])
 			end
 		end
 	end
