@@ -523,11 +523,21 @@ local glab = recovery.addlab(g, true, 'altseq')
 print(pretty.printg(glab, true))
 print()
 
+
 print("Unique Labels")
 --m.uniqueTk(g)
 local gunique = recovery.annotateUnique(g)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique")
+print()
+
+
+print("Unique Path (UPath)")
+--m.uniqueTk(g)
+local gupath = recovery.annotateUPath(g)
+print(pretty.printg(gupath, true), '\n')
+print("End UPath")
+print()
 
 
 local p = coder.makeg(g, 'ast')

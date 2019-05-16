@@ -8,7 +8,7 @@ local defs = {}
 local lasttk = {}
 
 local newNode = function (tag, p1, p2)
-	return { tag = tag, p1 = p1, p2 = p2 } 
+	return { tag = tag, p1 = p1, p2 = p2 }
 end
 
 defs.newString = function (v, quote)
@@ -198,9 +198,10 @@ defs.matchEmpty = function (p)
 		return defs.matchEmpty(p.p1) or defs.matchEmpty(p.p2)
 	elseif tag == 'var' then
 		return defs.matchEmpty(g.prules[p.p1])
-	elseif tag == 'simpCap' or tag == 'tabCap' or
-	       tag == 'anonCap' or tag == 'nameCap' then
+	elseif tag == 'simpCap' or tag == 'tabCap' or tag == 'anonCap' then
 		return defs.matchEmpty(p.p1)
+	elseif tag == 'nameCap' then
+		return defs.matchEmpty(p.p2)
 	else
 		print(p)
 		error("Unknown tag", p.tag)
@@ -286,6 +287,7 @@ defs.initgrammar = function()
 end
 
 
+
 defs.match = function (s)
 	g = defs.initgrammar()
 	local r, lab, pos = ppk:match(s)
@@ -301,59 +303,6 @@ defs.match = function (s)
 		g.init = g.plist[1]
 		return g 
 	end
-end
-
-
-local function updateCountTk (p, t)
-	local v = p.p1
-	if not t[v] then
-		t[v] = 1
-	else
-		t[v] = t[v] + 1
-	end
-end
-
-
-local function countTk (p, t)
-	if p.tag == 'char' then
-		updateCountTk(p, t)
-	elseif p.tag == 'var' and defs.isLexRule(p.p1) then
-		updateCountTk(p, t)
-	elseif p.tag == 'con' or p.tag == 'ord' then
-		countTk(p.p1, t)
-		countTk(p.p2, t)
-	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
-		countTk(p.p1, t)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		countTk(p.p1, t)
-	elseif p.tag == 'nameCap' then
-		countTk(p.p2, t)
-	elseif p.tag == 'and' or p.tag == 'not' then
-		--does not count tokens inside a predicate
-		return
-	end
-end
-
-
-defs.uniqueTk = function (g)
-	local t = {}
-	for k, v in pairs(g.prules) do
-		if not defs.isLexRule(k) then
-			print("count ", k)
-			countTk(v, t)
-		end
-	end
-
-	t['SKIP'] = true
-
-	local unique = {}
-	for k, v in pairs(t) do
-		unique[k] = v == 1
-		if v == 1 then
-			print("unique", k)
-		end
-	end
-	return unique
 end
 
 

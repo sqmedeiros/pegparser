@@ -98,10 +98,17 @@ print(pretty.printg(glab, true), '\n')
 --print(pretty.printg(glab, true), '\n')
 
 print("Unique Labels")
-m.uniqueTk(g)
+--m.uniqueTk(g)
 local gunique = recovery.annotateUnique(g)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique")
+
+print("Unique Path (UPath)")
+--m.uniqueTk(g)
+local gupath = recovery.annotateUPath(g)
+print(pretty.printg(gupath, true), '\n')
+print("End UPath")
+
 
 local p = coder.makeg(g, 'ast')
 

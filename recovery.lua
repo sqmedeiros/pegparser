@@ -1,5 +1,6 @@
 local parser = require'parser'
 local first = require'first'
+local unique = require'unique'
 
 local newOrd = parser.newOrd
 local newThrow = parser.newThrow
@@ -309,39 +310,39 @@ local function addlab_aux (g, p, seq, flw)
 	end
 end
 
-local function matchUnique (p, unique)
+local function matchUnique (p, tu)
 	if p.tag == 'char' then
-		return unique[p.p1]
+		return tu[p.p1]
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		return unique[p.p1]
+		return tu[p.p1]
 	elseif p.tag == 'con' then
-		return matchUnique(p.p1, unique) or matchUnique(p.p2, unique)
+		return matchUnique(p.p1, tu) or matchUnique(p.p2, tu)
 	elseif p.tag == 'ord' then
-		return matchUnique(p.p1, unique) and matchUnique(p.p2, unique)
+		return matchUnique(p.p1, tu) and matchUnique(p.p2, tu)
 	elseif p.tag == 'plus' then
-		return matchUnique(p.p1, unique)
+		return matchUnique(p.p1, tu)
 	else
 		return false
 	end
 end
 
-local function annotateUniqueAux (g, p, afterU, unique)
+local function annotateUniqueAux (g, p, afterU, tu)
 		if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU then
     return adderror(p, nil)
 	elseif p.tag == 'con' then
-		local p1 = annotateUniqueAux(g, p.p1, afterU, unique)
-		local p2 = annotateUniqueAux(g, p.p2, afterU or matchUnique(p.p1, unique), unique)
+		local p1 = annotateUniqueAux(g, p.p1, afterU, tu)
+		local p2 = annotateUniqueAux(g, p.p2, afterU or matchUnique(p.p1, tu), tu)
 		return newSeq(p1, p2)
 	elseif p.tag == 'ord' then
-		local p1 = annotateUniqueAux(g, p.p1, false, unique)
-		local p2 = annotateUniqueAux(g, p.p2, false, unique)
+		local p1 = annotateUniqueAux(g, p.p1, false, tu)
+		local p2 = annotateUniqueAux(g, p.p2, false, tu)
 		if afterU and not matchEmpty(p) then
 			return adderror(newOrd(p1, p2), nil)
 		else
       return newOrd(p1, p2)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then
-		local newp = annotateUniqueAux(g, p.p1, false, unique)
+		local newp = annotateUniqueAux(g, p.p1, false, tu)
     if p.tag == 'star' then
 			return newNode('star', newp)
 		elseif p.tag == 'opt' then
@@ -359,14 +360,30 @@ local function annotateUniqueAux (g, p, afterU, unique)
 end
 
 
+local function matchUPath (p)
+	if p.tag == 'char' or p.tag == 'var' then
+		return p.unique
+	elseif p.tag == 'con' then
+		return p.unique 
+	elseif p.tag == 'ord' then
+		return p.unique 
+	elseif p.tag == 'plus' then
+		return p.unique
+	else
+		return false
+	end
+end
+
+
+
 local function annotateUnique (g)
-	local unique = parser.uniqueTk(g)
+	local tu = unique.uniqueTk(g)
 	flagRecovery = false
 	ierr = 1
 	local newg = parser.initgrammar()
 	for i, v in ipairs(g.plist) do
 		if not g.lex[v] then
-			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, unique)
+			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, tu)
 		else
 			newg.prules[v] = g.prules[v]
 		end
@@ -376,12 +393,66 @@ local function annotateUnique (g)
 
 	--for k, v in pairs(g.prules) do
 	--	if not parser.isLexRule(k) then
-	--		newg[k] = annotateUniqueAux(g, v, false, unique)
+	--		newg[k] = annotateUniqueAux(g, v, false, tu)
 	--	end
 	--end
 	return newg
 end
 
+
+local function annotateUPathAux (g, p, afterU, flw)
+		if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU then
+    return adderror(p, nil)
+	elseif p.tag == 'con' then
+		local p1 = annotateUPathAux(g, p.p1, afterU, calck(g, p.p2, flw))
+		local p2 = annotateUPathAux(g, p.p2, afterU or matchUPath(p.p1), flw)
+		return newSeq(p1, p2)
+	elseif p.tag == 'ord' then
+		local p1 = annotateUPathAux(g, p.p1, false, flw)
+		local p2 = annotateUPathAux(g, p.p2, false, flw)
+		if afterU and not matchEmpty(p) then
+			return adderror(newOrd(p1, p2), nil)
+		else
+      return newOrd(p1, p2)
+		end
+	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw)  then
+		local newp = annotateUPathAux(g, p.p1, false, flw)
+    if p.tag == 'star' then
+			return newNode('star', newp)
+		elseif p.tag == 'opt' then
+			return newNode('opt', newp)
+    else --plus
+      if afterU then
+				return adderror(newNode('plus', newp), nil)
+			else
+				return newNode('plus', newp)
+			end
+		end
+	else
+		return p
+	end
+end
+
+
+local function annotateUPath (g)
+	local fst = first.calcFst(g)
+	local flw = first.calcFlw(g)	
+	unique.calcUniquePath(g)
+	flagRecovery = false
+	ierr = 1
+	local newg = parser.initgrammar()
+	for i, v in ipairs(g.plist) do
+		if not g.lex[v] then
+			--newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v])
+			newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
+		else
+			newg.prules[v] = g.prules[v]
+		end
+		newg.plist[i] = v
+	end
+
+	return newg
+end
 
 
 local function addrecrules (g)
@@ -472,4 +543,5 @@ end
 return {
 	addlab = addlab,
 	annotateUnique = annotateUnique,
+	annotateUPath = annotateUPath,
 }
