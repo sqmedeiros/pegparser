@@ -498,6 +498,7 @@ NullLiteral          <-  'null'
 COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]]
 
+local s = g
 local g = m.match(g)
 
 print("Regular Annotation")
@@ -532,6 +533,13 @@ print("End Unique")
 print()
 
 
+print("UniqueAlt Labels")
+local g = m.match(s)
+local guniqueAlt = recovery.annotateUniqueAlt(g)
+print(pretty.printg(guniqueAlt, true), '\n')
+print("End UniqueAlt")
+
+
 print("Unique Path (UPath)")
 --m.uniqueTk(g)
 local gupath = recovery.annotateUPath(g)
@@ -540,6 +548,7 @@ print("End UPath")
 print()
 
 
+local g = m.match(s)
 local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/java18/test/yes/'

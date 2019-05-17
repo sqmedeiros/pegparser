@@ -73,6 +73,7 @@ g = [[
   COMMENT         <- '--' (!%nl .)* ]]
 
 
+local s = g
 local g = m.match(g)
 print("Original Grammar")
 print(pretty.printg(g), '\n')
@@ -99,12 +100,23 @@ print(pretty.printg(glab, true), '\n')
 
 print("Unique Labels")
 --m.uniqueTk(g)
+local g = m.match(s)
 local gunique = recovery.annotateUnique(g)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique")
 
+
+print("UniqueAlt Labels")
+--m.uniqueTk(g)
+local g = m.match(s)
+local guniqueAlt = recovery.annotateUniqueAlt(g)
+print(pretty.printg(guniqueAlt, true), '\n')
+print("End UniqueAlt")
+
+
 print("Unique Path (UPath)")
 --m.uniqueTk(g)
+local g = m.match(s)
 local gupath = recovery.annotateUPath(g)
 print(pretty.printg(gupath, true), '\n')
 print("End UPath")

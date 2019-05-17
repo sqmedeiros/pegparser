@@ -7,8 +7,23 @@ local g = {}
 local defs = {}
 local lasttk = {}
 
+local function copyp (p)
+	local aux = p
+	for k, v in pairs(p) do
+		aux.k = v
+	end
+	aux.p1, aux.p2 = nil, nil
+	return aux
+end
+
 local newNode = function (tag, p1, p2)
-	return { tag = tag, p1 = p1, p2 = p2 }
+	if type(tag) == "table" then
+		local newp = copyp(tag)
+		newp.p1, newp.p2 = p1, p2
+		return newp	
+	else
+		return { tag = tag, p1 = p1, p2 = p2 }
+	end
 end
 
 defs.newString = function (v, quote)
