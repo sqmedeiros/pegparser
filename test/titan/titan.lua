@@ -5,7 +5,7 @@ local recovery = require 'recovery'
 local ast = require'ast'
 local util = require'util'
 
-g = [[
+local s = [[
   program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import / foreign)* !.
   toplevelfunc    <-  localopt 'function' NAME '(' paramlist ')' rettypeopt block 'end'
   ]]--predicate in 'toplevalvar' is related to the use of labels
@@ -73,9 +73,8 @@ g = [[
   COMMENT         <- '--' (!%nl .)* ]]
 
 
-local s = g
-local g = m.match(g)
 print("Original Grammar")
+local g = m.match(s)
 print(pretty.printg(g), '\n')
 
 --local gast = ast.buildAST(g)
@@ -83,24 +82,23 @@ print(pretty.printg(g), '\n')
 --print(pretty.printg(gast), '\n')
 
 print("Regular Annotation (SBLP paper)")
-local glabRegular = recovery.addlab(g, true, false)
+g = m.match(s)
+local glabRegular = recovery.annotateBan(g, true, false)
 print(pretty.printg(glabRegular, true), '\n')
 
 print("Conservative Annotation (Hard)")
-local glabHard = recovery.addlab(g, true, true)
+g = m.match(s)
+local glabHard = recovery.annotateBan(g, true, true)
 print(pretty.printg(glabHard, true), '\n')
 
 print("Conservative Annotation Alt)")
-local glab = recovery.addlab(g, true, 'alt')
+g = m.match(s)
+local glab = recovery.annotateBan(g, true, 'alt')
 print(pretty.printg(glab, true), '\n')
 
---print("Conservative Annotation AltSeq)")
---local glab = recovery.addlab(g, true, 'altseq')
---print(pretty.printg(glab, true), '\n')
-
 print("Unique Labels")
+g = m.match(s)
 --m.uniqueTk(g)
-local g = m.match(s)
 local gunique = recovery.annotateUnique(g)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique")
@@ -108,7 +106,7 @@ print("End Unique")
 
 print("UniqueAlt Labels")
 --m.uniqueTk(g)
-local g = m.match(s)
+g = m.match(s)
 local guniqueAlt = recovery.annotateUniqueAlt(g)
 print(pretty.printg(guniqueAlt, true), '\n')
 print("End UniqueAlt")
@@ -116,12 +114,12 @@ print("End UniqueAlt")
 
 print("Unique Path (UPath)")
 --m.uniqueTk(g)
-local g = m.match(s)
+g = m.match(s)
 local gupath = recovery.annotateUPath(g)
 print(pretty.printg(gupath, true), '\n')
 print("End UPath")
 
-
+g = m.match(s)
 local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'

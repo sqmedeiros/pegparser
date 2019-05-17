@@ -113,7 +113,7 @@ end
 
 
 local function uniqueUsage (g, p)
-	for i, v in pairs(g.varUsage[p.p1]) do
+	for k, v in pairs(g.varUsage[p.p1]) do
 		if not v.unique then
 			return false
 		end

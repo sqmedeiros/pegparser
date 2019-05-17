@@ -8,7 +8,7 @@ local lfs = require 'lfs'
 local re = require 'relabel'
 local util = require'util'
 
-g = [[
+local s = [[
 compilation           <-  SKIP compilationUnit !.
 
 -- JLS 4 Types, Values and Variables
@@ -498,34 +498,30 @@ NullLiteral          <-  'null'
 COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]]
 
-local s = g
-local g = m.match(g)
 
 print("Regular Annotation")
-local glab = recovery.addlab(g, true, false)
+local g = m.match(s)
+local glab = recovery.annotateBan(g, true, false)
 print(pretty.printg(glab))
 print("\n\n\n")
 
 
 print("Conservative Annotation (Hard)")
-local glab = recovery.addlab(g, true, true)
+g = m.match(s)
+local glab = recovery.annotateBan(g, true, true)
 print(pretty.printg(glab, true))
 print("\n\n\n")
 
 
 print("Conservative Annotation Alt)")
-local glab = recovery.addlab(g, true, 'alt')
-print(pretty.printg(glab, true))
-print()
-
-
-print("Conservative Annotation Alt Seq)")
-local glab = recovery.addlab(g, true, 'altseq')
+g = m.match(s)
+local glab = recovery.annotateBan(g, true, 'alt')
 print(pretty.printg(glab, true))
 print()
 
 
 print("Unique Labels")
+g = m.match(s)
 --m.uniqueTk(g)
 local gunique = recovery.annotateUnique(g)
 print(pretty.printg(gunique, true), '\n')
@@ -534,13 +530,14 @@ print()
 
 
 print("UniqueAlt Labels")
-local g = m.match(s)
+g = m.match(s)
 local guniqueAlt = recovery.annotateUniqueAlt(g)
 print(pretty.printg(guniqueAlt, true), '\n')
 print("End UniqueAlt")
 
 
 print("Unique Path (UPath)")
+g = m.match(s)
 --m.uniqueTk(g)
 local gupath = recovery.annotateUPath(g)
 print(pretty.printg(gupath, true), '\n')
@@ -548,7 +545,7 @@ print("End UPath")
 print()
 
 
-local g = m.match(s)
+g = m.match(s)
 local p = coder.makeg(g, 'ast')
 
 local dir = lfs.currentdir() .. '/test/java18/test/yes/'

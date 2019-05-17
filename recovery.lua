@@ -65,13 +65,11 @@ local function banSeq (g, p, notll1, seq)
 		if not first.disjoint(notll1, first.calck(g, p, {})) then
 			p.ban = true
 			banSeq(g, p.p1, notll1, seq)
-      -- Versao 1 (parece errada)
-			--banSeq(g, p.p2, notll1, seq or  matchEmpty(p.p1))
-      -- Versao 2 (parece a correta)
 			banSeq(g, p.p2, notll1, seq or not matchEmpty(p.p1))
 		end
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		banSeq(g, p.p1, notll1, seq)
+	 --algorithm works, but it is always supplying 'false' to 'seq' here
+		banSeq(g, p.p1, notll1) 
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
 		banSeq(g, p.p1, notll1, seq)
 	elseif p.tag == 'nameCap' then
@@ -80,81 +78,10 @@ local function banSeq (g, p, notll1, seq)
 end
 
 
-local function banFixed (g, p, notll1, seq)
-	if p.tag == 'var' then
-		if not g.lex[p.p1] and not first.issubset(notll1, visited[p.p1]) then
-			visited[p.p1] = first.union(visited[p.p1], notll1)
-			p.ban = true
-			print("Bani ", p.p1)
- 			if not g.lex[p.p1] and not seq then
-				print("Recursive", p.p1, g.prules[p.p1].tag)
-				banFixed(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), seq)
-			end
-		end
-	elseif p.tag == 'ord' then
-		banFixed(g, p.p1, notll1, seq)
-		banFixed(g, p.p2, notll1, seq)
-	elseif p.tag == 'con' then
-		--if first.issubset(notll1, first.calck(g, p, {})) then
-		if not first.disjoint(notll1, first.calck(g, p, {})) then
-			p.ban = true
-			banFixed(g, p.p1, notll1, seq)
-			--Versao alt
-			--if matchEmpty(p.p1) then
-			--	ban(g, p.p2, notll1)
-			--end	
-			-- Versao alt2
-			banFixed(g, p.p2, notll1, seq or not matchEmpty(p.p1))
-		end
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		banFixed(g, p.p1, notll1)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		banFixed(g, p.p1, notll1)
-	elseif p.tag == 'nameCap' then
-		banFixed(g, p.p2, notll1)
-	end
-end
-
-
-local function ban (g, p, notll1)
-	if p.tag == 'var' then
-		if not g.lex[p.p1] and not first.issubset(notll1, visited[p.p1]) then
-			visited[p.p1] = first.union(visited[p.p1], notll1)
-			p.ban = true
-			print("Bani ", p.p1)
- 			if not g.lex[p.p1] then
-				print("Recursive", p.p1, g.prules[p.p1].tag)
-				ban(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1))
-			end
-		end
-	elseif p.tag == 'ord' then
-		ban(g, p.p1, notll1)
-		ban(g, p.p2, notll1)
-	elseif p.tag == 'con' then
-    --print('ban con p.p1', p.p1.tag, 'p.p2', p.p2.tag)
-		--if first.issubset(notll1, first.calck(g, p, {})) then
-		if not first.disjoint(notll1, first.calck(g, p, {})) then
-			p.ban = true
-			ban(g, p.p1, notll1)
-			--Versao alt
-			--if matchEmpty(p.p1) then
-			--	ban(g, p.p2, notll1)
-			--end	
-			-- Versao alt2
-			ban(g, p.p2, notll1)
-		end
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		ban(g, p.p1, notll1)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		ban(g, p.p1, notll1)
-	elseif p.tag == 'nameCap' then
-		ban(g, p.p2, notll1)
-	end
-end
-
 local function notannotateAltSeq (g, p, flw, flag, notll1)
 	if p.tag == 'var' then
 		if flag and not g.lex[p.p1] then
+			print("cheguei aqui notannotate")
 			banSeq(g, p, notll1, false)
 		end
 	elseif p.tag == 'ord' then
@@ -189,45 +116,6 @@ local function notannotateAltSeq (g, p, flw, flag, notll1)
 	end
 end
 
-local function notannotateAlt (g, p, flw, flag, notll1)
-	if p.tag == 'var' then
-		if flag then
-			--ban(g, p, notll1)
-			banFixed(g, p.p1, notll1, false)
-		end
-	elseif p.tag == 'ord' then
-		local k = calck(g, p.p2, flw)
-		local firstp1 = calcfirst(g, p.p1)
-		if not disjoint(firstp1, k) then
-			io.write("Not disjoint :")
-			local set = first.inter(firstp1, k)
-			for k, v in pairs(set) do
-				io.write(k .. ", ")
-			end
-			io.write('\n')
-			--ban(g, p.p1, first.inter(firstp1, k))
-			banFixed(g, p.p1, first.inter(firstp1, k), false)
-		else
-			notannotateAlt(g, p.p1, flw, flag, notll1)
-		end
-		notannotateAlt(g, p.p2, flw, flag, notll1)
-	elseif p.tag == 'con' then
-		notannotateAlt(g, p.p1, calck(g, p.p2, flw), flag, notll1)
-		notannotateAlt(g, p.p2, flw, flag, notll1)
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		local firstp1 = calcfirst(g, p.p1)
-		if not disjoint(firstp1, flw) then
-			--ban(g, p.p1, first.inter(firstp1, flw))
-			banFixed(g, p.p1, first.inter(firstp1, flw), false)
-		else
-			notannotateAlt(g, p.p1, flw, flag, notll1)
-		end
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		notannotateAlt(g, p.p1, flw, flag, notll1)
-	elseif p.tag == 'nameCap' then
-		notannotateAlt(g, p.p2, flw, flag, notll1)
-	end
-end
 
 
 local function notannotate (g, p, flw, flag)
@@ -374,11 +262,7 @@ local function addlab (g, rec, flagBanned)
 			end
 			for i, v in ipairs(g.plist) do
 				if not g.lex[v] then
-					if flagBanned == 'alt' then
-						notannotateAlt(g, g.prules[v], flw[v], false, v)
-					else
-						notannotateAltSeq(g, g.prules[v], flw[v], false, v)
-					end
+					notannotateAltSeq(g, g.prules[v], flw[v], false, v)
 				end
 			end
 		else
@@ -431,6 +315,20 @@ local function addlab (g, rec, flagBanned)
 	return newg
 end
 
+
+local function annotateBan (g, rec, flagBanned)
+	local newg = addlab(g, rec, flagBanned)
+	for i, v in ipairs(newg.plist) do
+		if not g.lex[v] then
+			newg.prules[v] = labelgrammar(newg, newg.prules[v])
+		else
+			newg.prules[v] = newg.prules[v]
+		end
+		newg.plist[i] = v
+	end
+
+	return newg 
+end
 
 
 local function matchUnique (p, tu)
@@ -628,6 +526,7 @@ end
 
 return {
 	addlab = addlab,
+	annotateBan = annotateBan,
 	annotateUnique = annotateUnique,
 	annotateUniqueAlt = annotateUniqueAlt,
 	annotateUPath = annotateUPath,
