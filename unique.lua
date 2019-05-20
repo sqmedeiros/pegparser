@@ -113,6 +113,10 @@ end
 
 
 local function uniqueUsage (g, p)
+	print("uniqueUsage ", p)
+	if parser.matchEmpty(g.prules[p.p1]) then
+		return false
+	end
 	for k, v in pairs(g.varUsage[p.p1]) do
 		if not v.unique then
 			return false

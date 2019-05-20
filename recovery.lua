@@ -47,44 +47,83 @@ local function makeFailure (f, s)
 end
 
 
-local function banSeq (g, p, notll1, seq)
-	if p.tag == 'var' then
-		if not g.lex[p.p1] and not first.issubset(notll1, visited[p.p1]) then
-			visited[p.p1] = first.union(visited[p.p1], notll1)
-			p.ban = true
-			print("Bani ", p.p1)
- 			if not g.lex[p.p1] and not seq then
-				print("Recursive", p.p1, g.prules[p.p1].tag)
-				banSeq(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), seq)
-			end
-		end
-	elseif p.tag == 'ord' then
-		banSeq(g, p.p1, notll1, seq)
-		banSeq(g, p.p2, notll1, seq)
+local function consumeUnique (p)
+	if p.unique then
+		return true
 	elseif p.tag == 'con' then
-		if not first.disjoint(notll1, first.calck(g, p, {})) then
-			p.ban = true
-			banSeq(g, p.p1, notll1, seq)
-			banSeq(g, p.p2, notll1, seq or not matchEmpty(p.p1))
-		end
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-	 --algorithm works, but it is always supplying 'false' to 'seq' here
-		banSeq(g, p.p1, notll1) 
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		banSeq(g, p.p1, notll1, seq)
-	elseif p.tag == 'nameCap' then
-		banSeq(g, p.p2, notll1, seq)
+		return consumeUnique(p.p1) or consumeUnique(p.p2)
+	elseif p.tag == 'ord' then
+		return consumeUnique(p.p1) and matchUnique(p.p2)
+	elseif p.tag == 'plus' then
+		return consumeUnique(p.p1)
+	else
+		return false
 	end
 end
 
 
-local function notannotateAltSeq (g, p, flw, flag, notll1)
+local function banSeqAux (g, p, notll1, seq, stopUnq)
 	if p.tag == 'var' then
-		if flag and not g.lex[p.p1] then
-			print("cheguei aqui notannotate")
-			banSeq(g, p, notll1, false)
+		if not parser.isLexRule(p.p1) and not first.issubset(notll1, visited[p.p1]) then
+			visited[p.p1] = first.union(visited[p.p1], notll1)
+			p.ban = true
+			print("Bani Aux", p.p1)
+			print("Recursive Aux", p.p1, g.prules[p.p1].tag)
+			banSeqAux(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), seq, stopUnq)
 		end
 	elseif p.tag == 'ord' then
+		banSeqAux(g, p.p1, notll1, seq, stopUnq)
+		banSeqAux(g, p.p2, notll1, seq, stopUnq)
+	elseif p.tag == 'con' then
+		p.ban = true
+		banSeqAux(g, p.p1, notll1, seq, stopUnq)
+		if not stopUnq or not consumeUnique(p.p1) then
+			banSeqAux(g, p.p2, notll1, seq or not matchEmpty(p.p1), stopUnq)
+		end
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+	 --algorithm works, but it is always supplying 'false' to 'seq' here
+		banSeqAux(g, p.p1, notll1, seq, stopUnq)
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		banSeqAux(g, p.p1, notll1, seq, stopUnq)
+	elseif p.tag == 'nameCap' then
+		banSeqAux(g, p.p2, notll1, seq, stopUnq)
+	end
+end
+
+
+local function banSeq (g, p, notll1, seq, stopUnq)
+	if p.tag == 'var' then
+		if not parser.isLexRule(p.p1) and not first.issubset(notll1, visited[p.p1]) then
+			visited[p.p1] = first.union(visited[p.p1], notll1)
+			p.ban = true
+			print("Bani ", p.p1)
+ 			if not seq then
+				print("Recursive", p.p1, g.prules[p.p1].tag)
+				banSeqAux(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), seq, stopUnq)
+			end
+		end
+	elseif p.tag == 'ord' then
+		banSeq(g, p.p1, notll1, seq, stopUnq)
+		banSeq(g, p.p2, notll1, seq, stopUnq)
+	elseif p.tag == 'con' then
+		if not first.disjoint(notll1, first.calck(g, p, {})) then
+			p.ban = true
+			banSeq(g, p.p1, notll1, seq, stopUnq)
+			banSeq(g, p.p2, notll1, seq or not matchEmpty(p.p1), stopUnq)
+		end
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+	 --algorithm works, but it is always supplying 'false' to 'seq' here
+		banSeq(g, p.p1, notll1, seq, stopUnq) 
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		banSeq(g, p.p1, notll1, seq, stopUnq)
+	elseif p.tag == 'nameCap' then
+		banSeq(g, p.p2, notll1, seq, stopUnq)
+	end
+end
+
+
+local function notannotateAltSeq (g, p, flw, stopUnq)
+	if p.tag == 'ord' then
 		local k = calck(g, p.p2, flw)
 		local firstp1 = calcfirst(g, p.p1)
 		if not disjoint(firstp1, k) then
@@ -94,25 +133,25 @@ local function notannotateAltSeq (g, p, flw, flag, notll1)
 				io.write(k .. ", ")
 			end
 			io.write('\n')
-			banSeq(g, p.p1, first.inter(firstp1, k), false)
+			banSeq(g, p.p1, first.inter(firstp1, k), false, stopUnq)
 		else
-			notannotateAltSeq(g, p.p1, flw, flag, notll1)
+			notannotateAltSeq(g, p.p1, flw, stopUnq)
 		end
-		notannotateAltSeq(g, p.p2, flw, flag, notll1)
+		notannotateAltSeq(g, p.p2, flw, stopUnq)
 	elseif p.tag == 'con' then
-		notannotateAltSeq(g, p.p1, calck(g, p.p2, flw), flag, notll1)
-		notannotateAltSeq(g, p.p2, flw, flag, notll1)
+		notannotateAltSeq(g, p.p1, calck(g, p.p2, flw), stopUnq)
+		notannotateAltSeq(g, p.p2, flw, stopUnq)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		local firstp1 = calcfirst(g, p.p1)
 		if not disjoint(firstp1, flw) then
-			banSeq(g, p.p1, first.inter(firstp1, flw), false)
+			banSeq(g, p.p1, first.inter(firstp1, flw), false, stopUnq)
 		else
-			notannotateAltSeq(g, p.p1, flw, flag, notll1)
+			notannotateAltSeq(g, p.p1, flw, stopUnq)
 		end
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		notannotateAltSeq(g, p.p1, flw, flag, notll1)
+		notannotateAltSeq(g, p.p1, flw, stopUnq)
 	elseif p.tag == 'nameCap' then
-		notannotateAltSeq(g, p.p2, flw, flag, notll1)
+		notannotateAltSeq(g, p.p2, flw, stopUnq)
 	end
 end
 
@@ -120,7 +159,7 @@ end
 
 local function notannotate (g, p, flw, flag)
 	if p.tag == 'var' then
-		if flag and not banned[p.p1] and not g.lex[p.p1] then
+		if flag and not banned[p.p1] and not parser.isLexRule(p.p1) then
 			banned[p.p1] = true
 		end
 	elseif p.tag == 'ord' then
@@ -255,14 +294,15 @@ local function addlab (g, rec, flagBanned)
 	ierr = 1
 
 	if flagBanned then
-		if flagBanned == 'alt' or flagBanned == 'altseq' then
+		print("add lab", flagBanned == 'altunique')
+		if flagBanned == 'alt' or flagBanned == 'altunique' then
 			visited = {}
 			for i, v in ipairs(g.plist) do
 				visited[v] = {}
 			end
 			for i, v in ipairs(g.plist) do
-				if not g.lex[v] then
-					notannotateAltSeq(g, g.prules[v], flw[v], false, v)
+				if not parser.isLexRule(v) then
+					notannotateAltSeq(g, g.prules[v], flw[v], flagBanned == 'altunique')
 				end
 			end
 		else
@@ -282,7 +322,7 @@ local function addlab (g, rec, flagBanned)
 	io.write"\n"
 
 	for i, v in ipairs(g.plist) do
-		if not g.lex[v] and (not flagBanned or not banned[v]) then
+		if not parser.isLexRule(v) and (not flagBanned or not banned[v]) then
 			newg.prules[v] = addlab_aux(g, g.prules[v], false, flw[v])
 		else
 			newg.prules[v] = g.prules[v]
@@ -317,9 +357,14 @@ end
 
 
 local function annotateBan (g, rec, flagBanned)
+	banOpt = true
+	if flagBanned == 'altunique' then
+		print("eh alt unique")
+		unique.calcUniquePath(g)
+	end
 	local newg = addlab(g, rec, flagBanned)
 	for i, v in ipairs(newg.plist) do
-		if not g.lex[v] then
+		if not parser.isLexRule(v) then
 			newg.prules[v] = labelgrammar(newg, newg.prules[v])
 		else
 			newg.prules[v] = newg.prules[v]
@@ -409,7 +454,7 @@ local function annotateUnique (g)
 	ierr = 1
 	local newg = parser.initgrammar()
 	for i, v in ipairs(g.plist) do
-		if not g.lex[v] then
+		if not parser.isLexRule(v) then
 			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, false, tu, flw[v])
 		else
 			newg.prules[v] = g.prules[v]
@@ -418,7 +463,7 @@ local function annotateUnique (g)
 	end
 
 	for i, v in ipairs(g.plist) do
-		if not g.lex[v] then
+		if not parser.isLexRule(v) then
 			newg.prules[v] = labelgrammar(newg, newg.prules[v])
 		else
 			newg.prules[v] = newg.prules[v]
@@ -430,7 +475,7 @@ local function annotateUnique (g)
 end
 
 
-local function annotateUniqueAlt (g)
+local function annotateUniqueAlt (g, opt)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)	
 	local tu = unique.uniqueTk(g)
@@ -438,7 +483,7 @@ local function annotateUniqueAlt (g)
 	ierr = 400
 	local newg = parser.initgrammar()
 	for i, v in ipairs(g.plist) do
-		if not g.lex[v] then
+		if not parser.isLexRule(v) then
 			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, false, tu, flw[v])
 		else
 			newg.prules[v] = g.prules[v]
@@ -448,12 +493,13 @@ local function annotateUniqueAlt (g)
 
 	print("ierr = ", ierr)
 	newg.init = g.init
+	banOpt = true
 	local galt = addlab(newg, false, 'alt')
 	--local galt = newg
 	print("ierr = ", ierr)
 	ierr = 500
 	for i, v in ipairs(galt.plist) do
-		if not g.lex[v] then
+		if not parser.isLexRule(v) then
 			galt.prules[v] = labelgrammar(galt, galt.prules[v])
 		else
 			galt.prules[v] = galt.prules[v]
@@ -461,15 +507,13 @@ local function annotateUniqueAlt (g)
 		galt.plist[i] = v
 	end
 
-	return galt
-	
+	return galt	
 end
-
 
 
 local function annotateUPathAux (g, p, afterU, flw)
 		if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU then
-    return adderror(p, nil)
+    return markerror(p, nil)
 	elseif p.tag == 'con' then
 		local p1 = annotateUPathAux(g, p.p1, afterU, calck(g, p.p2, flw))
 		local p2 = annotateUPathAux(g, p.p2, afterU or matchUPath(p.p1), flw)
@@ -478,7 +522,7 @@ local function annotateUPathAux (g, p, afterU, flw)
 		local p1 = annotateUPathAux(g, p.p1, false, flw)
 		local p2 = annotateUPathAux(g, p.p2, false, flw)
 		if afterU and not matchEmpty(p) then
-			return adderror(newOrd(p1, p2), nil)
+			return markerror(newOrd(p1, p2), nil)
 		else
       return newOrd(p1, p2)
 		end
@@ -490,7 +534,7 @@ local function annotateUPathAux (g, p, afterU, flw)
 			return newNode('opt', newp)
     else --plus
       if afterU then
-				return adderror(newNode('plus', newp), nil)
+				return markerror(newNode('plus', newp), nil)
 			else
 				return newNode('plus', newp)
 			end
@@ -509,11 +553,20 @@ local function annotateUPath (g)
 	ierr = 1
 	local newg = parser.initgrammar()
 	for i, v in ipairs(g.plist) do
-		if not g.lex[v] then
-			newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v], flw[v])
-			--newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
+		if not parser.isLexRule(v) then
+			--newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v], flw[v])
+			newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
 		else
 			newg.prules[v] = g.prules[v]
+		end
+		newg.plist[i] = v
+	end
+
+	for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			newg.prules[v] = labelgrammar(newg, newg.prules[v])
+		else
+			newg.prules[v] = newg.prules[v]
 		end
 		newg.plist[i] = v
 	end

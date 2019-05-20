@@ -515,7 +515,7 @@ print("\n\n\n")
 
 print("Conservative Annotation Alt)")
 g = m.match(s)
-local glab = recovery.annotateBan(g, true, 'alt')
+local glab = recovery.annotateBan(g, true, 'altunique')
 print(pretty.printg(glab, true))
 print()
 
