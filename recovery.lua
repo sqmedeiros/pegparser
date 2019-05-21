@@ -81,7 +81,7 @@ local function banSeqAux (g, p, notll1, seq, stopUnq)
 			banSeqAux(g, p.p2, notll1, seq or not matchEmpty(p.p1), stopUnq)
 		end
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-	 --algorithm works, but it is always supplying 'false' to 'seq' here
+	 --algorithm worked, but it is always supplying 'false' to 'seq' here
 		banSeqAux(g, p.p1, notll1, seq, stopUnq)
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
 		banSeqAux(g, p.p1, notll1, seq, stopUnq)
@@ -110,10 +110,11 @@ local function banSeq (g, p, notll1, seq, stopUnq)
 			p.ban = true
 			banSeq(g, p.p1, notll1, seq, stopUnq)
 			banSeq(g, p.p2, notll1, seq or not matchEmpty(p.p1), stopUnq)
+      -- how to simulate the old behavior?
 		end
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 	 --algorithm works, but it is always supplying 'false' to 'seq' here
-		banSeq(g, p.p1, notll1, seq, stopUnq) 
+		banSeq(g, p.p1, notll1, false, stopUnq)
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
 		banSeq(g, p.p1, notll1, seq, stopUnq)
 	elseif p.tag == 'nameCap' then
@@ -511,29 +512,30 @@ local function annotateUniqueAlt (g, opt)
 end
 
 
-local function annotateUPathAux (g, p, afterU, flw)
-		if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU then
+local function annotateUPathAux (g, p, afterU, seq, flw)
+	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU and seq then
     return markerror(p, nil)
 	elseif p.tag == 'con' then
-		local p1 = annotateUPathAux(g, p.p1, afterU, calck(g, p.p2, flw))
-		local p2 = annotateUPathAux(g, p.p2, afterU or matchUPath(p.p1), flw)
+		local p1 = annotateUPathAux(g, p.p1, afterU, seq, calck(g, p.p2, flw))
+		seq = seq or not parser.matchEmpty(p.p1) 
+		local p2 = annotateUPathAux(g, p.p2, afterU or matchUPath(p.p1), seq, flw)
 		return newSeq(p1, p2)
 	elseif p.tag == 'ord' then
-		local p1 = annotateUPathAux(g, p.p1, false, flw)
-		local p2 = annotateUPathAux(g, p.p2, false, flw)
-		if afterU and not matchEmpty(p) then
+		local p1 = annotateUPathAux(g, p.p1, afterU, false, flw)
+		local p2 = annotateUPathAux(g, p.p2, afterU, false, flw)
+		if afterU and not matchEmpty(p) and seq then
 			return markerror(newOrd(p1, p2), nil)
 		else
       return newOrd(p1, p2)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw)  then
-		local newp = annotateUPathAux(g, p.p1, false, flw)
+		local newp = annotateUPathAux(g, p.p1, afterU, false, flw)
     if p.tag == 'star' then
 			return newNode('star', newp)
 		elseif p.tag == 'opt' then
 			return newNode('opt', newp)
     else --plus
-      if afterU then
+      if afterU and seq then
 				return markerror(newNode('plus', newp), nil)
 			else
 				return newNode('plus', newp)
@@ -554,13 +556,14 @@ local function annotateUPath (g)
 	local newg = parser.initgrammar()
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			--newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v], flw[v])
-			newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
+			newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v], g.uniqueVar[v] and not g.loopVar[v], flw[v])
+			--newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
 		else
 			newg.prules[v] = g.prules[v]
 		end
 		newg.plist[i] = v
 	end
+
 
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
@@ -571,7 +574,7 @@ local function annotateUPath (g)
 		newg.plist[i] = v
 	end
 
-	return newg
+  return newg
 end
 
 

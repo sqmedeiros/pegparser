@@ -113,10 +113,9 @@ end
 
 
 local function uniqueUsage (g, p)
-	print("uniqueUsage ", p)
-	if parser.matchEmpty(g.prules[p.p1]) then
-		return false
-	end
+	--if parser.matchEmpty(g.prules[p.p1]) then
+	--	return false
+	--end
 	for k, v in pairs(g.varUsage[p.p1]) do
 		if not v.unique then
 			return false
@@ -144,6 +143,7 @@ local function uniquePath (g, p, uPath, flw)
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
 		setUnique(p, uPath or g.uniqueTk[p.p1])
 	elseif p.tag == 'var' and uPath then
+		print("unique var ", p.p1)
 		setUnique(p, true)
 		g.uniqueVar[p.p1] = uniqueUsage(g, p)
 	elseif p.tag == 'con' then
@@ -167,6 +167,27 @@ local function uniquePath (g, p, uPath, flw)
 	end
 end
 
+local function insideLoop (g, p, loop, seq)
+	 if p.tag == 'var' and not parser.isLexRule(p.p1) and loop and not seq then
+		g.loopVar[p.p1] = true
+	elseif p.tag == 'con' then
+		insideLoop(g, p.p1, loop, seq)
+		insideLoop(g, p.p2, loop, seq or not parser.matchEmpty(p.p1))
+	elseif p.tag == 'ord' then
+		insideLoop(g, p.p1, loop, seq)
+		insideLoop(g, p.p2, loop, seq)
+	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
+		insideLoop(g, p.p1, true, false)
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		insideLoop(g, p.p1, loop, seq)
+	elseif p.tag == 'nameCap' then
+		insideLoop(g, p.p2, loop, seq)
+	elseif p.tag == 'and' or p.tag == 'not' then
+		insideLoop(g, p.p1, loop, seq)
+	end
+
+end
+
 
 local function calcUniquePath (g)
 	local fst = first.calcFst(g)
@@ -183,6 +204,18 @@ local function calcUniquePath (g)
 			end
 		end
 	end
+
+	g.loopVar = {}
+	for i, v in ipairs(g.plist) do
+		insideLoop(g, g.prules[v], false, false)
+	end
+	io.write("insideLoop: ")
+	for i, v in ipairs(g.plist) do
+		if g.loopVar[v] then
+			io.write(v .. ', ')
+		end
+	end
+	io.write('\n')
 end
 
 
