@@ -8,7 +8,7 @@ local lfs = require 'lfs'
 local re = require 'relabel'
 local util = require 'util'
 
-g = [[
+local s = [[
 	program 				<- SKIP head decs block Dot (!.)
 	head					<- PROGRAM Id (LPar ids RPar)? Semi
 	decs 					<- labelDecs constDefs typeDefs varDecs procAndFuncDecs
@@ -170,24 +170,52 @@ g = [[
 	WITH 			<- [Ww] [Ii] [Tt] [Hh]			 				!BodyId
 ]]
 
-local g = m.match(g)
 
 print("Regular Annotation")
-local glab = recovery.addlab(g, true, false)
+local g = m.match(s)
+local glab = recovery.annotateBan(g, true, false)
 print(pretty.printg(glab))
 print("\n\n\n")
 
 
 print("Conservative Annotation (Hard)")
-local glab = recovery.addlab(g, true, true)
-print(pretty.printg(glab))
+g = m.match(s)
+local glab = recovery.annotateBan(g, true, true)
+print(pretty.printg(glab, true))
 print("\n\n\n")
 
 
-print("Conservative Annotation (Soft)")
-local glab = recovery.addlab(g, true, 'soft')
-print(pretty.printg(glab))
+print("Conservative Annotation Alt)")
+g = m.match(s)
+local glab = recovery.annotateBan(g, false, 'alt')
+print(pretty.printg(glab, true))
 print()
+
+
+print("Unique Labels")
+g = m.match(s)
+--m.uniqueTk(g)
+local gunique = recovery.annotateUnique(g)
+print(pretty.printg(gunique, true), '\n')
+print("End Unique")
+print()
+
+
+print("UniqueAlt Labels")
+g = m.match(s)
+local guniqueAlt = recovery.annotateUniqueAlt(g)
+print(pretty.printg(guniqueAlt, true), '\n')
+print("End UniqueAlt")
+
+
+print("Unique Path (UPath)")
+g = m.match(s)
+--m.uniqueTk(g)
+local gupath = recovery.annotateUPath(g)
+print(pretty.printg(gupath, true), '\n')
+print("End UPath")
+print()
+
 
 local p = coder.makeg(g, 'ast')
 

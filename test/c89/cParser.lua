@@ -5,22 +5,7 @@ local recovery = require 'recovery'
 local ast = require'ast'
 local util = require'util'
 
-local function assertErr (p, s, lab)
-  local r, l, pos = p:match(s)
-  assert(not r, "Did not fail: r = " .. tostring(r))
-  if lab then
-    assert(l == lab, "Expected label '" .. tostring(lab) .. "' but got " .. tostring(l))
-  end
-end
-
-local function assertOk(p, s)
-  local r, l, pos = p:match(s)
-  assert(r, 'Failed: label = ' .. tostring(l) .. ', pos = ' .. tostring(pos))
-  assert(r == #s + 1, "Matched until " .. r)
-end
-
-
-local g = [[
+local s = [[
 translation_unit      <-  SKIP external_decl+ !.
 
 external_decl         <-  function_def  /  decl
@@ -191,26 +176,52 @@ KEYWORDS              <-  ('auto'  /  'double'  /  'int'  /  'struct'  /
                           'do'  /  'if'  /  'static'  /  'while') ![a-zA-Z_0-9]
 ]] 
 
-                 
-local g = m.match(g)
-print("Original Grammar")
-print(pretty.printg(g), '\n')
+         
 
-local gast = ast.buildAST(g)
-print("With annotations to build AST")
-print(pretty.printg(gast), '\n')
+print("Regular Annotation")
+local g = m.match(s)
+local glab = recovery.annotateBan(g, true, false)
+print(pretty.printg(glab))
+print("\n\n\n")
 
-print("Regular Annotation (SBLP paper)")
-local glabRegular = recovery.addlab(g, true, false)
-print(pretty.printg(glabRegular, true), '\n')
 
 print("Conservative Annotation (Hard)")
-local glabHard = recovery.addlab(g, true, true)
-print(pretty.printg(glabHard, true), '\n')
+g = m.match(s)
+local glab = recovery.annotateBan(g, true, true)
+print(pretty.printg(glab, true))
+print("\n\n\n")
 
-print("Conservative Annotation (Soft)")
-local glabSoft = recovery.addlab(g, true, 'soft')
-print(pretty.printg(glabSoft, true), '\n')
+
+print("Conservative Annotation Alt)")
+g = m.match(s)
+local glab = recovery.annotateBan(g, false, 'alt')
+print(pretty.printg(glab, true))
+print()
+
+
+print("Unique Labels")
+g = m.match(s)
+--m.uniqueTk(g)
+local gunique = recovery.annotateUnique(g)
+print(pretty.printg(gunique, true), '\n')
+print("End Unique")
+print()
+
+
+print("UniqueAlt Labels")
+g = m.match(s)
+local guniqueAlt = recovery.annotateUniqueAlt(g)
+print(pretty.printg(guniqueAlt, true), '\n')
+print("End UniqueAlt")
+
+
+print("Unique Path (UPath)")
+g = m.match(s)
+--m.uniqueTk(g)
+local gupath = recovery.annotateUPath(g)
+print(pretty.printg(gupath, true), '\n')
+print("End UPath")
+print()
 
 local p = coder.makeg(g, 'ast')
 

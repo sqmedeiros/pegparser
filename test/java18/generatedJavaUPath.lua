@@ -9,7 +9,7 @@ local re = require'relabel'
 local util = require'util'
 
 --[[
-  Inserted: 66 labels (XX correct) 
+  Inserted: 68 labels (68 correct) 
 ]]
 
 g = [[
@@ -66,8 +66,8 @@ receiverParameter <-  variableModifier* unannType (Identifier '.')? 'this'
 result          <-  unannType  /  'void'
 methodModifier  <-  annotation  /  'public'  /  'protected'  /  'private'  /  'abstract'  /  'static'  /  'final'  /  'synchronized'  /  'native'  /  'stictfp'
 throws          <-  'throws' exceptionTypeList^Err_012
-exceptionTypeList <-  exceptionType (',' exceptionType^Err_013)*
-exceptionType   <-  classType  /  typeVariable
+exceptionTypeList <-  exceptionType^Err_013 (',' exceptionType^Err_014)*
+exceptionType   <-  (classType  /  typeVariable)^Err_015
 methodBody      <-  block  /  ';'
 instanceInitializer <-  block
 staticInitializer <-  'static' block
@@ -76,9 +76,9 @@ constructorDeclarator <-  typeParameters? Identifier '(' formalParameterList? ')
 constructorModifier <-  annotation  /  'public'  /  'protected'  /  'private'
 constructorBody <-  '{' explicitConstructorInvocation? blockStatements? '}'
 explicitConstructorInvocation <-  typeArguments? 'this' arguments ';'  /  typeArguments? 'super' arguments ';'  /  primary '.' typeArguments? 'super' arguments ';'  /  qualIdent '.' typeArguments? 'super' arguments ';'
-enumDeclaration <-  classModifier* 'enum' Identifier^Err_014 superinterfaces? enumBody^Err_015
-enumBody        <-  '{' enumConstantList? ','? enumBodyDeclarations? '}'^Err_016
-enumConstantList <-  enumConstant (',' enumConstant^Err_017)*
+enumDeclaration <-  classModifier* 'enum' Identifier^Err_016 superinterfaces? enumBody^Err_017
+enumBody        <-  '{'^Err_018 enumConstantList? ','? enumBodyDeclarations? '}'^Err_019
+enumConstantList <-  enumConstant (',' enumConstant)*
 enumConstant    <-  enumConstantModifier* Identifier arguments? classBody?
 enumConstantModifier <-  annotation
 enumBodyDeclarations <-  ';' classBodyDeclaration*
@@ -114,26 +114,26 @@ blockStatements <-  blockStatement blockStatement*
 blockStatement  <-  localVariableDeclarationStatement  /  classDeclaration  /  statement
 localVariableDeclarationStatement <-  localVariableDeclaration ';'
 localVariableDeclaration <-  variableModifier* unannType variableDeclaratorList
-statement       <-  block  /  'if' parExpression^Err_018 statement^Err_019 ('else' statement^Err_020)?  /  basicForStatement  /  enhancedForStatement  /  'while' parExpression statement  /  'do' statement^Err_021 'while'^Err_022 parExpression^Err_023 ';'^Err_024  /  tryStatement  /  'switch' parExpression^Err_025 switchBlock^Err_026  /  'synchronized' parExpression block  /  'return' expression? ';'^Err_027  /  'throw' expression^Err_028 ';'^Err_029  /  'break' Identifier? ';'^Err_030  /  'continue' Identifier? ';'^Err_031  /  'assert' expression^Err_032 (':' expression^Err_033)? ';'^Err_034  /  ';'  /  statementExpression ';'  /  Identifier ':' statement
+statement       <-  block  /  'if' parExpression^Err_020 statement^Err_021 ('else' statement)?  /  basicForStatement  /  enhancedForStatement  /  'while' parExpression statement  /  'do' statement^Err_022 'while'^Err_023 parExpression^Err_024 ';'^Err_025  /  tryStatement  /  'switch' parExpression^Err_026 switchBlock^Err_027  /  'synchronized' parExpression block  /  'return' expression? ';'^Err_028  /  'throw' expression^Err_029 ';'^Err_030  /  'break' Identifier? ';'^Err_031  /  'continue' Identifier? ';'^Err_032  /  'assert' expression^Err_033 (':' expression^Err_034)? ';'^Err_035  /  ';'  /  statementExpression ';'  /  Identifier ':' statement
 statementExpression <-  assignment  /  ('++'  /  '--') (primary  /  qualIdent)  /  (primary  /  qualIdent) ('++'  /  '--')  /  primary
-switchBlock     <-  '{' switchBlockStatementGroup* switchLabel* '}'^Err_035
-switchBlockStatementGroup <-  switchLabels blockStatements^Err_036
+switchBlock     <-  '{'^Err_036 switchBlockStatementGroup* switchLabel* '}'^Err_037
+switchBlockStatementGroup <-  switchLabels blockStatements
 switchLabels    <-  switchLabel switchLabel*
-switchLabel     <-  'case' (constantExpression  /  enumConstantName)^Err_037 ':'^Err_038  /  'default' ':'^Err_039
-enumConstantName <-  Identifier
+switchLabel     <-  'case' (constantExpression  /  enumConstantName)^Err_038 ':'^Err_039  /  'default' ':'
+enumConstantName <-  Identifier^Err_040
 basicForStatement <-  'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
 forInit         <-  localVariableDeclaration  /  statementExpressionList
 forUpdate       <-  statementExpressionList
 statementExpressionList <-  statementExpression (',' statementExpression)*
 enhancedForStatement <-  'for' '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statement
-tryStatement    <-  'try' (block (catchClause* finally  /  catchClause+)^Err_040  /  resourceSpecification block^Err_041 catchClause* finally?)^Err_042
-catchClause     <-  'catch' '('^Err_043 catchFormalParameter^Err_044 ')'^Err_045 block^Err_046
-catchFormalParameter <-  variableModifier* catchType variableDeclaratorId^Err_047
-catchType       <-  unannClassType ('|' ![=|] classType^Err_048)*
-finally         <-  'finally' block^Err_049
-resourceSpecification <-  '(' resourceList^Err_050 ';'? ')'^Err_051
-resourceList    <-  resource (',' resource^Err_052)*
-resource        <-  variableModifier* unannType variableDeclaratorId^Err_053 '='^Err_054 !'=' expression^Err_055
+tryStatement    <-  'try' (block (catchClause* finally  /  catchClause+)^Err_041  /  resourceSpecification block^Err_042 catchClause* finally?)^Err_043
+catchClause     <-  'catch' '('^Err_044 catchFormalParameter^Err_045 ')'^Err_046 block^Err_047
+catchFormalParameter <-  variableModifier* catchType^Err_048 variableDeclaratorId^Err_049
+catchType       <-  unannClassType^Err_050 ('|' ![=|] classType^Err_051)*
+finally         <-  'finally' block^Err_052
+resourceSpecification <-  '('^Err_053 resourceList^Err_054 ';'? ')'^Err_055
+resourceList    <-  resource^Err_056 (',' resource^Err_057)*
+resource        <-  variableModifier* unannType^Err_058 variableDeclaratorId^Err_059 '='^Err_060 !'=' expression^Err_061
 expression      <-  lambdaExpression  /  assignmentExpression
 primary         <-  primaryBase primaryRest*
 primaryBase     <-  'this'  /  Literal  /  parExpression  /  'super' ('.' typeArguments? Identifier arguments  /  '.' Identifier  /  '::' typeArguments? Identifier)  /  'new' (classCreator  /  arrayCreator)  /  qualIdent ('[' expression ']'  /  arguments  /  '.' ('this'  /  'new' classCreator  /  typeArguments Identifier arguments  /  'super' '.' typeArguments? Identifier arguments  /  'super' '.' Identifier  /  'super' '::' typeArguments? Identifier arguments)  /  ('[' ']')* '.' 'class'  /  '::' typeArguments? Identifier)  /  'void' '.' 'class'  /  basicType ('[' ']')* '.' 'class'  /  referenceType '::' typeArguments? 'new'  /  arrayType '::' 'new'
@@ -146,20 +146,20 @@ arrayCreator    <-  type dimExpr+ dim*  /  type dim+ arrayInitializer
 dimExpr         <-  annotation* '[' expression ']'
 arguments       <-  '(' argumentList? ')'
 argumentList    <-  expression (',' expression)*
-unaryExpression <-  ('++'  /  '--') (primary  /  qualIdent)  /  '+' ![=+] unaryExpression^Err_056  /  '-' ![-=>] unaryExpression^Err_057  /  unaryExpressionNotPlusMinus
-unaryExpressionNotPlusMinus <-  '~' unaryExpression^Err_058  /  '!' ![=&] unaryExpression^Err_059  /  castExpression  /  (primary  /  qualIdent) ('++'  /  '--')?
+unaryExpression <-  ('++'  /  '--') (primary  /  qualIdent)  /  '+' ![=+] unaryExpression^Err_062  /  '-' ![-=>] unaryExpression^Err_063  /  unaryExpressionNotPlusMinus
+unaryExpressionNotPlusMinus <-  '~' unaryExpression^Err_064  /  '!' ![=&] unaryExpression^Err_065  /  castExpression  /  (primary  /  qualIdent) ('++'  /  '--')?
 castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
-infixExpression <-  unaryExpression (InfixOperator unaryExpression^Err_060  /  'instanceof' referenceType^Err_061)*
+infixExpression <-  unaryExpression (InfixOperator unaryExpression  /  'instanceof' referenceType)*
 InfixOperator   <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]  /  '=='  /  '!='  /  '<' ![=<]  /  '>' ![=>]  /  '<='  /  '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /  '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
-conditionalExpression <-  infixExpression ('query' expression^Err_062 ':'^Err_063 expression^Err_064)*
+conditionalExpression <-  infixExpression ('query' expression ':' expression)*
 assignmentExpression <-  assignment  /  conditionalExpression
-assignment      <-  leftHandSide AssignmentOperator expression^Err_065
+assignment      <-  leftHandSide AssignmentOperator expression^Err_066
 leftHandSide    <-  primary  /  qualIdent
 AssignmentOperator <-  '=' ![=]  /  '*='  /  '/='  /  '%='  /  '+='  /  '-='  /  '<<='  /  '>>='  /  '>>>='  /  '&='  /  '^='  /  '|='
-lambdaExpression <-  lambdaParameters '->' lambdaBody^Err_066
+lambdaExpression <-  lambdaParameters '->' lambdaBody^Err_067
 lambdaParameters <-  Identifier  /  '(' formalParameterList? ')'  /  '(' inferredFormalParameterList ')'
 inferredFormalParameterList <-  Identifier (',' Identifier)*
-lambdaBody      <-  expression  /  block
+lambdaBody      <-  (expression  /  block)^Err_068
 constantExpression <-  expression
 Identifier      <-  !Keywords [a-zA-Z_] [a-zA-Z_$0-9]*
 Keywords        <-  ('abstract'  /  'assert'  /  'boolean'  /  'break'  /  'byte'  /  'case'  /  'catch'  /  'char'  /  'class'  /  'const'  /  'continue'  /  'default'  /  'double'  /  'do'  /  'else'  /  'enum'  /  'extends'  /  'false'  /  'finally'  /  'final'  /  'float'  /  'for'  /  'goto'  /  'if'  /  'implements'  /  'import'  /  'interface'  /  'int'  /  'instanceof'  /  'long'  /  'native'  /  'new'  /  'null'  /  'package'  /  'private'  /  'protected'  /  'public'  /  'return'  /  'short'  /  'static'  /  'strictfp'  /  'super'  /  'switch'  /  'synchronized'  /  'this'  /  'throws'  /  'throw'  /  'transient'  /  'true'  /  'try'  /  'void'  /  'volatile'  /  'while') ![a-zA-Z_$0-9]
