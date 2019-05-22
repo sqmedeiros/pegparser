@@ -43,7 +43,8 @@ local function addrecrules (g)
 	end
 end
 
-local function labelgrammar_aux (p)
+
+local function putlabel (p)
 	if p.throw and not p.ban then
 		print("adding error ", ierr)
 		return adderror(p, p.throw)
@@ -52,23 +53,38 @@ local function labelgrammar_aux (p)
 	end
 end
 
-local function labelgrammar (g, p)
+
+local function labelexp (g, p)
 	if p.tag == 'char' or p.tag == 'var' or p.tag == 'any' then
-		return labelgrammar_aux(p)
+		return putlabel(p)
 	elseif p.tag == 'ord' then
-		local p1 = labelgrammar(g, p.p1)
-		local p2 = labelgrammar(g, p.p2)
-		return labelgrammar_aux(newNode(p, p1, p2))
+		local p1 = labelexp(g, p.p1)
+		local p2 = labelexp(g, p.p2)
+		return putlabel(newNode(p, p1, p2))
 	elseif p.tag == 'con' then
-		local p1 = labelgrammar(g, p.p1)
-		local p2 = labelgrammar(g, p.p2)
+		local p1 = labelexp(g, p.p1)
+		local p2 = labelexp(g, p.p2)
 		return newNode(p, p1, p2)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		local p1 = labelgrammar(g, p.p1)
-		return labelgrammar_aux(newNode(p, p1))
+		local p1 = labelexp(g, p.p1)
+		return putlabel(newNode(p, p1))
 	else
 		return p	
 	end
+end
+
+
+local function labelgrammar (g)
+	for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			g.prules[v] = labelexp(g, g.prules[v])
+		else
+			g.prules[v] = g.prules[v]
+		end
+		g.plist[i] = v
+	end
+
+	return g
 end
 
 
@@ -125,30 +141,18 @@ end
 
 local function annotateUnique (g)
 	local fst = first.calcFst(g)
-	local flw = first.calcFlw(g)	
+	local flw = first.calcFlw(g)
 	local tu = unique.uniqueTk(g)
 	flagRecovery = false
 	ierr = 1
-	local newg = parser.initgrammar()
+	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
 			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, false, tu, flw[v])
-		else
-			newg.prules[v] = g.prules[v]
 		end
-		newg.plist[i] = v
 	end
 
-	for i, v in ipairs(g.plist) do
-		if not parser.isLexRule(v) then
-			newg.prules[v] = labelgrammar(newg, newg.prules[v])
-		else
-			newg.prules[v] = newg.prules[v]
-		end
-		newg.plist[i] = v
-	end
-
-	return newg
+	return labelgrammar(newg)
 end
 
 
@@ -208,28 +212,15 @@ local function annotateUPath (g)
 	unique.calcUniquePath(g)
 	flagRecovery = false
 	ierr = 1
-	local newg = parser.initgrammar()
+	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
 			newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v], g.uniqueVar[v] and not g.loopVar[v], flw[v])
 			--newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
-		else
-			newg.prules[v] = g.prules[v]
 		end
-		newg.plist[i] = v
 	end
 
-
-	for i, v in ipairs(g.plist) do
-		if not parser.isLexRule(v) then
-			newg.prules[v] = labelgrammar(newg, newg.prules[v])
-		else
-			newg.prules[v] = newg.prules[v]
-		end
-		newg.plist[i] = v
-	end
-
-  return newg
+	return labelgrammar(newg)
 end
 
 

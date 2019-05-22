@@ -23,7 +23,7 @@ local function addCaptures (p, g)
 	elseif p.tag == 'anonCap' then
 		return p
 	elseif p.tag == 'var' then
-		if p.p1 ~= 'SKIP' and p.p1 ~= 'SPACE' and g.lex[p.p1] then
+		if p.p1 ~= 'SKIP' and p.p1 ~= 'SPACE' and parser.isLexRule(p.p1) then
 			return newSimpCap(p)
 		else
 			return p

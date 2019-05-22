@@ -73,9 +73,9 @@ local s = [[
   COMMENT         <- '--' (!%nl .)* ]]
 
 
-print("Original Grammar")
-local g = m.match(s)
-print(pretty.printg(g), '\n')
+--print("Original Grammar")
+--local g = m.match(s)
+--print(pretty.printg(g), '\n')
 
 --local gast = ast.buildAST(g)
 --print("With annotations to build AST")

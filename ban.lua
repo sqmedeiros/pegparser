@@ -24,9 +24,9 @@ local visited
 
 local function getLexRules (g, withSkip)
 	local t = {}
-	for k, _ in pairs(g.lex) do
-		if (k ~= 'SKIP' and k ~= 'SPACE') or ((k == 'SKIP' or k == 'SPACE') and withSkip) then
-			t['__' .. k] = true
+	for i, v in ipairs(g.plist) do
+		if parser.isLexRule(v) and (v ~= 'SKIP' and v ~= 'SPACE') or ((v == 'SKIP' or v == 'SPACE') and withSkip) then
+			t['__' .. v] = true
 		end
 	end
 	return t
@@ -94,7 +94,7 @@ local function addlab (g, rec, flagBanned)
 			end
 		else
 			for i, v in ipairs(g.plist) do
-				if not v.lex then
+				if not parser.isLexRule(v) then
 					notannotate(g, g.prules[v], flw[v], false)
 				end
 			end
@@ -396,7 +396,7 @@ local function addlab (g, rec, flagBanned)
 			end
 		else
 			for i, v in ipairs(g.plist) do
-				if not v.lex then
+				if not parser.isLexRule(v) then
 					notannotate(g, g.prules[v], flw[v], false)
 				end
 			end

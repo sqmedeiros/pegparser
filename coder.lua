@@ -103,7 +103,7 @@ local function autoskip (p, g)
 	elseif p.tag == 'anonCap' then
 		return matchskip(p)
 	elseif p.tag == 'var' then
-		if p.p1 ~= 'SKIP' and p.p1 ~= 'SPACE' and g.lex[p.p1] then
+		if p.p1 ~= 'SKIP' and p.p1 ~= 'SPACE' and parser.isLexRule(p.p1) then
 			return matchskip(p)
 		else
 			return p

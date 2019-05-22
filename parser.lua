@@ -158,7 +158,6 @@ defs.newRule = function (k, v)
 	g.prules[k] = v
 	g.plist[#g.plist + 1] = k
 	if defs.isLexRule(k) then
-		g.lex[k] = true
 		for k, v in pairs(lasttk) do
 			g.tokens[k] = nil
 		end
@@ -234,14 +233,12 @@ local function setSkip (g)
 	local s = 'SPACE'
 	if not g.prules[s] then
 		g.plist[#g.plist+1] = s
-		g.lex[s] = true
 	end
 	g.prules[s] = space
 
 	local s = 'SKIP'
 	if not g.prules[s] then
 		g.plist[#g.plist+1] = s
-		g.lex[s] = true
 	end
 	g.prules[s] = skip
 end
@@ -291,13 +288,19 @@ local peg = [[
 
 local ppk = re.compile(peg, defs)
 
-defs.initgrammar = function()
+defs.initgrammar = function(t)
 	local g = {}
-	g.plist = {}
-	g.prules = {}
-	g.lex = {}
-	g.tokens = {}
-	g.vars = {}
+	if t then
+		for k, v in pairs(t) do
+			g[k] = v
+		end
+	else
+		g.plist = {}
+		g.prules = {}
+		g.tokens = {}
+		g.vars = {}
+	end
+
 	return g
 end
 

@@ -169,7 +169,7 @@ function calcfirst (g, p)
 			return s1
 		end
 	elseif p.tag == 'var' then
-		if g.lex[p.p1] then
+		if parser.isLexRule(p.p1) then
 			return { ['__' .. p.p1] = true }
 		end
 		return FIRST[p.p1]
@@ -217,7 +217,7 @@ function calck (g, p, k)
 		local k2 = calck(g, p.p2, k)
 		return calck(g, p.p1, k2)
 	elseif p.tag == 'var' then
-		if g.lex[p.p1] then
+		if parser.isLexRule(p.p1) then
 			return { ['__' .. p.p1] = true }
 		end
     if parser.matchEmpty(p) then
