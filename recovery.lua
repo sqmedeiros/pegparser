@@ -171,24 +171,24 @@ local function matchUPath (p)
 end
 
 
-local function annotateUPathAux (g, p, afterU, seq, flw)
+local function annotateUPathAux (g, p, seq, afterU, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU and seq then
     return markerror(p, nil)
 	elseif p.tag == 'con' then
-		local p1 = annotateUPathAux(g, p.p1, afterU, seq, calck(g, p.p2, flw))
+		local p1 = annotateUPathAux(g, p.p1, seq, afterU, calck(g, p.p2, flw))
 		seq = seq or not parser.matchEmpty(p.p1) 
-		local p2 = annotateUPathAux(g, p.p2, afterU or matchUPath(p.p1), seq, flw)
+		local p2 = annotateUPathAux(g, p.p2, seq, afterU or matchUPath(p.p1), flw)
 		return newNode(p, p1, p2)
 	elseif p.tag == 'ord' then
-		local p1 = annotateUPathAux(g, p.p1, afterU, false, flw)
-		local p2 = annotateUPathAux(g, p.p2, afterU, false, flw)
+		local p1 = annotateUPathAux(g, p.p1, false, afterU, flw)
+		local p2 = annotateUPathAux(g, p.p2, false, afterU, flw)
 		if afterU and not matchEmpty(p) and seq then
 			return markerror(newNode(p, p1, p2), nil)
 		else
       return newNode(p, p1, p2)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw)  then
-		local newp = annotateUPathAux(g, p.p1, afterU, false, flw)
+		local newp = annotateUPathAux(g, p.p1, false, afterU, flw)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)
     else --plus
@@ -213,7 +213,7 @@ local function annotateUPath (g, rec)
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v], g.uniqueVar[v] and not g.loopVar[v], flw[v])
+			newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v] and not g.loopVar[v], g.uniqueVar[v], flw[v])
 			--newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
 		end
 	end
