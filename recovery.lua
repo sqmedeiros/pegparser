@@ -88,34 +88,34 @@ local function labelgrammar (g)
 end
 
 
-local function matchUnique (p, tu)
+local function matchUnique (g, p)
 	if p.tag == 'char' then
-		return tu[p.p1]
+		return g.unique[p.p1]
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		return tu[p.p1]
+		return g.unique[p.p1]
 	elseif p.tag == 'con' then
-		return matchUnique(p.p1, tu) or matchUnique(p.p2, tu)
+		return matchUnique(g, p.p1) or matchUnique(g, p.p2)
 	elseif p.tag == 'ord' then
-		return matchUnique(p.p1, tu) and matchUnique(p.p2, tu)
+		return matchUnique(g, p.p1) and matchUnique(g, p.p2)
 	elseif p.tag == 'plus' then
-		return matchUnique(p.p1, tu)
+		return matchUnique(g, p.p1)
 	else
 		return false
 	end
 end
 
 
-local function annotateUniqueAux (g, p, seq, afterU, tu, flw)
+local function annotateUniqueAux (g, p, seq, afterU, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and afterU then
 		return markerror(p, nil)
 	elseif p.tag == 'con' then
-		local p1 = annotateUniqueAux(g, p.p1, seq, afterU, tu, calck(g, p.p2, flw))
-		local p2 = annotateUniqueAux(g, p.p2, seq or not matchEmpty(p1), afterU or matchUnique(p.p1, tu), tu, flw)
+		local p1 = annotateUniqueAux(g, p.p1, seq, afterU, calck(g, p.p2, flw))
+		local p2 = annotateUniqueAux(g, p.p2, seq or not matchEmpty(p.p1), afterU or matchUnique(g, p.p1), flw)
 		return newNode(p, p1, p2)
 	elseif p.tag == 'ord' then
     local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
-		local p1 = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, tu, flw)
-		local p2 = annotateUniqueAux(g, p.p2, false, afterU, tu, flw)
+		local p1 = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, flw)
+		local p2 = annotateUniqueAux(g, p.p2, false, afterU, flw)
 		if seq and afterU and not matchEmpty(p) then
 			return markerror(newNode(p, p1, p2), nil)
 		else
@@ -123,7 +123,7 @@ local function annotateUniqueAux (g, p, seq, afterU, tu, flw)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
-		local newp = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, tu, flw)
+		local newp = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, flw)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)
     else --plus
@@ -139,16 +139,16 @@ local function annotateUniqueAux (g, p, seq, afterU, tu, flw)
 end
 
 
-local function annotateUnique (g)
+local function annotateUnique (g, rec)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)
-	local tu = unique.uniqueTk(g)
-	flagRecovery = false
+	g.unique = unique.uniqueTk(g)
+	flagRecovery = rec
 	ierr = 1
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, false, tu, flw[v])
+			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, false, flw[v])
 		end
 	end
 
@@ -189,15 +189,13 @@ local function annotateUPathAux (g, p, afterU, seq, flw)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw)  then
 		local newp = annotateUPathAux(g, p.p1, afterU, false, flw)
-    if p.tag == 'star' then
-			return newNode('star', newp)
-		elseif p.tag == 'opt' then
-			return newNode('opt', newp)
+    if p.tag == 'star' or p.tag == 'opt' then
+			return newNode(p, newp)
     else --plus
       if afterU and seq then
-				return markerror(newNode('plus', newp), nil)
+				return markerror(newNode(p, newp), nil)
 			else
-				return newNode('plus', newp)
+				return newNode(p, newp)
 			end
 		end
 	else
@@ -206,11 +204,11 @@ local function annotateUPathAux (g, p, afterU, seq, flw)
 end
 
 
-local function annotateUPath (g)
+local function annotateUPath (g, rec)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)	
 	unique.calcUniquePath(g)
-	flagRecovery = false
+	flagRecovery = rec
 	ierr = 1
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
@@ -226,9 +224,6 @@ end
 
 
 return {
-	addlab = addlab,
-	annotateBan = annotateBan,
 	annotateUnique = annotateUnique,
-	annotateUniqueAlt = annotateUniqueAlt,
 	annotateUPath = annotateUPath,
 }

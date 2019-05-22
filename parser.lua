@@ -299,6 +299,7 @@ defs.initgrammar = function(t)
 		g.prules = {}
 		g.tokens = {}
 		g.vars = {}
+		g.unique = {}
 	end
 
 	return g
