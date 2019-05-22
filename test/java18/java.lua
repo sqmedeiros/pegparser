@@ -499,6 +499,7 @@ COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]]
 
 
+--[==[
 print("Regular Annotation")
 local g = m.match(s)
 local glab = recovery.annotateBan(g, true, false)
@@ -512,12 +513,13 @@ local glab = recovery.annotateBan(g, true, true)
 print(pretty.printg(glab, true))
 print("\n\n\n")
 
-
 print("Conservative Annotation Alt)")
 g = m.match(s)
-local glab = recovery.annotateBan(g, true, 'altunique')
+local glab = recovery.annotateBan(g, false, 'alt')
+print(pretty.printg(glab, true, 'ban'))
 print(pretty.printg(glab, true))
 print()
+]==]
 
 
 print("Unique Labels")
@@ -529,11 +531,13 @@ print("End Unique")
 print()
 
 
+--[=[
 print("UniqueAlt Labels")
 g = m.match(s)
 local guniqueAlt = recovery.annotateUniqueAlt(g)
 print(pretty.printg(guniqueAlt, true), '\n')
 print("End UniqueAlt")
+]=]
 
 
 print("Unique Path (UPath)")

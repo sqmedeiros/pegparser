@@ -81,6 +81,7 @@ print(pretty.printg(g), '\n')
 --print("With annotations to build AST")
 --print(pretty.printg(gast), '\n')
 
+--[==[
 print("Regular Annotation (SBLP paper)")
 g = m.match(s)
 local glabRegular = recovery.annotateBan(g, true, false)
@@ -95,6 +96,7 @@ print("Conservative Annotation Alt)")
 g = m.match(s)
 local glab = recovery.annotateBan(g, true, 'alt')
 print(pretty.printg(glab, true), '\n')
+]==]
 
 print("Unique Labels")
 g = m.match(s)
@@ -103,20 +105,20 @@ local gunique = recovery.annotateUnique(g)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique")
 
-
+--[=[
 print("UniqueAlt Labels")
 --m.uniqueTk(g)
 g = m.match(s)
 local guniqueAlt = recovery.annotateUniqueAlt(g)
 print(pretty.printg(guniqueAlt, true), '\n')
 print("End UniqueAlt")
-
+]=]
 
 print("Unique Path (UPath)")
 --m.uniqueTk(g)
 g = m.match(s)
 local gupath = recovery.annotateUPath(g)
-print(pretty.printg(gupath, true), '\n')
+print(pretty.printg(gupath, true, 'unique'), '\n')
 print("End UPath")
 
 g = m.match(s)

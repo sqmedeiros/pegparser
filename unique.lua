@@ -38,6 +38,18 @@ local function countTk (p, t)
 end
 
 
+local function printUnique (t)
+	local l = {}
+	for k, v in pairs(t) do
+		table.insert(l, k)
+	end
+	table.sort(l)
+	io.write("Unique tokens\n")
+	io.write(table.concat(l, '\n'))
+	io.write('\n')
+end
+
+
 local function uniqueTk (g)
 	local t = {}
 	for i, v in ipairs(g.plist) do
@@ -46,15 +58,12 @@ local function uniqueTk (g)
 		end
 	end
 
-	t['SKIP'] = true
-
 	local unique = {}
 	for k, v in pairs(t) do
-		unique[k] = v == 1
-		if v == 1 then
-			print("unique", k)
-		end
+		unique[k] = (v == 1) or nil
 	end
+	unique['SKIP'] = nil 
+	printUnique(unique)
 	return unique
 end
 
@@ -113,9 +122,6 @@ end
 
 
 local function uniqueUsage (g, p)
-	--if parser.matchEmpty(g.prules[p.p1]) then
-	--	return false
-	--end
 	for k, v in pairs(g.varUsage[p.p1]) do
 		if not v.unique then
 			return false
