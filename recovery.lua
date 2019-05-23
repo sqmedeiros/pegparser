@@ -10,74 +10,106 @@ local set2choice = first.set2choice
 local matchEmpty = parser.matchEmpty
 local calck = first.calck
 local ierr
-local gerr
-local flagRecovery
 
 -- recovery rule for expression p
 -- (!FOLLOW(p) eatToken space)*
 -- eatToken  <-  token / (!space .)+
 
-local function adderror (p, flw)
+local function adderror (g, p, rec)
   local s = 'Err_' .. string.format("%03d", ierr)
 	ierr = ierr + 1
-	if flagRecovery then
-		local pred = parser.newNot(set2choice(flw))
+	if rec then
+		local pred = parser.newNot(set2choice(p.flw))
 		local seq = newNode('var', 'EatToken')
-		gerr[s] = newNode('star', parser.newSeq(pred, seq))
+		table.insert(g.plist, s)
+		g.prules[s] = newNode('star', parser.newSeq(pred, seq))
 	end
 	return parser.newOrd(p, parser.newThrow(s))
 end
 
 
 local function markerror (p, flw)	
-	p.throw = flw or true
+	p.throw = true
+	p.flw = flw
 	return p
 end
 
 
-local function addrecrules (g)
-	for j = 1, ierr - 1 do
-  	local s = 'Err_' .. string.format("%03d", j)
-		g.prules[s] = gerr[s]
-		table.insert(g.plist, s)
-	end
-end
-
-
-local function putlabel (p)
-	if p.throw and not p.ban then
+local function putlabel (g, p, rec)
+	if p.throw then
 		print("adding error ", ierr)
-		return adderror(p, p.throw)
+		return adderror(g, p, rec)
 	else
 		return p
 	end
 end
 
 
-local function labelexp (g, p)
+local function labelexp (g, p, rec)
 	if p.tag == 'char' or p.tag == 'var' or p.tag == 'any' then
-		return putlabel(p)
+		return putlabel(g, p, rec)
 	elseif p.tag == 'ord' then
-		local p1 = labelexp(g, p.p1)
-		local p2 = labelexp(g, p.p2)
-		return putlabel(newNode(p, p1, p2))
+		local p1 = labelexp(g, p.p1, rec)
+		local p2 = labelexp(g, p.p2, rec)
+		return putlabel(g, newNode(p, p1, p2), rec)
 	elseif p.tag == 'con' then
-		local p1 = labelexp(g, p.p1)
-		local p2 = labelexp(g, p.p2)
-		return newNode(p, p1, p2)
+		local p1 = labelexp(g, p.p1, rec)
+		local p2 = labelexp(g, p.p2, rec)
+		return newNode(p, p1, p2, rec)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		local p1 = labelexp(g, p.p1)
-		return putlabel(newNode(p, p1))
+		local p1 = labelexp(g, p.p1, rec)
+		return putlabel(g, newNode(p, p1), rec)
 	else
 		return p	
 	end
 end
 
 
-local function labelgrammar (g)
+local function getLexRules (g)
+	local t = {}
+	for i, v in ipairs(g.plist) do
+		if parser.isLexRule(v) and v ~= 'SKIP' and v ~= 'SPACE' then
+			t['__' .. v] = true
+		end
+	end
+	return t
+end
+
+
+local function addTkRule (g)
+	local t = getLexRules(g)
+	-- add literal tokens to t
+	for k, v in pairs(g.tokens) do
+		t[k] = v
+	end
+	local p = first.set2choice(t)
+	g.prules['Token'] = p
+	table.insert(g.plist, 'Token')
+end
+
+
+local function addEatTkRule (g)
+	-- (!FOLLOW(p) eatToken space)*
+	-- eatToken  <-  token / (!space .)+
+	local newSeq = parser.newSeq
+	local any = parser.newAny()
+	local tk = newNode('var', 'Token')
+	local notspace = parser.newNot(newNode('var', 'SPACE'))
+	local eatToken = parser.newOrd(tk, newNode('plus', newSeq(notspace, any)))
+	g.prules['EatToken'] = newSeq(eatToken, newNode('var', 'SKIP'))
+	table.insert(g.plist, 'EatToken')
+end
+
+
+local function labelgrammar (g, rec)
+	if rec then
+		addTkRule(g)
+		addEatTkRule(g)
+	end
+
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			g.prules[v] = labelexp(g, g.prules[v])
+			g.prules[v] = labelexp(g, g.prules[v], rec)
 		else
 			g.prules[v] = g.prules[v]
 		end
@@ -107,7 +139,7 @@ end
 
 local function annotateUniqueAux (g, p, seq, afterU, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and afterU then
-		return markerror(p, nil)
+		return markerror(p, flw)
 	elseif p.tag == 'con' then
 		local p1 = annotateUniqueAux(g, p.p1, seq, afterU, calck(g, p.p2, flw))
 		local p2 = annotateUniqueAux(g, p.p2, seq or not matchEmpty(p.p1), afterU or matchUnique(g, p.p1), flw)
@@ -117,7 +149,7 @@ local function annotateUniqueAux (g, p, seq, afterU, flw)
 		local p1 = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, flw)
 		local p2 = annotateUniqueAux(g, p.p2, false, afterU, flw)
 		if seq and afterU and not matchEmpty(p) then
-			return markerror(newNode(p, p1, p2), nil)
+			return markerror(newNode(p, p1, p2), flw)
 		else
       return newNode(p, p1, p2)
 		end
@@ -128,7 +160,7 @@ local function annotateUniqueAux (g, p, seq, afterU, flw)
 			return newNode(p, newp)
     else --plus
       if seq and afterU then
-				return markerror(newNode(p, newp), nil)
+				return markerror(newNode(p, newp), flw)
 			else
 				return newNode(p, newp)
 			end
@@ -143,7 +175,6 @@ local function annotateUnique (g, rec)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)
 	g.unique = unique.uniqueTk(g)
-	flagRecovery = rec
 	ierr = 1
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
@@ -152,7 +183,7 @@ local function annotateUnique (g, rec)
 		end
 	end
 
-	return labelgrammar(newg)
+	return labelgrammar(newg, rec)
 end
 
 
@@ -173,7 +204,7 @@ end
 
 local function annotateUPathAux (g, p, seq, afterU, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU and seq then
-    return markerror(p, nil)
+    return markerror(p, flw)
 	elseif p.tag == 'con' then
 		local p1 = annotateUPathAux(g, p.p1, seq, afterU, calck(g, p.p2, flw))
 		seq = seq or not parser.matchEmpty(p.p1) 
@@ -183,7 +214,7 @@ local function annotateUPathAux (g, p, seq, afterU, flw)
 		local p1 = annotateUPathAux(g, p.p1, false, afterU, flw)
 		local p2 = annotateUPathAux(g, p.p2, false, afterU, flw)
 		if afterU and not matchEmpty(p) and seq then
-			return markerror(newNode(p, p1, p2), nil)
+			return markerror(newNode(p, p1, p2), flw)
 		else
       return newNode(p, p1, p2)
 		end
@@ -193,7 +224,7 @@ local function annotateUPathAux (g, p, seq, afterU, flw)
 			return newNode(p, newp)
     else --plus
       if afterU and seq then
-				return markerror(newNode(p, newp), nil)
+				return markerror(newNode(p, newp), flw)
 			else
 				return newNode(p, newp)
 			end
@@ -208,7 +239,6 @@ local function annotateUPath (g, rec)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)	
 	unique.calcUniquePath(g)
-	flagRecovery = rec
 	ierr = 1
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
@@ -218,9 +248,8 @@ local function annotateUPath (g, rec)
 		end
 	end
 
-	return labelgrammar(newg)
+	return labelgrammar(newg, rec)
 end
-
 
 
 return {

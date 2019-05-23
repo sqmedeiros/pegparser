@@ -2,7 +2,8 @@ local m = require 'init'
 local coder = require 'coder'
 local util = require'util'
 
--- Does not need to remove labels manually
+-- Added 49 labels
+-- Did not have to remove rules manually
 
 g = [[
 program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.

@@ -2,7 +2,8 @@ local m = require 'init'
 local coder = require 'coder'
 local util = require'util'
 
--- Does not need to remove labels manually
+-- Added 42 labels
+-- Did not have to remove rules manually
 
 g = [[
 program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
@@ -11,7 +12,7 @@ toplevelvar     <-  localopt decl '=' exp
 toplevelrecord  <-  'record' NAME^Err_005 recordfields^Err_006 'end'^Err_007
 localopt        <-  'local'?
 import          <-  'local' NAME '=' 'import' ('(' STRINGLIT ')'  /  STRINGLIT)
-foreign         <-  'local' NAME '=' 'foreign' 'import'^Err_008 ('(' STRINGLIT ')'  /  STRINGLIT)^Err_009
+foreign         <-  'local' NAME '=' 'foreign' 'import'^Err_008 ('(' STRINGLIT^Err_009 ')'^Err_010  /  STRINGLIT)^Err_011
 rettypeopt      <-  (':' rettype)?
 paramlist       <-  (param (',' param)*)?
 param           <-  NAME ':' type
@@ -24,28 +25,28 @@ type            <-  typelist '->' rettype  /  simpletype '->' rettype  /  simple
 recordfields    <-  recordfield+
 recordfield     <-  NAME ':' type ';'?
 block           <-  statement* returnstat?
-statement       <-  ';'  /  'do' block 'end'  /  'while' exp^Err_010 'do'^Err_011 block 'end'^Err_012  /  'repeat' block 'until'^Err_013 exp^Err_014  /  'if' exp^Err_015 'then'^Err_016 block elseifstats elseopt 'end'^Err_017  /  'for' decl^Err_018 '='^Err_019 exp^Err_020 ','^Err_021 exp^Err_022 (',' exp)? 'do'^Err_023 block 'end'^Err_024  /  'local' decllist '=' explist  /  varlist '=' explist  /  suffixedexp
+statement       <-  ';'  /  'do' block 'end'  /  'while' exp^Err_012 'do'^Err_013 block 'end'^Err_014  /  'repeat' block 'until'^Err_015 exp^Err_016  /  'if' exp^Err_017 'then'^Err_018 block elseifstats elseopt 'end'^Err_019  /  'for' decl^Err_020 '='^Err_021 exp^Err_022 ','^Err_023 exp^Err_024 (',' exp^Err_025)? 'do'^Err_026 block 'end'^Err_027  /  'local' decllist '=' explist  /  varlist '=' explist  /  suffixedexp
 elseifstats     <-  elseifstat*
-elseifstat      <-  'elseif' exp^Err_025 'then'^Err_026 block
+elseifstat      <-  'elseif' exp^Err_028 'then'^Err_029 block
 elseopt         <-  ('else' block)?
 returnstat      <-  'return' explist? ';'?
 exp             <-  e1
-e1              <-  e2 ('or' e2^Err_027)*
-e2              <-  e3 ('and' e3^Err_028)*
-e3              <-  e4 (('=='  /  '~='  /  '<='  /  '>='  /  '<'  /  '>') e4^Err_029)*
-e4              <-  e5 ('|' e5^Err_030)*
+e1              <-  e2 ('or' e2^Err_030)*
+e2              <-  e3 ('and' e3^Err_031)*
+e3              <-  e4 (('=='  /  '~='  /  '<='  /  '>='  /  '<'  /  '>') e4^Err_032)*
+e4              <-  e5 ('|' e5^Err_033)*
 e5              <-  e6 ('~' !'=' e6)*
-e6              <-  e7 ('&' e7^Err_031)*
-e7              <-  e8 (('<<'  /  '>>') e8^Err_032)*
-e8              <-  e9 ('..' e8^Err_033)?
+e6              <-  e7 ('&' e7^Err_034)*
+e7              <-  e8 (('<<'  /  '>>') e8^Err_035)*
+e8              <-  e9 ('..' e8^Err_036)?
 e9              <-  e10 (('+'  /  '-') e10)*
-e10             <-  e11 (('*'  /  '%%'  /  '/'  /  '//') e11^Err_034)*
+e10             <-  e11 (('*'  /  '%%'  /  '/'  /  '//') e11^Err_037)*
 e11             <-  ('not'  /  '#'  /  '-'  /  '~')* e12
-e12             <-  castexp ('^' e11^Err_035)?
+e12             <-  castexp ('^' e11^Err_038)?
 suffixedexp     <-  prefixexp expsuffix+
-expsuffix       <-  funcargs  /  ':' NAME funcargs  /  '[' exp^Err_036 ']'^Err_037  /  '.' !'.' NAME^Err_038
+expsuffix       <-  funcargs  /  ':' NAME funcargs  /  '[' exp^Err_039 ']'^Err_040  /  '.' !'.' NAME^Err_041
 prefixexp       <-  NAME  /  '(' exp ')'
-castexp         <-  simpleexp 'as' type^Err_039  /  simpleexp
+castexp         <-  simpleexp 'as' type^Err_042  /  simpleexp
 simpleexp       <-  'nil'  /  'false'  /  'true'  /  NUMBER  /  STRINGLIT  /  initlist  /  suffixedexp  /  prefixexp
 var             <-  suffixedexp  /  NAME !expsuffix
 varlist         <-  var (',' var)*
@@ -63,7 +64,7 @@ COMMENT         <-  '--' (!%nl .)*
 SPACE           <-  [ 	
 ]  /  COMMENT
 SKIP            <-  ([ 	
-]  /  COMMENT)*	
+]  /  COMMENT)*
 ]]
 
 

@@ -173,6 +173,7 @@ local function uniquePath (g, p, uPath, flw)
 	end
 end
 
+
 local function insideLoop (g, p, loop, seq)
 	 if p.tag == 'var' and not parser.isLexRule(p.p1) and loop and not seq then
 		g.loopVar[p.p1] = true
