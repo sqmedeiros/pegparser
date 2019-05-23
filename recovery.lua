@@ -90,7 +90,7 @@ end
 
 local function addEatTkRule (g)
 	-- (!FOLLOW(p) eatToken space)*
-	-- eatToken  <-  token / (!space .)+
+	-- eatToken  <-  token / (!space .)+ skip
 	local newSeq = parser.newSeq
 	local any = parser.newAny()
 	local tk = newNode('var', 'Token')

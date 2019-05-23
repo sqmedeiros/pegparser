@@ -4,7 +4,7 @@ local util = require'util'
 
 -- Added 49 labels
 -- Did not have to remove rules manually
--- Add label Err_EOF and the corresponding recovery rule
+-- Added label Err_EOF and the corresponding recovery rule
 
 g = [[
 program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* (!.)^Err_EOF
