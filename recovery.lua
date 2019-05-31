@@ -218,8 +218,11 @@ local function annotateUPathAux (g, p, seq, afterU, flw)
 		else
       return newNode(p, p1, p2)
 		end
-	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw)  then
-		local newp = annotateUPathAux(g, p.p1, false, afterU, flw)
+	--elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw)  then
+		--local newp = annotateUPathAux(g, p.p1, false, afterU, flw)
+	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then
+		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
+		local newp = annotateUPathAux(g, p.p1, false, flagDisjoint and afterU, flw)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)
     else --plus
