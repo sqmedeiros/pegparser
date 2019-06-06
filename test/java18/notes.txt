@@ -12,8 +12,8 @@ Java 8:
 	- 181 labels anotadas
 		. 35 labels não anotadas
 		. 41 labels adicionadas
-			-> 10 corretas
-			-> 31 incorretas
+			-> 9 corretas
+			-> 32 incorretas
 		. 140 labels anotadas igualmente
 
 * Algoritmo Conservativo (Hard)
