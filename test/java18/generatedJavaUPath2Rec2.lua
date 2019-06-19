@@ -45,7 +45,7 @@ typeParameterList <-  typeParameter (',' typeParameter)*
 superclass      <-  'extends' classType
 superinterfaces <-  'implements' interfaceTypeList^Err_010
 interfaceTypeList <-  classType (',' classType)*
-classBody       <-  '{' classBodyDeclaration* '}'
+classBody       <-  '{' classBodyDeclaration* '}'^Err_Test2
 classBodyDeclaration <-  classMemberDeclaration  /  instanceInitializer  /  staticInitializer  /  constructorDeclaration
 classMemberDeclaration <-  fieldDeclaration  /  methodDeclaration  /  classDeclaration  /  interfaceDeclaration  /  ';'
 fieldDeclaration <-  fieldModifier* unannType variableDeclaratorList ';'
@@ -74,7 +74,7 @@ staticInitializer <-  'static' block
 constructorDeclaration <-  constructorModifier* constructorDeclarator throws? constructorBody
 constructorDeclarator <-  typeParameters? Identifier '(' formalParameterList? ')'
 constructorModifier <-  annotation  /  'public'  /  'protected'  /  'private'
-constructorBody <-  '{' explicitConstructorInvocation? blockStatements? '}'
+constructorBody <-  '{' explicitConstructorInvocation? blockStatements? '}'^Err_Test3
 explicitConstructorInvocation <-  typeArguments? 'this' arguments ';'  /  typeArguments? 'super' arguments ';'  /  primary '.' typeArguments? 'super' arguments ';'  /  qualIdent '.' typeArguments? 'super' arguments ';'
 enumDeclaration <-  classModifier* 'enum' Identifier^Err_016 superinterfaces? enumBody^Err_017
 enumBody        <-  '{'^Err_018 enumConstantList? ','? enumBodyDeclarations? '}'^Err_019
@@ -86,14 +86,14 @@ interfaceDeclaration <-  normalInterfaceDeclaration  /  annotationTypeDeclaratio
 normalInterfaceDeclaration <-  interfaceModifier* 'interface' Identifier typeParameters? extendsInterfaces? interfaceBody
 interfaceModifier <-  annotation  /  'public'  /  'protected'  /  'private'  /  'abstract'  /  'static'  /  'strictfp'
 extendsInterfaces <-  'extends' interfaceTypeList
-interfaceBody   <-  '{' interfaceMemberDeclaration* '}'
+interfaceBody   <-  '{' interfaceMemberDeclaration* '}'^Err_Test4
 interfaceMemberDeclaration <-  constantDeclaration  /  interfaceMethodDeclaration  /  classDeclaration  /  interfaceDeclaration  /  ';'
 constantDeclaration <-  constantModifier* unannType variableDeclaratorList ';'
 constantModifier <-  annotation  /  'public'  /  'static'  /  'final'
 interfaceMethodDeclaration <-  interfaceMethodModifier* methodHeader methodBody
 interfaceMethodModifier <-  annotation  /  'public'  /  'abstract'  /  'default'  /  'static'  /  'strictfp'
 annotationTypeDeclaration <-  interfaceModifier* '@' 'interface' Identifier annotationTypeBody
-annotationTypeBody <-  '{' annotationTypeMemberDeclaration* '}'
+annotationTypeBody <-  '{' annotationTypeMemberDeclaration* '}'^Err_Test5
 annotationTypeMemberDeclaration <-  annotationTypeElementDeclaration  /  constantDeclaration  /  classDeclaration  /  interfaceDeclaration  /  ';'
 annotationTypeElementDeclaration <-  annotationTypeElementModifier* unannType Identifier '(' ')' dim* defaultValue? ';'
 annotationTypeElementModifier <-  annotation  /  'public'  /  'abstract'
@@ -109,10 +109,10 @@ markerAnnotation <-  qualIdent
 singleElementAnnotation <-  qualIdent '(' elementValue ')'
 arrayInitializer <-  '{' variableInitializerList? ','? '}'
 variableInitializerList <-  variableInitializer (',' variableInitializer)*
-block           <-  '{' blockStatements? '}'
+block           <-  '{' blockStatements? '}'^Err_Test1
 blockStatements <-  blockStatement blockStatement*
 blockStatement  <-  localVariableDeclarationStatement  /  classDeclaration  /  statement
-localVariableDeclarationStatement <-  localVariableDeclaration ';'
+localVariableDeclarationStatement <-  localVariableDeclaration ';'^Err_Test6
 localVariableDeclaration <-  variableModifier* unannType variableDeclaratorList
 statement       <-  block  /  'if' parExpression^Err_020 statement^Err_021 ('else' statement^Err_022)?  /  basicForStatement  /  enhancedForStatement  /  'while' parExpression statement /  'do' statement^Err_023 'while'^Err_024 parExpression^Err_025 ';'^Err_026  /  tryStatement  /  'switch' parExpression^Err_027 switchBlock^Err_028  /  'synchronized' parExpression block  /  'return' expression? ';'^Err_029  /  'throw' expression^Err_030 ';'^Err_031  /  'break' Identifier? ';'^Err_032  /  'continue' Identifier? ';'^Err_033  /  'assert' expression^Err_034 (':' expression^Err_035)? ';'^Err_036  /  ';'  /  statementExpression ';'  /  Identifier ':' statement
 statementExpression <-  assignment  /  ('++'  /  '--') (primary  /  qualIdent)  /  (primary  /  qualIdent) ('++'  /  '--')  /  primary
@@ -266,8 +266,12 @@ Err_071         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Id
 Err_072         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_073         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_074         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_Test        <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_Test2       <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
+Err_Test1       <-  (!('}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'query'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'instanceof'  /  'if'  /  'for'  /  'float'  /  'finally'  /  'final'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'catch'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  InfixOperator  /  Identifier  /  ']'  /  '@'  /  '<'  /  ';'  /  ':'  /  '--'  /  ','  /  '++'  /  ')'  /  '(') EatToken)*
+Err_Test2       <-  (!('}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'query'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'instanceof'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '<'  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')'  /  '('  /  !.) EatToken)*
+Err_Test3       <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';') EatToken)*
+Err_Test4       <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'default'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';'  /  !.) EatToken)*
+Err_Test5       <-  (!('}'  /  '{'  /  'volatile'  /  'void'  /  'transient'  /  'synchronized'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'public'  /  'protected'  /  'private'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'default'  /  'class'  /  'char'  /  'byte'  /  'boolean'  /  'abstract'  /  Identifier  /  '@'  /  '<'  /  ';'  /  !.) EatToken)*
+Err_Test6       <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
 ]]
 
 local g = m.match(g)

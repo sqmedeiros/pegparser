@@ -370,6 +370,99 @@ local function addlab_aux (g, p, seq, flw)
 	end
 end
 
+-- Deep Algorithm ------------------------------------------------------------
+
+-- Removi parâmetro ban, pois sempre era igual a true
+--[=[
+	params:
+		g : gramática
+		p : regra
+		notll1 : conjunto onde há um conflito
+		seq : flag que indica se já casou um token
+]=]
+local function banDeep(g, p, notll1, seq, bannedRules)
+	print('banDeep', p.tag)
+	if p.tag == 'char' then
+		print("Bani ", p.tag, p.p1)
+		p.ban = true
+	elseif p.tag == 'var' then
+		if parser.isLexRule(p.p1) then
+			print("Bani ", p.tag, p.p1)
+			p.ban = true
+		else
+			-- já casou um token (seq == true) (Segundo lado da concatenação que já casou um token)
+			if seq then
+				p.ban = true
+				if not bannedRules[p.p1] then
+					bannedRules[p.p1] = true
+					banDeep(g, g.prules[p.p1], {}, seq --[[seq = true]], bannedRules)
+				end
+			-- p ainda não foi banido ou
+			-- notll1 não é suconjunto de visited
+			elseif not p.ban or not first.issubset(notll1, visited[p.p1]) then
+				p.ban = true
+				visited[p.p1] = first.union(visited[p.p1], notll1)
+				--print("Bani ", p.p1)
+				print("Recursive", p.p1, g.prules[p.p1].tag)
+				banDeep(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), false, bannedRules)
+			end
+		end
+	elseif p.tag == 'ord' then
+		p.ban = true
+		banDeep(g, p.p1, notll1, seq, bannedRules)
+		banDeep(g, p.p2, notll1, seq, bannedRules)
+	elseif p.tag == 'con' then
+		banDeep(g, p.p1, notll1, seq, bannedRules)
+		banDeep(g, p.p2, notll1, seq or not matchEmpty(p.p1), bannedRules)
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		p.ban = true 
+		banDeep(g, p.p1, notll1, seq, bannedRules)
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		banDeep(g, p.p1, notll1, seq, bannedRules)
+	elseif p.tag == 'nameCap' then
+		banDeep(g, p.p2, notll1, seq, bannedRules)
+	end
+end
+
+local function notannotateDeep(g, p, flw)
+	if p.tag == 'ord' then
+		local k = calck(g, p.p2, flw)
+		local firstp1 = calcfirst(g, p.p1)
+		if not disjoint(firstp1, k) then
+			io.write("Not disjoint :")
+			local set = first.inter(firstp1, k)
+			for k, v in pairs(set) do
+				io.write(k .. ", ")
+			end
+			io.write('\n')
+			banDeep(g, p.p1, first.inter(firstp1, k), false, {})
+		else
+			notannotateDeep(g, p.p1, flw)
+		end
+		notannotateDeep(g, p.p2, flw)
+	elseif p.tag == 'con' then
+		notannotateDeep(g, p.p1, calck(g, p.p2, flw))
+		notannotateDeep(g, p.p2, flw)
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		local firstp1 = calcfirst(g, p.p1)
+		if not disjoint(firstp1, flw) then
+			io.write("Not disjoint star: " .. tostring(p.p1.tag) .. ', ' .. tostring(p.p1.p1))
+			local set = first.inter(firstp1, flw)
+			for k, v in pairs(set) do
+				io.write(k .. ", ")
+			end
+			io.write('\n')
+			banDeep(g, p.p1, first.inter(firstp1, flw), false, {})
+		else
+			notannotateDeep(g, p.p1, flw)
+		end
+	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
+		notannotateDeep(g, p.p1, flw)
+	elseif p.tag == 'nameCap' then
+		notannotateDeep(g, p.p2, flw)
+	end
+end
+------------------------------------------------------------------------------
 
 local function addlab (g, rec, flagBanned)
 	local fst = first.calcFst(g)
@@ -392,6 +485,16 @@ local function addlab (g, rec, flagBanned)
 			for i, v in ipairs(g.plist) do
 				if not parser.isLexRule(v) then
 					notannotateAltSeq(g, g.prules[v], flw[v], flagBanned == 'altunique')
+				end
+			end
+		elseif flagBanned == 'deep' then
+			visited = {}
+			for i, v in ipairs(g.plist) do
+				visited[v] = {}
+			end
+			for i, v in ipairs(g.plist) do
+				if not parser.isLexRule(v) then
+					notannotateDeep(g, g.prules[v], flw[v])
 				end
 			end
 		else
@@ -466,4 +569,6 @@ local function annotateBan (g, rec, flagBanned)
 	return newg 
 end
 
-
+return {
+	addlab = addlab
+}

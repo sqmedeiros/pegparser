@@ -7,6 +7,7 @@ local recovery = require 'recovery'
 local lfs = require 'lfs'
 local re = require 'relabel'
 local util = require'util'
+local ban = require'ban'
 
 local s = [[
 compilation           <-  SKIP compilationUnit !.
@@ -521,6 +522,13 @@ print(pretty.printg(glab, true))
 print()
 ]==]
 
+print("Deep Ban Algorithm")
+g = m.match(s)
+local gdeep = ban.addlab(g, false, 'deep')
+print(pretty.printg(gdeep, true), '\n')
+print("End Deep")
+print()
+
 
 print("Unique Labels")
 g = m.match(s)
@@ -529,7 +537,6 @@ local gunique = recovery.annotateUnique(g, true)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique")
 print()
-
 
 --[=[
 print("UniqueAlt Labels")
