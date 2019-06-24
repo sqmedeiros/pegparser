@@ -2,147 +2,21 @@ local parser = require'parser'
 local first = require'first'
 local unique = require'unique'
 local pretty = require'pretty'
+local label = require'label'
 
-local newOrd = parser.newOrd
-local newThrow = parser.newThrow
 local newSeq = parser.newSeq
 local newNot = parser.newNot
 local newNode = parser.newNode
-local newAny = parser.newAny
 local newVar = parser.newVar
 local calcfirst = first.calcfirst
 local disjoint = first.disjoint
-local set2choice = first.set2choice
 local matchEmpty = parser.matchEmpty
 local calck = first.calck
-local ierr
-local gerr
-local flagRecovery
 local banned
 local visited
 
 
-local function getLexRules (g, withSkip)
-	local t = {}
-	for i, v in ipairs(g.plist) do
-		if parser.isLexRule(v) and (v ~= 'SKIP' and v ~= 'SPACE') or ((v == 'SKIP' or v == 'SPACE') and withSkip) then
-			t['__' .. v] = true
-		end
-	end
-	return t
-end
-
-
-local function addlab_aux (g, p, seq, flw)
-	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and not p.ban then
-    return markerror(p, flw)
-	elseif p.tag == 'con' then
-		local newseq = seq or not matchEmpty(p.p1)
-		--return newSeq(addlab_aux(g, p.p1, seq, calck(g, p.p2, flw)), addlab_aux(g, p.p2, newseq, flw))
-		return newNode(p, addlab_aux(g, p.p1, seq, calck(g, p.p2, flw)), addlab_aux(g, p.p2, newseq, flw))
-	elseif p.tag == 'ord' then
-    local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
-		local p1 = p.p1
-    if flagDisjoint then
-      p1 = addlab_aux(g, p.p1, false, flw)
-    end
-		local p2 = addlab_aux(g, p.p2, false, flw)
-		if seq and not matchEmpty(p) and not p.ban then
-			return markerror(newNode(p, p1, p2), flw)
-		else
-      return newNode(p, p1, p2)
-		end
-	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw) and not p.ban then
-		local newp = addlab_aux(g, p.p1, false, flw)
-    if p.tag == 'star' or p.tag == 'opt' then
-			return newNode(p, newp)
-    else --plus
-      if seq then
-				return markerror(newNode(p, newp), flw)
-			else
-				return newNode(p, newp)
-			end
-		end
-	else
-		return p
-	end
-end
-
-
-local function addlab (g, rec, flagBanned)
-	local fst = first.calcFst(g)
-	local flw = first.calcFlw(g)
-	flagRecovery = rec
-	
-	local newg = parser.initgrammar()
-	
-	banned = {}  -- map with non-terminals that we mut not annotate
-	gerr = {}
-	ierr = 1
-
-	if flagBanned then
-		print("add lab", flagBanned == 'altunique')
-		if flagBanned == 'alt' or flagBanned == 'altunique' then
-			visited = {}
-			for i, v in ipairs(g.plist) do
-				visited[v] = {}
-			end
-			for i, v in ipairs(g.plist) do
-				if not parser.isLexRule(v) then
-					notannotateAltSeq(g, g.prules[v], flw[v], flagBanned == 'altunique')
-				end
-			end
-		else
-			for i, v in ipairs(g.plist) do
-				if not parser.isLexRule(v) then
-					notannotate(g, g.prules[v], flw[v], false)
-				end
-			end
-		end
-	end
-
-	local s = first.sortset(banned)
-	io.write("Banned (" .. #s .. "): ")
-	for i, v in ipairs(s) do
-		io.write(v .. ', ')
-	end
-	io.write"\n"
-
-	for i, v in ipairs(g.plist) do
-		if not parser.isLexRule(v) and (not flagBanned or not banned[v]) then
-			newg.prules[v] = addlab_aux(g, g.prules[v], false, flw[v])
-		else
-			newg.prules[v] = g.prules[v]
-		end
-		newg.plist[i] = v
-	end
-
-	if flagRecovery then
-		local unpack = unpack or table.unpack
-		local t = getLexRules(g)
-		for k, v in pairs(g.tokens) do
-			t[k] = v
-		end
-		local p = first.set2choice(t)
-		newg.prules['Token'] = p
-		table.insert(newg.plist, 'Token')
-		
-
-		-- (!FOLLOW(p) eatToken space)*
-		-- eatToken  <-  token / (!space .)+
-		local tk = newNode('var', 'Token')
-		local notspace = newNot(newNode('var', 'SPACE'))
-		local eatToken = newOrd(tk, newNode('plus', newSeq(notspace, newAny())))
-		newg.prules['EatToken'] = newSeq(eatToken, newNode('var', 'SKIP'))
-		table.insert(newg.plist, 'EatToken')
-
-		addrecrules(newg)
-	end
-		
-	return newg
-end
-
-
+--[==[
 local function annotateBan (g, rec, flagBanned)
 	banOpt = true
 	if true then
@@ -179,7 +53,6 @@ local function consumeUnique (p)
 		return false
 	end
 end
-
 
 
 local function banSeqAux (g, p, notll1, seq, stopUnq)
@@ -335,9 +208,12 @@ local function notannotate (g, p, flw, flag)
 	end
 end
 
+]==]
+
+
 local function addlab_aux (g, p, seq, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and not p.ban then
-    return markerror(p, flw)
+    return label.markerror(p, flw)
 	elseif p.tag == 'con' then
 		local newseq = seq or not matchEmpty(p.p1)
 		--return newSeq(addlab_aux(g, p.p1, seq, calck(g, p.p2, flw)), addlab_aux(g, p.p2, newseq, flw))
@@ -350,7 +226,7 @@ local function addlab_aux (g, p, seq, flw)
     end
 		local p2 = addlab_aux(g, p.p2, false, flw)
 		if seq and not matchEmpty(p) and not p.ban then
-			return markerror(newNode(p, p1, p2), flw)
+			return label.markerror(newNode(p, p1, p2), flw)
 		else
       return newNode(p, p1, p2)
 		end
@@ -360,7 +236,7 @@ local function addlab_aux (g, p, seq, flw)
 			return newNode(p, newp)
     else --plus
       if seq then
-				return markerror(newNode(p, newp), flw)
+				return label.markerror(newNode(p, newp), flw)
 			else
 				return newNode(p, newp)
 			end
@@ -372,129 +248,84 @@ end
 
 -- Deep Algorithm ------------------------------------------------------------
 
--- Removi parâmetro ban, pois sempre era igual a true
---[=[
-	params:
-		g : gramática
-		p : regra
-		notll1 : conjunto onde há um conflito
-		seq : flag que indica se já casou um token
-]=]
-local function banDeep(g, p, notll1, seq, bannedRules)
-	print('banDeep', p.tag)
-	if p.tag == 'char' then
-		print("Bani ", p.tag, p.p1)
-		p.ban = true
-	elseif p.tag == 'var' then
-		if parser.isLexRule(p.p1) then
-			print("Bani ", p.tag, p.p1)
-			p.ban = true
-		else
-			-- já casou um token (seq == true) (Segundo lado da concatenação que já casou um token)
-			if seq then
-				p.ban = true
-				if not bannedRules[p.p1] then
-					bannedRules[p.p1] = true
-					banDeep(g, g.prules[p.p1], {}, seq --[[seq = true]], bannedRules)
-				end
-			-- p ainda não foi banido ou
-			-- notll1 não é suconjunto de visited
-			elseif not p.ban or not first.issubset(notll1, visited[p.p1]) then
-				p.ban = true
-				visited[p.p1] = first.union(visited[p.p1], notll1)
-				--print("Bani ", p.p1)
-				print("Recursive", p.p1, g.prules[p.p1].tag)
-				banDeep(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), false, bannedRules)
+
+local function deep_ban(g, p, k, flag, memo)
+	if p.tag == 'var' then
+		if flag and not parser.isLexRule(p.p1) and not (k and disjoint(calcfirst(g,p), k)) then
+			banned[p.p1] = true
+			if not memo[p.p1] then
+				memo[p.p1] = true
+				deep_ban(g, g.prules[p.p1], k, true, memo)
 			end
 		end
 	elseif p.tag == 'ord' then
-		p.ban = true
-		banDeep(g, p.p1, notll1, seq, bannedRules)
-		banDeep(g, p.p2, notll1, seq, bannedRules)
+		deep_ban(g, p.p1, k, flag, memo)
+		deep_ban(g, p.p2, k, flag, memo)
 	elseif p.tag == 'con' then
-		banDeep(g, p.p1, notll1, seq, bannedRules)
-		banDeep(g, p.p2, notll1, seq or not matchEmpty(p.p1), bannedRules)
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		p.ban = true 
-		banDeep(g, p.p1, notll1, seq, bannedRules)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		banDeep(g, p.p1, notll1, seq, bannedRules)
-	elseif p.tag == 'nameCap' then
-		banDeep(g, p.p2, notll1, seq, bannedRules)
+		flag = flag and not (k and disjoint(calcfirst(g,p), k))
+		deep_ban(g, p.p1, nil, flag, memo)
+		deep_ban(g, p.p2, nil, flag, memo)
+	elseif p.tag == 'star' then
+		deep_ban(g, p.p1, k, flag, memo)
 	end
 end
 
-local function notannotateDeep(g, p, flw)
-	if p.tag == 'ord' then
-		local k = calck(g, p.p2, flw)
-		local firstp1 = calcfirst(g, p.p1)
-		if not disjoint(firstp1, k) then
-			io.write("Not disjoint :")
-			local set = first.inter(firstp1, k)
-			for k, v in pairs(set) do
-				io.write(k .. ", ")
-			end
-			io.write('\n')
-			banDeep(g, p.p1, first.inter(firstp1, k), false, {})
-		else
-			notannotateDeep(g, p.p1, flw)
+local function notannotate_v3(g, p, flw, flag, k)
+	if p.tag == 'var' then
+		if flag and not parser.isLexRule(p.p1) and not (k and disjoint(calcfirst(g,p), k)) then
+			banned[p.p1] = true
+			deep_ban(g, g.prules[p.p1], k, true, {[p.p1] = true})
 		end
-		notannotateDeep(g, p.p2, flw)
+	elseif p.tag == 'ord' then
+		if flag then
+			notannotate_v3(g, p.p1, flw, flag, k)
+			notannotate_v3(g, p.p2, flw, flag, k)
+		else
+			k = calck(g, p.p2, flw)
+			--k = first.intersection(calcfirst(g,p.p1), calck(g, p.p2, flw))
+			notannotate_v3(g, p.p1, flw, not disjoint(calcfirst(g,p.p1), k), k)
+			notannotate_v3(g, p.p2, flw, false)
+		end
 	elseif p.tag == 'con' then
-		notannotateDeep(g, p.p1, calck(g, p.p2, flw))
-		notannotateDeep(g, p.p2, flw)
+		flag = flag and not (k and disjoint(calcfirst(g,p.p1), k))
+		notannotate_v3(g, p.p1, calck(g, p.p2, flw), flag, k)
+		notannotate_v3(g, p.p2, flw, flag)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		local firstp1 = calcfirst(g, p.p1)
-		if not disjoint(firstp1, flw) then
-			io.write("Not disjoint star: " .. tostring(p.p1.tag) .. ', ' .. tostring(p.p1.p1))
-			local set = first.inter(firstp1, flw)
-			for k, v in pairs(set) do
-				io.write(k .. ", ")
-			end
-			io.write('\n')
-			banDeep(g, p.p1, first.inter(firstp1, flw), false, {})
-		else
-			notannotateDeep(g, p.p1, flw)
-		end
+		flag = flag or not disjoint(calcfirst(g, p.p1), flw)
+		notannotate_v3(g, p.p1, flw, flag, k)
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		notannotateDeep(g, p.p1, flw)
+		notannotate_v3(g, p.p1, flw, flag, k)
 	elseif p.tag == 'nameCap' then
-		notannotateDeep(g, p.p2, flw)
+		notannotate_v3(g, p.p2, flw, flag, k)
 	end
 end
+
 ------------------------------------------------------------------------------
 
 local function addlab (g, rec, flagBanned)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)
-	flagRecovery = rec
 	
 	local newg = parser.initgrammar()
 	
 	banned = {}  -- map with non-terminals that we mut not annotate
 	gerr = {}
-	ierr = 1
 
 	if flagBanned then
-		print("add lab", flagBanned == 'altunique')
+		visited = {}
+		for i, v in ipairs(g.plist) do
+			visited[v] = {}
+		end
 		if flagBanned == 'alt' or flagBanned == 'altunique' then
-			visited = {}
-			for i, v in ipairs(g.plist) do
-				visited[v] = {}
-			end
-			for i, v in ipairs(g.plist) do
-				if not parser.isLexRule(v) then
-					notannotateAltSeq(g, g.prules[v], flw[v], flagBanned == 'altunique')
-				end
-			end
+			--for i, v in ipairs(g.plist) do
+			--	if not parser.isLexRule(v) then
+			--		notannotateAltSeq(g, g.prules[v], flw[v], flagBanned == 'altunique')
+			--	end
+			--end
 		elseif flagBanned == 'deep' then
-			visited = {}
-			for i, v in ipairs(g.plist) do
-				visited[v] = {}
-			end
 			for i, v in ipairs(g.plist) do
 				if not parser.isLexRule(v) then
-					notannotateDeep(g, g.prules[v], flw[v])
+					notannotate_v3(g, g.prules[v], flw[v], false)
 				end
 			end
 		else
@@ -522,33 +353,11 @@ local function addlab (g, rec, flagBanned)
 		newg.plist[i] = v
 	end
 
-	if flagRecovery then
-		local unpack = unpack or table.unpack
-		local t = getLexRules(g)
-		for k, v in pairs(g.tokens) do
-			t[k] = v
-		end
-		local p = first.set2choice(t)
-		newg.prules['Token'] = p
-		table.insert(newg.plist, 'Token')
-		
-
-		-- (!FOLLOW(p) eatToken space)*
-		-- eatToken  <-  token / (!space .)+
-		local tk = newNode('var', 'Token')
-		local notspace = newNot(newNode('var', 'SPACE'))
-		local eatToken = newOrd(tk, newNode('plus', newSeq(notspace, newAny())))
-		newg.prules['EatToken'] = newSeq(eatToken, newNode('var', 'SKIP'))
-		table.insert(newg.plist, 'EatToken')
-
-		addrecrules(newg)
-	end
-		
-	return newg
+  return label.labelgrammar(newg, rec)
 end
 
 
-local function annotateBan (g, rec, flagBanned)
+--[==[local function annotateBan (g, rec, flagBanned)
 	banOpt = true
 	if true then
 		unique.calcUniquePath(g)
@@ -567,7 +376,7 @@ local function annotateBan (g, rec, flagBanned)
 	end
 
 	return newg 
-end
+end]==]
 
 return {
 	addlab = addlab

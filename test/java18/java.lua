@@ -524,7 +524,7 @@ print()
 
 print("Deep Ban Algorithm")
 g = m.match(s)
-local gdeep = ban.addlab(g, false, 'deep')
+local gdeep = ban.addlab(g, true, 'deep')
 print(pretty.printg(gdeep, true), '\n')
 print("End Deep")
 print()
