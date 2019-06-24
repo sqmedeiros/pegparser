@@ -8,7 +8,6 @@ local util = require'util'
 
 g = [[
 program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* (!.)^Err_EOF
-program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
 toplevelfunc    <-  localopt 'function' NAME^Err_001 '('^Err_002 paramlist ')'^Err_003 rettypeopt block 'end'^Err_004
 toplevelvar     <-  localopt decl '=' exp
 toplevelrecord  <-  'record' NAME^Err_005 recordfields^Err_006 'end'^Err_007
