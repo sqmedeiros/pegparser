@@ -334,6 +334,7 @@ local function calcFlw (g)
     end
   end
 
+	g.FOLLOW = FOLLOW
   return FOLLOW
 end
 

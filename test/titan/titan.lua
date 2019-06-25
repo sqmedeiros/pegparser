@@ -98,10 +98,19 @@ local glab = recovery.annotateBan(g, true, 'alt')
 print(pretty.printg(glab, true), '\n')
 ]==]
 
+
+print("Deep Ban")
+g = m.match(s)
+--m.uniqueTk(g)
+local gdeep = recovery.putlabels(g, 'deep', true)
+print(pretty.printg(gdeep, true), '\n')
+print("End Deep")
+
+
 print("Unique Labels")
 g = m.match(s)
 --m.uniqueTk(g)
-local gunique = recovery.annotateUnique(g, true)
+local gunique = recovery.putlabels(g, 'unique', true)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique")
 
@@ -117,8 +126,7 @@ print("End UniqueAlt")
 print("Unique Path (UPath)")
 --m.uniqueTk(g)
 g = m.match(s)
-local gupath = recovery.annotateUPath(g, true)
---print(pretty.printg(gupath, true, 'unique'), '\n')
+local gupath = recovery.putlabels(g, 'upath', true)
 print(pretty.printg(gupath, true), '\n')
 print("End UPath")
 

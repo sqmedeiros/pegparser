@@ -3,14 +3,14 @@ local first = require'first'
 local unique = require'unique'
 local pretty = require'pretty'
 local label = require'label'
+local ban = require'ban'
 
 local newNode = parser.newNode
 local calcfirst = first.calcfirst
 local disjoint = first.disjoint
 local matchEmpty = parser.matchEmpty
 local calck = first.calck
-
-local ierr
+local labelgrammar = label.labelgrammar
 
 
 local function matchUnique (g, p)
@@ -64,7 +64,7 @@ local function annotateUniqueAux (g, p, seq, afterU, flw)
 end
 
 
-local function annotateUnique (g, rec)
+local function annotateUnique (g)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)
 	g.unique = unique.uniqueTk(g)
@@ -75,7 +75,7 @@ local function annotateUnique (g, rec)
 		end
 	end
 
-	return label.labelgrammar(newg, rec)
+	return newg
 end
 
 
@@ -130,7 +130,7 @@ local function annotateUPathAux (g, p, seq, afterU, flw)
 end
 
 
-local function annotateUPath (g, rec)
+local function annotateUPath (g)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)	
 	unique.calcUniquePath(g)
@@ -142,11 +142,25 @@ local function annotateUPath (g, rec)
 		end
 	end
 
-	return label.labelgrammar(newg, rec)
+	return newg
 end
 
 
+local function putlabels (g, f, rec)
+	if f == 'unique' then
+		return labelgrammar(annotateUnique(g), rec)
+	elseif f == 'upath' then
+		return labelgrammar(annotateUPath(g), rec)
+	elseif f == 'deep' then
+		local newg = ban.ban(g, f)
+		return labelgrammar(ban.annotateBan(newg), rec)
+	else  -- regular
+		return labelgrammar(ban.annotateBan(g), rec)
+	end	
+end
+
+
+
 return {
-	annotateUnique = annotateUnique,
-	annotateUPath = annotateUPath,
+	putlabels = putlabels,
 }

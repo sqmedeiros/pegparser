@@ -7,7 +7,6 @@ local recovery = require 'recovery'
 local lfs = require 'lfs'
 local re = require 'relabel'
 local util = require'util'
-local ban = require'ban'
 
 local s = [[
 compilation           <-  SKIP compilationUnit !.
@@ -524,7 +523,7 @@ print()
 
 print("Deep Ban Algorithm")
 g = m.match(s)
-local gdeep = ban.addlab(g, true, 'deep')
+local gdeep = recovery.putlabels(g, 'deep', true)
 print(pretty.printg(gdeep, true), '\n')
 print("End Deep")
 print()
@@ -533,7 +532,7 @@ print()
 print("Unique Labels")
 g = m.match(s)
 --m.uniqueTk(g)
-local gunique = recovery.annotateUnique(g, true)
+local gunique = recovery.putlabels(g, 'unique', true)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique")
 print()
@@ -550,7 +549,7 @@ print("End UniqueAlt")
 print("Unique Path (UPath)")
 g = m.match(s)
 --m.uniqueTk(g)
-local gupath = recovery.annotateUPath(g, true)
+local gupath = recovery.putlabels(g, 'upath', true)
 print(pretty.printg(gupath, true), '\n')
 print("End UPath")
 print()
