@@ -231,7 +231,8 @@ local function deep_ban(g, p, k, flag, memo)
 		flag = flag and not (k and disjoint(calcfirst(g,p), k))
 		deep_ban(g, p.p1, nil, flag, memo)
 		deep_ban(g, p.p2, nil, flag, memo)
-	elseif p.tag == 'star' then
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+	--elseif p.tag == 'star' then
 		deep_ban(g, p.p1, k, flag, memo)
 	end
 end
