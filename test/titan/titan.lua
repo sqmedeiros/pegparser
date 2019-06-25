@@ -130,6 +130,16 @@ local gupath = recovery.putlabels(g, 'upath', true)
 print(pretty.printg(gupath, true), '\n')
 print("End UPath")
 
+
+print("Deep UPath (UPath)")
+--m.uniqueTk(g)
+g = m.match(s)
+local gupath = recovery.putlabels(g, 'deepupath', true)
+print(pretty.printg(gupath, true), '\n')
+print("End UPath")
+
+
+
 g = m.match(s)
 local p = coder.makeg(g, 'ast')
 

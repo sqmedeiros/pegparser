@@ -154,6 +154,9 @@ local function putlabels (g, f, rec)
 	elseif f == 'deep' then
 		local newg = ban.ban(g, f)
 		return labelgrammar(ban.annotateBan(newg), rec)
+	elseif f == 'deepupath' then
+		local newg = ban.annotateBan(ban.ban(g, 'deep'))
+		return labelgrammar(annotateUPath(g), rec)
 	else  -- regular
 		return labelgrammar(ban.annotateBan(g), rec)
 	end	
