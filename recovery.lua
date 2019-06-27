@@ -5,30 +5,15 @@ local pretty = require'pretty'
 local label = require'label'
 local ban = require'ban'
 
+
 local newNode = parser.newNode
 local calcfirst = first.calcfirst
 local disjoint = first.disjoint
 local matchEmpty = parser.matchEmpty
 local calck = first.calck
 local labelgrammar = label.labelgrammar
-
-
-local function matchUnique (g, p)
-	if p.tag == 'char' then
-		return g.unique[p.p1]
-	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		return g.unique[p.p1]
-	elseif p.tag == 'con' then
-		return matchUnique(g, p.p1) or matchUnique(g, p.p2)
-	elseif p.tag == 'ord' then
-		return matchUnique(g, p.p1) and matchUnique(g, p.p2)
-	elseif p.tag == 'plus' then
-		return matchUnique(g, p.p1)
-	else
-		return false
-	end
-end
-
+local matchUnique = unique.matchUnique
+local matchUPath = unique.matchUPath
 
 local function annotateUniqueAux (g, p, seq, afterU, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and afterU then
@@ -76,21 +61,6 @@ local function annotateUnique (g)
 	end
 
 	return newg
-end
-
-
-local function matchUPath (p)
-	if p.tag == 'char' or p.tag == 'var' then
-		return p.unique
-	elseif p.tag == 'con' then
-		return p.unique 
-	elseif p.tag == 'ord' then
-		return p.unique 
-	elseif p.tag == 'plus' then
-		return p.unique
-	else
-		return false
-	end
 end
 
 
@@ -160,7 +130,7 @@ local function putlabels (g, f, rec)
 		return labelgrammar(annotateUPath(newg), rec) --tanto faz passar 'g' ou 'newg' (normalizar uso de funções que alteram ou não 'g')
 	elseif f == 'upathdeep' then
 		local newg = annotateUPath(g)
-		ban.ban(newg, 'deep')
+		ban.ban(newg, 'upathdeep')
 		newg = ban.annotateBan(newg)
 		return labelgrammar(newg, rec)
 	else  -- regular

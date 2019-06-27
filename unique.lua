@@ -7,6 +7,41 @@ local calcfirst = first.calcfirst
 
 local changeUnique = false
 
+
+local function matchUnique (g, p)
+	if p.tag == 'char' then
+		return g.unique[p.p1]
+	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
+		return g.unique[p.p1]
+	elseif p.unique and not parser.matchEmpty(p) then
+		return true
+	elseif p.tag == 'con' then
+		return matchUnique(g, p.p1) or matchUnique(g, p.p2)
+	elseif p.tag == 'ord' then
+		return matchUnique(g, p.p1) and matchUnique(g, p.p2)
+	elseif p.tag == 'plus' then
+		return matchUnique(g, p.p1)
+	else
+		return false
+	end
+end
+
+
+local function matchUPath (p)
+	if p.tag == 'char' or p.tag == 'var' then
+		return p.unique
+	elseif p.tag == 'con' then
+		return p.unique
+	elseif p.tag == 'ord' then
+		return p.unique
+	elseif p.tag == 'plus' then
+		return p.unique
+	else
+		return false
+	end
+end
+
+
 local function updateCountTk (p, t)
 	local v = p.p1
 	if not t[v] then
@@ -229,4 +264,6 @@ end
 return {
 	uniqueTk = uniqueTk,
 	calcUniquePath = calcUniquePath,
+	matchUnique = matchUnique,
+	matchUPath = matchUPath
 }

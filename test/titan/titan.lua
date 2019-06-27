@@ -127,7 +127,7 @@ print("Unique Path (UPath)")
 --m.uniqueTk(g)
 g = m.match(s)
 local gupath = recovery.putlabels(g, 'upath', true)
-print(pretty.printg(gupath, true), '\n')
+print(pretty.printg(gupath, true, 'unique'), '\n')
 print("End UPath")
 
 

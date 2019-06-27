@@ -16,204 +16,106 @@ local empty = first.empty
 local inter = first.inter
 local issubset = first.issubset
 local union = first.union
+local matchUPath = unique.matchUPath
 local banned
 local memo
 
 
---[==[
-local function annotateBan (g, rec, flagBanned)
-	banOpt = true
-	if true then
-		unique.calcUniquePath(g)
-	end
-	local newg = addlab(g, rec, flagBanned)
-	print("Grammar after Ban")
-	print(pretty.printg(newg, true, 'ban'), '\n')
-	print("End Ban")
-	for i, v in ipairs(newg.plist) do
-		if not parser.isLexRule(v) then
-			newg.prules[v] = labelgrammar(newg, newg.prules[v])
-		else
-			newg.prules[v] = newg.prules[v]
-		end
-		newg.plist[i] = v
-	end
 
-	return newg 
-end
-
-
-
-local function consumeUnique (p)
-	if p.unique then
-		return true
-	elseif p.tag == 'con' then
-		return consumeUnique(p.p1) or consumeUnique(p.p2)
-	elseif p.tag == 'ord' then
-		return consumeUnique(p.p1) and consumeUnique(p.p2)
-	elseif p.tag == 'plus' then
-		return consumeUnique(p.p1)
-	else
-		return false
-	end
-end
-
-
-local function banSeqAux (g, p, notll1, seq, stopUnq)
-	if p.tag == 'var' then
-		if not parser.isLexRule(p.p1) and not first.issubset(notll1, visited[p.p1]) then
-			visited[p.p1] = first.union(visited[p.p1], notll1)
-			p.ban = true
-			print("Bani Aux", p.p1)
-			print("Recursive Aux", p.p1, g.prules[p.p1].tag)
-			banSeqAux(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), seq, stopUnq)
-		end
-	elseif p.tag == 'ord' then
-		banSeqAux(g, p.p1, notll1, seq, stopUnq)
-		banSeqAux(g, p.p2, notll1, seq, stopUnq)
-	elseif p.tag == 'con' then
-		p.ban = true
-		banSeqAux(g, p.p1, notll1, seq, stopUnq)
-		print("consumeUnique ", consumeUnique(p.p1))
-		if not stopUnq or not consumeUnique(p.p1) then
-			banSeqAux(g, p.p2, notll1, seq or not matchEmpty(p.p1), stopUnq)
-		end
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-	 --algorithm worked, but it is always supplying 'false' to 'seq' here
-		banSeqAux(g, p.p1, notll1, seq, stopUnq)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		banSeqAux(g, p.p1, notll1, seq, stopUnq)
-	elseif p.tag == 'nameCap' then
-		banSeqAux(g, p.p2, notll1, seq, stopUnq)
-	end
-end
-
-
-local function banSeq (g, p, notll1, seq, ban, afterU)
-	print('banSeq', p.tag, seq, ban)
-	if p.tag == 'char' then
-		if ban and not afterU then
-			print("Bani ", p.tag, p.p1)
-			p.ban = true
-		end
-	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		if ban and not afterU then
-			print("Bani ", p.tag, p.p1)
+-- UPath Deep Algorithm ------------------------------------------------------------
+local function upathdeep_ban(g, p, ateTk, notll1, flw, afterU)
+	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
+		if (ateTk and not afterU) or not disjoint(notll1, calck(g, p, flw)) then
 			p.ban = true
 		end
 	elseif p.tag == 'var' then
- 		if ban and not afterU then
-      if not p.ban or not first.issubset(notll1, visited[p.p1]) then
+		local s = calck(g, p, flw)
+		if ateTk then
+			if not afterU then
 				p.ban = true
-				visited[p.p1] = first.union(visited[p.p1], notll1)
-				--print("Bani ", p.p1)
-				print("Recursive", p.p1, g.prules[p.p1].tag, seq)
-				banSeq(g, g.prules[p.p1], first.inter(first.calck(g, p, {}), notll1), seq, true, false)
+			else
+				return
 			end
-		end
-	elseif p.tag == 'ord' then
-		if ban then
+			if not issubset(notll1, memo[p.p1]) and not g.uniqueVar[p.p1] then
+				memo[p.p1] = union(memo[p.p1], notll1)
+				upathdeep_ban(g, g.prules[p.p1], true, notll1, flw, afterU)
+			end
+		elseif not empty(s) then
 			p.ban = true
-		end
-		banSeq(g, p.p1, notll1, seq, ban, false)
-		banSeq(g, p.p2, notll1, seq, ban, false)
-	elseif p.tag == 'con' then
-		--[=[if ban then
-			banSeq(g, p.p1, notll1, seq, true)
-			banSeq(g, p.p2, notll1, seq, true)
-		elseif not seq and not first.disjoint(notll1, first.calck(g, p.p1, {})) then
-			banSeq(g, p.p1, notll1, true, true)
-			banSeq(g, p.p2, notll1, true, true)
-		elseif not seq and matchEmpty(p.p1) and not first.disjoint(notll1, first.calck(g, p.p2, {})) then
-			banSeq(g, p.p1, notll1, seq, false)
-			banSeq(g, p.p2, notll1, seq, true)
-		else --not ban, not seq
-			banSeq(g, p.p1, notll1, seq, false)
-			banSeq(g, p.p2, notll1, seq or matchEmpty(p.p1), false)
-		end]=]
-		banSeq(g, p.p1, notll1, seq, true, afterU)
-		banSeq(g, p.p2, notll1, seq, true, afterU or consumeUnique(p.p1))
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-	 --algorithm worked, but it was always supplying 'false' to 'seq' here
-		if ban and not afterU then p.ban = true end
-		banSeq(g, p.p1, notll1, seq, ban, false)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		banSeq(g, p.p1, notll1, seq, ban, afterU)
-	elseif p.tag == 'nameCap' then
-		banSeq(g, p.p2, notll1, seq, ban, afterU)
-	end
-end
-
-
-local function notannotateAltSeq (g, p, flw, stopUnq)
-	if p.tag == 'ord' then
-		local k = calck(g, p.p2, flw)
-		local firstp1 = calcfirst(g, p.p1)
-		if not disjoint(firstp1, k) then
-			io.write("Not disjoint :")
-			local set = first.inter(firstp1, k)
-			for k, v in pairs(set) do
-				io.write(k .. ", ")
+			if not issubset(s, memo[p.p1]) then
+				memo[p.p1] = union(memo[p.p1], s)
+				upathdeep_ban(g, g.prules[p.p1], false, s, flw, afterU)
 			end
-			io.write('\n')
-			banSeq(g, p.p1, first.inter(firstp1, k), true, true)
-		else
-			notannotateAltSeq(g, p.p1, flw, stopUnq)
-		end
-		notannotateAltSeq(g, p.p2, flw, stopUnq)
-	elseif p.tag == 'con' then
-		notannotateAltSeq(g, p.p1, calck(g, p.p2, flw), stopUnq)
-		notannotateAltSeq(g, p.p2, flw, stopUnq)
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		local firstp1 = calcfirst(g, p.p1)
-		if not disjoint(firstp1, flw) then
-			io.write("Not disjoint star: " .. tostring(p.p1.tag) .. ', ' .. tostring(p.p1.p1))
-			local set = first.inter(firstp1, flw)
-			for k, v in pairs(set) do
-				io.write(k .. ", ")
-			end
-			io.write('\n')
-			banSeq(g, p.p1, first.inter(firstp1, flw), true, true) 
-		else
-			notannotateAltSeq(g, p.p1, flw, stopUnq)
-		end
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		notannotateAltSeq(g, p.p1, flw, stopUnq)
-	elseif p.tag == 'nameCap' then
-		notannotateAltSeq(g, p.p2, flw, stopUnq)
-	end
-end
-
-
-
-local function notannotate (g, p, flw, flag)
-	if p.tag == 'var' then
-		if flag and not banned[p.p1] and not parser.isLexRule(p.p1) then
-			banned[p.p1] = true
 		end
 	elseif p.tag == 'ord' then
-		local k = calck(g, p.p2, flw)
-		flag = flag or not disjoint(calcfirst(g, p.p1), k)
-		--if p.p1.p1 == 'function_def' and p.p2.p1 == 'decl' then
-		--	print("tamos aqui: flag ", flag)
-		--end
-		notannotate(g, p.p1, flw, flag)
-		notannotate(g, p.p2, flw, flag)
+		if ateTk then
+			if not afterU then
+				p.ban = true
+				upathdeep_ban(g, p.p1, true, notll1, flw, afterU)
+				upathdeep_ban(g, p.p2, true, notll1, flw, afterU)
+			end
+		else
+			local s1 = calck(g, p.p1, flw)
+			local s2 = calck(g, p.p2, flw)
+			if not empty(s1) then
+				p.ban = true
+				upathdeep_ban(g, p.p1, false, s1, flw, afterU)
+			end
+			if not empty(s2) then
+				p.ban = true
+				upathdeep_ban(g, p.p2, false, s2, flw, afterU)
+			end
+		end
 	elseif p.tag == 'con' then
-		notannotate(g, p.p1, calck(g, p.p2, flw), flag)
-		notannotate(g, p.p2, flw, flag)
+		if not afterU then
+			upathdeep_ban(g, p.p1, ateTk, notll1, calck(g, p.p2, flw), afterU)
+		end
+		if not ateTk then
+			ateTk = not disjoint(calcfirst(g, p.p1), notll1)
+		end
+		if not afterU then
+			upathdeep_ban(g, p.p2, ateTk, notll1, flw, afterU or matchUPath(p.p1))
+		end
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		flag = flag or not disjoint(calcfirst(g, p.p1), flw)
-		notannotate(g, p.p1, flw, flag)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		notannotate(g, p.p1, flw, flag)
-	elseif p.tag == 'nameCap' then
-		notannotate(g, p.p2, flw, flag)
+		local s = calck(g, p, flw)
+		if ateTk then
+			if not afterU then
+				p.ban = true
+				upathdeep_ban(g, p.p1, true, notll1, flw, afterU)
+			end
+		elseif not empty(s) then
+			p.ban = true
+			upathdeep_ban(g, p.p1, false, s, flw, afterU)
+		end
 	end
 end
 
-]==]
 
+local function notannotate_upathdeep(g, p, flw)
+	if p.tag == 'ord' then
+		local s = inter(calcfirst(g, p.p1), calck(g, p.p2, flw))
+		if not empty(s) then
+			p.ban = true
+			upathdeep_ban(g, p.p1, false, s, flw, false)
+		end
+		notannotate_upathdeep(g, p.p1, flw)
+		notannotate_upathdeep(g, p.p2, flw)
+	elseif p.tag == 'con' then
+		notannotate_upathdeep(g, p.p1, calck(g, p.p2, flw))
+		notannotate_upathdeep(g, p.p2, flw)
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		local s = inter(calcfirst(g, p.p1), flw)
+		if not empty(s) then
+			p.ban = true
+			upathdeep_ban(g, p.p1, false, s, flw, false)
+		end
+		notannotate_upathdeep(g, p.p1, flw)
+	end
+end
+
+
+
+------------------------------------------------------------------------------
 
 
 -- Deep Algorithm ------------------------------------------------------------
@@ -294,17 +196,10 @@ local function notannotate_deep(g, p, flw)
 			deep_ban(g, p.p1, false, s, flw)
 		end
 		notannotate_deep(g, p.p1, flw)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		notannotate_deep(g, p.p1, flw)
-	elseif p.tag == 'nameCap' then
-		notannotate_deep(g, p.p2, flw)
 	end
 end
-
-
-
-
 ------------------------------------------------------------------------------
+
 local function addlab (g, p, seq, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and not p.ban then
     return label.markerror(p, flw)
@@ -362,6 +257,8 @@ local function ban (g, flagBan)
 		
 	if flagBan == 'deep' then
 		ban_aux(g, notannotate_deep, flw)
+	elseif flagBan == 'upathdeep' then
+		ban_aux(g, notannotate_upathdeep, flw)
 	else
 		error("ban: Invalid flag " .. tostring(flagBan))
 	end
