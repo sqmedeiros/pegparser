@@ -12,8 +12,12 @@ local calcfirst = first.calcfirst
 local disjoint = first.disjoint
 local matchEmpty = parser.matchEmpty
 local calck = first.calck
+local empty = first.empty
+local inter = first.inter
+local issubset = first.issubset
+local union = first.union
 local banned
-local visited
+local memo
 
 
 --[==[
@@ -215,55 +219,85 @@ end
 -- Deep Algorithm ------------------------------------------------------------
 
 
-local function deep_ban(g, p, k, flag, memo)
-	if p.tag == 'var' then
-		if flag and not parser.isLexRule(p.p1) and not (k and disjoint(calcfirst(g,p), k)) then
-			banned[p.p1] = true
-			if not memo[p.p1] then
-				memo[p.p1] = true
-				deep_ban(g, g.prules[p.p1], k, true, memo)
+local function deep_ban(g, p, ateTk, notll1, flw)
+	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
+		if ateTk or not disjoint(notll1, calck(g, p, flw)) then
+			p.ban = true
+		end
+	elseif p.tag == 'var' then
+		local s = calck(g, p, flw)
+		if ateTk then
+			p.ban = true
+			if not issubset(notll1, memo[p.p1]) then
+				memo[p.p1] = union(memo[p.p1], notll1)
+				deep_ban(g, g.prules[p.p1], true, notll1, flw)
+			end
+		elseif not empty(s) then
+			p.ban = true
+			if not issubset(s, memo[p.p1]) then
+				memo[p.p1] = union(memo[p.p1], s)
+				deep_ban(g, g.prules[p.p1], false, s, flw)
 			end
 		end
 	elseif p.tag == 'ord' then
-		deep_ban(g, p.p1, k, flag, memo)
-		deep_ban(g, p.p2, k, flag, memo)
+		if ateTk then
+			p.ban = true
+			deep_ban(g, p.p1, true, notll1, flw)
+			deep_ban(g, p.p2, true, notll1, flw)
+		else
+			local s1 = calck(g, p.p1, flw)
+			local s2 = calck(g, p.p2, flw)
+			if not empty(s1) then
+				p.ban = true
+				deep_ban(g, p.p1, false, s1, flw)
+			end
+			if not empty(s2) then
+				p.ban = true
+				deep_ban(g, p.p2, false, s2, flw)
+			end
+		end
 	elseif p.tag == 'con' then
-		flag = flag and not (k and disjoint(calcfirst(g,p), k))
-		deep_ban(g, p.p1, nil, flag, memo)
-		deep_ban(g, p.p2, nil, flag, memo)
+		deep_ban(g, p.p1, ateTk, notll1, calck(g, p.p2, flw))
+		if not ateTk then
+			ateTk = not disjoint(calcfirst(g, p.p1), notll1)
+		end
+		deep_ban(g, p.p2, ateTk, notll1, flw)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-	--elseif p.tag == 'star' then
-		deep_ban(g, p.p1, k, flag, memo)
+		local s = calck(g, p, flw)
+		if ateTk then
+			p.ban = true
+			deep_ban(g, p.p1, true, notll1, flw)
+		elseif not empty(s) then
+			p.ban = true
+			deep_ban(g, p.p1, false, s, flw)
+		end
 	end
 end
 
-local function notannotate_deep(g, p, flw, flag, k)
-	if p.tag == 'var' then
-		if flag and not parser.isLexRule(p.p1) and not (k and disjoint(calcfirst(g,p), k)) then
-			banned[p.p1] = true
-			deep_ban(g, g.prules[p.p1], k, true, {[p.p1] = true})
+
+local function notannotate_deep(g, p, flw)
+	if p.tag == 'ord' then
+		local s = inter(calcfirst(g, p.p1), calck(g, p.p2, flw))
+		if not empty(s) then
+			p.ban = true
+			deep_ban(g, p.p1, false, s, flw)
 		end
-	elseif p.tag == 'ord' then
-		if flag then
-			notannotate_deep(g, p.p1, flw, flag, k)
-			notannotate_deep(g, p.p2, flw, flag, k)
-		else
-			k = calck(g, p.p2, flw)
-			--k = first.intersection(calcfirst(g,p.p1), calck(g, p.p2, flw))
-			notannotate_deep(g, p.p1, flw, not disjoint(calcfirst(g,p.p1), k), k)
-			notannotate_deep(g, p.p2, flw, false)
-		end
+		notannotate_deep(g, p.p1, flw)
+		notannotate_deep(g, p.p2, flw)
 	elseif p.tag == 'con' then
-		flag = flag and not (k and disjoint(calcfirst(g,p.p1), k))
-		notannotate_deep(g, p.p1, calck(g, p.p2, flw), flag, k)
-		notannotate_deep(g, p.p2, flw, flag)
+		notannotate_deep(g, p.p1, calck(g, p.p2, flw))
+		notannotate_deep(g, p.p2, flw)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		flag = flag or not disjoint(calcfirst(g, p.p1), flw)
-		notannotate_deep(g, p.p1, flw, flag, k)
+		local s = inter(calcfirst(g, p.p1), flw)
+		if not empty(s) then
+			p.ban = true
+			deep_ban(g, p.p1, false, s, flw)
+		end
+		notannotate_deep(g, p.p1, flw)
 	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		notannotate_deep(g, p.p1, flw, flag, k)
+		notannotate_deep(g, p.p1, flw)
 	elseif p.tag == 'nameCap' then
-		notannotate_deep(g, p.p2, flw, flag, k)
+		notannotate_deep(g, p.p2, flw)
 	end
 end
 
@@ -290,12 +324,12 @@ local function addlab (g, p, seq, flw)
 		else
       return newNode(p, p1, p2)
 		end
-	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw) and not p.ban then
+	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw) then
 		local newp = addlab(g, p.p1, false, flw)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)
     else --plus
-      if seq then
+      if seq and not p.ban then
 				return label.markerror(newNode(p, newp), flw)
 			else
 				return newNode(p, newp)
@@ -310,7 +344,7 @@ end
 local function ban_aux (g, f, flw)
   for i, v in ipairs(g.plist) do
     if not parser.isLexRule(v) then
-      f(g, g.prules[v], flw[v], false)
+      f(g, g.prules[v], flw[v])
     end
   end
 end
@@ -319,17 +353,14 @@ end
 local function ban (g, flagBan)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)
-	local newg = parser.initgrammar(g)
 	
-	banned = {}  -- map with non-terminals that we mut not annotate
-	visited = {}
+	banned = {}    -- map with non-terminals that we mut not annotate
+	memo = {}
 	for i, v in ipairs(g.plist) do
-		visited[v] = {}
+		memo[v] = {}
 	end
 		
-	if flagBan == 'alt' or flagBan == 'altunique' then
-		ban_aux(g, notannotate_deep, flw)
-	elseif flagBan == 'deep' then
+	if flagBan == 'deep' then
 		ban_aux(g, notannotate_deep, flw)
 	else
 		error("ban: Invalid flag " .. tostring(flagBan))
@@ -341,8 +372,6 @@ local function ban (g, flagBan)
 		io.write(v .. ', ')
 	end
 	io.write"\n"
-
-	return newg
 end
 
 

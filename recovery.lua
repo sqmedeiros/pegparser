@@ -152,11 +152,17 @@ local function putlabels (g, f, rec)
 	elseif f == 'upath' then
 		return labelgrammar(annotateUPath(g), rec)
 	elseif f == 'deep' then
-		local newg = ban.ban(g, f)
-		return labelgrammar(ban.annotateBan(newg), rec)
+		ban.ban(g, f)
+		return labelgrammar(ban.annotateBan(g), rec)
 	elseif f == 'deepupath' then
-		local newg = ban.annotateBan(ban.ban(g, 'deep'))
-		return labelgrammar(annotateUPath(g), rec)
+		ban.ban(g, 'deep')
+		local newg = ban.annotateBan(g)
+		return labelgrammar(annotateUPath(newg), rec) --tanto faz passar 'g' ou 'newg' (normalizar uso de funções que alteram ou não 'g')
+	elseif f == 'upathdeep' then
+		local newg = annotateUPath(g)
+		ban.ban(newg, 'deep')
+		newg = ban.annotateBan(newg)
+		return labelgrammar(newg, rec)
 	else  -- regular
 		return labelgrammar(ban.annotateBan(g), rec)
 	end	

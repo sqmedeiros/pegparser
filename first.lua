@@ -46,6 +46,11 @@ local function issubset (s1, s2)
 end
 
 
+local function empty (s)
+	return next(s) == nil
+end
+
+
 local function inter (s1, s2, notEmpty)
 	local s3 = {}
 	for k, _ in pairs(s1) do
@@ -355,5 +360,6 @@ return {
 	sortset = sortset,
 	inter = inter,
 	union = union,
+	empty = empty,
 }
 
