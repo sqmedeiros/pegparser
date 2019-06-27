@@ -79,8 +79,8 @@ local function printUnique (t)
 		table.insert(l, k)
 	end
 	table.sort(l)
-	io.write("Unique tokens\n")
-	io.write(table.concat(l, '\n'))
+	io.write("Unique tokens (# " .. #l .. "): ")
+	io.write(table.concat(l, ', '))
 	io.write('\n')
 end
 

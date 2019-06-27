@@ -32,7 +32,7 @@ end
 
 local function putlabel (g, p, rec)
 	if p.throw then
-		print("adding error ", ierr)
+		io.write("Err_" .. ierr .. ", ")
 		return adderror(g, p, rec)
 	else
 		return p
@@ -102,6 +102,7 @@ local function labelgrammar (g, rec)
 		addEatTkRule(g)
 	end
 
+	io.write("Adding labels: ")
 	ierr = 1
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
@@ -111,7 +112,7 @@ local function labelgrammar (g, rec)
 		end
 		g.plist[i] = v
 	end
-
+	io.write("\n\n")
 	return g
 end
 

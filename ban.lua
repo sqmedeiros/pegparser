@@ -17,7 +17,6 @@ local inter = first.inter
 local issubset = first.issubset
 local union = first.union
 local matchUPath = unique.matchUPath
-local banned
 local memo
 
 
@@ -249,7 +248,6 @@ local function ban (g, flagBan)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)
 	
-	banned = {}    -- map with non-terminals that we mut not annotate
 	memo = {}
 	for i, v in ipairs(g.plist) do
 		memo[v] = {}
@@ -262,13 +260,6 @@ local function ban (g, flagBan)
 	else
 		error("ban: Invalid flag " .. tostring(flagBan))
 	end
-
-	local s = first.sortset(banned)
-	io.write("Banned (" .. #s .. "): ")
-	for i, v in ipairs(s) do
-		io.write(v .. ', ')
-	end
-	io.write"\n"
 end
 
 
@@ -278,7 +269,7 @@ local function annotateBan (g)
 	local newg = parser.initgrammar(g)
 
 	for i, v in ipairs(g.plist) do
-		if not parser.isLexRule(v) and not banned[v] then
+		if not parser.isLexRule(v) then
 			newg.prules[v] = addlab(g, g.prules[v], false, flw[v])
 		end
 	end

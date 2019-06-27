@@ -1,11 +1,8 @@
 local m = require 'init'
-local errinfo = require 'syntax_errors'
 local pretty = require 'pretty'
 local coder = require 'coder'
-local first = require 'first'
 local recovery = require 'recovery'
-local lfs = require 'lfs'
-local re = require 'relabel'
+local ast = require'ast'
 local util = require'util'
 
 local s = [[
@@ -499,34 +496,19 @@ COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]]
 
 
---[==[
-print("Regular Annotation")
-local g = m.match(s)
-local glab = recovery.annotateBan(g, true, false)
-print(pretty.printg(glab))
-print("\n\n\n")
-
-
-print("Conservative Annotation (Hard)")
+print("Regular Annotation (SBLP paper)")
 g = m.match(s)
-local glab = recovery.annotateBan(g, true, true)
-print(pretty.printg(glab, true))
-print("\n\n\n")
+local greg = recovery.putlabels(g, 'regular', true)
+print(pretty.printg(greg, true), '\n')
+print("End Regular\n")
 
-print("Conservative Annotation Alt)")
-g = m.match(s)
-local glab = recovery.annotateBan(g, false, 'alt')
-print(pretty.printg(glab, true, 'ban'))
-print(pretty.printg(glab, true))
-print()
-]==]
 
-print("Deep Ban Algorithm")
+print("Deep Ban")
 g = m.match(s)
 local gdeep = recovery.putlabels(g, 'deep', true)
-print(pretty.printg(gdeep, true, 'ban'), '\n')
-print("End Deep")
-print()
+print(pretty.printg(gdeep, true), '\n')
+--print(pretty.printg(gdeep, true, 'ban'), '\n')
+print("End Deep\n")
 
 
 print("Unique Labels")
@@ -534,42 +516,30 @@ g = m.match(s)
 --m.uniqueTk(g)
 local gunique = recovery.putlabels(g, 'unique', true)
 print(pretty.printg(gunique, true), '\n')
-print("End Unique")
-print()
-
---[=[
-print("UniqueAlt Labels")
-g = m.match(s)
-local guniqueAlt = recovery.annotateUniqueAlt(g)
-print(pretty.printg(guniqueAlt, true), '\n')
-print("End UniqueAlt")
-]=]
+print("End Unique\n")
 
 
 print("Unique Path (UPath)")
 g = m.match(s)
---m.uniqueTk(g)
 local gupath = recovery.putlabels(g, 'upath', true)
-print(pretty.printg(gupath, true, 'unique'), '\n')
-print("End UPath")
-print()
+print(pretty.printg(gupath, true), '\n')
+--print(pretty.printg(gupath, true, 'unique'), '\n')
+print("End UPath\n")
 
 
 print("Deep UPath")
 g = m.match(s)
---m.uniqueTk(g)
 local gupath = recovery.putlabels(g, 'deepupath', true)
 print(pretty.printg(gupath, true), '\n')
-print("End UPath")
-print()
+print("End DeepUPath\n")
+
 
 print("UPath Deep")
-g = m.match(s)
 --m.uniqueTk(g)
+g = m.match(s)
 local gupath = recovery.putlabels(g, 'upathdeep', true)
-print(pretty.printg(gupath, true, 'ban'), '\n')
-print("End UPathDeep")
-print()
+print(pretty.printg(gupath, true), '\n')
+print("End UPathDeep\n")
 
 
 g = m.match(s)

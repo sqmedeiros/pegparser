@@ -5,7 +5,7 @@ local util = require'util'
 -- Added 12 labels
 -- Did not have to remove rules manually
 
-g = [[
+local g = [[
 program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
 toplevelfunc    <-  localopt 'function' NAME '(' paramlist ')' rettypeopt block 'end'
 toplevelvar     <-  localopt decl '=' exp
@@ -65,6 +65,20 @@ SPACE           <-  [
 ]  /  COMMENT
 SKIP            <-  ([ 	
 ]  /  COMMENT)*
+Token           <-  '~='  /  '~'  /  '}'  /  '|'  /  '{'  /  STRINGLIT  /  RESERVED  /  NUMBER  /  NAME  /  COMMENT  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '#'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!NAME EatToken)*
+Err_002         <-  (!'end' EatToken)*
+Err_003         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_004         <-  (!'=' EatToken)*
+Err_005         <-  (!'foreign' EatToken)*
+Err_006         <-  (!'import' EatToken)*
+Err_007         <-  (!(STRINGLIT  /  '(') EatToken)*
+Err_008         <-  (!')' EatToken)*
+Err_009         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_010         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_011         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  NAME  /  '(') EatToken)*
+Err_012         <-  (!('end'  /  NAME  /  ';') EatToken)*	
 ]]
 
 
@@ -74,5 +88,6 @@ local p = coder.makeg(g, 'ast')
 local dir = lfs.currentdir() .. '/test/titan/test/yes/'
 util.testYes(dir, 'titan', p)
 
+util.setVerbose(true)
 local dir = lfs.currentdir() .. '/test/titan/test/no/'
-util.testNo(dir, 'titan', p)
+util.testNoRec(dir, 'titan', p)
