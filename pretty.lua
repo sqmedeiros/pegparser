@@ -105,7 +105,27 @@ local function printg (g, flagthrow, k)
 end
 
 
+local function prefix (p1, p2)
+	local s1 = printp(p1)
+	local s2 = printp(p2)
+	local pre = ""
+	local i = 1
+	while string.sub(s1, 1, i) == string.sub(s2, 1, i) do
+		i = i + 1
+	end
+	pre = string.sub(s1, 1, i - 1)
+	if i > 1 then
+		print("s1 = ", s1, "s2 = ", s2)
+		print("Prefixo foi ", pre)
+	end
+	return pre
+end
+
+
+
+
 return {
 	printp = printp,
-	printg = printg
+	printg = printg,
+	prefix = prefix
 }

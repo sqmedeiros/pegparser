@@ -180,6 +180,7 @@ local function notannotate_deep(g, p, flw)
 	if p.tag == 'ord' then
 		local s = inter(calcfirst(g, p.p1), calck(g, p.p2, flw))
 		if not empty(s) then
+			pretty.prefix(p.p1, p.p2)
 			p.ban = true
 			deep_ban(g, p.p1, false, s, flw)
 		end
