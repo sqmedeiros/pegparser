@@ -9,22 +9,22 @@ local re = require'relabel'
 local util = require'util'
 
 --[[ 
-	Inserted: 60 labels (60 correct)
+	Inserted: 64 labels (64 correct)
 ]]
 
 g = [[
-program         <-  SKIP head decs block Dot !.
-head            <-  PROGRAM Id^Err_001 (LPar ids^Err_002 RPar^Err_003)? Semi^Err_004
+program         <-  SKIP head^Err_001 decs block^Err_002 Dot^Err_003 !.
+head            <-  PROGRAM^Err_004 Id^Err_005 (LPar ids^Err_006 RPar^Err_007)? Semi^Err_008
 decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
 ids             <-  Id (Comma Id)*
-labelDecs       <-  (LABEL labels^Err_005 Semi^Err_006)?
-labels          <-  label^Err_007 (Comma label^Err_008)*
+labelDecs       <-  (LABEL labels^Err_009 Semi^Err_010)?
+labels          <-  label^Err_011 (Comma label^Err_012)*
 label           <-  UInt
-constDefs       <-  (CONST constDef^Err_009 Semi^Err_010 (constDef Semi^Err_011)*)?
-constDef        <-  Id Eq^Err_012 const^Err_013
+constDefs       <-  (CONST constDef^Err_013 Semi^Err_014 (constDef Semi^Err_015)*)?
+constDef        <-  Id Eq^Err_016 const^Err_017
 const           <-  Sign? (UNumber  /  Id)  /  String
-typeDefs        <-  (TYPE typeDef^Err_014 Semi^Err_015 (typeDef Semi^Err_016)*)?
-typeDef         <-  Id Eq^Err_017 type^Err_018
+typeDefs        <-  (TYPE typeDef^Err_018 Semi^Err_019 (typeDef Semi^Err_020)*)?
+typeDef         <-  Id Eq^Err_021 type^Err_022
 type            <-  newType  /  Id
 newType         <-  newOrdinalType  /  newStructuredType  /  newPointerType
 newOrdinalType  <-  enumType  /  subrangeType
@@ -33,11 +33,11 @@ newPointerType  <-  Pointer Id
 enumType        <-  LPar ids RPar
 subrangeType    <-  const DotDot const
 unpackedStructuredType <-  arrayType  /  recordType  /  setType  /  fileType
-arrayType       <-  ARRAY LBrack^Err_019 ordinalType^Err_020 (Comma ordinalType^Err_021)* RBrack^Err_022 OF^Err_023 type^Err_024
-recordType      <-  RECORD fieldList END^Err_025
-setType         <-  SET OF^Err_026 ordinalType^Err_027
-fileType        <-  FILE OF^Err_028 type^Err_029
-ordinalType     <-  (newOrdinalType  /  Id)^Err_030
+arrayType       <-  ARRAY LBrack^Err_023 ordinalType^Err_024 (Comma ordinalType^Err_025)* RBrack^Err_026 OF^Err_027 type^Err_028
+recordType      <-  RECORD fieldList END^Err_029
+setType         <-  SET OF^Err_030 ordinalType^Err_031
+fileType        <-  FILE OF^Err_032 type^Err_033
+ordinalType     <-  (newOrdinalType  /  Id)^Err_034
 fieldList       <-  ((fixedPart (Semi variantPart)?  /  variantPart) Semi?)?
 fixedPart       <-  varDec (Semi varDec)*
 variantPart     <-  CASE Id (Colon Id)? OF variant (Semi variant)*
@@ -47,12 +47,12 @@ varDecs         <-  (VAR varDec Semi (varDec Semi)*)?
 varDec          <-  ids Colon type
 procAndFuncDecs <-  ((procDec  /  funcDec) Semi)*
 procDec         <-  procHeading Semi (decs block  /  Id)
-procHeading     <-  PROCEDURE Id^Err_031 formalParams?
+procHeading     <-  PROCEDURE Id^Err_035 formalParams?
 funcDec         <-  funcHeading Semi (decs block  /  Id)
-funcHeading     <-  FUNCTION Id^Err_032 formalParams? Colon^Err_033 type^Err_034
-formalParams    <-  LPar formalParamsSection^Err_035 (Semi formalParamsSection^Err_036)* RPar^Err_037
-formalParamsSection <-  (VAR? ids Colon^Err_038 Id^Err_039  /  procHeading  /  funcHeading)^Err_040
-block           <-  BEGIN stmts END^Err_041
+funcHeading     <-  FUNCTION Id^Err_036 formalParams? Colon^Err_037 type^Err_038
+formalParams    <-  LPar formalParamsSection^Err_039 (Semi formalParamsSection^Err_040)* RPar^Err_041
+formalParamsSection <-  (VAR? ids Colon^Err_042 Id^Err_043  /  procHeading  /  funcHeading)^Err_044
+block           <-  BEGIN stmts END^Err_045
 stmts           <-  stmt (Semi stmt)*
 stmt            <-  (label Colon)? (simpleStmt  /  structuredStmt)?
 simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
@@ -61,20 +61,20 @@ var             <-  Id (LBrack expr (Comma expr)* RBrack  /  Dot Id  /  Pointer)
 procStmt        <-  Id params?
 params          <-  LPar (param (Comma param)*)? RPar
 param           <-  expr (Colon expr)? (Colon expr)?
-gotoStmt        <-  GOTO label^Err_042
+gotoStmt        <-  GOTO label^Err_046
 structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
 conditionalStmt <-  ifStmt  /  caseStmt
-ifStmt          <-  IF expr^Err_043 THEN^Err_044 stmt (ELSE stmt)?
+ifStmt          <-  IF expr^Err_047 THEN^Err_048 stmt (ELSE stmt)?
 caseStmt        <-  CASE expr OF caseListElement (Semi caseListElement)* Semi? END
 caseListElement <-  consts Colon stmt
 repetitiveStmt  <-  repeatStmt  /  whileStmt  /  forStmt
-repeatStmt      <-  REPEAT stmts UNTIL^Err_045 expr^Err_046
-whileStmt       <-  WHILE expr^Err_047 DO^Err_048 stmt
-forStmt         <-  FOR Id^Err_049 Assign^Err_050 expr^Err_051 (TO  /  DOWNTO)^Err_052 expr^Err_053 DO^Err_054 stmt
-withStmt        <-  WITH var^Err_055 (Comma var^Err_056)* DO^Err_057 stmt
-expr            <-  simpleExpr (RelOp simpleExpr^Err_058)?
-simpleExpr      <-  Sign? term (AddOp term^Err_059)*
-term            <-  factor (MultOp factor^Err_060)*
+repeatStmt      <-  REPEAT stmts UNTIL^Err_049 expr^Err_050
+whileStmt       <-  WHILE expr^Err_051 DO^Err_052 stmt
+forStmt         <-  FOR Id^Err_053 Assign^Err_054 expr^Err_055 (TO  /  DOWNTO)^Err_056 expr^Err_057 DO^Err_058 stmt
+withStmt        <-  WITH var^Err_059 (Comma var^Err_060)* DO^Err_061 stmt
+expr            <-  simpleExpr (RelOp simpleExpr^Err_062)?
+simpleExpr      <-  Sign? term (AddOp term^Err_063)*
+term            <-  factor (MultOp factor^Err_064)*
 factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar expr RPar)
 unsignedConst   <-  UNumber  /  String  /  Id  /  NIL
 funcCall        <-  Id params
@@ -144,7 +144,7 @@ WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
 SPACE           <-  [ 	
 ]  /  COMMENT
 SKIP            <-  ([ 	
-]  /  COMMENT)*	
+]  /  COMMENT)*
 ]]
 
 local g = m.match(g)
