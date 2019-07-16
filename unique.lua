@@ -236,6 +236,7 @@ local function calcUniquePath (g)
 	local flw = first.calcFlw(g)	
 	g.uniqueTk = uniqueTk(g)
 	g.uniqueVar = {}
+	g.uniqueVar[g.plist[1]] = true
 	varUsage(g)
 	changeUnique = true
 	while changeUnique do
