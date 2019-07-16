@@ -2,11 +2,12 @@ local m = require 'init'
 local coder = require 'coder'
 local util = require'util'
 
+-- Added 40 labels
 -- Does not need to remove labels manually
 -- Disable rule typedef_name, because its correct matching depends on semantic actions
 
 local g = [[
-translation_unit <-  SKIP external_decl+ !.
+translation_unit <-  SKIP external_decl+^Err_001 !.
 external_decl   <-  function_def  /  decl
 function_def    <-  declarator decl* compound_stat  /  decl_spec function_def
 decl_spec       <-  storage_class_spec  /  type_spec  /  type_qualifier
@@ -33,26 +34,26 @@ type_name       <-  spec_qualifier_list abstract_declarator?
 abstract_declarator <-  pointer  /  pointer? direct_abstract_declarator
 direct_abstract_declarator <-  '(' abstract_declarator ')' ('[' const_exp? ']'  /  '(' param_type_list? ')')*
 typedef_name    <-  ID
-stat            <-  ID ':' stat  /  'case' const_exp^Err_001 ':'^Err_002 stat^Err_003  /  'default' ':'^Err_004 stat^Err_005  /  exp? ';'  /  compound_stat  /  'if' '(' exp ')' stat 'else' stat^Err_006  /  'if' '(' exp ')' stat  /  'switch' '('^Err_007 exp^Err_008 ')'^Err_009 stat^Err_010  /  'while' '(' exp ')' stat  /  'do' stat^Err_011 'while'^Err_012 '('^Err_013 exp^Err_014 ')'^Err_015 ';'^Err_016  /  'for' '('^Err_017 exp? ';'^Err_018 exp? ';'^Err_019 exp? ')'^Err_020 stat^Err_021  /  'goto' ID^Err_022 ';'^Err_023  /  'continue' ';'^Err_024  /  'break' ';'^Err_025  /  'return' exp? ';'^Err_026
+stat            <-  ID ':' stat  /  'case' const_exp^Err_002 ':'^Err_003 stat^Err_004  /  'default' ':'^Err_005 stat^Err_006  /  exp? ';'  /  compound_stat  /  'if' '(' exp ')' stat 'else' stat^Err_007  /  'if' '(' exp ')' stat  /  'switch' '('^Err_008 exp^Err_009 ')'^Err_010 stat^Err_011  /  'while' '(' exp ')' stat  /  'do' stat^Err_012 'while'^Err_013 '('^Err_014 exp^Err_015 ')'^Err_016 ';'^Err_017  /  'for' '('^Err_018 exp? ';'^Err_019 exp? ';'^Err_020 exp? ')'^Err_021 stat^Err_022  /  'goto' ID^Err_023 ';'^Err_024  /  'continue' ';'^Err_025  /  'break' ';'^Err_026  /  'return' exp? ';'^Err_027
 compound_stat   <-  '{' decl* stat* '}'
 exp             <-  assignment_exp (',' assignment_exp)*
 assignment_exp  <-  unary_exp assignment_operator assignment_exp  /  conditional_exp
 assignment_operator <-  '=' !'='  /  '*='  /  '/='  /  '%='  /  '+='  /  '-='  /  '<<='  /  '>>='  /  '&='  /  '^='  /  '|='
-conditional_exp <-  logical_or_exp '?' exp^Err_027 ':'^Err_028 conditional_exp^Err_029  /  logical_or_exp
+conditional_exp <-  logical_or_exp '?' exp^Err_028 ':'^Err_029 conditional_exp^Err_030  /  logical_or_exp
 const_exp       <-  conditional_exp
-logical_or_exp  <-  logical_and_exp ('||' logical_and_exp^Err_030)*
-logical_and_exp <-  inclusive_or_exp ('&&' inclusive_or_exp^Err_031)*
-inclusive_or_exp <-  exclusive_or_exp ('|' !'|' exclusive_or_exp^Err_032)*
-exclusive_or_exp <-  and_exp ('^' and_exp^Err_033)*
+logical_or_exp  <-  logical_and_exp ('||' logical_and_exp^Err_031)*
+logical_and_exp <-  inclusive_or_exp ('&&' inclusive_or_exp^Err_032)*
+inclusive_or_exp <-  exclusive_or_exp ('|' !'|' exclusive_or_exp^Err_033)*
+exclusive_or_exp <-  and_exp ('^' and_exp^Err_034)*
 and_exp         <-  equality_exp ('&' !'&' equality_exp)*
-equality_exp    <-  relational_exp (('=='  /  '!=') relational_exp^Err_034)*
-relational_exp  <-  shift_exp (('<='  /  '>='  /  '<'  /  '>') shift_exp^Err_035)*
-shift_exp       <-  additive_exp (('<<'  /  '>>') additive_exp^Err_036)*
+equality_exp    <-  relational_exp (('=='  /  '!=') relational_exp^Err_035)*
+relational_exp  <-  shift_exp (('<='  /  '>='  /  '<'  /  '>') shift_exp^Err_036)*
+shift_exp       <-  additive_exp (('<<'  /  '>>') additive_exp^Err_037)*
 additive_exp    <-  multiplicative_exp (('+'  /  '-') multiplicative_exp)*
 multiplicative_exp <-  cast_exp (('*'  /  '/'  /  '%') cast_exp)*
 cast_exp        <-  '(' type_name ')' cast_exp  /  unary_exp
-unary_exp       <-  '++' unary_exp  /  '--' unary_exp  /  unary_operator cast_exp  /  'sizeof' (type_name  /  unary_exp)^Err_037  /  postfix_exp
-postfix_exp     <-  primary_exp ('[' exp ']'  /  '(' (assignment_exp (',' assignment_exp)*)? ')'  /  '.' ID^Err_038  /  '->' ID^Err_039  /  '++'  /  '--')*
+unary_exp       <-  '++' unary_exp  /  '--' unary_exp  /  unary_operator cast_exp  /  'sizeof' (type_name  /  unary_exp)^Err_038  /  postfix_exp
+postfix_exp     <-  primary_exp ('[' exp ']'  /  '(' (assignment_exp (',' assignment_exp)*)? ')'  /  '.' ID^Err_039  /  '->' ID^Err_040  /  '++'  /  '--')*
 primary_exp     <-  ID  /  STRING  /  constant  /  '(' exp ')'
 constant        <-  INT_CONST  /  CHAR_CONST  /  FLOAT_CONST  /  ENUMERATION_CONST
 unary_operator  <-  '&'  /  '*'  /  '+'  /  '-'  /  '~'  /  '!'
@@ -70,7 +71,7 @@ KEYWORDS        <-  ('auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  
 SPACE           <-  [ 	
 ]  /  COMMENT
 SKIP            <-  ([ 	
-]  /  COMMENT)*	
+]  /  COMMENT)*
 ]] 
 
 
