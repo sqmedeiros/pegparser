@@ -1,5 +1,23 @@
 Java 8:
 
+* As regras mais problemáticas de anotar parecem ser "normalAnnotation" e "elementValuePair".
+  Dado o contexto:
+annotation      <-  '@' (normalAnnotation  /  singleElementAnnotation  /  markerAnnotation)
+normalAnnotation <-  qualIdent '(' elementValuePairList* ')'^Err_020
+elementValuePairList <-  elementValuePair (',' elementValuePair^Err_021)*
+elementValuePair <-  Identifier '='^Err_022 !'=' elementValue^Err_023
+singleElementAnnotation <-  qualIdent '(' elementValue^Err_024 ')'^Err_025
+elementValue    <-  conditionalExpression  /  elementValueArrayInitializer  /  annotation
+
+É errada a anotação ')'^Err_020 em normalAnnotation, pois podemos ter
+uma singleElementAnnotation, ao invés de uma anotação vazia.
+
+Também é errada a anotação '='^Err_022 em elementValuePair, pois ao invés
+de uma normalAnnotation, podemos ter uma singleElementAnnotation que usa
+um elementValue ao invés de elementValuePair.
+
+No teste yes/AllTests.java esse erro é mostrado.
+
 * Gramática anotada manualmente:
 	- 175 labels anotadas
 		Removi BlockStatementsErr na regra switchBlockStatementGroup

@@ -188,7 +188,7 @@ print("Deep Ban")
 g = m.match(s)
 local gdeep = recovery.putlabels(g, 'deep', true)
 print(pretty.printg(gdeep, true), '\n')
---print(pretty.printg(gdeep, true, 'ban'), '\n')
+print(pretty.printg(gdeep, true, 'ban'), '\n')
 print("End Deep\n")
 
 
@@ -204,7 +204,7 @@ print("Unique Path (UPath)")
 g = m.match(s)
 local gupath = recovery.putlabels(g, 'upath', true)
 print(pretty.printg(gupath, true), '\n')
---print(pretty.printg(gupath, true, 'unique'), '\n')
+print(pretty.printg(gupath, true, 'unique'), '\n')
 print("End UPath\n")
 
 
@@ -220,6 +220,7 @@ print("UPath Deep")
 g = m.match(s)
 local gupath = recovery.putlabels(g, 'upathdeep', true)
 print(pretty.printg(gupath, true), '\n')
+print(pretty.printg(gupath, true, 'ban'), '\n')
 print("End UPathDeep\n")
 
 g = m.match(s)

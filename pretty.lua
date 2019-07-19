@@ -115,7 +115,7 @@ local function prefix (p1, p2)
 	end
 	pre = string.sub(s1, 1, i - 1)
 	if i > 1 then
-		print("s1 = ", s1, "s2 = ", s2)
+		print("s1 = ", s1, "s2 = ", s2, p1.p1, p1.p1.tag)
 		print("Prefixo foi ", pre)
 	end
 	return pre

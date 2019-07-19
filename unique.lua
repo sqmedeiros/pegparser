@@ -93,10 +93,23 @@ local function uniqueTk (g)
 		end
 	end
 
+	print("Uunique")
+	local cont = {}
 	local unique = {}
 	for k, v in pairs(t) do
+		print(k, " = ", v)
 		unique[k] = (v == 1) or nil
+		if not cont[v] then
+			cont[v] = 1
+		else
+			cont[v] = cont[v] + 1
+		end
 	end
+	
+	for i = 1, 10 do
+		print("Token ", i, " = ", cont[i])
+	end
+
 	unique['SKIP'] = nil 
 	printUnique(unique)
 	return unique
@@ -187,6 +200,13 @@ local function uniquePath (g, p, uPath, flw)
 		print("unique var ", p.p1)
 		setUnique(p, true)
 		g.uniqueVar[p.p1] = uniqueUsage(g, p)
+	elseif p.tag == 'var' then
+		--print("p.p1", p.p1, #g.varUsage[p.p1])
+		if matchUnique(g, g.prules[p.p1]) and #g.varUsage[p.p1] == 1 then
+		--if matchUnique(g, g.prules[p.p1]) then
+			print("unique var2 ", p.p1)
+			setUnique(p, true)
+		end
 	elseif p.tag == 'con' then
 		uniquePath(g, p.p1, uPath, calck(g, p.p2, flw))
 		uPath = uPath or p.p1.unique
@@ -238,10 +258,12 @@ local function calcUniquePath (g)
 	g.uniqueVar = {}
 	g.uniqueVar[g.plist[1]] = true
 	varUsage(g)
+	first.calcTail(g)
+	--calcPrefix(g)
 	changeUnique = true
 	while changeUnique do
 		changeUnique = false
-		for i, v in ipairs(g.plist) do
+		for i, v in ipairs(g.plist) do		
 			if not parser.isLexRule(v) then
 				uniquePath(g, g.prules[v], g.uniqueVar[v], flw[v])
 			end
@@ -259,6 +281,16 @@ local function calcUniquePath (g)
 		end
 	end
 	io.write('\n')
+
+
+	io.write("Unique vars: ")
+	for i, v in ipairs(g.plist) do
+		if g.uniqueVar[v] then
+			io.write(v .. ', ')
+		end
+	end
+	io.write('\n')
+
 end
 
 

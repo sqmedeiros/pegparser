@@ -2,7 +2,9 @@ local parser = require'parser'
 local pretty = require'pretty'
 local FIRST
 local FOLLOW
+local TAIL
 local empty = '__empty'
+local nothing = '__nothing'
 local any = '__any'
 local calcf
 local newString = parser.newString
@@ -46,7 +48,7 @@ local function issubset (s1, s2)
 end
 
 
-local function empty (s)
+local function isempty (s)
 	return next(s) == nil
 end
 
@@ -76,6 +78,17 @@ local function union (s1, s2, notEmpty)
   if notEmpty then
 		s3[empty] = nil
 	end	
+	return s3
+end
+
+-- returns s1 - s2
+local function setdiff (s1, s2)
+	local s3 = {}
+	for k, _ in pairs(s1) do
+		if not s2[k] then
+			s3[k] = true
+		end
+	end
 	return s3
 end
 
@@ -114,6 +127,11 @@ local function set2choice (s)
 end
 
 
+local function printtail (g)
+	for i, v in ipairs(g.plist) do
+		print(v .. ': ', table.concat(sortset(TAIL[v]), ", "))
+	end
+end
 
 local function printfollow (g)
 	for i, v in ipairs(g.plist) do
@@ -252,6 +270,86 @@ function calck (g, p, k)
 	end
 end
 
+function updatePref (g, p, tk)
+	local entry = g.varPref[p.p1]
+	if not entry[p] then
+		entry[p] = {}
+		updatePrefix = true
+	end
+	entry[p] = union(entry[p], tk)
+	updatePrefix = updatePrefix or not issubset(tk, entry[p])
+end
+
+
+local function printTkPath (t)
+	print(table.concat(sortset(t), ", "))
+end
+
+
+local function calcTkPath_aux (g, p, mark, notll1, seq)
+	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
+		return calcfirst(g, p)
+	elseif p.tag == 'var' then
+		if mark[p.p1] then
+			return {}
+		else
+			mark[p.p1] = true
+			return calcTkPath_aux(g, g.prules[p.p1], mark, notll1, seq)
+		end
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		return calcTkPath_aux(g, p.p1, mark, notll1, seq)
+	elseif p.tag == 'ord' then
+		local tk1, tk2 = {}, {}
+		local s1 = inter(notll1, calcfirst(g, p.p1))
+		if not isempty(s1) or seq then
+			tk1 = calcTkPath_aux(g, p.p1, mark, notll1, seq)
+		end
+		local s2 = inter(notll1, calcfirst(g, p.p2))
+		if not isempty(s2) or seq then
+			tk2 = calcTkPath_aux(g, p.p2, mark, notll1, seq)
+		end
+		return union(tk1, tk2)
+	elseif p.tag == 'con' then
+		return union(calcTkPath_aux(g, p.p1, mark, notll1, seq), calcTkPath_aux(g, p.p2, mark, notll1, seq or not parser.matchEmpty(p.p1)))
+	elseif p.tag == 'not' or p.tag == 'and' then
+		return {}
+	else
+		error("Unknown tag: " .. p.tag)
+	end
+end
+
+local function calcTkPath (g, p, notll1, all)
+	return calcTkPath_aux(g, p, {}, notll1, all)
+end
+
+
+local function matchTkPath_aux (g, p, t, mark)
+	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
+		return t[p.p1]
+	elseif p.tag == 'var' then
+		if mark[p.p1] then
+			return false
+		else
+			mark[p.p1] = true
+			return matchTkPath_aux(g, g.prules[p.p1], t, mark)
+		end
+	elseif p.tag == 'plus' then
+		return matchTkPath_aux(g, p.p1, t, mark)
+	elseif p.tag == 'ord' then
+		return matchTkPath_aux(g, p.p1, t, mark) and matchTkPath_aux(g, p.p2, t, mark)
+	elseif p.tag == 'con' then
+		return matchTkPath_aux(g, p.p1, t, mark) or matchTkPath_aux(g, p.p2, t, mark)
+	else
+		return false
+	end
+end
+
+local function matchTkPath (g, p, t)
+	return matchTkPath_aux(g, p, t, {})
+end
+
+
+
 
 local function initFst (g)
   FIRST = {}
@@ -277,6 +375,128 @@ local function calcFst (g)
 	end
 
 	return FIRST
+end
+
+
+local function initPrefix (g)
+	g.varPref = {}
+	for i, v in ipairs(g.plist) do
+		g.varPref[v] = {}
+	end
+end
+
+
+local function calcPrefix (g)
+  updatePrefix = true
+  initPrefix(g)
+
+	while updatePrefix do
+    updatePrefix = false
+    for i, v in ipairs(g.plist) do
+			if i == 1 then
+				prefix(g, g.prules[v], { [nothing] = true })
+			else
+				prefix(g, g.prules[v], {})
+			end
+    end
+	end
+
+	for i1, v1 in ipairs(g.plist) do
+		for i2, v2 in ipairs(g.varPref[v1]) do
+			print(v1 .. ': ', table.concat(sortset(v2)), ", ")
+		end
+	end
+end
+
+
+local function initTail(g)
+  TAIL = {}
+  for k, v in pairs(g.prules) do
+    TAIL[k] = {  }
+  end
+end
+
+
+function calcTailAux (g, p, tk)
+	if p.tag == 'empty' then
+		return tk
+	elseif p.tag == 'char' then
+    return { [p.p1] = true }
+	elseif p.tag == 'any' then
+		return { [any] = true }
+	elseif p.tag == 'set' then
+		return unfoldset(p.p1)
+	elseif p.tag == 'ord' then
+		local s = union(calcTailAux(g, p.p1, tk), calcTailAux(g, p.p2, tk), false)
+		if s[empty] then
+			s[empty] = nil
+			s = union(s, tk)
+		end
+		return s
+	elseif p.tag == 'con' then
+    local s1 = calcTailAux(g, p.p1, tk)
+		local s2 = calcTailAux(g, p.p2, s1)
+		--print("Con", pretty.printp(p))
+		--print("Test: ", table.concat(sortset(s2), ", "))
+		return s2
+	elseif p.tag == 'var' then
+		if parser.isLexRule(p.p1) then
+			return { ['__' .. p.p1] = true }
+		else
+			local s = TAIL[p.p1]
+			if s[empty] then
+				return union(s, tk, false)
+			else
+				return s
+			end
+		end
+	elseif p.tag == 'throw' then
+		return tk 
+	elseif p.tag == 'and' then
+		return tk 
+	elseif p.tag == 'not' then
+		return tk 
+  -- in a well-formed PEG, given p*, we know p does not match the empty string
+	elseif p.tag == 'opt' or p.tag == 'star' then 
+    --if p.tag == 'plus' and p.p1.v == 'recordfield' then
+    --  print ('danado', p.p1.v)
+    --end
+		return union(calcTailAux(g, p.p1, tk), tk, false)
+  elseif p.tag == 'plus' then
+		return calcTailAux(g, p.p1, tk)
+	elseif p.tag == 'def' then
+		return { ['%' .. p.p1] = true }
+	else
+		print(p, p.tag, p.empty, p.any)
+		error("Unknown tag: " .. p.tag)
+	end
+end
+
+
+local function calcTail (g)
+  local update = true
+	initTail(g)
+
+	while update do
+		local tmp = {}
+    for k, v in pairs(TAIL) do
+      tmp[k] = v
+    end
+		
+		for i, v in ipairs(g.plist) do
+			TAIL[v] = union(TAIL[v], calcTailAux(g, g.prules[v], { [empty] = true }), false)
+    end
+    
+		update = false
+    for i, v in pairs(g.plist) do
+      if not isequal(TAIL[v], tmp[v]) then
+			  update = true
+      end
+    end
+	end	
+
+	g.TAIL = TAIL
+	return TAIL
 end
 
 
@@ -343,7 +563,6 @@ local function calcFlw (g)
   return FOLLOW
 end
 
-
 return {
   calcFlw = calcFlw,
   calcFst = calcFst,
@@ -353,13 +572,19 @@ return {
 	disjoint = disjoint,
 	set2choice = set2choice,
 	calck = calck,
-	empty = empty,
+	isempty = isempty,
 	any = any,
 	isequal = isequal,
 	issubset = issubset,
 	sortset = sortset,
 	inter = inter,
 	union = union,
+	setdiff = setdiff,
 	empty = empty,
+	calcTkPath = calcTkPath,
+	printTkPath = printTkPath,
+	matchTkPath = matchTkPath,
+	calcPrefix = calcPrefix,
+	calcTail = calcTail
 }
 
