@@ -43,43 +43,43 @@ fixedPart       <-  varDec (Semi varDec)*
 variantPart     <-  CASE Id (Colon Id)? OF variant (Semi variant)*
 variant         <-  consts Colon LPar fieldList RPar
 consts          <-  const (Comma const)*
-varDecs         <-  (VAR varDec Semi (varDec Semi)*)?
+varDecs         <-  (VAR varDec^Err_036 Semi^Err_037 (varDec Semi^Err_038)*)?
 varDec          <-  ids Colon type
-procAndFuncDecs <-  ((procDec  /  funcDec) Semi)*
-procDec         <-  procHeading Semi (decs block  /  Id)
-procHeading     <-  PROCEDURE Id^Err_036 formalParams?
-funcDec         <-  funcHeading Semi (decs block  /  Id)
-funcHeading     <-  FUNCTION Id^Err_037 formalParams? Colon^Err_038 type^Err_039
-formalParams    <-  LPar formalParamsSection^Err_040 (Semi formalParamsSection^Err_041)* RPar^Err_042
-formalParamsSection <-  (VAR? ids Colon^Err_043 Id^Err_044  /  procHeading  /  funcHeading)^Err_045
-block           <-  BEGIN stmts END^Err_046
+procAndFuncDecs <-  ((procDec  /  funcDec) Semi^Err_039)*
+procDec         <-  procHeading Semi^Err_040 (decs block  /  Id)^Err_041
+procHeading     <-  PROCEDURE Id^Err_042 formalParams?
+funcDec         <-  funcHeading Semi^Err_043 (decs block  /  Id)^Err_044
+funcHeading     <-  FUNCTION Id^Err_045 formalParams? Colon^Err_046 type^Err_047
+formalParams    <-  LPar formalParamsSection^Err_048 (Semi formalParamsSection^Err_049)* RPar^Err_050
+formalParamsSection <-  (VAR? ids Colon^Err_051 Id^Err_052  /  procHeading  /  funcHeading)^Err_053
+block           <-  BEGIN stmts END^Err_054
 stmts           <-  stmt (Semi stmt)*
 stmt            <-  (label Colon)? (simpleStmt  /  structuredStmt)?
 simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
 assignStmt      <-  var Assign expr
-var             <-  Id (LBrack expr^Err_047 (Comma expr^Err_048)* RBrack^Err_049  /  Dot Id^Err_050  /  Pointer)*
+var             <-  Id (LBrack expr^Err_055 (Comma expr^Err_056)* RBrack^Err_057  /  Dot Id^Err_058  /  Pointer)*
 procStmt        <-  Id params?
 params          <-  LPar (param (Comma param)*)? RPar
 param           <-  expr (Colon expr)? (Colon expr)?
-gotoStmt        <-  GOTO label^Err_051
+gotoStmt        <-  GOTO label^Err_059
 structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
 conditionalStmt <-  ifStmt  /  caseStmt
-ifStmt          <-  IF expr^Err_052 THEN^Err_053 stmt (ELSE stmt)?
+ifStmt          <-  IF expr^Err_060 THEN^Err_061 stmt (ELSE stmt)?
 caseStmt        <-  CASE expr OF caseListElement (Semi caseListElement)* Semi? END
 caseListElement <-  consts Colon stmt
 repetitiveStmt  <-  repeatStmt  /  whileStmt  /  forStmt
-repeatStmt      <-  REPEAT stmts UNTIL^Err_054 expr^Err_055
-whileStmt       <-  WHILE expr^Err_056 DO^Err_057 stmt
-forStmt         <-  FOR Id^Err_058 Assign^Err_059 expr^Err_060 (TO  /  DOWNTO)^Err_061 expr^Err_062 DO^Err_063 stmt
-withStmt        <-  WITH var^Err_064 (Comma var^Err_065)* DO^Err_066 stmt
-expr            <-  simpleExpr (RelOp simpleExpr^Err_067)?
-simpleExpr      <-  Sign? term (AddOp term^Err_068)*
-term            <-  factor (MultOp factor^Err_069)*
+repeatStmt      <-  REPEAT stmts UNTIL^Err_062 expr^Err_063
+whileStmt       <-  WHILE expr^Err_064 DO^Err_065 stmt
+forStmt         <-  FOR Id^Err_066 Assign^Err_067 expr^Err_068 (TO  /  DOWNTO)^Err_069 expr^Err_070 DO^Err_071 stmt
+withStmt        <-  WITH var^Err_072 (Comma var^Err_073)* DO^Err_074 stmt
+expr            <-  simpleExpr (RelOp simpleExpr^Err_075)?
+simpleExpr      <-  Sign? term (AddOp term^Err_076)*
+term            <-  factor (MultOp factor^Err_077)*
 factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar expr RPar)
 unsignedConst   <-  UNumber  /  String  /  Id  /  NIL
 funcCall        <-  Id params
-setConstructor  <-  LBrack (memberDesignator (Comma memberDesignator^Err_070)*)? RBrack^Err_071
-memberDesignator <-  expr (DotDot expr^Err_072)?
+setConstructor  <-  LBrack (memberDesignator (Comma memberDesignator^Err_078)*)? RBrack^Err_079
+memberDesignator <-  expr (DotDot expr^Err_080)?
 AddOp           <-  '+'  /  '-'  /  OR
 Assign          <-  ':='
 Dot             <-  '.'

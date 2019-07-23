@@ -120,33 +120,70 @@ local function isPrefixUnique (g, p)
 	local s = p.p1
 	if p.tag == 'char' then
 		s = '__' .. s
+	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
+		s = p.p1
 	else
-		return
+		return false
 	end
 
 	local pref = g.symPref[s][p]
-	--print(s .. ' := ', table.concat(first.sortset(pref), ", "))
+	local flw = g.symFlw[s][p]
+	print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
+	local res = true
 	for k, v in pairs(g.symPref[s]) do
 		if k ~= p then
 			if not disjoint(pref, v) then
-				return false
+				res = 'next'
+				if not disjoint(flw, g.symFlw[s][k]) then
+					return false
+				end
 			end
 		end
 	end
 
 	--return false
-	return true
+	return res
 end
 
 
+local function setNextUnique (p)
+	if p.tag == 'char' or p.tag == 'var' then
+		p.unique = true
+	elseif p.tag == 'ord' then
+		p.unique = true
+	elseif p.tag == 'con' then
+		setNextUnique(p.p1)
+	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
+		p.unique = true
+		setNextUnique(p.p1)
+	end
+end
+
+local function lastSymCon (p)
+	if p.tag == 'con' then
+		return p.p2
+	else
+		return p
+	end
+end
+
 local function uniquePrefixAux (g, p)
 	if p.tag == 'char' or p.tag == 'var' then
-		assert(not p.unique or (p.unique == true and isPrefixUnique(g, p) == true))
+		--assert(not p.unique or (p.unique == true and isPrefixUnique(g, p) == true))
 		--if p.p1 == '=' then
 		--	print("here __= ", isPrefixUnique(g, p))
 		--end
-		p.unique = p.unique or isPrefixUnique(g, p)
-	elseif p.tag == 'con' or p.tag == 'ord' then
+		p.unique = p.unique or (isPrefixUnique(g, p) == true)
+	elseif p.tag == 'con' then
+		uniquePrefixAux(g, p.p1)
+		local res = isPrefixUnique(g, lastSymCon(p.p1))
+		if res == 'next' then
+			local x = lastSymCon(p.p1)
+			print("Nextt", x.tag, x.p1)
+			setNextUnique(p.p2)
+		end
+		uniquePrefixAux(g, p.p2)
+	elseif p.tag == 'ord' then
 		uniquePrefixAux(g, p.p1)
 		uniquePrefixAux(g, p.p2)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
@@ -308,6 +345,7 @@ local function calcUniquePath (g)
 	varUsage(g)
 	first.calcTail(g)
 	first.calcPrefix(g)
+	first.calcLocalFollow(g)
 	uniquePrefix(g)
 	changeUnique = true
 	while changeUnique do

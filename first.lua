@@ -592,6 +592,7 @@ local function calcPrefix (g)
 end
 
 
+
 local function initFlw(g)
   FOLLOW = {}
   for k, v in pairs(g.prules) do
@@ -655,6 +656,67 @@ local function calcFlw (g)
   return FOLLOW
 end
 
+
+local function initLocalFollow (g)
+	g.symFlw = {}
+end
+
+
+function updateLocalFollow (g, p, tk)
+	local k = p.p1
+	if p.tag == 'char' then
+		k = '__' .. p.p1
+	end
+	--print("updatePref", k)
+	if not g.symFlw[k] then
+		g.symFlw[k] = {}
+	end
+	g.symFlw[k][p] = tk
+end
+
+
+local function calcLocalFollowAux (g, p, flw)
+	if p.tag == 'var' and not parser.isLexRule(p.p1) then
+		return g.FOLLOW[p.p1]
+	elseif p.tag == 'var' or p.tag == 'char' then
+		updateLocalFollow(g, p, flw)
+	elseif p.tag == 'ord' then
+		calcLocalFollowAux(g, p.p1, flw)
+		calcLocalFollowAux(g, p.p2, flw)
+	elseif p.tag == 'con' then
+		calcLocalFollowAux(g, p.p1, calck(g, p.p2, flw))
+		calcLocalFollowAux(g, p.p2, flw)
+	elseif p.tag == 'star' or p.tag == 'plus' then
+    calcLocalFollowAux(g, p.p1, union(calcfirst(g, p.p1), flw, true))
+	elseif p.tag == 'opt' then
+		calcLocalFollowAux(g, p.p1, flw)
+	end
+end
+
+
+local function calcLocalFollow (g)
+	calcFlw(g)
+  initLocalFollow(g)
+
+  for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			calcLocalFollowAux(g, g.prules[v], g.FOLLOW[v])
+		end
+  end
+	--calcPrefixAux(g, g.prules['import'], { [empty] = true })
+
+	print("calcLocalFollow")
+	for k1, v1 in pairs(g.symFlw) do
+		for k2, v2 in pairs(v1) do
+			print(k1 .. ': ', table.concat(sortset(v2), ", "))
+		end
+	end
+end
+
+
+
+
+
 return {
   calcFlw = calcFlw,
   calcFst = calcFst,
@@ -678,6 +740,7 @@ return {
 	matchTkPath = matchTkPath,
 	calcPrefix = calcPrefix,
 	calcGlobalPrefix = calcGlobalPrefix,
-	calcTail = calcTail
+	calcTail = calcTail,
+	calcLocalFollow = calcLocalFollow
 }
 
