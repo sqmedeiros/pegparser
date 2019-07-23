@@ -65,6 +65,7 @@ end
 
 
 local function annotateUPathAux (g, p, seq, afterU, flw)
+	--print("UPathAux", p.tag, p.p1, seq, afterU)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU and seq then
     return label.markerror(p, flw)
 	elseif p.tag == 'con' then
@@ -73,7 +74,8 @@ local function annotateUPathAux (g, p, seq, afterU, flw)
 		local p2 = annotateUPathAux(g, p.p2, seq, afterU or matchUPath(p.p1), flw)
 		return newNode(p, p1, p2)
 	elseif p.tag == 'ord' then
-		local p1 = annotateUPathAux(g, p.p1, false, afterU, flw)
+		local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
+		local p1 = annotateUPathAux(g, p.p1, false, afterU and flagDisjont, flw)
 		local p2 = annotateUPathAux(g, p.p2, false, afterU, flw)
 		if afterU and not matchEmpty(p) and seq then
 			return label.markerror(newNode(p, p1, p2), flw)
@@ -116,6 +118,58 @@ local function annotateUPath (g)
 end
 
 
+local function addlabAll (g, p, seq, flw)
+	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and not p.ban then
+    return label.markerror(p, flw)
+	elseif p.tag == 'con' then
+		local newseq = seq or not matchEmpty(p.p1)
+		--return newSeq(addlab(g, p.p1, seq, calck(g, p.p2, flw)), addlab(g, p.p2, newseq, flw))
+		return newNode(p, addlabAll(g, p.p1, seq, calck(g, p.p2, flw)), addlabAll(g, p.p2, newseq, flw))
+	elseif p.tag == 'ord' then
+    local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
+		local p1 = p.p1
+    --if flagDisjoint then
+      p1 = addlabAll(g, p.p1, false, flw)
+    --end
+		local p2 = addlabAll(g, p.p2, false, flw)
+		if seq and not matchEmpty(p) and not p.ban then
+			return label.markerror(newNode(p, p1, p2), flw)
+		else
+      return newNode(p, p1, p2)
+		end
+	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then  --and disjoint(calcfirst(g, p.p1), flw) then
+		local newp = addlabAll(g, p.p1, false, flw)
+    if p.tag == 'star' or p.tag == 'opt' then
+			return newNode(p, newp)
+    else --plus
+      if seq and not p.ban then
+				return label.markerror(newNode(p, newp), flw)
+			else
+				return newNode(p, newp)
+			end
+		end
+	else
+		return p
+	end
+end
+
+
+local function annotateAll (g)
+	local fst = first.calcFst(g)
+	local flw = first.calcFlw(g)
+	local newg = parser.initgrammar(g)
+
+	for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			newg.prules[v] = addlabAll(g, g.prules[v], false, flw[v])
+		end
+	end
+
+	return newg
+end
+
+
+
 local function putlabels (g, f, rec)
 	if f == 'unique' then
 		return labelgrammar(annotateUnique(g), rec)
@@ -133,6 +187,8 @@ local function putlabels (g, f, rec)
 		ban.ban(newg, 'upathdeep')
 		newg = ban.annotateBan(newg)
 		return labelgrammar(newg, rec)
+	elseif f == 'all' then  -- regular
+		return labelgrammar(annotateAll(g), rec)
 	else  -- regular
 		return labelgrammar(ban.annotateBan(g), rec)
 	end	

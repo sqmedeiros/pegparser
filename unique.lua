@@ -116,6 +116,54 @@ local function uniqueTk (g)
 end
 
 
+local function isPrefixUnique (g, p)
+	local s = p.p1
+	if p.tag == 'char' then
+		s = '__' .. s
+	else
+		return
+	end
+
+	local pref = g.symPref[s][p]
+	--print(s .. ' := ', table.concat(first.sortset(pref), ", "))
+	for k, v in pairs(g.symPref[s]) do
+		if k ~= p then
+			if not disjoint(pref, v) then
+				return false
+			end
+		end
+	end
+
+	--return false
+	return true
+end
+
+
+local function uniquePrefixAux (g, p)
+	if p.tag == 'char' or p.tag == 'var' then
+		assert(not p.unique or (p.unique == true and isPrefixUnique(g, p) == true))
+		--if p.p1 == '=' then
+		--	print("here __= ", isPrefixUnique(g, p))
+		--end
+		p.unique = p.unique or isPrefixUnique(g, p)
+	elseif p.tag == 'con' or p.tag == 'ord' then
+		uniquePrefixAux(g, p.p1)
+		uniquePrefixAux(g, p.p2)
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		uniquePrefixAux(g, p.p1)
+	end
+end
+
+
+local function uniquePrefix (g)
+	for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			uniquePrefixAux(g, g.prules[v])
+		end
+	end
+end
+
+
 local function addUsage(g, p)
 	if not g.varUsage[p.p1] then
 		g.varUsage[p.p1] = {}
@@ -259,7 +307,8 @@ local function calcUniquePath (g)
 	g.uniqueVar[g.plist[1]] = true
 	varUsage(g)
 	first.calcTail(g)
-	--calcPrefix(g)
+	first.calcPrefix(g)
+	uniquePrefix(g)
 	changeUnique = true
 	while changeUnique do
 		changeUnique = false
@@ -298,5 +347,5 @@ return {
 	uniqueTk = uniqueTk,
 	calcUniquePath = calcUniquePath,
 	matchUnique = matchUnique,
-	matchUPath = matchUPath
+	matchUPath = matchUPath,
 }

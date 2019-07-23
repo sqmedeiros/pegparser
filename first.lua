@@ -3,6 +3,7 @@ local pretty = require'pretty'
 local FIRST
 local FOLLOW
 local TAIL
+local PREFIX
 local empty = '__empty'
 local nothing = '__nothing'
 local any = '__any'
@@ -270,16 +271,6 @@ function calck (g, p, k)
 	end
 end
 
-function updatePref (g, p, tk)
-	local entry = g.varPref[p.p1]
-	if not entry[p] then
-		entry[p] = {}
-		updatePrefix = true
-	end
-	entry[p] = union(entry[p], tk)
-	updatePrefix = updatePrefix or not issubset(tk, entry[p])
-end
-
 
 local function printTkPath (t)
 	print(table.concat(sortset(t), ", "))
@@ -378,37 +369,6 @@ local function calcFst (g)
 end
 
 
-local function initPrefix (g)
-	g.varPref = {}
-	for i, v in ipairs(g.plist) do
-		g.varPref[v] = {}
-	end
-end
-
-
-local function calcPrefix (g)
-  updatePrefix = true
-  initPrefix(g)
-
-	while updatePrefix do
-    updatePrefix = false
-    for i, v in ipairs(g.plist) do
-			if i == 1 then
-				prefix(g, g.prules[v], { [nothing] = true })
-			else
-				prefix(g, g.prules[v], {})
-			end
-    end
-	end
-
-	for i1, v1 in ipairs(g.plist) do
-		for i2, v2 in ipairs(g.varPref[v1]) do
-			print(v1 .. ': ', table.concat(sortset(v2)), ", ")
-		end
-	end
-end
-
-
 local function initTail(g)
   TAIL = {}
   for k, v in pairs(g.prules) do
@@ -417,7 +377,7 @@ local function initTail(g)
 end
 
 
-function calcTailAux (g, p, tk)
+function calcTailAux (g, p, tk, comp)
 	if p.tag == 'empty' then
 		return tk
 	elseif p.tag == 'char' then
@@ -443,11 +403,15 @@ function calcTailAux (g, p, tk)
 		if parser.isLexRule(p.p1) then
 			return { ['__' .. p.p1] = true }
 		else
-			local s = TAIL[p.p1]
-			if s[empty] then
-				return union(s, tk, false)
+			if comp then
+				return TAIL[p.p1]
 			else
-				return s
+				local s = TAIL[p.p1]
+				if s[empty] then
+					return union(s, tk, false)
+				else
+					return s
+				end
 			end
 		end
 	elseif p.tag == 'throw' then
@@ -495,8 +459,136 @@ local function calcTail (g)
     end
 	end	
 
+	print("calcTail")
+	for i1, v1 in ipairs(g.plist) do
+		print(v1 .. ': ', table.concat(sortset(TAIL[v1]), ", "))
+	end
+
+
 	g.TAIL = TAIL
 	return TAIL
+end
+
+
+local function initGlobalPrefix (g)
+	PREFIX = {}
+	for k, v in pairs(g.prules) do
+    PREFIX[k] = {  }
+  end
+end
+
+
+local function calcGlobalPrefixAux (g, p, pref)
+	if p.tag == 'var' then
+		PREFIX[p.p1] = union(PREFIX[p.p1], pref)
+		return PREFIX[p.p1]
+	elseif p.tag == 'ord' then
+		calcGlobalPrefixAux(g, p.p1, pref)
+		calcGlobalPrefixAux(g, p.p2, pref)
+	elseif p.tag == 'con' then
+		calcGlobalPrefixAux(g, p.p1, pref)
+		local tailp2 = calcTailAux(g, p.p1, pref, true)
+		calcGlobalPrefixAux(g, p.p2, tailp2)
+	elseif p.tag == 'star' or p.tag == 'plus' then
+		local tailp = calcTailAux(g, p, pref, true)
+		calcGlobalPrefixAux(g, p.p1, tailp)
+	elseif p.tag == 'opt' then
+		calcGlobalPrefixAux(g, p.p1, pref)
+	end
+end
+
+
+local function calcGlobalPrefix (g)
+  local update = true
+  initGlobalPrefix(g)
+
+  while update do
+    local tmp = {}
+    for k, v in pairs(PREFIX) do
+      tmp[k] = v
+    end
+
+    for k, v in pairs(g.prules) do
+      calcGlobalPrefixAux(g, v, PREFIX[k])
+    end
+
+    update = false
+    for k, v in pairs(g.prules) do
+      if not isequal(PREFIX[k], tmp[k]) then
+			  update = true
+      end
+    end
+  end
+
+	print("Global Prefix")
+	for i, v in ipairs(g.plist) do
+		print(v .. ': ', table.concat(sortset(PREFIX[v]), ", "))
+	end
+
+
+	g.PREFIX = PREFIX
+  return PREFIX
+end
+
+
+
+local function initPrefix (g)
+	g.symPref = {}
+	g.symPref[g.init] = {}
+end
+
+
+function updatePref (g, p, tk)
+	local k = p.p1
+	if p.tag == 'char' then
+		k = '__' .. p.p1
+	end
+	--print("updatePref", k)
+	if not g.symPref[k] then
+		g.symPref[k] = {}
+	end
+	g.symPref[k][p] = tk
+end
+
+
+local function calcPrefixAux (g, p, pref)
+	--print(tostring(p.p1) .. ':: ', table.concat(sortset(pref), ", "))
+	if p.tag == 'var' or p.tag == 'char' then
+		updatePref(g, p, pref)
+	elseif p.tag == 'ord' then
+		calcPrefixAux(g, p.p1, pref)
+		calcPrefixAux(g, p.p2, pref)
+	elseif p.tag == 'con' then
+		calcPrefixAux(g, p.p1, pref)
+		local tailp2 = calcTailAux(g, p.p1, pref, true)
+		calcPrefixAux(g, p.p2, tailp2)
+	elseif p.tag == 'star' or p.tag == 'plus' then
+		local tailp = calcTailAux(g, p, pref, true)
+		calcPrefixAux(g, p.p1, tailp)
+	elseif p.tag == 'opt' then
+		calcPrefixAux(g, p.p1, pref)
+	end
+end
+
+
+local function calcPrefix (g)
+	calcGlobalPrefix(g)
+  initPrefix(g)
+
+  for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			--calcPrefixAux(g, g.prules[v], { [empty] = true })
+			calcPrefixAux(g, g.prules[v], g.PREFIX[v])
+		end
+  end
+	--calcPrefixAux(g, g.prules['import'], { [empty] = true })
+
+	print("calcPrefix")
+	for k1, v1 in pairs(g.symPref) do
+		for k2, v2 in pairs(v1) do
+			print(k1 .. ': ', table.concat(sortset(v2), ", "))
+		end
+	end
 end
 
 
@@ -585,6 +677,7 @@ return {
 	printTkPath = printTkPath,
 	matchTkPath = matchTkPath,
 	calcPrefix = calcPrefix,
+	calcGlobalPrefix = calcGlobalPrefix,
 	calcTail = calcTail
 }
 

@@ -5,6 +5,7 @@ local util = require'util'
 -- Added 40 labels
 -- Does not need to remove labels manually
 -- Disable rule typedef_name, because its correct matching depends on semantic actions
+-- UPathPref = 40, UPathPref + Deep = 40, UPath + Deep = 40
 
 local g = [[
 translation_unit <-  SKIP external_decl+^Err_001 !.
