@@ -116,27 +116,95 @@ local function uniqueTk (g)
 end
 
 
+local function belongRHSFirst (g, p, rhs)
+	if rhs.tag == 'char' then
+		return p == rhs
+	elseif rhs.tag == 'var' and parser.isLexRule(p.p1) then 
+		return p == rhs
+	elseif rhs.tag == 'var' and p.tag == 'var' then
+		return not disjoint(calcfirst(g, p), calcfirst(g, rhs))
+	elseif rhs.tag == 'con' then
+		if belongRHSFirst(g, p, rhs.p1) then
+			return true
+		end
+		return parser.matchEmpty(rhs.p1) and belongRHSFirst(g, p, rhs.p2) 
+	elseif rhs == 'ord' then
+		return belongRHSFirst(g, p, rhs.p1) or belongRHSFirst(g, p, rhs.p2)
+	elseif rhs.tag == 'star' or rhs.tag == 'plus' or rhs.tag == 'opt' then
+		return belongRHSFirst(g, p, rhs.p1)
+	else
+		return false
+	end
+end
+
+
+local function isPrefixUniqueVar (g, p)
+	local s = p.p1
+
+	print("symPref", s, p, p.p1)
+	local pref = g.symPref[s][p]
+	--local flw = g.symFlw[s][p]
+	--print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
+	local res = true
+	for k, v in pairs(g.symPref[s]) do
+		if k ~= p then
+			if not disjoint(pref, v) then
+				--res = 'next'
+				--if not disjoint(flw, g.symFlw[s][k]) then
+					return false
+				--end
+			end
+		end
+	end
+
+	print("analisar ", p.p1)
+	local tk = calcfirst(g, p)
+	local rhs = g.prules[p.p1]
+	for k1, v1 in pairs(tk) do
+		print("k1, v1", k1, v1)
+		if k1 ~= '__empty' then
+			if string.sub(k1, 1, 2) ~= '__' then k1 = '__' .. k1 else k1 = string.sub(k1, 3) end
+			for k2, v2 in pairs(g.symPref[k1]) do
+				if not belongRHSFirst(g, k2, rhs) then
+					if not disjoint(pref, v2) then
+						return false
+					end
+				end
+			end
+		end
+	end
+	print("vai ser true", p.p1)
+	
+	--return false
+	return res
+end
+
+
 local function isPrefixUnique (g, p)
 	local s = p.p1
 	if p.tag == 'char' then
 		s = '__' .. s
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
 		s = p.p1
+	--elseif p.tag == 'var' then
+	--	return isPrefixUniqueVar(g, p.p1)	
+	--	s = p.p1
 	else
 		return false
 	end
 
+	print("symPref", s, p, p.p1)
 	local pref = g.symPref[s][p]
-	local flw = g.symFlw[s][p]
-	print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
+	--local flw = g.symFlw[s][p]
+	--print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
 	local res = true
 	for k, v in pairs(g.symPref[s]) do
 		if k ~= p then
 			if not disjoint(pref, v) then
-				res = 'next'
-				if not disjoint(flw, g.symFlw[s][k]) then
+				--res = 'next'
+				--if not disjoint(flw, g.symFlw[s][k]) then
 					return false
-				end
+				--end
 			end
 		end
 	end

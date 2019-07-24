@@ -86,7 +86,7 @@ local function upathdeep_ban(g, p, ateTk, notll1, flw, afterU, diffTk)
 		end
 		if not afterU then
 			local tmp = afterU
-			afterU = afterU or first.matchTkPath(g, p.p1, diffTk)
+			afterU = afterU --or first.matchTkPath(g, p.p1, diffTk)
 			if not tmp and afterU then
 				print("Changed afterU")
 			end
