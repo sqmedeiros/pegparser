@@ -535,10 +535,11 @@ end
 local function initPrefix (g)
 	g.symPref = {}
 	g.symPref[g.init] = {}
+	g.symRule = {}
 end
 
 
-function updatePref (g, p, tk)
+function updatePref (g, p, tk, v)
 	local k = p.p1
 	if p.tag == 'char' then
 		k = '__' .. p.p1
@@ -547,26 +548,27 @@ function updatePref (g, p, tk)
 	if not g.symPref[k] then
 		g.symPref[k] = {}
 	end
+	g.symRule[p] = v
 	g.symPref[k][p] = tk
 end
 
 
-local function calcPrefixAux (g, p, pref)
+local function calcPrefixAux (g, p, pref, v)
 	--print(tostring(p.p1) .. ':: ', table.concat(sortset(pref), ", "))
 	if p.tag == 'var' or p.tag == 'char' then
-		updatePref(g, p, pref)
+		updatePref(g, p, pref, v)
 	elseif p.tag == 'ord' then
-		calcPrefixAux(g, p.p1, pref)
-		calcPrefixAux(g, p.p2, pref)
+		calcPrefixAux(g, p.p1, pref, v)
+		calcPrefixAux(g, p.p2, pref, v)
 	elseif p.tag == 'con' then
-		calcPrefixAux(g, p.p1, pref)
+		calcPrefixAux(g, p.p1, pref, v)
 		local tailp2 = calcTailAux(g, p.p1, pref, true)
-		calcPrefixAux(g, p.p2, tailp2)
+		calcPrefixAux(g, p.p2, tailp2, v)
 	elseif p.tag == 'star' or p.tag == 'plus' then
 		local tailp = calcTailAux(g, p, pref, true)
-		calcPrefixAux(g, p.p1, tailp)
+		calcPrefixAux(g, p.p1, tailp, v)
 	elseif p.tag == 'opt' then
-		calcPrefixAux(g, p.p1, pref)
+		calcPrefixAux(g, p.p1, pref, v)
 	end
 end
 
@@ -578,7 +580,7 @@ local function calcPrefix (g)
   for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
 			--calcPrefixAux(g, g.prules[v], { [empty] = true })
-			calcPrefixAux(g, g.prules[v], g.PREFIX[v])
+			calcPrefixAux(g, g.prules[v], g.PREFIX[v], v)
 		end
   end
 	--calcPrefixAux(g, g.prules['import'], { [empty] = true })

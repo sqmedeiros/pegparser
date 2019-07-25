@@ -179,6 +179,57 @@ local function isPrefixUniqueVar (g, p)
 	return res
 end
 
+local function hasSym (p, v)
+	if p.tag == 'char' or p.tag == 'var' then
+		return p == v
+	elseif p.tag == 'con' or p.tag == 'ord' then
+		return hasSym(p.p1, v, opt) or hasSym(p.p2, v, opt)
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		return hasSym(p.p1, v, opt)
+	else
+		return false
+	end
+end
+
+
+local function isLastAlternativeAux (p, e, found)
+	if p.tag == 'char' or p.tag == 'var' then
+		if p.p1 == e.p1 and found and p ~= e then
+			return false
+		else
+			return true
+		end
+	elseif p.tag == 'ord' then
+		if not isLastAlternativeAux(p.p1, e, found) then
+			return false
+		else
+			return isLastAlternativeAux(p.p2, e, found or hasSym(p.p1, e))
+		end
+	elseif p.tag == 'con' then
+		return isLastAlternativeAux(p.p1, e, found) and isLastAlternativeAux(p.p1, e, found)
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		return isLastAlternativeAux(p.p1, e, found)
+	else
+		return true
+	end
+end
+
+
+local function isLastAlternative (g, p, t)
+	--print("lastAlt", p.p1)
+	for k, v in pairs(t) do
+		if k ~= p and g.symRule[p] ~= g.symRule[k] then
+			print(g.symRule[p], g.symRule[k])
+			return false
+		end
+	end
+
+	local res = isLastAlternativeAux(g.prules[g.symRule[p]], p, false)
+	--print("lastAlt", p.p1, res)
+	return res
+end
+
+
 
 local function isPrefixUnique (g, p)
 	local s = p.p1
@@ -189,23 +240,25 @@ local function isPrefixUnique (g, p)
 	--elseif p.tag == 'var' then
 	--	return isPrefixUniqueVar(g, p.p1)	
 	--	s = p.p1
+	elseif p.tag == 'var' then
+		return matchUPath(g.prules[p.p1]) and isLastAlternative(g, p, g.symPref[p.p1])
 	else
 		return false
 	end
 
-	print("symPref", s, p, p.p1)
 	local pref = g.symPref[s][p]
 	--local flw = g.symFlw[s][p]
 	--print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
 	local res = true
 	for k, v in pairs(g.symPref[s]) do
+		print("isUnique", p, k == p)
 		if k ~= p then
-			if not disjoint(pref, v) then
+			if not disjoint(pref, v) and not isLastAlternative(g, p, g.symPref[s]) then
 				--res = 'next'
 				--if not disjoint(flw, g.symFlw[s][k]) then
 					return false
 				--end
-			end
+				end
 		end
 	end
 
@@ -355,7 +408,8 @@ local function uniquePath (g, p, uPath, flw)
 		g.uniqueVar[p.p1] = uniqueUsage(g, p)
 	elseif p.tag == 'var' then
 		--print("p.p1", p.p1, #g.varUsage[p.p1])
-		if matchUnique(g, g.prules[p.p1]) and #g.varUsage[p.p1] == 1 then
+		--if matchUnique(g, g.prules[p.p1]) and #g.varUsage[p.p1] == 1 then
+		if matchUPath(g.prules[p.p1]) and #g.varUsage[p.p1] == 1 then
 		--if matchUnique(g, g.prules[p.p1]) then
 			print("unique var2 ", p.p1)
 			setUnique(p, true)
@@ -414,10 +468,10 @@ local function calcUniquePath (g)
 	first.calcTail(g)
 	first.calcPrefix(g)
 	first.calcLocalFollow(g)
-	uniquePrefix(g)
 	changeUnique = true
 	while changeUnique do
 		changeUnique = false
+		uniquePrefix(g)
 		for i, v in ipairs(g.plist) do		
 			if not parser.isLexRule(v) then
 				uniquePath(g, g.prules[v], g.uniqueVar[v], flw[v])
