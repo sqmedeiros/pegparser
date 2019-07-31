@@ -157,7 +157,7 @@ local function isPrefixUniqueVar (g, p)
 		end
 	end
 
-	print("analisar ", p.p1)
+	--[==[print("analisar ", p.p1)
 	local tk = calcfirst(g, p)
 	local rhs = g.prules[p.p1]
 	for k1, v1 in pairs(tk) do
@@ -173,6 +173,7 @@ local function isPrefixUniqueVar (g, p)
 			end
 		end
 	end
+	]==]
 	print("vai ser true", p.p1)
 	
 	--return false
