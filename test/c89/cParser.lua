@@ -183,18 +183,12 @@ local greg = recovery.putlabels(g, 'regular', true)
 print(pretty.printg(greg, true), '\n')
 print("End Regular\n")
 
-print("Annotating All expressions")
-g = m.match(s)
-local greg = recovery.putlabels(g, 'all', true)
-print(pretty.printg(greg, true), '\n')
-print("End All\n")
-
 
 print("Deep Ban")
 g = m.match(s)
 local gdeep = recovery.putlabels(g, 'deep', true)
 print(pretty.printg(gdeep, true), '\n')
-print(pretty.printg(gdeep, true, 'ban'), '\n')
+--print(pretty.printg(gdeep, true, 'ban'), '\n')
 print("End Deep\n")
 
 

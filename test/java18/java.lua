@@ -503,6 +503,12 @@ print(pretty.printg(greg, true), '\n')
 print("End Regular\n")
 
 
+print("Annotating All expressions")
+g = m.match(s)
+local gall = recovery.putlabels(g, 'all', true)
+print(pretty.printg(gall, true), '\n')
+print("End All\n")
+
 print("Deep Ban")
 g = m.match(s)
 local gdeep = recovery.putlabels(g, 'deep', true)
