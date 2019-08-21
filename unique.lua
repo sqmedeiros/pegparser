@@ -4,6 +4,7 @@ local first = require'first'
 local disjoint = first.disjoint
 local calck = first.calck
 local calcfirst = first.calcfirst
+local union = first.union
 
 local changeUnique = false
 
@@ -427,6 +428,9 @@ local function uniquePath (g, p, uPath, flw)
 		setUnique(p, uPath or (p.p1.unique and p.p2.unique))
 	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
+		if p.tag == 'star' or p.tag == 'plus' then
+			flw = union(calcfirst(g, p.p1), flw)
+		end
 		uniquePath(g, p.p1, flagDisjoint and uPath, flw)
 		if p.tag == 'plus' then
 			setUnique(p, uPath or p.p1.unique)

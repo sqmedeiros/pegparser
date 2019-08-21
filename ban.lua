@@ -260,6 +260,9 @@ local function addlab (g, p, seq, flw)
       return newNode(p, p1, p2)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') and disjoint(calcfirst(g, p.p1), flw) then
+		if p.tag == 'star' or p.tag == 'plus' then
+			flw = union(calcfirst(g, p.p1), flw)
+		end
 		local newp = addlab(g, p.p1, false, flw)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)

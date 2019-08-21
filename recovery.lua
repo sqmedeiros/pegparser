@@ -14,6 +14,8 @@ local calck = first.calck
 local labelgrammar = label.labelgrammar
 local matchUnique = unique.matchUnique
 local matchUPath = unique.matchUPath
+local union = first.union
+local calcfirst = first.calcfirst
 
 local function annotateUniqueAux (g, p, seq, afterU, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and afterU then
@@ -33,6 +35,10 @@ local function annotateUniqueAux (g, p, seq, afterU, flw)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
+		--local newp = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, flw)
+		if p.tag == 'star' or p.tag == 'plus' then
+			flw = union(calcfirst(g, p.p1), flw)
+		end
 		local newp = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, flw)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)
@@ -86,6 +92,10 @@ local function annotateUPathAux (g, p, seq, afterU, flw)
 		--local newp = annotateUPathAux(g, p.p1, false, afterU, flw)
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
+		--local newp = annotateUPathAux(g, p.p1, false, flagDisjoint and afterU, flw)
+		if p.tag == 'star' or p.tag == 'plus' then
+			flw = union(calcfirst(g, p.p1), flw)
+		end
 		local newp = annotateUPathAux(g, p.p1, false, flagDisjoint and afterU, flw)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)
@@ -138,6 +148,10 @@ local function addlabAll (g, p, seq, flw)
       return newNode(p, p1, p2)
 		end
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then  --and disjoint(calcfirst(g, p.p1), flw) then
+		--local newp = addlabAll(g, p.p1, false, flw)
+		if p.tag == 'star' or p.tag == 'plus' then
+			flw = union(calcfirst(g, p.p1), flw)
+		end
 		local newp = addlabAll(g, p.p1, false, flw)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)
