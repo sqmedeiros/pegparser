@@ -214,6 +214,11 @@ local gupath = recovery.putlabels(g, 'deepupath', true)
 print(pretty.printg(gupath, true), '\n')
 print("End DeepUPath\n")
 
+print("Annotating All expressions")
+g = m.match(s)
+local gall = recovery.putlabels(g, 'all', true)
+print(pretty.printg(gall, true), '\n')
+print("End All\n")
 
 print("UPath Deep")
 --m.uniqueTk(g)

@@ -13,6 +13,7 @@ local util = require'util'
 
 g = [[
 compilation     <-  SKIP compilationUnit (!.)^Err_EOF
+compilation     <-  SKIP compilationUnit !.
 basicType       <-  'byte'  /  'short'  /  'int'  /  'long'  /  'char'  /  'float'  /  'double'  /  'boolean'
 primitiveType   <-  annotation* basicType
 referenceType   <-  primitiveType dim+  /  classType dim*
@@ -190,12 +191,12 @@ SKIP            <-  ([
 ]  /  COMMENT)*
 Token           <-  '~'  /  '}'  /  '{'  /  'stictfp'  /  'query'  /  'and'  /  StringLiteral  /  OctalNumeral  /  NullLiteral  /  Literal  /  Keywords  /  IntegerLiteral  /  InfixOperator  /  Identifier  /  HexaDecimalFloatingPointLiteral  /  HexSignificand  /  HexNumeral  /  HexDigits  /  HexDigit  /  FloatLiteral  /  Exponent  /  Digits  /  DecimalNumeral  /  DecimalFloatingPointLiteral  /  CharLiteral  /  COMMENT  /  BooleanLiteral  /  BinaryNumeral  /  BinaryExponent  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '?'  /  ';'  /  '::'  /  ':'  /  '...'  /  '->'  /  '--'  /  ','  /  '++'  /  ')'  /  '('  /  '!'
 EatToken        <-  (Token  /  (!SPACE .)+) SKIP
-Err_EOF         <-  (!(!.) EatToken)*
+Err_EOF         <-  (!!. EatToken)*
 Err_001         <-  (!('and'  /  '>'  /  ','  /  ')') EatToken)*
 Err_002         <-  (!('>'  /  ',') EatToken)*
 Err_003         <-  (!('>'  /  ',') EatToken)*
 Err_004         <-  (!(';'  /  '.') EatToken)*
-Err_005         <-  (!';' EatToken)*
+Err_005         <-  (!(';'  /  '.') EatToken)*
 Err_006         <-  (!('strictfp'  /  'static'  /  'public'  /  'protected'  /  'private'  /  'interface'  /  'import'  /  'final'  /  'enum'  /  'class'  /  'abstract'  /  '@'  /  ';'  /  !.) EatToken)*
 Err_007         <-  (!(';'  /  '.') EatToken)*
 Err_008         <-  (!';' EatToken)*
@@ -205,11 +206,11 @@ Err_011         <-  (!('}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'tr
 Err_012         <-  (!('{'  /  'implements') EatToken)*
 Err_013         <-  (!'{' EatToken)*
 Err_014         <-  (!('{'  /  ',') EatToken)*
-Err_015         <-  (!'{' EatToken)*
+Err_015         <-  (!('{'  /  ',') EatToken)*
 Err_016         <-  (!(','  /  ')') EatToken)*
 Err_017         <-  (!('{'  /  ';') EatToken)*
 Err_018         <-  (!('{'  /  ';'  /  ',') EatToken)*
-Err_019         <-  (!('{'  /  ';') EatToken)*
+Err_019         <-  (!('{'  /  ';'  /  ',') EatToken)*
 Err_020         <-  (!('{'  /  ';'  /  ',') EatToken)*
 Err_021         <-  (!('{'  /  'implements') EatToken)*
 Err_022         <-  (!('}'  /  '{'  /  'while'  /  'volatile'  /  'void'  /  'try'  /  'transient'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'stictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'native'  /  'long'  /  'interface'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  '<'  /  ';'  /  '--'  /  '++'  /  '('  /  !.) EatToken)*
@@ -258,20 +259,20 @@ Err_064         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw' 
 Err_065         <-  (!Identifier EatToken)*
 Err_066         <-  (!')' EatToken)*
 Err_067         <-  (!('|'  /  Identifier) EatToken)*
-Err_068         <-  (!Identifier EatToken)*
+Err_068         <-  (!('|'  /  Identifier) EatToken)*
 Err_069         <-  (!('}'  /  '{'  /  'while'  /  'void'  /  'try'  /  'throw'  /  'this'  /  'synchronized'  /  'switch'  /  'super'  /  'strictfp'  /  'static'  /  'short'  /  'return'  /  'public'  /  'protected'  /  'private'  /  'new'  /  'long'  /  'int'  /  'if'  /  'for'  /  'float'  /  'final'  /  'enum'  /  'else'  /  'double'  /  'do'  /  'default'  /  'continue'  /  'class'  /  'char'  /  'case'  /  'byte'  /  'break'  /  'boolean'  /  'assert'  /  'abstract'  /  Literal  /  Identifier  /  '@'  /  ';'  /  '--'  /  '++'  /  '(') EatToken)*
 Err_070         <-  (!('short'  /  'long'  /  'int'  /  'float'  /  'final'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Identifier  /  '@') EatToken)*
 Err_071         <-  (!(';'  /  ')') EatToken)*
 Err_072         <-  (!'{' EatToken)*
 Err_073         <-  (!(';'  /  ','  /  ')') EatToken)*
-Err_074         <-  (!(';'  /  ')') EatToken)*
+Err_074         <-  (!(';'  /  ','  /  ')') EatToken)*
 Err_075         <-  (!Identifier EatToken)*
 Err_076         <-  (!'=' EatToken)*
 Err_077         <-  (!('~'  /  'void'  /  'this'  /  'super'  /  'short'  /  'new'  /  'long'  /  'int'  /  'float'  /  'double'  /  'char'  /  'byte'  /  'boolean'  /  Literal  /  Identifier  /  '@'  /  '--'  /  '-'  /  '++'  /  '+'  /  '('  /  '!') EatToken)*
 Err_078         <-  (!(';'  /  ','  /  ')') EatToken)*
 Err_079         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
 Err_080         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
-Err_081         <-  (!'{' EatToken)*
+Err_081         <-  (!('{'  /  '['  /  '@') EatToken)*
 Err_082         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
 Err_083         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  AssignmentOperator  /  ']'  /  '['  /  ';'  /  '::'  /  ':'  /  '.'  /  '--'  /  ','  /  '++'  /  ')') EatToken)*
 Err_084         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
@@ -286,7 +287,7 @@ Err_092         <-  (!('~'  /  'void'  /  'this'  /  'super'  /  'short'  /  'ne
 Err_093         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_094         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_095         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_096         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
+Err_096         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*	
 ]]
 
 local g = m.match(g)
