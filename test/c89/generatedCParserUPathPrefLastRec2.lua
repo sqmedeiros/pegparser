@@ -2,9 +2,8 @@ local m = require 'init'
 local coder = require 'coder'
 local util = require'util'
 
--- Added 40 labels
+-- Added 49 labels
 -- Does not need to remove labels manually
--- Disable rule typedef_name, because its correct matching depends on semantic actions
 
 local g = [[
 translation_unit <-  SKIP external_decl+^Err_001 (!.)^Err_EOF
