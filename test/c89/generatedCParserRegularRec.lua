@@ -8,7 +8,7 @@ local util = require'util'
 local g = [[
 translation_unit <-  SKIP external_decl+ !.
 external_decl   <-  function_def  /  decl
-function_def    <-  declarator decl* compound_stat  /  decl_spec function_def^Err_001
+function_def    <-  declarator decl* compound_stat  /  decl_spec function_def
 decl_spec       <-  storage_class_spec  /  type_spec  /  type_qualifier
 decl            <-  decl_spec init_declarator_list? ';'  /  decl_spec decl^Err_002
 storage_class_spec <-  'auto'  /  'register'  /  'static'  /  'extern'  /  'typedef'
@@ -32,7 +32,7 @@ initializer     <-  '{' initializer^Err_013 (',' initializer)* ','? '}'^Err_014 
 type_name       <-  spec_qualifier_list abstract_declarator?
 abstract_declarator <-  pointer  /  pointer? direct_abstract_declarator
 direct_abstract_declarator <-  '(' abstract_declarator^Err_015 ')'^Err_016 ('[' const_exp? ']'^Err_017  /  '(' param_type_list? ')'^Err_018)*
-typedef_name    <-  ID
+typedef_name    <-  ID [a-z]
 stat            <-  ID ':' stat  /  'case' const_exp^Err_019 ':'^Err_020 stat^Err_021  /  'default' ':'^Err_022 stat^Err_023  /  exp? ';'  /  compound_stat  /  'if' '(' exp ')' stat 'else' stat  /  'if' '('^Err_024 exp^Err_025 ')'^Err_026 stat^Err_027  /  'switch' '('^Err_028 exp^Err_029 ')'^Err_030 stat^Err_031  /  'while' '('^Err_032 exp^Err_033 ')'^Err_034 stat^Err_035  /  'do' stat^Err_036 'while'^Err_037 '('^Err_038 exp^Err_039 ')'^Err_040 ';'^Err_041  /  'for' '('^Err_042 exp? ';'^Err_043 exp? ';'^Err_044 exp? ')'^Err_045 stat^Err_046  /  'goto' ID^Err_047 ';'^Err_048  /  'continue' ';'^Err_049  /  'break' ';'^Err_050  /  'return' exp? ';'^Err_051
 compound_stat   <-  '{' decl* stat* '}'^Err_052
 exp             <-  assignment_exp (',' assignment_exp^Err_053)*
@@ -149,7 +149,7 @@ Err_071         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  '^='  /  '^'  /  ']'  /
 Err_072         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  '^='  /  '^'  /  ']'  /  '['  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '.'  /  '->'  /  '-='  /  '--'  /  '-'  /  ','  /  '+='  /  '++'  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*
 Err_073         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  '^='  /  '^'  /  ']'  /  '['  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '.'  /  '->'  /  '-='  /  '--'  /  '-'  /  ','  /  '+='  /  '++'  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*
 Err_074         <-  (!')' EatToken)*
-Err_075         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  '^='  /  '^'  /  ']'  /  '['  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '.'  /  '->'  /  '-='  /  '--'  /  '-'  /  ','  /  '+='  /  '++'  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*	
+Err_075         <-  (!('}'  /  '||'  /  '|='  /  '|'  /  '^='  /  '^'  /  ']'  /  '['  /  '?'  /  '>>='  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '/='  /  '/'  /  '.'  /  '->'  /  '-='  /  '--'  /  '-'  /  ','  /  '+='  /  '++'  /  '+'  /  '*='  /  '*'  /  ')'  /  '('  /  '&='  /  '&&'  /  '&'  /  '%='  /  '%'  /  '!=') EatToken)*
 ]] 
 
 
