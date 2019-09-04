@@ -13,7 +13,6 @@ local util = require'util'
 
 g = [[
 compilation     <-  SKIP compilationUnit (!.)^Err_EOF
-compilation     <-  SKIP compilationUnit !.
 basicType       <-  'byte'  /  'short'  /  'int'  /  'long'  /  'char'  /  'float'  /  'double'  /  'boolean'
 primitiveType   <-  annotation* basicType
 referenceType   <-  primitiveType dim+  /  classType dim*
@@ -287,7 +286,7 @@ Err_092         <-  (!('~'  /  'void'  /  'this'  /  'super'  /  'short'  /  'ne
 Err_093         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_094         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 Err_095         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
-Err_096         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*	
+Err_096         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Identifier  /  ']'  /  ';'  /  ':'  /  ','  /  ')') EatToken)*
 ]]
 
 local g = m.match(g)
