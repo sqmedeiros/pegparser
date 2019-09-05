@@ -2,7 +2,7 @@ local m = require 'init'
 local coder = require 'coder'
 local util = require'util'
 
--- Added 49 labels
+-- Added 50 labels
 -- Does not need to remove labels manually
 
 local g = [[
