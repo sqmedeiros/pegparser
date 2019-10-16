@@ -8,7 +8,7 @@ local lfs = require'lfs'
 local re = require'relabel'
 local util = require'util'
 
--- Added 68 labels
+-- Added 74 labels
 -- Did not have to remove rules manually
 
 g = [[
