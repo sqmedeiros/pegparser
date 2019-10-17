@@ -1,8 +1,8 @@
-local parser = require'parser'
-local first = require'first'
-local unique = require'unique'
-local label = require'label'
-local pretty = require'pretty'
+local parser = require'pegparser.parser'
+local first = require'pegparser.first'
+local unique = require'pegparser.unique'
+local label = require'pegparser.label'
+local pretty = require'pegparser.pretty'
 
 local newSeq = parser.newSeq
 local newNot = parser.newNot

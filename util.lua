@@ -1,12 +1,33 @@
-local ast = require'ast'
 local lfs = require'lfs'
 local re = require 'relabel'
-local ast = require 'ast'
+local ast = require'pegparser.ast'
 
 local verbose = false
 
 local function setVerbose (v)
 	verbose = v
+end
+
+
+local function getFileName (s)
+	local i = 1
+	local j = string.find(s, '/', i)
+	while j ~= nil do
+		i = j + 1
+		j = string.find(s, '/', i)
+	end
+	return string.sub(s, i)
+end
+
+
+local function getPath (s)
+	local i = 1
+	local j = string.find(s, '/', i)
+	while j ~= nil do
+		i = j + 1
+		j = string.find(s, '/', i)
+	end
+	return string.sub(s, 1, i - 1)
 end
 
 
@@ -121,4 +142,6 @@ return {
 	testNoRec = testNoRec,
 	testFile = testFile,
 	setVerbose = setVerbose,
+	getFileName = getFileName,
+	getPath = getPath
 }

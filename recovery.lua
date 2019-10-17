@@ -1,9 +1,9 @@
-local parser = require'parser'
-local first = require'first'
-local unique = require'unique'
-local pretty = require'pretty'
-local label = require'label'
-local ban = require'ban'
+local parser = require'pegparser.parser'
+local first = require'pegparser.first'
+local unique = require'pegparser.unique'
+local pretty = require'pegparser.pretty'
+local label = require'pegparser.label'
+local ban = require'pegparser.ban'
 
 
 local newNode = parser.newNode

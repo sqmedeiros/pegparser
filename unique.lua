@@ -1,5 +1,5 @@
-local parser = require'parser'
-local first = require'first'
+local parser = require'pegparser.parser'
+local first = require'pegparser.first'
 
 local disjoint = first.disjoint
 local calck = first.calck

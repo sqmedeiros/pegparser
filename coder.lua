@@ -1,8 +1,8 @@
 local m = require'lpeglabel'
-local parser = require 'parser'
-local pretty = require 'pretty'
-local predef = require 'predef'
-local ast = require 'ast'
+local parser = require'pegparser.parser'
+local pretty = require'pegparser.pretty'
+local predef = require'pegparser.predef'
+local ast = require'pegparser.ast'
 
 local sp = predef.space^0
 

@@ -1,7 +1,7 @@
-local m = require 'init'
-local recovery = require 'recovery'
-local pretty = require 'pretty'
-local coder = require 'coder'
+local m = require'pegparser.parser'
+local recovery = require'pegparser.recovery'
+local pretty = require'pegparser.pretty'
+local coder = require'pegparser.coder'
 
 local function assertErr (p, s, lab)
 	local r, l, pos = p:match(s)

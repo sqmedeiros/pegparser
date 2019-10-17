@@ -1,6 +1,6 @@
-local parser = require'parser'
-local first = require'first'
-local pretty = require'pretty'
+local parser = require'pegparser.parser'
+local first = require'pegparser.first'
+local pretty = require'pegparser.pretty'
 
 local empty = first.empty
 local any = first.any

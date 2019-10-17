@@ -1,7 +1,7 @@
-local m = require 'lpeglabel'
-local re = require 'relabel'
-local errinfo = require 'syntax_errors'
-local predef = require 'predef'
+local m = require'lpeglabel'
+local re = require'relabel'
+local errinfo = require'pegparser.syntax_errors'
+local predef = require'pegparser.predef'
 
 local g = {}
 local defs = {}

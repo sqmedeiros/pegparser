@@ -1,5 +1,5 @@
-local first = require'first'
-local parser = require'parser'
+local first = require'pegparser.first'
+local parser = require'pegparser.parser'
 
 local newNode = parser.newNode
 local set2choice = first.set2choice

@@ -1,6 +1,6 @@
 local pretty = {}
 
-local parser = require 'parser'
+local parser = require'pegparser.parser'
 
 local property
 

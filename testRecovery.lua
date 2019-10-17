@@ -1,8 +1,8 @@
-local m = require 'init'
-local errinfo = require 'syntax_errors'
-local pretty = require 'pretty'
-local coder = require 'coder'
-local recovery = require 'recovery'
+local m = require'pegparser.parser'
+local errinfo = require'pegparser.syntax_errors'
+local pretty = require'pegparser.pretty'
+local coder = require'pegparser.coder'
+local recovery = require'pegparser.recovery'
 
 
 local function assertlab (g, lab)

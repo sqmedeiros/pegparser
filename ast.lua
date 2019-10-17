@@ -1,5 +1,5 @@
-local parser = require 'parser'
-local pretty = require 'pretty'
+local parser = require 'pegparser.parser'
+local pretty = require 'pegparser.pretty'
 
 local newSeq = parser.newSeq
 local newNode = parser.newNode
