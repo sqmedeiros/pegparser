@@ -1,6 +1,7 @@
-local m = require 'init'
-local coder = require 'coder'
-local util = require'util'
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
+
 
 -- Remove Err_006 ('exp' in rule toplevelvar), Err_012 ('import' in rule import)
 
@@ -154,9 +155,9 @@ Err_080         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'unt
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/titan/test/yes/'
-util.testYes(dir, 'titan', p)
+local dir = util.getPath(arg[0])
+
+util.testYes(dir .. '/test/yes/', 'titan', p)
 
 util.setVerbose(true)
-local dir = lfs.currentdir() .. '/test/titan/test/no/'
-util.testNoRec(dir, 'titan', p)
+util.testNo(dir .. '/test/no/', 'titan', p)

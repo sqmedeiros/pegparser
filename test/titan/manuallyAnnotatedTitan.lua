@@ -1,7 +1,7 @@
-local m = require 'init'
-local pretty = require 'pretty'
-local coder = require 'coder'
-local util = require'util'
+local m = require 'pegparser.parser'
+local pretty = require 'pegparser.pretty'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 -- Removed label 'AssignAssign' in rule statement because the correct matching
 -- of varlist depends on a semantic action in rule var
@@ -78,11 +78,10 @@ print(pretty.printg(g), '\n')
 
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/titan/test/yes/'	
-util.testYes(dir, 'titan', p)
+local dir = util.getPath(arg[0])
 
-local dir = lfs.currentdir() .. '/test/titan/test/no/'	
+util.testYes(dir .. '/test/yes/', 'titan', p)
+
+util.setVerbose(true)
 util.testNo(dir, 'titan', p, 'strict', 'AssignAssign')
-
-
 

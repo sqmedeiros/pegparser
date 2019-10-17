@@ -1,6 +1,7 @@
-local m = require 'init'
-local coder = require 'coder'
-local util = require'util'
+local m = require 'pegparser.parser'
+local pretty = require 'pegparser.pretty'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 
 -- Removed label 'AssignAssign' in rule statement because the correct matching
@@ -71,9 +72,11 @@ g = [[
   NUMBER          <- [0-9]+ ('.'!'.' [0-9]*)?
   COMMENT         <- '--' (!%nl .)* 
 SPACE           <-  [ 	
-]  /  COMMENT
+
+]  /  COMMENT
 SKIP            <-  ([ 	
-]  /  COMMENT)*
+
+]  /  COMMENT)*
   Token           <-  '~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'value'  /  'until'  /  'true'  /  'then'  /  'string'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'not'  /  'nil'  /  'local'  /  'integer'  /  'import'  /  'if'  /  'function'  /  'foreign'  /  'for'  /  'float'  /  'false'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'boolean'  /  'as'  /  'and'  /  STRINGLIT  /  RESERVED  /  NUMBER  /  NAME  /  COMMENT  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '#'
 EatToken        <-  (Token  /  (!SKIP .)+) SKIP
 Err_EOF         <-  (!(!.) EatToken)*
@@ -147,9 +150,9 @@ Err_ExpFieldList         <-  (!('}'  /  ';'  /  ',') EatToken)*
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/titan/test/yes/'
-util.testYes(dir, 'titan', p)
+local dir = util.getPath(arg[0])
+
+util.testYes(dir .. '/test/yes/', 'titan', p)
 
 util.setVerbose(true)
-local dir = lfs.currentdir() .. '/test/titan/test/no/'
-util.testNoRec(dir, 'titan', p)
+util.testNo(dir .. '/test/no/', 'titan', p)

@@ -1,9 +1,9 @@
-local m = require 'init'
-local pretty = require 'pretty'
-local coder = require 'coder'
-local recovery = require 'recovery'
-local ast = require'ast'
-local util = require'util'
+local m = require 'pegparser.parser'
+local pretty = require 'pegparser.pretty'
+local coder = require 'pegparser.coder'
+local recovery = require 'pegparser.recovery'
+local ast = require'pegparser.ast'
+local util = require'pegparser.util'
 
 local s = [[
   program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import / foreign)* !.
@@ -138,9 +138,9 @@ print("End UPathDeep\n")
 g = m.match(s)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/titan/test/yes/'
-util.testYes(dir, 'titan', p)
+local dir = util.getPath(arg[0])
 
-local dir = lfs.currentdir() .. '/test/titan/test/no/'
-util.testNo(dir, 'titan', p)
+util.testYes(dir .. '/test/yes/', 'titan', p)
+
+util.testNo(dir .. '/test/no/', 'titan', p)
 

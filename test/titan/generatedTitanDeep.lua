@@ -1,6 +1,6 @@
-local m = require 'init'
-local coder = require 'coder'
-local util = require'util'
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 -- Added 12 labels
 -- Did not have to remove rules manually
@@ -62,17 +62,19 @@ NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
 NUMBER          <-  [0-9]+ ('.' !'.' [0-9]*)?
 COMMENT         <-  '--' (!%nl .)*
 SPACE           <-  [ 	
-]  /  COMMENT
+
+]  /  COMMENT
 SKIP            <-  ([ 	
-]  /  COMMENT)*
+
+]  /  COMMENT)*
 ]]
 
 
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/titan/test/yes/'
-util.testYes(dir, 'titan', p)
+local dir = util.getPath(arg[0])
 
-local dir = lfs.currentdir() .. '/test/titan/test/no/'
-util.testNo(dir, 'titan', p)
+util.testYes(dir .. '/test/yes/', 'titan', p)
+
+util.testNo(dir .. '/test/no/', 'titan', p)
