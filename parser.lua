@@ -258,13 +258,7 @@ local peg = [[
 
   suffix        <-   (primary ({'+'} S /  {'*'} S /  {'?'} S /  {'^'} S name)*) -> newSuffix
 
-  primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var / def / throw /
-                     ('{|' S  exp^ExpTabCap '          |}'^RCurTabCap S)   -> newTabCap /
-                     ('{:' S  name S ':'  exp         ':}'^RCurNameCap  S) -> newNameCap /
-                     ('{:' S  exp^ExpAnonCap          ':}'^RCurNameCap  S) -> newAnonCap /
-                     ('{'  S  exp                      '}'^RCurCap  S)     -> newSimpCap /
-                      '{'  S                           '}'^RCurCap  S      -> newPosCap
-
+  primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var / def / throw 
 
   string        <-   ("'" {(!"'"  .)*} {"'"}^SingQuote  S  /
                       '"' {(!'"'  .)*} {'"'}^DoubQuote  S) -> newString

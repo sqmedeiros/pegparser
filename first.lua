@@ -173,12 +173,6 @@ function calcfirst (g, p)
 		return { [any] = true }
 	elseif p.tag == 'set' then
 		return unfoldset(p.p1)
-	elseif p.tag == 'posCap' then
-		return { [empty] = true }
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		return calcfirst(g, p.p1)
-	elseif p.tag == 'nameCap'then
-		return calcfirst(g, p.p2)
 	elseif p.tag == 'ord' then
 		return union(calcfirst(g, p.p1), calcfirst(g, p.p2), false)
 	elseif p.tag == 'con' then
@@ -229,10 +223,6 @@ function calck (g, p, k)
 		return { [any] = true }
 	elseif p.tag == 'set' then
 		return unfoldset(p.p1)
-	elseif p.tag == 'posCap' then
-		return { [empty] = true }
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'nameCap' or p.tag == 'anonCap' then
-		return { [empty] = true }
 	elseif p.tag == 'ord' then
 		local k1 = calck(g, p.p1, k)
 		local k2 = calck(g, p.p2, k)
@@ -515,12 +505,12 @@ local function calcPrefix (g)
   end
 	--calcPrefixAux(g, g.prules['import'], { [empty] = true })
 
-	print("calcPrefix")
+	--[[print("calcPrefix")
 	for k1, v1 in pairs(g.symPref) do
 		for k2, v2 in pairs(v1) do
 			print(k1 .. ': ', table.concat(sortset(v2), ", "))
 		end
-	end
+	end]]
 end
 
 
@@ -554,10 +544,6 @@ local function calcFlwAux (g, p, flw)
   elseif p.tag == 'ord' then
     calcFlwAux(g, p.p1, flw)
     calcFlwAux(g, p.p2, flw)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		calcFlwAux(g, p.p1, flw)
-	elseif p.tag == 'nameCap' then
-		calcFlwAux(g, p.p2, flw)
 	end
 end
 
@@ -637,12 +623,12 @@ local function calcLocalFollow (g)
   end
 	--calcPrefixAux(g, g.prules['import'], { [empty] = true })
 
-	print("calcLocalFollow")
+	--[[print("calcLocalFollow")
 	for k1, v1 in pairs(g.symFlw) do
 		for k2, v2 in pairs(v1) do
 			print(k1 .. ': ', table.concat(sortset(v2), ", "))
 		end
-	end
+	end]]
 end
 
 

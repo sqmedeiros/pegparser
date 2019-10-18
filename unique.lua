@@ -63,10 +63,6 @@ local function countTk (p, t)
 		countTk(p.p2, t)
 	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
 		countTk(p.p1, t)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		countTk(p.p1, t)
-	elseif p.tag == 'nameCap' then
-		countTk(p.p2, t)
 	elseif p.tag == 'and' or p.tag == 'not' then
 		--does not count tokens inside a predicate
 		return
@@ -221,7 +217,7 @@ local function isLastAlternative (g, p, t)
 	--print("lastAlt", p.p1)
 	for k, v in pairs(t) do
 		if k ~= p and g.symRule[p] ~= g.symRule[k] then
-			print(g.symRule[p], g.symRule[k])
+			--print(g.symRule[p], g.symRule[k])
 			return false
 		end
 	end
@@ -253,7 +249,7 @@ local function isPrefixUnique (g, p)
 	--print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
 	local res = true
 	for k, v in pairs(g.symPref[s]) do
-		print("isUnique", p, k == p)
+		--print("isUnique", p, k == p)
 		if k ~= p then
 			if not disjoint(pref, v) and not isLastAlternative(g, p, g.symPref[s]) then
 				--res = 'next'
@@ -335,22 +331,18 @@ end
 local function countUsage(g, p)
 	local tag = p.tag
 	if tag == 'empty' or tag == 'char' or tag == 'set' or
-     tag == 'any' or tag == 'throw' or tag == 'posCap' or
-     tag == 'def' then
+     tag == 'any' or tag == 'throw' or tag == 'def' then
 		return
 	elseif tag == 'var' and parser.isLexRule(p.p1) then
 		return
 	elseif tag == 'var' then
 		addUsage(g, p)
 	elseif tag == 'not' or tag == 'and' or tag == 'star' or
-         tag == 'opt' or tag == 'plus' or tag == 'simpCap' or
-         tag == 'tabCap' or tag == 'anonCap' then
+         tag == 'opt' or tag == 'plus' then
 		countUsage(g, p.p1)
 	elseif tag == 'con' or tag == 'ord' then
 		countUsage(g, p.p1)
 		countUsage(g, p.p2)
-	elseif tag == 'nameCap' then
-		countUsage(p.p2)
 	else
 		print(p)
 		error("Unknown tag", p.tag)
@@ -452,10 +444,6 @@ local function insideLoop (g, p, loop, seq)
 		insideLoop(g, p.p2, loop, seq)
 	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
 		insideLoop(g, p.p1, true, false)
-	elseif p.tag == 'simpCap' or p.tag == 'tabCap' or p.tag == 'anonCap' then
-		insideLoop(g, p.p1, loop, seq)
-	elseif p.tag == 'nameCap' then
-		insideLoop(g, p.p2, loop, seq)
 	elseif p.tag == 'and' or p.tag == 'not' then
 		insideLoop(g, p.p1, loop, seq)
 	end
