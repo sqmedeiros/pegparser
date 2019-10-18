@@ -1,6 +1,6 @@
-local m = require 'init'
-local coder = require 'coder'
-local util = require'util'
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 -- Added 40 labels
 -- Does not need to remove labels manually
@@ -70,17 +70,19 @@ ENUMERATION_CONST <-  ID
 ID              <-  !KEYWORDS [a-zA-Z_] [a-zA-Z_0-9]*
 KEYWORDS        <-  ('auto'  /  'double'  /  'int'  /  'struct'  /  'break'  /  'else'  /  'long'  /  'switch'  /  'case'  /  'enum'  /  'register'  /  'typedef'  /  'char'  /  'extern'  /  'return'  /  'union'  /  'const'  /  'float'  /  'short'  /  'unsigned'  /  'continue'  /  'for'  /  'signed'  /  'void'  /  'default'  /  'goto'  /  'sizeof'  /  'volatile'  /  'do'  /  'if'  /  'static'  /  'while') ![a-zA-Z_0-9]
 SPACE           <-  [ 	
-]  /  COMMENT
+
+]  /  COMMENT
 SKIP            <-  ([ 	
-]  /  COMMENT)*
+
+]  /  COMMENT)*
 ]] 
 
 
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/c89/test/yes/'
-util.testYes(dir, 'c', p)
+local dir = util.getPath(arg[0])
 
-local dir = lfs.currentdir() .. '/test/c89/test/no/'
-util.testNo(dir, 'c', p)
+util.testYes(dir .. '/test/yes/', 'c', p)
+
+util.testNo(dir .. '/test/no/', 'c', p)

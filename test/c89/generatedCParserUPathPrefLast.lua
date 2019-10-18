@@ -1,6 +1,6 @@
-local m = require 'init'
-local coder = require 'coder'
-local util = require'util'
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 -- Added 50 labels
 -- Does not need to remove labels manually
@@ -80,8 +80,8 @@ SKIP            <-  ([
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/c89/test/yes/'
-util.testYes(dir, 'c', p)
+local dir = util.getPath(arg[0])
 
-local dir = lfs.currentdir() .. '/test/c89/test/no/'
-util.testNo(dir, 'c', p)
+util.testYes(dir .. '/test/yes/', 'c', p)
+
+util.testNo(dir .. '/test/no/', 'c', p)
