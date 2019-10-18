@@ -1,13 +1,6 @@
-local m = require 'init'
-local errinfo = require 'syntax_errors'
-local pretty = require 'pretty'
-local coder = require 'coder'
-local first = require 'first'
-local recovery = require 'recovery'
-local lfs = require'lfs'
-local re = require'relabel'
-local ast = require'ast'
-local util = require'util'
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 --[[ 
 	Inserted: 70 labels (70 correct)
@@ -227,10 +220,9 @@ Err_070         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBr
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/yes/' 
-util.testYes(dir, 'pas', p)
+local dir = util.getPath(arg[0])
+
+util.testYes(dir .. '/test/yes/', 'pas', p)
 
 util.setVerbose(true)
-print""
-local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/no/' 
-util.testNoRec(dir, 'pas', p)
+util.testNoRec(dir .. '/test/no/', 'pas', p)

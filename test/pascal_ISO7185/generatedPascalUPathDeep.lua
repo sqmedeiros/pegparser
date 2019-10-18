@@ -1,12 +1,6 @@
-local m = require 'init'
-local errinfo = require 'syntax_errors'
-local pretty = require 'pretty'
-local coder = require 'coder'
-local first = require 'first'
-local recovery = require 'recovery'
-local lfs = require'lfs'
-local re = require'relabel'
-local util = require'util'
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 --[[ 
 	Inserted: 72 labels (72 correct)
@@ -142,16 +136,18 @@ VAR             <-  [Vv] [Aa] [Rr] !BodyId
 WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
 WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
 SPACE           <-  [ 	
-]  /  COMMENT
+
+]  /  COMMENT
 SKIP            <-  ([ 	
-]  /  COMMENT)*
+
+]  /  COMMENT)*
 ]]
 
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/yes/'
-util.testYes(dir, 'pas', p)
+local dir = util.getPath(arg[0])
 
-local dir = lfs.currentdir() .. '/test/pascal_ISO7185/test/no/'
-util.testNo(dir, 'pas', p)
+util.testYes(dir .. '/test/yes/', 'pas', p)
+
+util.testNo(dir .. '/test/no/', 'pas', p)
