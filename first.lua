@@ -272,76 +272,6 @@ function calck (g, p, k)
 end
 
 
-local function printTkPath (t)
-	print(table.concat(sortset(t), ", "))
-end
-
-
-local function calcTkPath_aux (g, p, mark, notll1, seq)
-	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
-		return calcfirst(g, p)
-	elseif p.tag == 'var' then
-		if mark[p.p1] then
-			return {}
-		else
-			mark[p.p1] = true
-			return calcTkPath_aux(g, g.prules[p.p1], mark, notll1, seq)
-		end
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		return calcTkPath_aux(g, p.p1, mark, notll1, seq)
-	elseif p.tag == 'ord' then
-		local tk1, tk2 = {}, {}
-		local s1 = inter(notll1, calcfirst(g, p.p1))
-		if not isempty(s1) or seq then
-			tk1 = calcTkPath_aux(g, p.p1, mark, notll1, seq)
-		end
-		local s2 = inter(notll1, calcfirst(g, p.p2))
-		if not isempty(s2) or seq then
-			tk2 = calcTkPath_aux(g, p.p2, mark, notll1, seq)
-		end
-		return union(tk1, tk2)
-	elseif p.tag == 'con' then
-		return union(calcTkPath_aux(g, p.p1, mark, notll1, seq), calcTkPath_aux(g, p.p2, mark, notll1, seq or not parser.matchEmpty(p.p1)))
-	elseif p.tag == 'not' or p.tag == 'and' then
-		return {}
-	else
-		error("Unknown tag: " .. p.tag)
-	end
-end
-
-local function calcTkPath (g, p, notll1, all)
-	return calcTkPath_aux(g, p, {}, notll1, all)
-end
-
-
-local function matchTkPath_aux (g, p, t, mark)
-	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
-		return t[p.p1]
-	elseif p.tag == 'var' then
-		if mark[p.p1] then
-			return false
-		else
-			mark[p.p1] = true
-			return matchTkPath_aux(g, g.prules[p.p1], t, mark)
-		end
-	elseif p.tag == 'plus' then
-		return matchTkPath_aux(g, p.p1, t, mark)
-	elseif p.tag == 'ord' then
-		return matchTkPath_aux(g, p.p1, t, mark) and matchTkPath_aux(g, p.p2, t, mark)
-	elseif p.tag == 'con' then
-		return matchTkPath_aux(g, p.p1, t, mark) or matchTkPath_aux(g, p.p2, t, mark)
-	else
-		return false
-	end
-end
-
-local function matchTkPath (g, p, t)
-	return matchTkPath_aux(g, p, t, {})
-end
-
-
-
-
 local function initFst (g)
   FIRST = {}
   for k, v in pairs(g.prules) do
@@ -737,9 +667,6 @@ return {
 	union = union,
 	setdiff = setdiff,
 	empty = empty,
-	calcTkPath = calcTkPath,
-	printTkPath = printTkPath,
-	matchTkPath = matchTkPath,
 	calcPrefix = calcPrefix,
 	calcGlobalPrefix = calcGlobalPrefix,
 	calcTail = calcTail,
