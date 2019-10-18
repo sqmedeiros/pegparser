@@ -1,12 +1,6 @@
-local m = require 'init'
-local errinfo = require 'syntax_errors'
-local pretty = require 'pretty'
-local coder = require 'coder'
-local first = require 'first'
-local recovery = require 'recovery'
-local lfs = require'lfs'
-local re = require'relabel'
-local util = require'util'
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 --[[
   Removed labels:
@@ -220,8 +214,8 @@ COMMENT         <-  '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/java18/test/yes/' 
-util.testYes(dir, 'java', p)
+local dir = util.getPath(arg[0])
 
-local dir = lfs.currentdir() .. '/test/java18/test/no/' 
-util.testNo(dir, 'java', p)
+util.testYes(dir .. '/test/yes/', 'java', p)
+
+util.testNo(dir .. '/test/no/', 'java', p)

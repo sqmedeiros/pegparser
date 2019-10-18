@@ -1,13 +1,6 @@
-local m = require 'init'
-local errinfo = require 'syntax_errors'
-local pretty = require 'pretty'
-local coder = require 'coder'
-local first = require 'first'
-local recovery = require 'recovery'
-local lfs = require'lfs'
-local re = require'relabel'
-local ast = require'ast'
-local util = require'util'
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
 
 -- Added 51 labels
 -- Did not have to remove rules manually
@@ -184,9 +177,11 @@ StringLiteral   <-  '"' (%nl  /  !'"' .)* '"'
 NullLiteral     <-  'null'
 COMMENT         <-  '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 SPACE           <-  [ 	
-]  /  COMMENT
+
+]  /  COMMENT
 SKIP            <-  ([ 	
-]  /  COMMENT)*
+
+]  /  COMMENT)*
 Token           <-  '~'  /  '}'  /  '{'  /  'stictfp'  /  'query'  /  'and'  /  StringLiteral  /  OctalNumeral  /  NullLiteral  /  Literal  /  Keywords  /  IntegerLiteral  /  InfixOperator  /  Identifier  /  HexaDecimalFloatingPointLiteral  /  HexSignificand  /  HexNumeral  /  HexDigits  /  HexDigit  /  FloatLiteral  /  Exponent  /  Digits  /  DecimalNumeral  /  DecimalFloatingPointLiteral  /  CharLiteral  /  COMMENT  /  BooleanLiteral  /  BinaryNumeral  /  BinaryExponent  /  AssignmentOperator  /  ']'  /  '['  /  '@'  /  '?'  /  ';'  /  '::'  /  ':'  /  '...'  /  '->'  /  '--'  /  ','  /  '++'  /  ')'  /  '('  /  '!'
 EatToken        <-  (Token  /  (!SPACE .)+) SKIP
 Err_001         <-  (!('and'  /  '>'  /  ','  /  ')') EatToken)*
@@ -245,10 +240,9 @@ Err_051         <-  (!('}'  /  'query'  /  'instanceof'  /  InfixOperator  /  Id
 local g = m.match(g)
 local p = coder.makeg(g, 'ast')
 
-local dir = lfs.currentdir() .. '/test/java18/test/yes/' 
-util.testYes(dir, 'java', p)
+local dir = util.getPath(arg[0])
+
+util.testYes(dir .. '/test/yes/', 'java', p)
 
 util.setVerbose(true)
-print""
-local dir = lfs.currentdir() .. '/test/java18/test/no/' 
-util.testNoRec(dir, 'java', p)
+util.testNoRec(dir .. '/test/no/', 'java', p)
