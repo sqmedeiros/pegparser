@@ -134,4 +134,4 @@ local dir = util.getPath(arg[0])
 util.testYes(dir .. '/test/yes/', 'titan', p)
 
 util.setVerbose(true)
-util.testNo(dir .. '/test/no/', 'titan', p)
+util.testNoRec(dir .. '/test/no/', 'titan', p)
