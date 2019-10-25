@@ -14,11 +14,14 @@ local calck = first.calck
 local labelgrammar = label.labelgrammar
 local matchUnique = unique.matchUnique
 local matchUPath = unique.matchUPath
+local matchUniqueEq = unique.matchUniqueEq
 local union = first.union
 local calcfirst = first.calcfirst
 
 local function annotateUniqueAux (g, p, seq, afterU, flw)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and afterU then
+		return label.markerror(p, flw)
+	elseif ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and p.uniqueEq then
 		return label.markerror(p, flw)
 	elseif p.tag == 'con' then
 		local p1 = annotateUniqueAux(g, p.p1, seq, afterU, calck(g, p.p2, flw))
@@ -70,19 +73,22 @@ local function annotateUnique (g)
 end
 
 
-local function annotateUPathAux (g, p, seq, afterU, flw)
-	--print("UPathAux", p.tag, p.p1, seq, afterU)
+local function annotateUPathAux (g, p, seq, afterU, flw, afterUEq)
+	--print("UPathAux", p.tag, p.p1, seq, afterU, afterUEq)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU and seq then
     return label.markerror(p, flw)
+	elseif ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterUEq and seq then
+		return label.markerror(p, flw)
 	elseif p.tag == 'con' then
-		local p1 = annotateUPathAux(g, p.p1, seq, afterU, calck(g, p.p2, flw))
-		seq = seq or not parser.matchEmpty(p.p1) 
-		local p2 = annotateUPathAux(g, p.p2, seq, afterU or matchUPath(p.p1), flw)
+		--print("con", p.p1.tag, p.p2.tag, matchUniqueEq(p.p1))
+		local p1 = annotateUPathAux(g, p.p1, seq, afterU, calck(g, p.p2, flw), afterUEq)
+		seq = seq or not parser.matchEmpty(p.p1)
+		local p2 = annotateUPathAux(g, p.p2, seq, afterU or matchUPath(p.p1), flw, matchUniqueEq(p.p1))
 		return newNode(p, p1, p2)
 	elseif p.tag == 'ord' then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
-		local p1 = annotateUPathAux(g, p.p1, false, afterU and flagDisjont, flw)
-		local p2 = annotateUPathAux(g, p.p2, false, afterU, flw)
+		local p1 = annotateUPathAux(g, p.p1, false, afterU and flagDisjont, flw, afterUEq and flagDisjoint)
+		local p2 = annotateUPathAux(g, p.p2, false, afterU, flw, afterUEq)
 		if afterU and not matchEmpty(p) and seq then
 			return label.markerror(newNode(p, p1, p2), flw)
 		else
@@ -96,7 +102,7 @@ local function annotateUPathAux (g, p, seq, afterU, flw)
 		if p.tag == 'star' or p.tag == 'plus' then
 			flw = union(calcfirst(g, p.p1), flw)
 		end
-		local newp = annotateUPathAux(g, p.p1, false, flagDisjoint and afterU, flw)
+		local newp = annotateUPathAux(g, p.p1, false, afterU and flagDisjoint, flw, afterUEq and flagDisjoint)
     if p.tag == 'star' or p.tag == 'opt' then
 			return newNode(p, newp)
     else --plus
