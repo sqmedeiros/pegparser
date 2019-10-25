@@ -441,7 +441,6 @@ local function isPrefixUniqueFlw (g, p, pflw)
 		end
 
 		if pflw then
-			print("foi true1")
 			pflw.unique = true
 		end
 		return
@@ -481,27 +480,17 @@ local function isPrefixUnique (g, p, pflw)
 	local pref = g.symPref[s][p]
 	--local flw = g.symFlw[s][p]
 	--print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
-	local res = true
 
 	for k, v in pairs(g.symPref[s]) do
 		--print("isUnique", p, k == p)
 		if k ~= p then
-			if not disjoint(pref, v) then
-				if false then --not parser.isLexRule(s) then
-					return false
-				elseif not isLastAlternative(g, p, g.symPref[s]) then
-					if (p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1))) and first.isequal(pref, v) then
-						res = false
-					else
-						return false
-					end
-				end
+			if not disjoint(pref, v) and not isLastAlternative(g, p, g.symPref[s]) then
+				return false
 			end
 		end
 	end
 
-	--return false
-	return res
+	return true
 end
 
 
