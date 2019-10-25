@@ -374,7 +374,6 @@ local function isPrefixUniqueEq (g, p)
 	local nPrefEq = 0
 
 	for k, v in pairs(g.symPref[s]) do
-		--if first.isequal(pref, v) then
 		if first.issubset(v, pref) then
 			prefEq[k] = true
 			nPrefEq = nPrefEq + 1
@@ -392,19 +391,75 @@ local function isPrefixUniqueEq (g, p)
 	local flwEq = {}
 	local nFlwEq = 0
 
-	for k, v in pairs(g.symFlw[s]) do
-		--if first.isequal(flw, v) then
-		if first.issubset(v, flw) then
-			if not prefEq[k] then
-				return false
-			end
-		elseif not disjoint(flw, v) then
+	for k, _ in pairs(prefEq) do
+		if not first.issubset(g.symFlw[s][k], flw) then
 			return false
 		end
 	end
 
 	return true
 end
+
+
+local function isPrefixUniqueFlw (g, p, pflw)
+	local s = p.p1
+	if p.tag == 'char' then
+		s = '__' .. s
+	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
+		s = p.p1
+	else
+		return false
+	end
+
+	local pref = g.symPref[s][p]
+	local prefEq = {}
+	local nPrefEq = 0
+
+	local prefInt = {}
+
+	for k, v in pairs(g.symPref[s]) do
+		if k ~= p and first.issubset(v, pref) then
+			prefEq[k] = true
+			nPrefEq = nPrefEq + 1
+		elseif k ~= p and not disjoint(pref, v) then
+			table.insert(prefInt, k)
+		end
+	end
+
+	--print("UniqueFlw", s, "pref = ", table.concat(first.sortset(g.symPref[s][p]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s][p]), ", "), "nInt = ", #prefInt, "nEq = ", nPrefEq)
+
+	if #prefInt > 0 then
+		-- flw sets share some symbol?
+		table.insert(prefInt, p)
+		for i = 1, #prefInt do
+			local flw1 = g.symFlw[s][prefInt[i]]
+			for j = i + 1, #prefInt do
+				if not disjoint(flw1, g.symFlw[s][prefInt[j]]) then
+					return
+				end
+			end
+		end
+
+		if pflw then
+			print("foi true1")
+			pflw.unique = true
+		end
+		return
+	end
+
+	-- all prefixes which are not disjoint are a p's prefix subset
+	local flw = g.symFlw[s][p]
+	for k, _ in pairs(prefEq) do
+		if not disjoint(flw, g.symFlw[s][k]) then
+			return
+		end
+	end
+	if pflw then
+		print("foi true2")
+		pflw.unique = true
+	end
+end
+
 
 local function isPrefixUnique (g, p, pflw)
 	local s = p.p1
@@ -427,23 +482,6 @@ local function isPrefixUnique (g, p, pflw)
 	--local flw = g.symFlw[s][p]
 	--print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
 	local res = true
-	local disjointFlw = {}
-
-	--[==[
-	if prefEq then
-		local keepEq = true
-		local prev = g.symPref[s][p]
-		for k, v in pairs(g.symPref[s]) do
-			--print("here s", s, "i, v", i, v, v.p1, g.symFlw[s][p], g.symFlw[s][v])
-			if first.isequal(prev, v) and not first.isequal(g.symFlw[s][p], g.symFlw[s][k]) then
-				keepEq = false
-			end
-		end
-		print("keepEq = ", keepEq, s, "pref = ", table.concat(first.sortset(prev), ", "), "suf = ", table.concat(first.sortset(g.symFlw[s][p]), ", "))
-		if keepEq then
-			p.uniqueEq = prefEq
-		end
-	end]==]
 
 	for k, v in pairs(g.symPref[s]) do
 		--print("isUnique", p, k == p)
@@ -451,8 +489,6 @@ local function isPrefixUnique (g, p, pflw)
 			if not disjoint(pref, v) then
 				if false then --not parser.isLexRule(s) then
 					return false
-				elseif (p.tag == 'char' or parser.isLexRule(p.p1)) and disjoint(g.symFlw[s][p], g.symFlw[s][k]) then
-					table.insert(disjointFlw, k)
 				elseif not isLastAlternative(g, p, g.symPref[s]) then
 					if (p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1))) and first.isequal(pref, v) then
 						res = false
@@ -461,24 +497,6 @@ local function isPrefixUnique (g, p, pflw)
 					end
 				end
 			end
-		end
-	end
-
-	local n = #disjointFlw
-	for i = 1, n  do
-		local flw1 = g.symFlw[s][disjointFlw[i]]
-		for j = i + 1, n do
-			if not disjoint(flw1, g.symFlw[s][disjointFlw[j]]) then
-				return false
-			end
-		end
-	end
-
-	if n > 0 then
-		res = false
-		if pflw then
-			print("pflw", p.p1, pflw.p1)
-			pflw.unique = true
 		end
 	end
 
@@ -519,7 +537,8 @@ local function uniquePrefixAux (g, p, pflw)
 		if not res1 then
 			res2 = isPrefixUniqueEq(g, p)
 		end
-		print("preUnique ", res1, "prefUniqueEq", res2)
+		isPrefixUniqueFlw(g, p, pflw)
+		--print("preUnique ", res1, "prefUniqueEq", res2)
 		p.unique = p.unique or (res1)
 		p.uniqueEq = p.uniqueEq or res2
 	elseif p.tag == 'con' then
