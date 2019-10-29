@@ -421,7 +421,8 @@ local function isPrefixUniqueFlw (g, p, pflw)
 		if k ~= p and first.issubset(v, pref) then
 			prefEq[k] = true
 			nPrefEq = nPrefEq + 1
-		elseif k ~= p and not disjoint(pref, v) then
+		end
+		if k ~= p and not disjoint(pref, v) then
 			table.insert(prefInt, k)
 		end
 	end
@@ -430,7 +431,7 @@ local function isPrefixUniqueFlw (g, p, pflw)
 
 	if #prefInt > 0 then
 		-- flw sets share some symbol?
-		table.insert(prefInt, p)
+		--[=[table.insert(prefInt, p)
 		for i = 1, #prefInt do
 			local flw1 = g.symFlw[s][prefInt[i]]
 			for j = i + 1, #prefInt do
@@ -438,10 +439,17 @@ local function isPrefixUniqueFlw (g, p, pflw)
 					return
 				end
 			end
+		end]=]
+		for i = 1, #prefInt do
+			if not disjoint(g.symFlw[s][p], g.symFlw[s][prefInt[i]]) then
+				return
+			end
 		end
 
 		if pflw then
 			pflw.unique = true
+		else
+			print("UniqueFlw", s, "rule = ", g.symRule[p], "pref = ", table.concat(first.sortset(g.symPref[s][p]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s][p]), ", "), "nInt = ", #prefInt, "nEq = ", nPrefEq, "pflw = ", pflw)
 		end
 		return
 	end
@@ -454,7 +462,7 @@ local function isPrefixUniqueFlw (g, p, pflw)
 		end
 	end
 	if pflw then
-		print("foi true2")
+		print("foi true22")
 		pflw.unique = true
 	end
 end
