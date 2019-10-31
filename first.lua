@@ -595,6 +595,7 @@ end
 
 local function calcLocalFollowAux (g, p, flw)
 	if p.tag == 'var' and not parser.isLexRule(p.p1) then
+		updateLocalFollow(g, p, flw)
 		return g.FOLLOW[p.p1]
 	elseif p.tag == 'var' or p.tag == 'char' then
 		updateLocalFollow(g, p, flw)
