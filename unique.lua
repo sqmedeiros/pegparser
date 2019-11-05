@@ -429,6 +429,8 @@ local function isPrefixUniqueVarFlw (g, p, pflw, rep)
 			pflw.unique = true
 		end
 	end
+
+
 end
 
 
@@ -464,13 +466,53 @@ local function isPrefixUniqueFlw (g, p, pflw, rep)
 		if parser.matchEmpty(g.prules[p.p1]) then
 			return
 		end
-		for i = 1, #prefInt do
-			if not disjoint(g.symFlw[s][p], g.symFlw[s][prefInt[i]]) then
-				return
+		if #prefInt > 0 then
+			for i = 1, #prefInt do
+				if not disjoint(g.symFlw[s][p], g.symFlw[s][prefInt[i]]) then
+					return
+				end
+			end
+			isPrefixUniqueVarFlw(g, p, pflw, rep)
+		else
+			-- all prefixes which are not disjoint are a p's prefix subset
+			local flw = g.symFlw[s][p]
+			for k, _ in pairs(prefEq) do
+				if not disjoint(flw, g.symFlw[s][k]) then
+					return
+				end
+			end
+			
+			local t = getSymbolsFirst(g, g.prules[p.p1])
+			io.write("simbolos = ")
+			for k, v in pairs(t) do
+		 		io.write(k.p1 .. ', ')
+			end
+			io.write("\n")
+			local s1 = s
+			for k1, _ in pairs(t) do
+				local s2 = k1.p1
+				if k1.tag == 'char' then
+					s2 = '__' .. s2
+				end
+				for k2, v2 in pairs(g.symPref[s2]) do
+					print(s2,  "pref = ", table.concat(first.sortset(g.symPref[s2][k2]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s2][k2]), ", "))
+					if not t[k2] and first.issubset(v2, pref) then
+						if not disjoint(g.symFlw[s1][p], g.symFlw[s2][k2]) then
+							return false
+						end 
+					end
+				end
+			end
+
+			--verificar se nao choca com outros nao terminais
+
+			if pflw and not rep then
+				print("foi trueVar22")
+				print("UniqueFlwVar", s1, "rule = ", g.symRule[p], "pref = ", table.concat(first.sortset(g.symPref[s1][p]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s1][p]), ", "))
+				pflw.unique = true
 			end
 		end
-		--return
-		return isPrefixUniqueVarFlw(g, p, pflw, rep)
+		return
 	end
 
 	if #prefInt > 0 then
