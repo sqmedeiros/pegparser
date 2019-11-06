@@ -10,6 +10,16 @@ local isLastAlternativeAux
 local changeUnique = false
 local fst, flw
 
+local function getName (p)
+	assert(p.tag == 'char' or p.tag == 'var')
+	if p.tag == 'char' then
+		return '__' .. p.p1
+	else
+		return p.p1
+	end
+end
+
+
 local function matchUnique (g, p)
 	if p.tag == 'char' then
 		return g.unique[p.p1]
@@ -196,10 +206,7 @@ end
 
 
 local function isPrefUniVarAux2 (g, p, pref)
-	local s = p.p1
-	if p.tag == 'char' then
-		s = '__' .. s
-	end
+	local s = getName(p)
 
 	for k, v in pairs(g.symPref[s]) do
 		if k ~= p then
@@ -262,45 +269,52 @@ end
 
 local function isPrefSymUnique (g, t, pref)
 	for p, _ in pairs(t) do
-		local s = p.p1
-		if p.tag == 'char' then
-			s = '__' .. s
-		end
+		local s = getName(p)
+		local setDisj = {}
 		for k, v in pairs(g.symPref[s]) do
 			if not t[k] then
-				if not disjoint(pref, v) and not isLastAlternative(g, p, g.symPref[s]) then
-					return false
+				if not disjoint(pref, v) then
+					setDisj[k] = true
 				end
 			end
+		end
+		if not isLastAlternative(g, p, setDisj) then
+			return false
 		end
 	end
 	return true
 end
 
-local function isPrefUniVar (g, p)
-	local s = p.p1
-
-	--print("symPrefUniVar", s, g.symRule[p])
+local function isDisjointLast (g, p)
+	local s = getName(p)
 	local pref = g.symPref[s][p]
+	local setDisj = {}
 	for k, v in pairs(g.symPref[s]) do
 		if k ~= p then
 			if not disjoint(pref, v) then
-				return false
+				setDisj[k] = true
 			end
 		end
 	end
 
-	local t = getSymbolsFirst(g, g.prules[p.p1])
-	--[==[print("passou um")
-	io.write("symbols: ")
-	for k, v in pairs(t) do
-		io.write('(' .. k.p1 .. ',' .. g.symRule[k] .. '); ')
-	end
-	io.write("\n")
-	]==]
-	--local res = isPrefUniVarAux(g, g.prules[p.p1], pref)
+	return isLastAlternative(g, p, setDisj)
+end
 
-	local res = isPrefSymUnique(g, t, pref)
+
+local function isPrefUniVar (g, p)
+	local res = isDisjointLast(g, p)
+
+	local s = getName(p)
+
+	print("symPrefUniVar", s, g.symRule[p], res)
+	if not res then
+		return false
+	end
+
+	print("passou um")
+	local t = getSymbolsFirst(g, g.prules[p.p1])
+
+	local res = isPrefSymUnique(g, t, g.symPref[s][p])
 	if res then
 		print("passou três", s, g.symRule[p])
 	end
@@ -347,12 +361,8 @@ end
 
 
 local function isPrefixUniqueEq (g, p)
-	local s = p.p1
-	if p.tag == 'char' then
-		s = '__' .. s
-	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		s = p.p1
-	else
+	local s = getName(p)
+	if p.tag == 'var' and not parser.isLexRule(p.p1) then
 		return false
 	end
 
@@ -388,11 +398,8 @@ local function isPrefixUniqueEq (g, p)
 end
 
 local function hasSharedPrefix (g, p1, p2)
-	local s1 = p1.p1
-	local s2 = p2.p1
-	if p2.tag == 'char' then
-		s2 = '__' .. s2
-	end
+	local s1 = getName(p1)
+	local s2 = getName(p2)
 	if p1 == p2 then
 		return false
 	elseif s1 == s2 then
@@ -405,15 +412,6 @@ local function hasSharedPrefix (g, p1, p2)
 	end
 end
 
-
-local function getName (p)
-	assert(p.tag == 'char' or p.tag == 'var')
-	if p.tag == 'char' then
-		return '__' .. p.p1
-	else
-		return p.p1
-	end
-end
 
 local function isPrefixUniqueVarFlw (g, p, pflw, rep)
 	local s1 = p.p1
@@ -447,10 +445,7 @@ local function isPrefixUniqueVarFlw (g, p, pflw, rep)
 
 	if #prefInt > 0 then
 		for i, v in ipairs(prefInt) do
-			local sInt = v.p1
-			if v.tag == 'char' then
-				sInt = '__' .. sInt
-			end
+			local sInt = getName(v)
 			if not symFirst[v] and not disjoint(g.symFlw[s1][p], g.symFlw[sInt][v]) then
 				return
 			end
@@ -466,10 +461,7 @@ local function isPrefixUniqueVarFlw (g, p, pflw, rep)
 	end
 
 	for i, v in ipairs(prefEq) do
-		local sEq = v.p1
-		if v.tag == 'char' then
-			sEq = '__' .. sEq
-		end
+		local sEq = getName(v)
 		if not symFirst[v] and not disjoint(g.symFlw[s1][p], g.symFlw[sEq][v]) then
 			return
 		end
@@ -486,15 +478,11 @@ end
 
 
 local function isPrefixUniqueFlw (g, p, pflw, rep)
-	local s = p.p1
-	if p.tag == 'char' then
-		s = '__' .. s
-	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		s = p.p1
-	elseif p.tag == 'var' and not parser.isLexRule(p.p1) then
+	local s = getName(p)
+	if p.tag == 'var' and not parser.isLexRule(p.p1) then
 		return isPrefixUniqueVarFlw(g, p, pflw, rep)
 		--return
-	else
+	elseif p.tag ~= 'char' and p.tag ~= 'var' then
 		assert(false)
 	end
 
@@ -553,49 +541,27 @@ local function isPrefixUnique (g, p, pflw, rep)
 	if pflw and pflw.p1 == 'if' then
 		print("prefixUnique", pflw.p1, pflw.unique)
 	end
-	local s = p.p1
-	if p.tag == 'char' then
-		s = '__' .. s
-	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		s = p.p1
-	elseif p.tag == 'var' and matchUPath(g.prules[p.p1]) and isLastAlternative(g, p, g.symPref[p.p1]) then
-		return true 
+	local s = getName(p)
+	--elseif p.tag == 'var' and matchUPath(g.prules[p.p1]) and isDisjointLast(g, p) then
+	--	return true
 	--elseif p.tag == 'var' then
 		--return isPrefixUniqueVar(g, p.p1)	
 		--s = p.p1
-	elseif p.tag == 'var' and isPrefUniVar(g, p) then
-		return true 
-	else
-		return false
+	if p.tag == 'var' and not parser.isLexRule(p.p1) then
+		return isPrefUniVar(g, p)
 	end
 
 	local pref = g.symPref[s][p]
 	local flw = g.symFlw[s][p]
 	print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
 
-	local setDisj = {}
-	for k, v in pairs(g.symPref[s]) do
-		if k ~= p then
-			if not disjoint(pref, v) then --and not isLastAlternative(g, p, g.symPref[s]) then
-				setDisj[k] = true
-				--return false
-			end
-		end
-	end
-
-	if not isLastAlternative(g, p, setDisj) then
+	if not isDisjointLast(g, p) then
 		return false
 	end
-	--for i, v in ipairs(setDisj) do
-	--	if not isLastAlternative(g, p, v) then
-	--		return false
-	--	end
-	--end
 
 	print("true33", p.p1)
 	return true
 end
-
 
 
 local function uniquePrefixAux (g, p, pflw, rep)
