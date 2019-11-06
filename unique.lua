@@ -308,44 +308,31 @@ local function isPrefUniVar (g, p)
 end
 
 
-local function hasSym (p, v)
-	if p.tag == 'char' or p.tag == 'var' then
-		return p == v
-	elseif p.tag == 'con' or p.tag == 'ord' then
-		return hasSym(p.p1, v, opt) or hasSym(p.p2, v, opt)
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		return hasSym(p.p1, v, opt)
-	else
-		return false
-	end
-end
 
-
-local function isLastAlternativeAux (p, e, found)
+local function isLastAlternativeAux (p, s, last)
+	--print("last", s, p, p.tag, last)
 	if p.tag == 'char' or p.tag == 'var' then
-		if p.p1 == e.p1 and found and p ~= e then
-			return false
+		if p.p1 == s then
+			return p
 		else
-			return true
+			return last
 		end
 	elseif p.tag == 'ord' then
-		if not isLastAlternativeAux(p.p1, e, found) then
-			return false
-		else
-			return isLastAlternativeAux(p.p2, e, found or hasSym(p.p1, e))
-		end
+		last = isLastAlternativeAux(p.p1, s, last)
+		return isLastAlternativeAux(p.p2, s, last)
 	elseif p.tag == 'con' then
-		return isLastAlternativeAux(p.p1, e, found) and isLastAlternativeAux(p.p1, e, found)
+		last = isLastAlternativeAux(p.p1, s, last)
+		return isLastAlternativeAux(p.p2, s, last)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		return isLastAlternativeAux(p.p1, e, found)
+		return isLastAlternativeAux(p.p1, s, last)
 	else
-		return true
+		return last
 	end
 end
 
 
 function isLastAlternative (g, p, t)
-	--print("lastAlt", p.p1)
+	--print("lastAlt", p, p.p1, g.symRule[p])
 	for k, v in pairs(t) do
 		if k ~= p and g.symRule[p] ~= g.symRule[k] then
 			--print(g.symRule[p], g.symRule[k])
@@ -353,9 +340,9 @@ function isLastAlternative (g, p, t)
 		end
 	end
 
-	local res = isLastAlternativeAux(g.prules[g.symRule[p]], p, false)
-	--print("lastAlt", p.p1, res)
-	return res
+	local res = isLastAlternativeAux(g.prules[g.symRule[p]], p.p1, nil)
+	--print("lastAlt2", p.p1, res, res == p)
+	return res == p
 end
 
 
@@ -400,36 +387,100 @@ local function isPrefixUniqueEq (g, p)
 	return true
 end
 
+local function hasSharedPrefix (g, p1, p2)
+	local s1 = p1.p1
+	local s2 = p2.p1
+	if p2.tag == 'char' then
+		s2 = '__' .. s2
+	end
+	if p1 == p2 then
+		return false
+	elseif s1 == s2 then
+		return not disjoint(g.symPref[s1][p1], g.symPref[s2][p1])
+	elseif not disjoint(g.symPref[s1][p1], g.symPref[s2][p2]) then
+		--return not disjoint(calck(g, g.prules[s1], g.symFlw[s1][p1]), calcfirst(g, p2))
+		return false
+	else
+		return false
+	end
+end
+
+
+local function getName (p)
+	assert(p.tag == 'char' or p.tag == 'var')
+	if p.tag == 'char' then
+		return '__' .. p.p1
+	else
+		return p.p1
+	end
+end
 
 local function isPrefixUniqueVarFlw (g, p, pflw, rep)
 	local s1 = p.p1
 
 	local pref = g.symPref[s1][p]
-	local t = getSymbolsFirst(g, g.prules[p.p1])
+	local prefEq = {}
+	local nPrefEq = 0
 
-	for k1, _ in pairs(t) do
-		local s2 = k1.p1
-		if k1.tag == 'char' then
-			s2 = '__' .. s2
-		end
-		for k2, v2 in pairs(g.symPref[s2]) do
-			if not t[k2] and not disjoint(pref, v2) then
-				if not disjoint(g.symFlw[s1][p], g.symFlw[s2][k2]) then
-					return false
-				end 
+	local prefInt = {}
+
+	local first1 = fst[s1]
+	for k1, v1 in pairs(g.symPref) do
+		local first2 = fst[k1]
+		for k2, v2 in pairs(v1) do
+			--print("vamos", k1, fst[k1], k2.p1, fst[k2.p1], calcfirst(g, k2))
+			first2 = calcfirst(g, k2)
+			if k2 ~= p and not disjoint(pref, v2) then
+			--if hasSharedPrefix(g, p, k2) then
+				if not disjoint(first1, first2) then
+					table.insert(prefInt, k2)
+					if first.issubset(v2, pref) then
+						prefEq[k2] = true
+						nPrefEq = nPrefEq + 1
+					end
+				end
 			end
 		end
 	end
-	--if true then
-		--return false
-	--end
+
+	local symFirst = getSymbolsFirst(g, g.prules[p.p1])
+
+	if #prefInt > 0 then
+		for i, v in ipairs(prefInt) do
+			local sInt = v.p1
+			if v.tag == 'char' then
+				sInt = '__' .. sInt
+			end
+			if not symFirst[v] and not disjoint(g.symFlw[s1][p], g.symFlw[sInt][v]) then
+				return
+			end
+		end
+		if pflw then
+			print("UniqueFlwVar", s1, "rule = ", g.symRule[p], "pref = ", table.concat(first.sortset(g.symPref[s1][p]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s1][p]), ", "), "rep = ", rep)
+			if not rep then
+				pflw.unique = true
+			end
+		end
+
+		return
+	end
+
+	for i, v in ipairs(prefEq) do
+		local sEq = v.p1
+		if v.tag == 'char' then
+			sEq = '__' .. sEq
+		end
+		if not symFirst[v] and not disjoint(g.symFlw[s1][p], g.symFlw[sEq][v]) then
+			return
+		end
+	end
+
 	if pflw then
 		print("UniqueFlwVar", s1, "rule = ", g.symRule[p], "pref = ", table.concat(first.sortset(g.symPref[s1][p]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s1][p]), ", "), "rep = ", rep)
 		if not rep then
 			pflw.unique = true
 		end
 	end
-
 
 end
 
@@ -440,8 +491,11 @@ local function isPrefixUniqueFlw (g, p, pflw, rep)
 		s = '__' .. s
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
 		s = p.p1
+	elseif p.tag == 'var' and not parser.isLexRule(p.p1) then
+		return isPrefixUniqueVarFlw(g, p, pflw, rep)
+		--return
 	else
-		s = p.p1
+		assert(false)
 	end
 
 	local pref = g.symPref[s][p]
@@ -449,8 +503,10 @@ local function isPrefixUniqueFlw (g, p, pflw, rep)
 	local nPrefEq = 0
 
 	local prefInt = {}
+	local total = 0
 
 	for k, v in pairs(g.symPref[s]) do
+		total = total + 1
 		if k ~= p and not disjoint(pref, v) then
 			table.insert(prefInt, k)
 			if first.issubset(v, pref) then
@@ -460,79 +516,18 @@ local function isPrefixUniqueFlw (g, p, pflw, rep)
 		end
 	end
 
-	--print("UniqueFlw", s, "pref = ", table.concat(first.sortset(g.symPref[s][p]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s][p]), ", "), "nInt = ", #prefInt, "nEq = ", nPrefEq)
-
-	if p.tag == 'var' and not parser.isLexRule(p.p1) then
-		if parser.matchEmpty(g.prules[p.p1]) then
-			return
-		end
-		if #prefInt > 0 then
-			for i = 1, #prefInt do
-				if not disjoint(g.symFlw[s][p], g.symFlw[s][prefInt[i]]) then
-					return
-				end
-			end
-			isPrefixUniqueVarFlw(g, p, pflw, rep)
-		else
-			-- all prefixes which are not disjoint are a p's prefix subset
-			local flw = g.symFlw[s][p]
-			for k, _ in pairs(prefEq) do
-				if not disjoint(flw, g.symFlw[s][k]) then
-					return
-				end
-			end
-			
-			local t = getSymbolsFirst(g, g.prules[p.p1])
-			io.write("simbolos = ")
-			for k, v in pairs(t) do
-		 		io.write(k.p1 .. ', ')
-			end
-			io.write("\n")
-			local s1 = s
-			for k1, _ in pairs(t) do
-				local s2 = k1.p1
-				if k1.tag == 'char' then
-					s2 = '__' .. s2
-				end
-				for k2, v2 in pairs(g.symPref[s2]) do
-					print(s2,  "pref = ", table.concat(first.sortset(g.symPref[s2][k2]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s2][k2]), ", "))
-					if not t[k2] and first.issubset(v2, pref) then
-						if not disjoint(g.symFlw[s1][p], g.symFlw[s2][k2]) then
-							return false
-						end 
-					end
-				end
-			end
-
-			--verificar se nao choca com outros nao terminais
-
-			if pflw and not rep then
-				print("foi trueVar22")
-				print("UniqueFlwVar", s1, "rule = ", g.symRule[p], "pref = ", table.concat(first.sortset(g.symPref[s1][p]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s1][p]), ", "))
-				pflw.unique = true
-			end
-		end
-		return
+	if total > 1 and total == nPrefEq + 1 then
+		print("Subset", s, "rule = ", g.symRule[p], "total = ", total)
 	end
 
 	if #prefInt > 0 then
-		-- flw sets share some symbol?
-		--[=[table.insert(prefInt, p)
-		for i = 1, #prefInt do
-			local flw1 = g.symFlw[s][prefInt[i]]
-			for j = i + 1, #prefInt do
-				if not disjoint(flw1, g.symFlw[s][prefInt[j]]) then
-					return
-				end
-			end
-		end]=]
 		for i = 1, #prefInt do
 			if not disjoint(g.symFlw[s][p], g.symFlw[s][prefInt[i]]) then
 				return
 			end
 		end
 		
-		if pflw then
+		if pflw and not rep then
 			pflw.unique = true
 		else
 			print("UniqueFlw", s, "rule = ", g.symRule[p], "pref = ", table.concat(first.sortset(g.symPref[s][p]), ", "), "flw = ", table.concat(first.sortset(g.symFlw[s][p]), ", "), "nInt = ", #prefInt, "nEq = ", nPrefEq, "pflw = ", pflw)
@@ -547,14 +542,17 @@ local function isPrefixUniqueFlw (g, p, pflw, rep)
 			return
 		end
 	end
-	if pflw then
-		print("foi true22")
+	if pflw and not rep then
+		print("foi true22", p.p1, pflw.p1, p.unique)
 		pflw.unique = true
 	end
 end
 
 
 local function isPrefixUnique (g, p, pflw, rep)
+	if pflw and pflw.p1 == 'if' then
+		print("prefixUnique", pflw.p1, pflw.unique)
+	end
 	local s = p.p1
 	if p.tag == 'char' then
 		s = '__' .. s
@@ -572,49 +570,42 @@ local function isPrefixUnique (g, p, pflw, rep)
 	end
 
 	local pref = g.symPref[s][p]
-	--local flw = g.symFlw[s][p]
-	--print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
+	local flw = g.symFlw[s][p]
+	print(s, " pref := ", table.concat(first.sortset(pref), ", "), " flw := ", table.concat(first.sortset(flw), ", "))
 
+	local setDisj = {}
 	for k, v in pairs(g.symPref[s]) do
-		--print("isUnique", p, k == p)
 		if k ~= p then
-			if not disjoint(pref, v) and not isLastAlternative(g, p, g.symPref[s]) then
-				return false
+			if not disjoint(pref, v) then --and not isLastAlternative(g, p, g.symPref[s]) then
+				setDisj[k] = true
+				--return false
 			end
 		end
 	end
 
+	if not isLastAlternative(g, p, setDisj) then
+		return false
+	end
+	--for i, v in ipairs(setDisj) do
+	--	if not isLastAlternative(g, p, v) then
+	--		return false
+	--	end
+	--end
+
+	print("true33", p.p1)
 	return true
 end
 
 
-local function setNextUnique (p)
-	if p.tag == 'char' or p.tag == 'var' then
-		p.unique = true
-	elseif p.tag == 'ord' then
-		p.unique = true
-	elseif p.tag == 'con' then
-		setNextUnique(p.p1)
-	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
-		p.unique = true
-		setNextUnique(p.p1)
-	end
-end
-
-local function lastSymCon (p)
-	if p.tag == 'con' then
-		return p.p2
-	else
-		return p
-	end
-end
 
 local function uniquePrefixAux (g, p, pflw, rep)
+	--print("prefixAux pflw", p.tag, p.p1, (pflw or {}).tag, (pflw or {}).p1)
 	if p.tag == 'char' or p.tag == 'var' then
 		--assert(not p.unique or (p.unique == true and isPrefixUnique(g, p) == true))
 		--if p.p1 == '=' then
 		--	print("here __= ", isPrefixUnique(g, p))
 		--end
+		--print("uniquePrefixAux", p.p1, p.unique)
 		local res1 = isPrefixUnique(g, p, pflw, rep)
 		local res2
 		if not res1 then
@@ -624,14 +615,9 @@ local function uniquePrefixAux (g, p, pflw, rep)
 		--print("preUnique ", res1, "prefUniqueEq", res2)
 		p.unique = p.unique or (res1)
 		p.uniqueEq = p.uniqueEq or res2
+		--print("end", p.p1, p.unique, res1, res2)
 	elseif p.tag == 'con' then
 		uniquePrefixAux(g, p.p1, p.p2, rep)
-		--local res = isPrefixUnique(g, lastSymCon(p.p1))
-		--if res == 'next' then
-		--	local x = lastSymCon(p.p1)
-		--	print("Nextt", x.tag, x.p1)
-		--	setNextUnique(p.p2)
-		--end
 		rep = rep and parser.matchEmpty(p.p1)
 		uniquePrefixAux(g, p.p2, pflw, rep)
 	elseif p.tag == 'ord' then
@@ -716,6 +702,9 @@ local function setUnique (p, v)
 	if not v then
 		return
 	end
+	if p.p1 == 'if' then
+		print("setUnique", p.p1, p.v, p.unique)
+	end
 	if not p.unique then
 		changeUnique = true
 	end
@@ -724,7 +713,9 @@ end
 
 
 local function uniquePath (g, p, uPath, flw)
+	--print("uniquePath ", p.tag, p.p1, p.unique, uPath)
 	if p.tag == 'char' then
+		--print("uniquePath", p.p1, p.unique, uPath)
 		setUnique(p, uPath or g.uniqueTk[p.p1])
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
 		setUnique(p, uPath or g.uniqueTk[p.p1])
