@@ -124,7 +124,8 @@ local function set2choice (s)
 			p = newOrd(getElem(v), p)
 		end
 	end	
-	return p
+	--returns pattern . when s is empty
+	return p or parser.newAny()
 end
 
 
@@ -505,12 +506,13 @@ local function calcPrefix (g)
   end
 	--calcPrefixAux(g, g.prules['import'], { [empty] = true })
 
-	--[[print("calcPrefix")
+	print("calcPrefix")
 	for k1, v1 in pairs(g.symPref) do
+		print(k1, ' -> ')
 		for k2, v2 in pairs(v1) do
-			print(k1 .. ': ', table.concat(sortset(v2), ", "))
+			print('\t(' .. k1 .. ', ' .. g.symRule[k2] .. '): ', table.concat(sortset(v2), ", "))
 		end
-	end]]
+	end
 end
 
 
