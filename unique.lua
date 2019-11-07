@@ -140,27 +140,6 @@ local function uniqueTk (g)
 end
 
 
-local function belongRHSFirst (g, p, rhs)
-	if rhs.tag == 'char' then
-		return p == rhs
-	elseif rhs.tag == 'var' and parser.isLexRule(p.p1) then 
-		return p == rhs
-	elseif rhs.tag == 'var' and p.tag == 'var' then
-		return not disjoint(calcfirst(g, p), calcfirst(g, rhs))
-	elseif rhs.tag == 'con' then
-		if belongRHSFirst(g, p, rhs.p1) then
-			return true
-		end
-		return parser.matchEmpty(rhs.p1) and belongRHSFirst(g, p, rhs.p2) 
-	elseif rhs == 'ord' then
-		return belongRHSFirst(g, p, rhs.p1) or belongRHSFirst(g, p, rhs.p2)
-	elseif rhs.tag == 'star' or rhs.tag == 'plus' or rhs.tag == 'opt' then
-		return belongRHSFirst(g, p, rhs.p1)
-	else
-		return false
-	end
-end
-
 
 local function isPrefixUniqueVar (g, p)
 	local s = p.p1
@@ -181,71 +160,12 @@ local function isPrefixUniqueVar (g, p)
 		end
 	end
 
-	--[==[print("analisar ", p.p1)
-	local tk = calcfirst(g, p)
-	local rhs = g.prules[p.p1]
-	for k1, v1 in pairs(tk) do
-		print("k1, v1", k1, v1)
-		if k1 ~= '__empty' then
-			if string.sub(k1, 1, 2) ~= '__' then k1 = '__' .. k1 else k1 = string.sub(k1, 3) end
-			for k2, v2 in pairs(g.symPref[k1]) do
-				if not belongRHSFirst(g, k2, rhs) then
-					if not disjoint(pref, v2) then
-						return false
-					end
-				end
-			end
-		end
-	end
-	]==]
 	print("vai ser true", p.p1)
 	
 	--return false
 	return res
 end
 
-
-local function isPrefUniVarAux2 (g, p, pref)
-	local s = getName(p)
-
-	for k, v in pairs(g.symPref[s]) do
-		if k ~= p then
-			if not disjoint(pref, v) and not isLastAlternative(g, p, g.symPref[s]) then
-				return false
-			end
-		end
-	end
-
-	print("passou dois")
-	return true
-end
-
-local function isPrefUniVarAux (g, p, pref)
-	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
-		return isPrefUniVarAux2(g, p, pref)
-	elseif p.tag == 'var' then
-		--io.write("isPrefUniVarAux " .. p.p1 .. ": ")
-		--for k, v in pairs(fst) do
-		--	io.write(k .. ', ')
-		--end
-		--io.write('\n')
-		--return false
-		return isPrefUniVarAux(g, g.prules[p.p1], pref)
-	elseif p.tag == 'con' then
-		local res = isPrefUniVarAux(g, p.p1, pref)
-		if res and parser.matchEmpty(p.p1) then
-			res = isPrefUniVarAux(g, p.p2, pref)
-		end
-		return res 
-	elseif p.tag == 'ord' then
-		return isPrefUniVarAux(g, p.p1, pref) and isPrefUniVarAux(g, p.p2, pref)
-	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
-		return isPrefUniVarAux(g, p.p1, pref)	
-	else
-		print("falseee", p.tag, p.p1, p)
-		return false
-	end
-end
 
 local function getSymbolsFirst (g, p)
 	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
@@ -416,7 +336,16 @@ end
 
 
 local function isPrefixUniqueVarFlw (g, p, pflw, rep)
-	local s1 = p.p1
+	if matchUPath(p) then
+		if isDisjointLast(g, p) then
+			if pflw and not rep then
+				pflw.unique = true
+			end
+			--return
+		end
+	end
+
+	local s1 = getName(p)
 
 	local pref = g.symPref[s1][p]
 	local prefEq = {}
@@ -592,7 +521,8 @@ local function uniquePrefixAux (g, p, pflw, rep)
 		uniquePrefixAux(g, p.p1, pflw, rep)
 		uniquePrefixAux(g, p.p2, pflw, rep)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		uniquePrefixAux(g, p.p1, pflw, true)
+		--uniquePrefixAux(g, p.p1, pflw, true)
+		uniquePrefixAux(g, p.p1, pflw, p.tag ~= 'plus')
 	end
 end
 
