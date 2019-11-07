@@ -323,22 +323,22 @@ end
 
 
 
-local function isLastAlternativeAux (p, s, last)
+local function isLastAlternativeAux (p, s, last, disj)
 	--print("last", s, p, p.tag, last)
 	if p.tag == 'char' or p.tag == 'var' then
-		if p.p1 == s then
+		if p.p1 == s and disj[p] then
 			return p
 		else
 			return last
 		end
 	elseif p.tag == 'ord' then
-		last = isLastAlternativeAux(p.p1, s, last)
-		return isLastAlternativeAux(p.p2, s, last)
+		last = isLastAlternativeAux(p.p1, s, last, disj)
+		return isLastAlternativeAux(p.p2, s, last, disj)
 	elseif p.tag == 'con' then
-		last = isLastAlternativeAux(p.p1, s, last)
-		return isLastAlternativeAux(p.p2, s, last)
+		last = isLastAlternativeAux(p.p1, s, last, disj)
+		return isLastAlternativeAux(p.p2, s, last, disj)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		return isLastAlternativeAux(p.p1, s, last)
+		return isLastAlternativeAux(p.p1, s, last, disj)
 	else
 		return last
 	end
@@ -354,7 +354,9 @@ function isLastAlternative (g, p, t)
 		end
 	end
 
-	local res = isLastAlternativeAux(g.prules[g.symRule[p]], p.p1, nil)
+	t[p] = true
+	local res = isLastAlternativeAux(g.prules[g.symRule[p]], p.p1, nil, t)
+	t[p] = true
 	--print("lastAlt2", p.p1, res, res == p)
 	return res == p
 end
