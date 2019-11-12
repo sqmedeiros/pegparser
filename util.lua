@@ -27,7 +27,12 @@ local function getPath (s)
 		i = j + 1
 		j = string.find(s, '/', i)
 	end
-	return string.sub(s, 1, i - 1)
+	local path = string.sub(s, 1, i - 1)
+	if #path == 0 then
+		return "."
+	else
+		return path
+	end
 end
 
 

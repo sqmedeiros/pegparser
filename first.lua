@@ -13,6 +13,17 @@ local newNode = parser.newNode
 local newOrd = parser.newOrd
 local printfirst, printsymbols, calcfirst, calck
 
+
+local function getName (p)
+	assert(p.tag == 'char' or p.tag == 'var')
+	if p.tag == 'char' then
+		return '__' .. p.p1
+	else
+		return p.p1
+	end
+end
+
+
 local function disjoint (s1, s2)
 	for k, _ in pairs(s1) do
 		if s2[k] then
@@ -516,6 +527,47 @@ local function calcPrefix (g)
 end
 
 
+local function notDisjointFirstAux (g, t, first1, v)
+	if parser.isLexRule(v) then
+		v = '__' .. v
+	end
+	first2 = FIRST[v]
+	if not first2 then
+		first2 = {}
+		first2[v] = true
+	end
+
+	if not disjoint(first1, first2) then
+		t[v] = true
+	end
+end
+
+local function notDisjointFirst (g)
+	local res = {}
+	for _, var in ipairs(g.plist) do
+		if not parser.isLexRule(var) then
+			res[var] = {}
+			local first1 = FIRST[var]
+			for k, _ in pairs(g.tokens) do
+				notDisjointFirstAux(g, res[var], first1, k)
+			end
+			for _, v in ipairs(g.plist) do
+				if var ~= v then
+					notDisjointFirstAux(g, res[var], first1, v)
+				end
+			end
+
+			--[==[io.write("Not disjoint " .. var .. ": ")
+			for k, v in pairs(res[var]) do
+				io.write(k .. ", ")
+			end
+			io.write("\n")]==]
+		end
+	end
+	return res
+end
+
+
 
 local function initFlw(g)
   FOLLOW = {}
@@ -639,6 +691,7 @@ end
 
 
 return {
+	getName = getName,
   calcFlw = calcFlw,
   calcFst = calcFst,
 	calcfirst = calcfirst,
@@ -659,6 +712,7 @@ return {
 	calcPrefix = calcPrefix,
 	calcGlobalPrefix = calcGlobalPrefix,
 	calcTail = calcTail,
-	calcLocalFollow = calcLocalFollow
+	calcLocalFollow = calcLocalFollow,
+	notDisjointFirst = notDisjointFirst,
 }
 

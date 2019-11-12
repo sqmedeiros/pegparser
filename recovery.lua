@@ -77,7 +77,8 @@ local function annotateUPathAux (g, p, seq, afterU, flw, afterUEq)
 	--print("UPathAux", p.tag, p.p1, seq, afterU, afterUEq)
 	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterU and seq then
     return label.markerror(p, flw)
-	elseif ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterUEq and seq then
+	elseif ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and afterUEq and seq and p.uniqueEq then
+		print("addEq", p.p1, p.throw, g.symRule[p])
 		return label.markerror(p, flw)
 	elseif p.tag == 'con' then
 		--print("con", p.p1.tag, p.p2.tag, matchUniqueEq(p.p1))
