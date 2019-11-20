@@ -90,7 +90,7 @@ end
 
 defs.newDef = function (v)
 	if not predef[v] then
-		error("undefined name: ", v)
+		error("undefined name: " .. tostring(v))
 	end
 	return newNode('def', v)
 end
@@ -218,7 +218,7 @@ defs.matchEmpty = function (p)
 		return defs.matchEmpty(p.p2)
 	else
 		print(p)
-		error("Unknown tag", p.tag)
+		error("Unknown tag" .. tostring(p.tag))
 	end
 end
 
