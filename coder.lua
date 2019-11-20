@@ -90,6 +90,8 @@ local function autoskip (p, g)
 	if p.tag == 'empty' or p.tag == 'char' or p.tag == 'set' or
      p.tag == 'any' then
 		return matchskip(p)
+	elseif p.tag == 'def' then
+		return p
 	elseif p.tag == 'constCap' then
 		return p
 	elseif p.tag == 'posCap' then
