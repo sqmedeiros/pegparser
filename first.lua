@@ -15,7 +15,7 @@ local printfirst, printsymbols, calcfirst, calck
 
 
 local function getName (p)
-	assert(p.tag == 'char' or p.tag == 'var')
+	assert(p.tag == 'char' or p.tag == 'var', tostring(p.tag))
 	if p.tag == 'char' then
 		return '__' .. p.p1
 	else
@@ -130,7 +130,7 @@ local function set2choice (s)
   local r = sortset(s)
 	for i, v in ipairs(r) do
 		if not p then
-				p = getElem(v)
+			p = getElem(v)
 		else
 			p = newOrd(getElem(v), p)
 		end
@@ -472,10 +472,7 @@ end
 
 
 function updatePref (g, p, tk, v)
-	local k = p.p1
-	if p.tag == 'char' then
-		k = '__' .. p.p1
-	end
+	local k = getName(p)
 	--print("updatePref", k)
 	if not g.symPref[k] then
 		g.symPref[k] = {}
@@ -527,18 +524,19 @@ local function calcPrefix (g)
 end
 
 
-local function notDisjointFirstAux (g, t, first1, v)
+local function notDisjointFirstAux (g, t, first1, v, kind)
+	local idxFirst = v
 	if parser.isLexRule(v) then
-		v = '__' .. v
+		idxFirst = '__' .. v
 	end
-	first2 = FIRST[v]
+	first2 = FIRST[idxFirst]
 	if not first2 then
 		first2 = {}
-		first2[v] = true
+		first2[idxFirst] = true
 	end
 
 	if not disjoint(first1, first2) then
-		t[v] = true
+		t[v] = kind
 	end
 end
 
@@ -549,11 +547,11 @@ local function notDisjointFirst (g)
 			res[var] = {}
 			local first1 = FIRST[var]
 			for k, _ in pairs(g.tokens) do
-				notDisjointFirstAux(g, res[var], first1, k)
+				notDisjointFirstAux(g, res[var], first1, k, 'token')
 			end
 			for _, v in ipairs(g.plist) do
 				if var ~= v then
-					notDisjointFirstAux(g, res[var], first1, v)
+					notDisjointFirstAux(g, res[var], first1, v, 'var')
 				end
 			end
 
@@ -635,10 +633,7 @@ end
 
 
 function updateLocalFollow (g, p, tk)
-	local k = p.p1
-	if p.tag == 'char' then
-		k = '__' .. p.p1
-	end
+	local k = getName(p)
 	--print("updatePref", k)
 	if not g.symFlw[k] then
 		g.symFlw[k] = {}
