@@ -213,7 +213,7 @@ annotation            <-  '@' (normalAnnotation         /
                                singleElementAnnotation  /
                                markerAnnotation)
 
-normalAnnotation      <-  qualIdent '(' elementValuePairList* ')'
+normalAnnotation      <-  qualIdent '(' elementValuePairList? ')'
 
 elementValuePairList  <-  elementValuePair (',' elementValuePair)*
 
@@ -496,6 +496,7 @@ COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
 ]]
 
 
+--[==[
 print("Regular Annotation (SBLP paper)")
 g = m.match(s)
 local greg = recovery.putlabels(g, 'regular', true)
@@ -523,16 +524,16 @@ g = m.match(s)
 local gunique = recovery.putlabels(g, 'unique', true)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique\n")
-
+]==]
 
 print("Unique Path (UPath)")
 g = m.match(s)
 local gupath = recovery.putlabels(g, 'upath', true)
 print(pretty.printg(gupath, true), '\n')
---print(pretty.printg(gupath, true, 'unique'), '\n')
+print(pretty.printg(gupath, true, 'unique'), '\n')
 print("End UPath\n")
 
-
+--[==[
 print("Deep UPath")
 g = m.match(s)
 local gupath = recovery.putlabels(g, 'deepupath', true)
@@ -546,7 +547,7 @@ g = m.match(s)
 local gupath = recovery.putlabels(g, 'upathdeep', true)
 print(pretty.printg(gupath, true), '\n')
 print("End UPathDeep\n")
-
+]==]
 
 g = m.match(s)
 local p = coder.makeg(g, 'ast')
