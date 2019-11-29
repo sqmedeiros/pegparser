@@ -11,6 +11,16 @@ local isLastAlternativeAux
 local changeUnique = false
 local fst, flw
 
+
+local function lastSymCon (p)
+	if p.tag == 'con' then
+		return p.p2
+	else
+		return p
+	end
+end
+
+
 local function matchUnique (g, p)
 	if p.tag == 'char' then
 		return g.unique[p.p1]
@@ -261,8 +271,18 @@ local function isPrefixUniqueEq (g, p, inter, sub)
 		end
 	end]==]
 
+	if p.previousEq then
+		local namePrev = getName(p.previousEq)
+		print("previousEq: ", p.p1, ", rule: ", g.symRule[p], ", prev: ", namePrev, p, p.previousEq)
+		for k, v in pairs(g.symPref[namePrev][p.previousEq]) do
+			io.write(k .. ' ; ')
+		end
+		io.write('\n')
+	end
 	for k, _ in pairs(inter) do
 		if not sub[k] then
+			-- test if 'k' is also preceded by 'previousEq'
+			print("Nao foi sub", k, k.p1, g.symRule[k])
 			local t = { [k] = true }
 			if not isLastAlternative(g, p, t) then
 				return
@@ -270,6 +290,12 @@ local function isPrefixUniqueEq (g, p, inter, sub)
 		end 
 	end
 	
+	print("foi uniqueEq", p.p1, g.symRule[p])
+	for k, v in pairs(g.symPref[getName(p)][p]) do
+			io.write(k .. ' ; ')
+	end
+	io.write('\n')
+
 	p.uniqueEq = true	
 end
 
@@ -320,7 +346,7 @@ local function isPrefixUniqueFlw (g, p)
 	if next(flwInt) ~= nil then
 		print("teve colisao")
 	else
-		print("sem colisao")
+		return true
 	end
 
 	return isLastAlternative(g, p, flwInt)
@@ -333,8 +359,11 @@ local function uniquePrefixAux (g, p)
 		p.unique = p.unique or isPrefixUnique(g, p) 
 	elseif p.tag == 'con' then
 		uniquePrefixAux(g, p.p1)
-		if not p.p2.unique and (p.p1.tag == 'char' or p.p1.tag == 'var') and isPrefixUniqueFlw(g, p.p1) then
-			p.p2.unique = true
+		if not p.p2.unique then
+			local last = lastSymCon(p.p1)
+			if (last.tag == 'char' or  last.tag == 'var') and isPrefixUniqueFlw(g, last) then
+				p.p2.unique = true
+			end
 		end
 		uniquePrefixAux(g, p.p2)
 	elseif p.tag == 'ord' then
@@ -447,18 +476,23 @@ local function uniquePath (g, p, uPath, flw)
 	elseif p.tag == 'con' then
 		uniquePath(g, p.p1, uPath, calck(g, p.p2, flw))
 		uPath = uPath or p.p1.unique
+		local p1 = lastSymCon(p.p1)
 		if not uPath then
-			if p.p1.tag == 'var' and not parser.isLexRule(p.p1.p1) and matchUPath(g.prules[p.p1.p1]) and isDisjointLast(g, p.p1, getName(p.p1)) then
-				print("Vai ser agora", p.p1.p1, g.symRule[p.p1])
+			if p1.tag == 'var' and not parser.isLexRule(p1.p1) and matchUPath(g.prules[p1.p1]) and isDisjointLast(g, p1, getName(p1)) then
+				print("Vai ser agora", p1.p1, g.symRule[p1])
 			end
 			-- it seems this condition has verty little impact
-			if p.p1.tag == 'var' and not parser.isLexRule(p.p1.p1) and matchUPath(g.prules[p.p1.p1]) and isDisjointLast(g, p.p1, getName(p.p1)) then
-				setUnique(p.p1, true)
+			if p1.tag == 'var' and not parser.isLexRule(p1.p1) and matchUPath(g.prules[p1.p1]) and isDisjointLast(g, p1, getName(p1)) then
+				setUnique(p1, true)
 				uPath = true
-			elseif (p.p1.tag == 'char' or (p.p1.tag == 'var' and parser.isLexRule(p.p1.p1))) and isDisjointLast(g, p.p1, getName(p.p1)) then
-				setUnique(p.p1, true)
+			elseif (p1.tag == 'char' or (p1.tag == 'var' and parser.isLexRule(p1.p1))) and isDisjointLast(g, p1, getName(p1)) then
+				setUnique(p1, true)
 				uPath = true
 			end
+		end
+		if p1.uniqueEq then
+			print("upathEq", p1.p1)
+			p.p2.previousEq = p1
 		end
 		uniquePath(g, p.p2, uPath, flw)
 		setUnique(p, uPath or p.p2.unique)
