@@ -9,8 +9,8 @@ local s = [[
 compilation           <-  SKIP compilationUnit !.
 
 -- JLS 4 Types, Values and Variables
-basicType            <-  'byte'  /  'short'  /  'int'  /  'long' /
-                         'char'  /  'float'  /  'double'  /  'boolean'
+basicType            <-  BYTE  /  SHORT  /  INT  /  LONG /
+                         CHAR  /  FLOAT  /  DOUBLE  /  BOOLEAN
 
 primitiveType        <-  annotation* basicType
 
@@ -31,9 +31,9 @@ typeParameter        <-  typeParameterModifier* Identifier typeBound?
 
 typeParameterModifier  <-  annotation
 
-typeBound            <-  'extends' (classType additionalBound*  /  typeVariable)
+typeBound            <-  EXTENDS (classType additionalBound*  /  typeVariable)
 
-additionalBound      <-  'and' classType
+additionalBound      <-  AND classType
 
 typeArguments        <-  '<' typeArgumentList '>'
 
@@ -43,7 +43,7 @@ typeArgument         <-  referenceType  /  wildcard
 
 wildcard             <-  annotation* '?' wildcardBounds?
 
-wildcardBounds       <-  'extends' referenceType  / 'super' referenceType
+wildcardBounds       <-  EXTENDS referenceType  / SUPER referenceType
 
 
 -- JLS 6 Names
@@ -53,11 +53,11 @@ qualIdent            <-  Identifier ('.' Identifier)*
 -- JLS 7 Packages
 compilationUnit      <-  packageDeclaration? importDeclaration* typeDeclaration*
 
-packageDeclaration   <-  packageModifier* 'package' Identifier ('.' Identifier)* ';'
+packageDeclaration   <-  packageModifier* PACKAGE Identifier ('.' Identifier)* ';'
 
 packageModifier      <-  annotation
 
-importDeclaration    <-  'import' 'static'? qualIdent ('.' '*')? ';'  /  ';'
+importDeclaration    <-  IMPORT STATIC? qualIdent ('.' '*')? ';'  /  ';'
 
 typeDeclaration      <-  classDeclaration  /  interfaceDeclaration  /  ';'
 
@@ -65,19 +65,19 @@ typeDeclaration      <-  classDeclaration  /  interfaceDeclaration  /  ';'
 -- JLS 8 Classes
 classDeclaration     <-  normalClassDeclaration  /  enumDeclaration
 
-normalClassDeclaration  <-  classModifier* 'class' Identifier typeParameters?
+normalClassDeclaration  <-  classModifier* CLASS Identifier typeParameters?
                               superclass? superinterfaces? classBody
 
-classModifier        <-  annotation  /  'public'  /  'protected'  /  'private'  /
-                         'abstract'  /  'static'  /  'final'  /  'strictfp'
+classModifier        <-  annotation  /  PUBLIC  /  PROTECTED  /  PRIVATE  /
+                         ABSTRACT  /  STATIC  /  FINAL  /  STRICTFP
 
 typeParameters       <-  '<' typeParameterList '>'
 
 typeParameterList    <-  typeParameter (',' typeParameter)*
 
-superclass           <-  'extends' classType
+superclass           <-  EXTENDS classType
 
-superinterfaces      <-  'implements' interfaceTypeList
+superinterfaces      <-  IMPLEMENTS interfaceTypeList
 
 interfaceTypeList    <-  classType (',' classType)*
 
@@ -104,8 +104,8 @@ unannClassType       <-  Identifier typeArguments?
 
 unannType            <-  basicType dim*  /  unannClassType dim*
 
-fieldModifier        <-  annotation  /  'public'  /  'protected'  /  'private'  /
-                         'static'  /  'final'  /  'transient'  /  'volatile'
+fieldModifier        <-  annotation  /  PUBLIC  /  PROTECTED  /  PRIVATE  /
+                         STATIC  /  FINAL  /  TRANSIENT  /  VOLATILE
 
 methodDeclaration    <-  methodModifier* methodHeader methodBody
 
@@ -119,17 +119,17 @@ formalParameterList  <-  (receiverParameter  /  formalParameter) (',' formalPara
 formalParameter      <-  variableModifier* unannType variableDeclaratorId  /
                          variableModifier* unannType annotation* '...' variableDeclaratorId !','
 
-variableModifier     <-  annotation  /  'final'
+variableModifier     <-  annotation  /  FINAL
 
-receiverParameter    <-  variableModifier* unannType (Identifier '.')? 'this'
+receiverParameter    <-  variableModifier* unannType (Identifier '.')? THIS
 
-result               <-  unannType  /  'void'
+result               <-  unannType  /  VOID
 
-methodModifier       <-  annotation  /  'public'  /  'protected'  /  'private'  /
-                         'abstract'  /  'static'  /  'final'  /  'synchronized'  /
-                         'native'  /  'stictfp'
+methodModifier       <-  annotation  /  PUBLIC  /  PROTECTED  /  PRIVATE  /
+                         ABSTRACT  /  STATIC  /  FINAL  /  SYNCHRONIZED  /
+                         NATIVE  /  STRICTFP
 
-throws               <-  'throws' exceptionTypeList
+throws               <-  THROWS exceptionTypeList
 
 exceptionTypeList    <-  exceptionType (',' exceptionType)*
 
@@ -139,22 +139,22 @@ methodBody           <-  block  /  ';'
 
 instanceInitializer  <-  block
 
-staticInitializer    <-  'static' block
+staticInitializer    <-  STATIC block
 
 constructorDeclaration  <-  constructorModifier* constructorDeclarator throws? constructorBody
 
 constructorDeclarator  <-  typeParameters? Identifier '(' formalParameterList? ')'
 
-constructorModifier  <-  annotation  /  'public'  /  'protected'  /  'private'
+constructorModifier  <-  annotation  /  PUBLIC  /  PROTECTED  /  PRIVATE
 
 constructorBody      <-  '{' explicitConstructorInvocation? blockStatements? '}'
 
-explicitConstructorInvocation  <-  typeArguments? 'this'  arguments ';'  /
-                                   typeArguments? 'super' arguments ';'  /
-                                   primary '.' typeArguments? 'super' arguments ';'  /
-                                   qualIdent '.' typeArguments? 'super' arguments ';'
+explicitConstructorInvocation  <-  typeArguments? THIS  arguments ';'  /
+                                   typeArguments? SUPER arguments ';'  /
+                                   primary '.' typeArguments? SUPER arguments ';'  /
+                                   qualIdent '.' typeArguments? SUPER arguments ';'
 
-enumDeclaration       <-  classModifier* 'enum' Identifier superinterfaces? enumBody
+enumDeclaration       <-  classModifier* ENUM Identifier superinterfaces? enumBody
 
 enumBody              <-  '{' enumConstantList? ','? enumBodyDeclarations? '}'
 
@@ -170,13 +170,13 @@ enumBodyDeclarations  <-  ';' classBodyDeclaration*
 -- JLS 9 Interfaces
 interfaceDeclaration  <-  normalInterfaceDeclaration  /  annotationTypeDeclaration
 
-normalInterfaceDeclaration  <-  interfaceModifier* 'interface' Identifier typeParameters?
+normalInterfaceDeclaration  <-  interfaceModifier* INTERFACE Identifier typeParameters?
                                   extendsInterfaces? interfaceBody
 
-interfaceModifier     <-  annotation  /  'public'  /  'protected'  /  'private'  /
-                          'abstract'  /  'static'  /  'strictfp'
+interfaceModifier     <-  annotation  /  PUBLIC  /  PROTECTED  /  PRIVATE  /
+                          ABSTRACT  /  STATIC  /  STRICTFP
 
-extendsInterfaces     <-  'extends' interfaceTypeList
+extendsInterfaces     <-  EXTENDS interfaceTypeList
 
 interfaceBody         <-  '{' interfaceMemberDeclaration* '}'
 
@@ -185,14 +185,14 @@ interfaceMemberDeclaration  <-  constantDeclaration  /  interfaceMethodDeclarati
 
 constantDeclaration   <-  constantModifier* unannType variableDeclaratorList ';'
 
-constantModifier      <-  annotation  /  'public'  /  'static'  /  'final'
+constantModifier      <-  annotation  /  PUBLIC  /  STATIC  /  FINAL
 
 interfaceMethodDeclaration  <-  interfaceMethodModifier* methodHeader methodBody
 
-interfaceMethodModifier  <-  annotation  /  'public'  /  'abstract'  /
-                             'default'  /  'static'  /  'strictfp'
+interfaceMethodModifier  <-  annotation  /  PUBLIC  /  ABSTRACT  /
+                             DEFAULT  /  STATIC  /  STRICTFP
 
-annotationTypeDeclaration  <-  interfaceModifier* '@' 'interface' Identifier annotationTypeBody
+annotationTypeDeclaration  <-  interfaceModifier* '@' INTERFACE Identifier annotationTypeBody
 
 annotationTypeBody    <-  '{' annotationTypeMemberDeclaration* '}'
 
@@ -205,9 +205,9 @@ annotationTypeMemberDeclaration  <-  annotationTypeElementDeclaration  /
 annotationTypeElementDeclaration  <-  annotationTypeElementModifier* unannType
                                         Identifier '(' ')' dim* defaultValue? ';'
 
-annotationTypeElementModifier  <-  annotation  /  'public'  /  'abstract'
+annotationTypeElementModifier  <-  annotation  /  PUBLIC  /  ABSTRACT
 
-defaultValue          <-  'default' elementValue
+defaultValue          <-  DEFAULT elementValue
 
 annotation            <-  '@' (normalAnnotation         /
                                singleElementAnnotation  /
@@ -252,19 +252,19 @@ localVariableDeclarationStatement  <-  localVariableDeclaration ';'
 localVariableDeclaration  <-  variableModifier* unannType variableDeclaratorList
 
 statement            <-  block                                             /
-                         'if' parExpression statement ('else' statement)?  /
+                         IF parExpression statement (ELSE statement)?  /
                          basicForStatement                                 /
                          enhancedForStatement                              /
-                         'while' parExpression statement                   /
-                         'do' statement 'while' parExpression ';'          /
+                         WHILE parExpression statement                   /
+                         DO statement WHILE parExpression ';'          /
                          tryStatement                                      /
-                         'switch' parExpression switchBlock                /
-                         'synchronized' parExpression block                /
-                         'return' expression? ';'                          /
-                         'throw' expression ';'                            /
-                         'break' Identifier? ';'                           /
-                         'continue' Identifier? ';'                        /
-                         'assert' expression (':' expression)? ';'         /
+                         SWITCH parExpression switchBlock                /
+                         SYNCHRONIZED parExpression block                /
+                         RETURN expression? ';'                          /
+                         THROW expression ';'                            /
+                         BREAK Identifier? ';'                           /
+                         CONTINUE Identifier? ';'                        /
+                         ASSERT expression (':' expression)? ';'         /
                          ';'                                               /
                          statementExpression ';'                           /
                          Identifier ':' statement
@@ -280,12 +280,12 @@ switchBlockStatementGroup  <-  switchLabels blockStatements
 
 switchLabels          <-  switchLabel switchLabel*
 
-switchLabel           <-  'case' (constantExpression / enumConstantName) ':'  /
-                          'default' ':'
+switchLabel           <-  CASE (constantExpression / enumConstantName) ':'  /
+                          DEFAULT ':'
 
 enumConstantName      <-  Identifier
 
-basicForStatement     <-  'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
+basicForStatement     <-  FOR '(' forInit? ';' expression? ';' forUpdate? ')' statement
 
 forInit               <-  localVariableDeclaration  /  statementExpressionList
 
@@ -293,23 +293,23 @@ forUpdate             <-  statementExpressionList
 
 statementExpressionList  <-  statementExpression (',' statementExpression)*
 
-enhancedForStatement  <-  'for' '(' variableModifier* unannType variableDeclaratorId ':'
+enhancedForStatement  <-  FOR '(' variableModifier* unannType variableDeclaratorId ':'
                             expression ')' statement
 
-tryStatement          <-  'try' (block (catchClause* finally  /  catchClause+)  /
+tryStatement          <-  TRY (block (catchClause* finally  /  catchClause+)  /
                                  resourceSpecification block catchClause* finally?)
 
-catchClause           <-  'catch' '(' catchFormalParameter ')' block
+catchClause           <-  CATCH '(' catchFormalParameter ')' block
 
 catchFormalParameter  <-  variableModifier* catchType variableDeclaratorId
 
 catchType             <-  unannClassType ('|'![=|] classType)*
 
-finally               <-  'finally' block
+finally               <-  FINALLY block
 
 resourceSpecification <-  '(' resourceList ';'? ')'
 
-resourceList          <-  resource (',' resource)*
+resourceList          <-  resource (';' resource)*
 
 resource              <-  variableModifier* unannType variableDeclaratorId '='!'=' expression
 
@@ -319,34 +319,34 @@ expression            <-  lambdaExpression  /  assignmentExpression
 
 primary               <-  primaryBase primaryRest*
 
-primaryBase           <-  'this'
+primaryBase           <-  THIS
                        /  Literal
                        /  parExpression
-                       /  'super' ('.' typeArguments? Identifier arguments  /
+                       /  SUPER ('.' typeArguments? Identifier arguments  /
                                    '.' Identifier                            /
                                    '::' typeArguments? Identifier
                                   ) 
-                       /  'new' (classCreator  /  arrayCreator)
+                       /  NEW (classCreator  /  arrayCreator)
                        /  qualIdent ('[' expression ']' /
                                      arguments          /
-                                     '.' ('this'                                           /
-                                          'new' classCreator                               /
+                                     '.' (THIS                                           /
+                                          NEW classCreator                               /
                                           typeArguments Identifier arguments               /
-                                          'super' '.' typeArguments? Identifier arguments  /
-                                          'super' '.' Identifier                           /
-                                          'super' '::' typeArguments? Identifier arguments
+                                          SUPER '.' typeArguments? Identifier arguments  /
+                                          SUPER '.' Identifier                           /
+                                          SUPER '::' typeArguments? Identifier arguments
                                          )
-                                                        /  ('[' ']')* '.' 'class'
+                                                        /  ('[' ']')* '.' CLASS
                                                         /  '::' typeArguments? Identifier
                                      )
-                       /  'void' '.' 'class'
-                       /  basicType ('[' ']')* '.' 'class'
-                       /  referenceType '::' typeArguments? 'new'
-                       /  arrayType '::' 'new'
+                       /  VOID '.' CLASS
+                       /  basicType ('[' ']')* '.' CLASS
+                       /  referenceType '::' typeArguments? NEW
+                       /  arrayType '::' NEW
 
 primaryRest           <-  '.' (typeArguments? Identifier arguments  /
                                Identifier                           /
-                               'new' classCreator
+                               NEW classCreator
                               )
                        /  '[' expression ']'
                        /  '::' typeArguments? Identifier
@@ -388,14 +388,14 @@ castExpression        <-  '(' primitiveType ')' unaryExpression                 
                           '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
 
 infixExpression       <-  unaryExpression ((InfixOperator unaryExpression) /
-                                           ('instanceof' referenceType))*
+                                           (INSTANCEOF referenceType))*
 
 InfixOperator         <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]          /
                           '=='  /  '!='  /  '<' ![=<]  /  '>'![=>]  /  '<='               /
                           '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /
                           '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
 
-conditionalExpression <-  infixExpression ('query' expression ':' expression)*
+conditionalExpression <-  infixExpression ('?' expression ':' expression)*
 
 assignmentExpression  <-  assignment  /  conditionalExpression
 
@@ -424,19 +424,7 @@ constantExpression    <-  expression
 Identifier            <-  !Keywords [a-zA-Z_] [a-zA-Z_$0-9]*
 
 -- JLS 3.9 Keywords
-Keywords              <- ('abstract'  /  'assert'  /  'boolean'  /  'break'  /
-                         'byte'  /  'case'  /  'catch'  /  'char'  /
-                         'class'  /  'const'  /  'continue'  /  'default'  /
-                         'double'  /  'do'  /  'else'  /  'enum'  /
-                         'extends'  /  'false'  /  'finally'  /  'final'  /
-                         'float'  /  'for'  /  'goto'  /  'if'  /
-                         'implements'  /  'import'  /  'interface'  /  'int'  /
-                         'instanceof'  /  'long'  /  'native'  /  'new'  /
-                         'null'  /  'package'  /  'private'  /  'protected' /
-                         'public'  /  'return'  /  'short'  /  'static'  /
-                         'strictfp'  /  'super'  /  'switch'  /  'synchronized'  /
-                         'this'  /  'throws'  /  'throw'  /  'transient'  /
-                         'true'  /  'try'  /  'void'  /  'volatile'  /  'while') ![a-zA-Z_$0-9]
+Keywords              <- ABSTRACT  /  AND  /  ASSERT  /  BYTE  /  BOOLEAN  /  BREAK  /  CASE  /  CATCH  /  CHAR  /  CLASS  /  CONTINUE  /  DEFAULT  /  DO  /  DOUBLE  /  ELSE  /  ENUM  /  EXTENDS  /  FALSE  /  FINAL  /  FINALLY  /  FLOAT  /  FOR  /  IF  /  IMPLEMENTS  /  IMPORT  /  INSTANCEOF  /  INT  /  INTERFACE  /  LONG  /  NATIVE  /  NEW  /  NULL  /  PACKAGE  /  PRIVATE  /  PROTECTED  /  PUBLIC  /  RETURN  /  SYNCHRONIZED  /  STRICTFP  /  SHORT  /  STATIC  /  SUPER  /  SWITCH  /  THIS  /  THROWS  /  THROW  /  TRANSIENT  /  TRUE  /  TRY  /  VOID  /  VOLATILE  /  WHILE
    
  
 -- JLS 3.10 Literals
@@ -479,22 +467,74 @@ Digits               <-  [0-9]([_]*[0-9])*
 
 
 -- JLS 3.10.3 Boolean Literals
-BooleanLiteral       <-  'true'  /  'false'  
+BooleanLiteral       <-  TRUE  /  FALSE
 
 
 -- JLS 3.10.4 Character Literals
 -- JLS 3.10.5 String Literals
 -- JLS 3.10.6 Null Literal
 
-CharLiteral          <-  "'" (%nl  /  !"'" .)  "'"
+CharLiteral          <-  "'" (%nl / '\n' / '\0' / '\t' / '\\' / "\'" / '\"' / '\u' [a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9] / !"'" .)  "'"
 
-StringLiteral        <-  '"' (%nl  /  !'"' .)* '"'
+StringLiteral        <-  '"' (%nl / '\n' / '\0' / '\t' / '\\' / "\'" / '\"' / '\u' [a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9] / !'"' .)* '"'
 
-NullLiteral          <-  'null'
+NullLiteral          <-  NULL
 
 COMMENT              <- '//' (!%nl .)*  /  '/*' (!'*/' .)* '*/'
-]]
 
+ABSTRACT             <- 'abstract' ![a-zA-Z_$0-9]
+AND                  <- 'and' ![a-zA-Z_$0-9]
+ASSERT               <- 'assert' ![a-zA-Z_$0-9]
+BYTE                 <- 'byte' ![a-zA-Z_$0-9]
+BOOLEAN              <- 'boolean' ![a-zA-Z_$0-9]
+BREAK                <- 'break' ![a-zA-Z_$0-9]
+CASE                 <- 'case' ![a-zA-Z_$0-9]
+CATCH                <- 'catch' ![a-zA-Z_$0-9]
+CHAR                 <- 'char' ![a-zA-Z_$0-9]
+CLASS                <- 'class' ![a-zA-Z_$0-9]
+CONTINUE             <- 'continue' ![a-zA-Z_$0-9]
+DEFAULT              <- 'default' ![a-zA-Z_$0-9]
+DO                   <- 'do' ![a-zA-Z_$0-9]
+DOUBLE               <- 'double' ![a-zA-Z_$0-9]
+ELSE                 <- 'else' ![a-zA-Z_$0-9]
+ENUM                 <- 'enum' ![a-zA-Z_$0-9]
+EXTENDS              <- 'extends' ![a-zA-Z_$0-9]
+FALSE                <- 'false' ![a-zA-Z_$0-9]
+FINAL                <- 'final' ![a-zA-Z_$0-9]
+FINALLY              <- 'finally' ![a-zA-Z_$0-9]
+FLOAT                <- 'float' ![a-zA-Z_$0-9]
+FOR                  <- 'for' ![a-zA-Z_$0-9]
+IF                   <- 'if' ![a-zA-Z_$0-9]
+IMPLEMENTS           <- 'implements' ![a-zA-Z_$0-9]
+IMPORT               <- 'import' ![a-zA-Z_$0-9]
+INSTANCEOF           <- 'instanceof' ![a-zA-Z_$0-9]
+INT                  <- 'int' ![a-zA-Z_$0-9]
+INTERFACE            <- 'interface' ![a-zA-Z_$0-9]
+LONG                 <- 'long' ![a-zA-Z_$0-9]
+NATIVE               <- 'native' ![a-zA-Z_$0-9]
+NEW                  <- 'new' ![a-zA-Z_$0-9]
+NULL                 <- 'null' ![a-zA-Z_$0-9]
+PACKAGE              <- 'package' ![a-zA-Z_$0-9]
+PRIVATE              <- 'private' ![a-zA-Z_$0-9]
+PROTECTED            <- 'protected' ![a-zA-Z_$0-9]
+PUBLIC               <- 'public' ![a-zA-Z_$0-9]
+RETURN               <- 'return' ![a-zA-Z_$0-9]
+SYNCHRONIZED         <- 'synchronized' ![a-zA-Z_$0-9]
+STRICTFP             <- 'strictfp' ![a-zA-Z_$0-9]
+SHORT                <- 'short' ![a-zA-Z_$0-9]
+STATIC               <- 'static' ![a-zA-Z_$0-9] 
+SUPER                <- 'super' ![a-zA-Z_$0-9]
+SWITCH               <- 'switch' ![a-zA-Z_$0-9]
+THIS                 <- 'this' ![a-zA-Z_$0-9]
+THROWS               <- 'throws' ![a-zA-Z_$0-9]
+THROW                <- 'throw' ![a-zA-Z_$0-9]
+TRANSIENT            <- 'transient' ![a-zA-Z_$0-9]
+TRUE                 <- 'true' ![a-zA-Z_$0-9]
+TRY                  <- 'try' ![a-zA-Z_$0-9]
+VOID                 <- 'void' ![a-zA-Z_$0-9]
+VOLATILE             <- 'volatile' ![a-zA-Z_$0-9]
+WHILE                <- 'while' ![a-zA-Z_$0-9]
+]]
 
 --[==[
 print("Regular Annotation (SBLP paper)")
@@ -549,11 +589,13 @@ print(pretty.printg(gupath, true), '\n')
 print("End UPathDeep\n")
 ]==]
 
-g = m.match(s)
+local g = m.match(s)
 local p = coder.makeg(g, 'ast')
 
-local dir = util.getPath(arg[0])
+local dir = util.getPath(arg[0]) .. '/test'
+if arg[1] then
+  dir = util.getPath(arg[1])
+end
 
-util.testYes(dir .. '/test/yes/', 'java', p)
-
-util.testNo(dir .. '/test/no/', 'java', p)
+util.testYes(dir .. '/yes/', 'java', p)
+util.testNo(dir .. '/no/', 'java', p)
