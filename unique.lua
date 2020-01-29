@@ -72,8 +72,7 @@ local function matchUniqueEq (p)
 end
 
 
-local function updateCountTk (p, t)
-	local v = p.p1
+local function updateCountTk (v, t)
 	if not t[v] then
 		t[v] = 1
 	else
@@ -84,9 +83,13 @@ end
 
 local function countTk (p, t)
 	if p.tag == 'char' then
-		updateCountTk(p, t)
+		updateCountTk(p.p1, t)
+	elseif p.tag == 'set' then
+		for i, v in pairs(p.l) do
+			updateCountTk(v, t)
+		end
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		updateCountTk(p, t)
+		updateCountTk(p.p1, t)
 	elseif p.tag == 'con' or p.tag == 'ord' then
 		countTk(p.p1, t)
 		countTk(p.p2, t)
