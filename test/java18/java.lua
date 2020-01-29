@@ -568,9 +568,10 @@ print("End Unique\n")
 
 print("Unique Path (UPath)")
 g = m.match(s)
-local gupath = recovery.putlabels(g, 'upath', true)
+local gupath = recovery.putlabels(g, 'upath')
 print(pretty.printg(gupath, true), '\n')
 print(pretty.printg(gupath, true, 'unique'), '\n')
+pretty.printToFile(g)
 print("End UPath\n")
 
 --[==[

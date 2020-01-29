@@ -122,10 +122,43 @@ local function prefix (p1, p2)
 end
 
 
+local preDefault = [==[
+local m = require 'pegparser.parser'
+local coder = require 'pegparser.coder'
+local util = require'pegparser.util'
+
+g = [[
+]==] 
+
+local posDefault = [==[
+]]
+
+local g = m.match(g)
+local p = coder.makeg(g, 'ast')
+
+local dir = util.getPath(arg[0])
+
+util.testYes(dir .. '/test/yes/', 'java', p)
+
+util.testNo(dir .. '/test/no/', 'java', p)
+]==]
+
+
+local function printToFile (g, file, k)
+	file = file or 'out.lua'
+	local f = io.open(file, "w")
+	
+	local s = preDefault ..  printg(g, true, k)
+	print(f)
+	f:write(s .. '\n' .. posDefault)
+	
+	f:close()
+end
 
 
 return {
 	printp = printp,
 	printg = printg,
-	prefix = prefix
+	prefix = prefix,
+	printToFile = printToFile
 }
