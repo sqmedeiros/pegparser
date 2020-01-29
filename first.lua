@@ -1,17 +1,24 @@
 local parser = require'pegparser.parser'
 local pretty = require'pegparser.pretty'
+local lexKey
 local FIRST
 local FOLLOW
 local TAIL
 local PREFIX
-local empty = '__empty'
-local nothing = '__nothing'
-local any = '__any'
+local prefixLex = '__'
+local empty = prefixLex .. 'empty'
+local nothing = prefixLex .. 'nothing'
+local any = prefixLex .. 'any'
 local calcf
 local newString = parser.newString
 local newNode = parser.newNode
 local newOrd = parser.newOrd
 local printfirst, printsymbols, calcfirst, calck
+
+
+function lexKey (p)
+	return prefixLex .. p.p1
+end
 
 
 local function getName (p)
@@ -116,7 +123,7 @@ end
 
 
 local function getElem (v)
-	if string.sub(v, 1, 2) == '__' then
+	if string.sub(v, 1, 2) == prefixLex then
 		return newNode('var', string.sub(v, 3))
 	elseif v == '$' then
 		return parser.newNot(parser.newAny())
@@ -200,7 +207,7 @@ function calcfirst (g, p)
 		end
 	elseif p.tag == 'var' then
 		if parser.isLexRule(p.p1) then
-			return { ['__' .. p.p1] = true }
+			return { [lexKey(p)] = true }
 		end
 		return FIRST[p.p1]
 	elseif p.tag == 'throw' then
@@ -244,7 +251,7 @@ function calck (g, p, k)
 		return calck(g, p.p1, k2)
 	elseif p.tag == 'var' then
 		if parser.isLexRule(p.p1) then
-			return { ['__' .. p.p1] = true }
+			return { [lexKey(p)] = true }
 		end
     if parser.matchEmpty(p) then
 			return union(FIRST[p.p1], k, true)
@@ -289,7 +296,11 @@ local function calcFst (g)
   while update do
     update = false
     for k, v in pairs(g.prules) do
-			local firstv = calcfirst(g, v)
+			local p = v
+			if parser.isLexRule(k) then
+				p = parser.newNode('var', k)
+			end
+			local firstv = calcfirst(g, p)
 			if not isequal(FIRST[k], firstv) then
         update = true
 	      FIRST[k] = union(FIRST[k], firstv, false)
@@ -333,7 +344,7 @@ function calcTailAux (g, p, tk, comp)
 		return s2
 	elseif p.tag == 'var' then
 		if parser.isLexRule(p.p1) then
-			return { ['__' .. p.p1] = true }
+			return { [lexKey(p)] = true }
 		else
 			if comp then
 				return TAIL[p.p1]
@@ -527,7 +538,7 @@ end
 local function notDisjointFirstAux (g, t, first1, v, kind)
 	local idxFirst = v
 	if parser.isLexRule(v) then
-		idxFirst = '__' .. v
+		idxFirst = prefixLex .. v
 	end
 	first2 = FIRST[idxFirst]
 	if not first2 then

@@ -6,6 +6,9 @@ local empty = first.empty
 local any = first.any
 
 -- testing FIRST and FOLLOW
+-- Rules starting with an uppercase letter (A, Start, START) are lexical rules.
+-- The FIRST set of a lexical rule A is A itself (__A more currently).
+
 
 local function assertequal_aux (v, pre, comp)
 	for k, _ in pairs (pre) do
@@ -19,6 +22,7 @@ end
 local function assertequal (pre, comp)
 	local auxk = nil
 	comp['SKIP'] = nil
+	comp['SPACE'] = nil
 	for k, v in pairs (pre) do
 		assertequal_aux(k, v, comp[k])
 		auxk = next(comp, auxk)
@@ -34,92 +38,65 @@ local function makeset (l)
 	end
 	return t
 end
---[==[
 
 local g = [[
-	S <- (A / B)* 'c'
-	A <- 'a'
-  B <- 'b' 
+	s <- (a / b)* 'c'
+	a <- 'a'
+  b <- 'b' 
 ]]
 
 local prefst = {
-  S = makeset{'a', 'b', 'c'},
-	A = makeset{'a'},
-	B = makeset{'b'}
+  s = makeset{'a', 'b', 'c'},
+	a = makeset{'a'},
+	b = makeset{'b'}
 }
 local preflw = {
-	S = makeset{'$'},
-	A = makeset{'a',  'b', 'c'},
-	B = makeset{'a', 'b', 'c'}
+	s = makeset{'$'},
+	a = makeset{'a',  'b', 'c'},
+	b = makeset{'a', 'b', 'c'}
 }
 
 local peg = parser.match(g)
 local fst = first.calcFst(peg)
 local flw = first.calcFlw(peg)
 
-assertequal(prefst, fst)
-assertequal(preflw, flw)
-
-
-local g = [[
-	S <- ('o' A / 'u' B)* (C / D)* 'c' E F G
-	A <- 'a'?
-  B <- 'b'? 'x' 
-  C <- 'k'+ 'z'  
-	D <- 'd'
-	E <- !'e' 'g'
-  F <- &'f' 'g'  
-  G <- &'e' !'f'  
-]]
-
-
-local prefst = {
-  S = makeset{'o', 'u', 'k', 'd', 'c'},
-	A = makeset{empty, 'a'},
-	B = makeset{'b', 'x'},
-	C = makeset{'k'},
-	D = makeset{'d'},
-	E = makeset{'g'},
-	F = makeset{'g'},
-	G = makeset{empty}
-}
-
-local preflw = {
-  S = makeset{'$'},
-	A = makeset{'o', 'u', 'k', 'd', 'c'},
-	B = makeset{'o', 'u', 'k', 'd', 'c'},
-	C = makeset{'k', 'd', 'c'},
-	D = makeset{'k', 'd', 'c'},
-	E = makeset{'g'},
-	F = makeset{'$'},
-	G = makeset{'$'}
-}
-
-
-local peg = parser.match(g)
-local fst = first.calcFst(peg)
-local flw = first.calcFlw(peg)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
 
 
 local g = [[
-	S <- A^bola / B
-	A <- 'a' %{Erro}
-  B <- 'b'? 'x'? ('y'+)^Erro2 
+	s <- ('o' a / 'u' b)* (c / d)* 'c' e f g
+	a <- 'a'?
+  b <- 'b'? 'x' 
+  c <- 'k'+ 'z'  
+	d <- 'd'
+	e <- !'e' 'g'
+  f <- &'f' 'g'  
+  g <- &'e' !'f'  
 ]]
 
+
 local prefst = {
-  S = makeset{'a', 'b', 'x', 'y', empty},
-	A = makeset{'a'},
-	B = makeset{'b', 'x', 'y', empty},
+  s = makeset{'o', 'u', 'k', 'd', 'c'},
+	a = makeset{empty, 'a'},
+	b = makeset{'b', 'x'},
+	c = makeset{'k'},
+	d = makeset{'d'},
+	e = makeset{'g'},
+	f = makeset{'g'},
+	g = makeset{empty}
 }
 
 local preflw = {
-  S = makeset{'$'},
-	A = makeset{'$'},
-	B = makeset{'$'},
+  s = makeset{'$'},
+	a = makeset{'o', 'u', 'k', 'd', 'c'},
+	b = makeset{'o', 'u', 'k', 'd', 'c'},
+	c = makeset{'k', 'd', 'c'},
+	d = makeset{'k', 'd', 'c'},
+	e = makeset{'g'},
+	f = makeset{'$'},
+	g = makeset{'$'}
 }
 
 
@@ -132,29 +109,21 @@ assertequal(preflw, flw)
 
 
 local g = [[
-	S <- A S B / ([a-cd] / C)* 
-	A <- .   
-  B <- ('x' / D)*
-	C <- 'f'? 'y'+
-	D <- 'd' / C
+	s <- a^bola / b
+	a <- 'a' %{Erro}
+  b <- 'b'? 'x'? ('y'+)^Erro2 
 ]]
 
-local peg = parser.match(g)
-
 local prefst = {
-  S = makeset{any, 'a', 'b', 'c', 'd', 'f', 'y', empty},
-	A = makeset{any},
-	B = makeset{'x', 'd', 'f', 'y', empty},
-	C = makeset{'f', 'y'},
-	D = makeset{'d', 'f', 'y'},
+  s = makeset{'a', 'b', 'x', 'y', empty},
+	a = makeset{'a'},
+	b = makeset{'b', 'x', 'y', empty},
 }
 
 local preflw = {
-  S = makeset{'$', 'x', 'd', 'f', 'y'},
-	A = makeset{any, 'a', 'b', 'c', 'd', 'f', 'y', '$', 'x'},
-	B = makeset{'$', 'x', 'd', 'f', 'y'},
-	C = makeset{'a', 'b', 'c', 'd', 'f', 'y', '$', 'x'},
-	D = makeset{'$', 'x', 'd', 'f', 'y'},
+  s = makeset{'$'},
+	a = makeset{'$'},
+	b = makeset{'$'},
 }
 
 
@@ -162,37 +131,90 @@ local peg = parser.match(g)
 local fst = first.calcFst(peg)
 local flw = first.calcFlw(peg)
 
---print("FIRST")
---first.printfirst(tree, r)
---print("FOLLOW")
---first.printfollow(r)
+assertequal(prefst, fst)
+assertequal(preflw, flw)
+
+
+local g = [[
+	s <- a s b / ([a-cd] / c)* 
+	a <- .   
+  b <- ('x' / d)*
+	c <- 'f'? 'y'+
+	d <- 'd' / c
+]]
+
+local prefst = {
+  s = makeset{any, 'a', 'b', 'c', 'd', 'f', 'y', empty},
+	a = makeset{any},
+	b = makeset{'x', 'd', 'f', 'y', empty},
+	c = makeset{'f', 'y'},
+	d = makeset{'d', 'f', 'y'},
+}
+
+local preflw = {
+  s = makeset{'$', 'x', 'd', 'f', 'y'},
+	a = makeset{any, 'a', 'b', 'c', 'd', 'f', 'y', '$', 'x'},
+	b = makeset{'$', 'x', 'd', 'f', 'y'},
+	c = makeset{'a', 'b', 'c', 'd', 'f', 'y', '$', 'x'},
+	d = makeset{'$', 'x', 'd', 'f', 'y'},
+}
+
+
+local peg = parser.match(g)
+local fst = first.calcFst(peg)
+local flw = first.calcFlw(peg)
 
 assertequal(prefst, fst)
 assertequal(preflw, flw)
 
-]==]
 print("+")
 
 local g = [[
-	S <- A
+	s <- A
 	A <- 'a'   
   B <- 'a'
 	C <- A
 	D <- B
+	c <- A
+	d <- B
 ]]
+
+local prefst = {
+  s = makeset{'__A'},
+	A = makeset{'__A'},
+	B = makeset{'__B'},
+	C = makeset{'__C'},
+	D = makeset{'__D'},
+	c = makeset{'__A'},
+	d = makeset{'__B'},
+}
+
+local preflw = {
+  s = makeset{'$'},
+	A = makeset{'$'},
+	B = makeset{},
+	C = makeset{},
+	D = makeset{},
+	c = makeset{},
+	d = makeset{},
+}
+
 
 local peg = parser.match(g)
 local fst = first.calcFst(peg)
 local flw = first.calcFlw(peg)
 
-print(first.disjoint(fst['A'], fst['B']))
-print(first.disjoint(fst['C'], fst['D']))
-print(first.disjoint(fst['C'], fst['S']))
+assert(first.disjoint(fst['s'], fst['A']) == false)
+assert(first.disjoint(fst['s'], fst['C']) == true)
+assert(first.disjoint(fst['A'], fst['B']) == true)
+assert(first.disjoint(fst['A'], fst['C']) == true)
+assert(first.disjoint(fst['A'], fst['c']) == false)
+assert(first.disjoint(fst['C'], fst['D']) == true)
+assert(first.disjoint(fst['C'], fst['c']) == true)
+assert(first.disjoint(fst['D'], fst['d']) == true)
 
-for k,v in pairs(fst['D']) do
-	print(k, v)
-end
-
+assertequal(prefst, fst)
+assertequal(preflw, flw)
 
 print("Ok")
 
