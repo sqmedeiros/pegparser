@@ -36,6 +36,11 @@ local function getPath (s)
 end
 
 
+local function removeSpace (s)
+	return s:gsub("[ \t\n\r]", "")
+end
+
+
 local function isSource (file, ext)
 	return string.sub(file, 1, 1) ~= '.' and string.sub(file, #file - #ext + 1) == ext
 end
@@ -148,5 +153,6 @@ return {
 	testFile = testFile,
 	setVerbose = setVerbose,
 	getFileName = getFileName,
-	getPath = getPath
+	getPath = getPath,
+	removeSpace = removeSpace
 }
