@@ -94,12 +94,14 @@ local function printp (p, flag)
 	end
 end
 
-local function printg (g, flagthrow, k)
+local function printg (g, flagthrow, k, notLex)
 	property = k
 	print("Property ", k)
 	local t = {}
 	for i, v in ipairs(g.plist) do
-		table.insert(t, string.format("%-15s <-  %s", v, printp(g.prules[v], flagthrow)))
+		if notLex == false or not parser.isLexRule(v) then
+			table.insert(t, string.format("%-15s <-  %s", v, printp(g.prules[v], flagthrow)))
+		end
 	end
 	return table.concat(t, '\n')
 end
