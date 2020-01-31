@@ -418,6 +418,7 @@ local function initGlobalPrefix (g)
 	for k, v in pairs(g.prules) do
     PREFIX[k] = {  }
   end
+	PREFIX[g.init] = { [tostring({})] = true }
 end
 
 
