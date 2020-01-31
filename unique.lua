@@ -114,6 +114,19 @@ local function printUnique (t)
 end
 
 
+local function setUnique (p, v)
+	if not v then
+		return
+	end
+	print("setUnique", p, p.p1, p.kind, p.unique)
+	--assert(p.p1 ~= 'if')
+	if not p.unique then
+		changeUnique = true
+	end
+	p.unique = true
+end
+
+
 local function uniqueTk (g)
 	local t = {}
 	for i, v in ipairs(g.plist) do
@@ -143,6 +156,69 @@ local function uniqueTk (g)
 	printUnique(unique)
 	return unique
 end
+
+
+local function addUsage(g, p)
+	if not g.varUsage[p.p1] then
+		g.varUsage[p.p1] = {}
+	end
+	table.insert(g.varUsage[p.p1], p)
+end
+
+
+local function countUsage(g, p)
+	local tag = p.tag
+	if tag == 'empty' or tag == 'char' or tag == 'set' or
+     tag == 'any' or tag == 'throw' or tag == 'def' then
+		return
+	elseif tag == 'var' and parser.isLexRule(p.p1) then
+		return
+	elseif tag == 'var' then
+		addUsage(g, p)
+	elseif tag == 'not' or tag == 'and' or tag == 'star' or
+         tag == 'opt' or tag == 'plus' then
+		countUsage(g, p.p1)
+	elseif tag == 'con' or tag == 'ord' then
+		countUsage(g, p.p1)
+		countUsage(g, p.p2)
+	else
+		print(p)
+		error("Unknown tag", p.tag)
+	end
+
+end
+
+local function varUsage (g)
+	g.varUsage = {}
+	for i, v in ipairs(g.plist) do
+		if not g.varUsage[v] then
+			g.varUsage[v] = {}
+		end
+		countUsage(g, g.prules[v])
+	end
+end
+
+local function printVarUsage (g)
+	for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			print("Usage", v, #g.varUsage[v])
+		end
+	end
+end
+
+
+local function uniqueUsage (g, p)
+	print("testing uniqueUsage ", p.p1)
+	for k, v in pairs(g.varUsage[p.p1]) do
+		print(k, v, v.unique, v.uniqueEq)
+		if not v.unique and not v.uniqueEq then
+			return false
+		end
+	end
+	print("Unique usage", p.p1)
+	return true
+end
+
 
 
 local function getSymbolsFirst (g, p)
@@ -216,10 +292,12 @@ local function isDisjointLast (g, p, s)
 		if k ~= p then
 			if not disjoint(pref, v) then
 				inter[k] = true
+				print("inter = true", s, p)
 			end
 		end
 	end
 
+	print("isDisjointLast", p, s, next(inter))
 	return isLastAlternative(g, p, inter)
 end
 
@@ -299,7 +377,11 @@ local function isPrefixUniqueEq (g, p, inter, sub)
 	end
 	io.write('\n')
 
-	p.uniqueEq = true	
+	p.uniqueEq = true
+	if p.tag == 'var' then
+		print("Mais um", p.p1, p)
+		g.uniqueVar[p.p1] = uniqueUsage(g, p)
+	end
 end
 
 
@@ -311,6 +393,8 @@ local function isPrefixUnique (g, p)
 	else
 		inter, sub = notDisjointPrefSyn(g, p)
 	end
+
+	print("isPrefixUnique", next(inter), next(sub))
 
 	-- prefix is unique
 	if next(inter) == nil then
@@ -339,15 +423,15 @@ local function isPrefixUniqueFlw (g, p)
 	end
 
 	local flwInt = {}
-	print("isPrefixUniqueFlw s = ", s, g.symRule[p])
+	--print("isPrefixUniqueFlw s = ", s, g.symRule[p])
 	for k, _ in pairs(inter) do
 		if not disjoint(g.symFlw[s][p], g.symFlw[getName(k)][k]) then
 			flwInt[k] = true
-			print("colide flw", k.p1, k, g.symRule[k])
+			--print("colide flw", k.p1, k, g.symRule[k])
 		end
 	end
 	if next(flwInt) ~= nil then
-		print("teve colisao")
+		--print("teve colisao")
 	else
 		return true
 	end
@@ -359,13 +443,14 @@ end
 local function uniquePrefixAux (g, p)
 	if p.tag == 'char' or p.tag == 'var' then
 		--assert(not p.unique or (p.unique == true and isPrefixUnique(g, p) == true))
-		p.unique = p.unique or isPrefixUnique(g, p) 
+		print("uniquePrefixAux", p.p1, p, isPrefixUnique(g, p))
+		setUnique(p.unique or isPrefixUnique(g, p))
 	elseif p.tag == 'con' then
 		uniquePrefixAux(g, p.p1)
 		if not p.p2.unique then
 			local last = lastSymCon(p.p1)
 			if (last.tag == 'char' or  last.tag == 'var') and isPrefixUniqueFlw(g, last) then
-				p.p2.unique = true
+				setUnique(p.p2.unique)
 			end
 		end
 		uniquePrefixAux(g, p.p2)
@@ -388,78 +473,8 @@ local function uniquePrefix (g)
 end
 
 
-local function addUsage(g, p)
-	if not g.varUsage[p.p1] then
-		g.varUsage[p.p1] = {}
-	end
-	table.insert(g.varUsage[p.p1], p)
-end
-
-
-local function countUsage(g, p)
-	local tag = p.tag
-	if tag == 'empty' or tag == 'char' or tag == 'set' or
-     tag == 'any' or tag == 'throw' or tag == 'def' then
-		return
-	elseif tag == 'var' and parser.isLexRule(p.p1) then
-		return
-	elseif tag == 'var' then
-		addUsage(g, p)
-	elseif tag == 'not' or tag == 'and' or tag == 'star' or
-         tag == 'opt' or tag == 'plus' then
-		countUsage(g, p.p1)
-	elseif tag == 'con' or tag == 'ord' then
-		countUsage(g, p.p1)
-		countUsage(g, p.p2)
-	else
-		print(p)
-		error("Unknown tag", p.tag)
-	end
-
-end
-
-local function varUsage (g)
-	g.varUsage = {}
-	for i, v in ipairs(g.plist) do
-		if not g.varUsage[v] then
-			g.varUsage[v] = {}
-		end
-		countUsage(g, g.prules[v])
-	end
-end
-
-local function printVarUsage (g)
-	for i, v in ipairs(g.plist) do
-		if not parser.isLexRule(v) then
-			print("Usage", v, #g.varUsage[v])
-		end
-	end
-end
-
-
-local function uniqueUsage (g, p)
-	for k, v in pairs(g.varUsage[p.p1]) do
-		if not v.unique then
-			return false
-		end
-	end
-	print("Unique usage", p.p1)
-	return true
-end
-
-
-local function setUnique (p, v)
-	if not v then
-		return
-	end
-	if not p.unique then
-		changeUnique = true
-	end
-	p.unique = true
-end
-
-
 local function uniquePath (g, p, uPath, flw)
+	print("uniquePath", p, p.tag, p.p1, uPath, p.p1.unique)
 	if p.tag == 'char' then
 		setUnique(p, uPath or g.uniqueTk[p.p1])
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
@@ -477,8 +492,10 @@ local function uniquePath (g, p, uPath, flw)
 			setUnique(p, true)
 		end
 	elseif p.tag == 'con' then
+		print("con 1", p.p1, p.p2, uPath, p.p1.unique, p.p1.p1)
 		uniquePath(g, p.p1, uPath, calck(g, p.p2, flw))
 		uPath = uPath or p.p1.unique
+		print("con 2", p.p1, p.p2, uPath, p.p1.unique, p.p1.p1)
 		local p1 = lastSymCon(p.p1)
 		if not uPath then
 			if p1.tag == 'var' and not parser.isLexRule(p1.p1) and matchUPath(g.prules[p1.p1]) and isDisjointLast(g, p1, getName(p1)) then
@@ -497,11 +514,14 @@ local function uniquePath (g, p, uPath, flw)
 			print("upathEq", p1.p1)
 			p.p2.previousEq = p1
 		end
+		print("p.p2", uPath, p.p2.p1)
 		uniquePath(g, p.p2, uPath, flw)
 		setUnique(p, uPath or p.p2.unique)
 	elseif p.tag == 'ord' then
     local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
+		print('ord', flagDisjoint, uPath)
 		uniquePath(g, p.p1, flagDisjoint and uPath, flw)
+		print('p2 ord', uPath)
 		uniquePath(g, p.p2, uPath, flw)
 		setUnique(p, uPath or (p.p1.unique and p.p2.unique))
 	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
