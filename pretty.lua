@@ -99,7 +99,7 @@ local function printg (g, flagthrow, k, notLex)
 	print("Property ", k)
 	local t = {}
 	for i, v in ipairs(g.plist) do
-		if notLex == false or not parser.isLexRule(v) then
+		if not parser.isLexRule(v) or not notLex then
 			table.insert(t, string.format("%-15s <-  %s", v, printp(g.prules[v], flagthrow)))
 		end
 	end
