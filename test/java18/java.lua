@@ -387,10 +387,11 @@ castExpression        <-  '(' primitiveType ')' unaryExpression                 
                           '(' referenceType additionalBound* ')' lambdaExpression  /
                           '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
 
-infixExpression       <-  unaryExpression ((InfixOperator unaryExpression) /
+infixExpression       <-  unaryExpression ((infixOperator unaryExpression) /
                                            (INSTANCEOF referenceType))*
 
-InfixOperator         <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]          /
+-- renamed InfixOperator to infixOperator, because it matches '<', '>' which also appear in typeArguments
+infixOperator         <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]          /
                           '=='  /  '!='  /  '<' ![=<]  /  '>'![=>]  /  '<='               /
                           '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /
                           '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
@@ -600,3 +601,5 @@ end
 
 util.testYes(dir .. '/yes/', 'java', p)
 util.testNo(dir .. '/no/', 'java', p)
+
+print(util.removeSpace(pretty.printg(gupath, true)))
