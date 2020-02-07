@@ -23,6 +23,22 @@ local function adderror (g, p, rec)
 end
 
 
+local function adderrorstar (g, p, rec)
+  local s = 'Err_' .. string.format("%03d", ierr)
+	ierr = ierr + 1
+	--local pred = parser.newNot(set2choice(first.setdiff(p.flw, first.calcfirst(g, p.p1))))
+	local pred = parser.newNot(set2choice(p.flw))
+	if rec then
+		local seq = newNode('var', 'EatToken')
+		table.insert(g.plist, s)
+		g.prules[s] = newNode('star', parser.newSeq(pred, seq))
+	end
+	local p2 = parser.newSeq(pred, parser.newSeq(parser.newThrow(s), parser.newAny()))
+	local choice = parser.newOrd(p.p1, p2)
+	return newNode(p, choice)
+end
+
+
 local function markerror (p, flw)	
 	p.throw = true
 	p.flw = flw
@@ -33,7 +49,11 @@ end
 local function putlabel (g, p, rec)
 	if p.throw then
 		io.write("Err_" .. ierr .. ", ")
-		return adderror(g, p, rec)
+		if p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
+			return adderrorstar(g, p, rec)
+		else
+			return adderror(g, p, rec)
+		end
 	else
 		return p
 	end
