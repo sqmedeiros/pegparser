@@ -37,15 +37,15 @@ local function printp (p, flag)
 		return p.p1 .. printProp(p)
 	elseif p.tag == 'ord' then
 		local s1 = printp(p.p1, flag) 
-		local s2 = printp(p.p2, flag) 
+		local s2 = printp(p.p2, flag)
 		if p.p2.tag == 'throw' then
 			if not flag then
-				return '[' .. s1 .. ']^' .. string.sub(s2, 2) .. printProp(p) 
+				return '[' .. s1 .. ']^' .. string.sub(s2, 3, #s2 - 1) .. printProp(p)
 			else
 					if p.p1.tag == 'ord' then
 						s1 = '(' .. s1 .. ')'
 					end
-					return s1 .. '^' .. string.sub(s2, 2) .. printProp(p)
+					return s1 .. '^' .. string.sub(s2, 3, #s2 - 1) .. printProp(p)
 			end
 		else
 			local s = printProp(p)
@@ -85,7 +85,7 @@ local function printp (p, flag)
 			return '(' .. s .. ')' .. parser.repSymbol(p) .. printProp(p)
 		end
   elseif p.tag == 'throw' then
-    return '^' .. p.p1
+    return '%{' .. p.p1 .. '}'
 	elseif p.tag == 'def' then
 		return '%' .. p.p1
 	else
@@ -140,20 +140,25 @@ local p = coder.makeg(g, 'ast')
 
 local dir = util.getPath(arg[0])
 
-util.testYes(dir .. '/test/yes/', 'java', p)
+util.testYes(dir .. '/test/yes/', 'source', p)
 
-util.testNo(dir .. '/test/no/', 'java', p)
+util.testNo(dir .. '/test/no/', 'source', p)
 ]==]
 
 
-local function printToFile (g, file, k)
+local function printToFile (g, file, ext, pre, pos)
 	file = file or 'out.lua'
 	local f = io.open(file, "w")
-	
-	local s = preDefault ..  printg(g, true, k)
+
+	pre = pre or preDefault
+	local s = preDefault ..  printg(g, true)
 	print(f)
-	f:write(s .. '\n' .. posDefault)
-	
+	if not pos then
+		pos = string.gsub(posDefault, 'source', ext)
+	end
+
+	f:write(s .. '\n' .. pos)
+
 	f:close()
 end
 
