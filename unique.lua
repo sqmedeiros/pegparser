@@ -384,6 +384,8 @@ local function isPrefixUniqueEq (g, p, inter, sub, seq)
 	end
 
 	p.uniqueEq = true
+	-- TODO: review the following line, it crashes the C parser (annotates rule assignment_operator)
+	--p.seq = seq 
 	if p.tag == 'var' then
 		print("Mais um: prefixUniqueEq uniqueUsage", p.p1, p)
 		g.uniqueVar[p.p1] = uniqueUsage(g, p)
@@ -548,43 +550,11 @@ local function uniquePath (g, p, uPath, flw, seq)
 end
 
 
-local function insideLoop (g, p, loop, seq)
-	 if p.tag == 'var' and not parser.isLexRule(p.p1) and loop and not seq then
-		if not g.loopVar[p.p1] then
-			g.loopVar[p.p1] = true
-			insideLoop(g, g.prules[p.p1], loop, seq)
-		end
-	elseif p.tag == 'con' then
-		insideLoop(g, p.p1, loop, seq)
-		insideLoop(g, p.p2, loop, seq or not parser.matchEmpty(p.p1))
-	elseif p.tag == 'ord' then
-		insideLoop(g, p.p1, loop, seq)
-		insideLoop(g, p.p2, loop, seq)
-	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
-		insideLoop(g, p.p1, true, false)
-	elseif p.tag == 'and' or p.tag == 'not' then
-		insideLoop(g, p.p1, loop, seq)
-	end
-
-end
-
-
 local function calcUniquePath (g)
-	g.loopVar = {}
 	g.uniqueVar = {}
 	for i, v in ipairs(g.plist) do
-		insideLoop(g, g.prules[v], false, false)
 		g.uniqueVar[v] = {}
 	end
-	--[==[io.write("insideLoop: ")
-	for i, v in ipairs(g.plist) do
-		if g.loopVar[v] then
-			io.write(v .. ', ')
-		end
-	end
-	io.write('\n')
-	]==]
-
 
 	fst = first.calcFst(g)
 	flw = first.calcFlw(g)	

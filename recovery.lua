@@ -132,9 +132,7 @@ local function annotateUPath (g)
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			--newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v] and not g.loopVar[v], g.uniqueVar[v], flw[v])
 			newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v].upath, g.uniqueVar[v].seq, flw[v])
-			--newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
 		end
 	end
 
