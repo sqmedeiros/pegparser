@@ -168,7 +168,7 @@ local s = [[
 	WITH 			<- [Ww] [Ii] [Tt] [Hh]			 				!BodyId
 ]]
 
-
+--[==[
 print("Regular Annotation (SBLP paper)")
 g = m.match(s)
 local greg = recovery.putlabels(g, 'regular', true)
@@ -195,21 +195,23 @@ g = m.match(s)
 local gunique = recovery.putlabels(g, 'unique', true)
 print(pretty.printg(gunique, true), '\n')
 print("End Unique\n")
-
+]==]
 
 print("Unique Path (UPath)")
 g = m.match(s)
-local gupath = recovery.putlabels(g, 'upath', true)
+local gupath = recovery.putlabels(g, 'upath', false)
 print(pretty.printg(gupath, true), '\n')
 print(pretty.printg(gupath, true, 'unique'), '\n')
+pretty.printToFile(g, nil, 'pas')
 print("End UPath\n")
 
-
+--[==[
 print("Deep UPath")
 g = m.match(s)
 local gupath = recovery.putlabels(g, 'deepupath', true)
 print(pretty.printg(gupath, true), '\n')
 print("End DeepUPath\n")
+]==]
 
 
 print("UPath Deep")

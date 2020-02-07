@@ -83,48 +83,51 @@ local s = [[
 --print(pretty.printg(gast), '\n')
 
 
-print("Regular Annotation (SBLP paper)")
-g = m.match(s)
-local greg = recovery.putlabels(g, 'regular', true)
-print(pretty.printg(greg, true), '\n')
-print("End Regular\n")
+--print("Regular Annotation (SBLP paper)")
+--g = m.match(s)
+--local greg = recovery.putlabels(g, 'regular', true)
+--print(pretty.printg(greg, true), '\n')
+--print("End Regular\n")
 
-print("Annotating All expressions")
-g = m.match(s)
-local greg = recovery.putlabels(g, 'all', true)
-print(pretty.printg(greg, true), '\n')
-print("End All\n")
+--print("Annotating All expressions")
+--g = m.match(s)
+--local greg = recovery.putlabels(g, 'all', true)
+--print(pretty.printg(greg, true), '\n')
+--print("End All\n")
 
-print("Deep Ban")
-g = m.match(s)
-local gdeep = recovery.putlabels(g, 'deep', true)
-print(pretty.printg(gdeep, true), '\n')
---print(pretty.printg(gdeep, true, 'ban'), '\n')
-print("End Deep\n")
+--print("Deep Ban")
+--g = m.match(s)
+--local gdeep = recovery.putlabels(g, 'deep', true)
+--print(pretty.printg(gdeep, true), '\n')
+----print(pretty.printg(gdeep, true, 'ban'), '\n')
+--print("End Deep\n")
 
 
-print("Unique Labels")
-g = m.match(s)
---m.uniqueTk(g)
-local gunique = recovery.putlabels(g, 'unique', true)
-print(pretty.printg(gunique, true), '\n')
-print("End Unique\n")
+--print("Unique Labels")
+--g = m.match(s)
+----m.uniqueTk(g)
+--local gunique = recovery.putlabels(g, 'unique', true)
+--print(pretty.printg(gunique, true), '\n')
+--print("End Unique\n")
 
 
 print("Unique Path (UPath)")
 g = m.match(s)
-local gupath = recovery.putlabels(g, 'upath', true)
+local gupath = recovery.putlabels(g, 'upath', false)
 print(pretty.printg(gupath, true), '\n')
 print(pretty.printg(gupath, true, 'unique'), '\n')
+print(pretty.printg(gupath, true, 'uniqueEq'), '\n')
+pretty.printToFile(g, nil, 'titan')
+
 print("End UPath\n")
 
-
+--[==[
 print("Deep UPath")
 g = m.match(s)
 local gupath = recovery.putlabels(g, 'deepupath', true)
 print(pretty.printg(gupath, true), '\n')
 print("End DeepUPath\n")
-
+]==]
 
 print("UPath Deep")
 --m.uniqueTk(g)

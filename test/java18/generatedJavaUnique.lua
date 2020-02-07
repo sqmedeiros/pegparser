@@ -108,7 +108,7 @@ blockStatements <-  blockStatement blockStatement*
 blockStatement  <-  localVariableDeclarationStatement  /  classDeclaration  /  statement
 localVariableDeclarationStatement <-  localVariableDeclaration ';'
 localVariableDeclaration <-  variableModifier* unannType variableDeclaratorList
-statement       <-  block  /  'if' parExpression^Err_013 statement^Err_014 ('else' statement^Err_015)?  /  basicForStatement  /  enhancedForStatement  /  'while' parExpression statement  /  'do' statement^Err_016 'while'^Err_017 parExpression^Err_018 ';'^Err_019  /  tryStatement  /  'switch' parExpression^Err_020 switchBlock^Err_021  /  'synchronized' parExpression block  /  'return' expression? ';'^Err_022  /  'throw' expression^Err_023 ';'^Err_024  /  'break' Identifier? ';'^Err_025  /  'continue' Identifier? ';'^Err_026  /  'assert' expression^Err_027 (':' expression^Err_028)? ';'^Err_029  /  ';'  /  statementExpression ';'  /  Identifier ':' statement
+statement       <-  block  /  'if' parExpression^Err_013 statement^Err_014 ('else' statement^Err_015)?  /  basicForStatement  /  enhancedForStatement  /  'while' parExpression statement  /  'do' ![a-zA-Z0-9_] statement^Err_016 'while'^Err_017 parExpression^Err_018 ';'^Err_019  /  tryStatement  /  'switch' parExpression^Err_020 switchBlock^Err_021  /  'synchronized' parExpression block  /  'return' expression? ';'^Err_022  /  'throw' expression^Err_023 ';'^Err_024  /  'break' Identifier? ';'^Err_025  /  'continue' Identifier? ';'^Err_026  /  'assert' expression^Err_027 (':' expression^Err_028)? ';'^Err_029  /  ';'  /  statementExpression ';'  /  Identifier ':' statement
 statementExpression <-  assignment  /  ('++'  /  '--') (primary  /  qualIdent)  /  (primary  /  qualIdent) ('++'  /  '--')  /  primary
 switchBlock     <-  '{' switchBlockStatementGroup* switchLabel* '}'
 switchBlockStatementGroup <-  switchLabels blockStatements
@@ -143,9 +143,9 @@ argumentList    <-  expression (',' expression)*
 unaryExpression <-  ('++'  /  '--') (primary  /  qualIdent)  /  '+' ![=+] unaryExpression^Err_041  /  '-' ![-=>] unaryExpression^Err_042  /  unaryExpressionNotPlusMinus
 unaryExpressionNotPlusMinus <-  '~' unaryExpression^Err_043  /  '!' ![=&] unaryExpression^Err_044  /  castExpression  /  (primary  /  qualIdent) ('++'  /  '--')?
 castExpression  <-  '(' primitiveType ')' unaryExpression  /  '(' referenceType additionalBound* ')' lambdaExpression  /  '(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
-infixExpression <-  unaryExpression (InfixOperator unaryExpression^Err_045  /  'instanceof' referenceType^Err_046)*
+infixExpression <-  unaryExpression (InfixOperator unaryExpression  /  'instanceof' referenceType^Err_046)*
 InfixOperator   <-  '||'  /  '&&'  /  '|' ![=|]  /  '^' ![=]  /  '&' ![=&]  /  '=='  /  '!='  /  '<' ![=<]  /  '>' ![=>]  /  '<='  /  '>='  /  '<<' ![=]  /  '>>' ![=>]  /  '>>>' ![=]  /  '+' ![=+]  /  '-' ![-=>]  /  '*' ![=]  /  '/' ![=]  /  '%' ![=]
-conditionalExpression <-  infixExpression ('query' expression^Err_047 ':'^Err_048 expression^Err_049)*
+conditionalExpression <-  infixExpression ('?' expression^Err_047 ':'^Err_048 expression^Err_049)*
 assignmentExpression <-  assignment  /  conditionalExpression
 assignment      <-  leftHandSide AssignmentOperator expression^Err_050
 leftHandSide    <-  primary  /  qualIdent

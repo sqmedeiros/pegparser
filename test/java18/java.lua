@@ -572,7 +572,7 @@ g = m.match(s)
 local gupath = recovery.putlabels(g, 'upath')
 print(pretty.printg(gupath, true), '\n')
 print(pretty.printg(gupath, true, 'unique'), '\n')
-pretty.printToFile(g)
+pretty.printToFile(g, nil, 'java')
 print("End UPath\n")
 
 --[==[
