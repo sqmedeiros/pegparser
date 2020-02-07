@@ -89,7 +89,7 @@ local function annotateUPathAux (g, p, seq, afterU, flw, afterUEq)
 	elseif p.tag == 'ord' then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
 		local p1 = annotateUPathAux(g, p.p1, false, afterU and flagDisjont, flw, afterUEq and flagDisjoint)
-		local p2 = annotateUPathAux(g, p.p2, false, afterU, flw, afterUEq)
+		local p2 = annotateUPathAux(g, p.p2, seq and p.p2.tag ~= 'ord', afterU, flw, afterUEq)
 		if afterU and not matchEmpty(p) and seq then
 			return label.markerror(newNode(p, p1, p2), flw)
 		else
@@ -100,15 +100,21 @@ local function annotateUPathAux (g, p, seq, afterU, flw, afterUEq)
 	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
 		--local newp = annotateUPathAux(g, p.p1, false, flagDisjoint and afterU, flw)
+		local flwRep = flw
 		if p.tag == 'star' or p.tag == 'plus' then
-			flw = union(calcfirst(g, p.p1), flw)
+			flwRep = union(calcfirst(g, p.p1), flw)
 		end
-		local newp = annotateUPathAux(g, p.p1, false, afterU and flagDisjoint, flw, afterUEq and flagDisjoint)
+		local newp = annotateUPathAux(g, p.p1, false, afterU and flagDisjoint, flwRep, afterUEq and flagDisjoint)
     if p.tag == 'star' or p.tag == 'opt' then
-			return newNode(p, newp)
-    else --plus
-      if afterU and seq then
+			if afterU then
 				return label.markerror(newNode(p, newp), flw)
+			else
+				return newNode(p, newp)
+			end
+    else --plus
+      --if afterU and seq then
+			if afterU then
+				return label.markerror(newNode(p, newp), flwRep)
 			else
 				return newNode(p, newp)
 			end
@@ -126,7 +132,8 @@ local function annotateUPath (g)
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v] and not g.loopVar[v], g.uniqueVar[v], flw[v])
+			--newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v] and not g.loopVar[v], g.uniqueVar[v], flw[v])
+			newg.prules[v] = annotateUPathAux(g, g.prules[v], g.uniqueVar[v].upath, g.uniqueVar[v].seq, flw[v])
 			--newg.prules[v] = annotateUPathAux(g, g.prules[v], false, flw[v])
 		end
 	end
