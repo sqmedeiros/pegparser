@@ -114,17 +114,28 @@ local function printUnique (t)
 end
 
 
+local function setUPath (p)
+	print("setUPath", p, p.p1, p.kind, p.upath)
+	if not p.upath then
+		changeUnique = true
+	end
+	p.upath = true
+end
+
+
 local function setUnique (p, v, seq)
 	if not v then
 		return
 	end
 	print("setUnique", p, p.p1, p.kind, p.unique, 'seq = ', seq)
-	--assert(p.p1 ~= 'if')
 	if not p.unique then
 		changeUnique = true
 	end
 	p.unique = true
 	p.seq = seq
+	if v and seq then
+		setUPath(p)
+	end
 end
 
 
@@ -494,9 +505,9 @@ end
 local function uniquePath (g, p, uPath, flw, seq)
 	--print("uniquePath", p, p.tag, p.p1, uPath, p.p1.unique)
 	if p.tag == 'char' then
-		setUnique(p, p.unique or uPath)
+		setUPath(p, uPath and seq)
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		setUnique(p, p.unique or uPath)
+		setUPath(p, uPath and seq)
 	elseif p.tag == 'var' and uPath then
 		print("unique var ", p.p1, seq, p)
 		setUnique(p, true, seq)
