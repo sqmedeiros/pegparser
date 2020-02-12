@@ -479,12 +479,24 @@ local function uniquePrefix (g)
 end
 
 
+local function setUniqueTk (g, p)
+	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
+		setUnique(p, g.uniqueTk[p.p1])
+	elseif p.tag == 'ord' or p.tag == 'con' then
+		setUniqueTk(g, p.p1)
+		setUniqueTk(g, p.p2)
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
+		setUniqueTk(g, p.p1)
+	end
+end
+
+
 local function uniquePath (g, p, uPath, flw, seq)
 	--print("uniquePath", p, p.tag, p.p1, uPath, p.p1.unique)
 	if p.tag == 'char' then
-		setUnique(p, uPath or g.uniqueTk[p.p1])
+		setUnique(p, p.unique or uPath)
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		setUnique(p, uPath or g.uniqueTk[p.p1])
+		setUnique(p, p.unique or uPath)
 	elseif p.tag == 'var' and uPath then
 		print("unique var ", p.p1, seq, p)
 		setUnique(p, true, seq)
@@ -558,15 +570,21 @@ local function calcUniquePath (g)
 	g.notDisjointFirst = first.notDisjointFirst(g)
 
 	g.uniqueTk = uniqueTk(g)
+	for i, v in ipairs(g.plist) do
+		if not parser.isLexRule(v) then
+			setUniqueTk(g, g.prules[v])
+		end
+	end
+
 	g.uniqueVar[g.plist[1]] = { upath = true, seq = true }
 	varUsage(g)
 	first.calcTail(g)
 	first.calcPrefix(g)
 	first.calcLocalFollow(g)
 	changeUnique = true
+	uniquePrefix(g)
 	while changeUnique do
 		changeUnique = false
-		uniquePrefix(g)
 		for i, v in ipairs(g.plist) do		
 			if not parser.isLexRule(v) then
 				uniquePath(g, g.prules[v], g.uniqueVar[v].upath, flw[v], g.uniqueVar[v].seq)
