@@ -354,21 +354,21 @@ local function isPrefixUniqueEq (g, p, inter, sub, seq)
 		end
 	end]==]
 
-	if p.previousEq then
+	--[==[if p.previousEq then
 		local namePrev = getName(p.previousEq)
 		print("previousEq: ", p.p1, ", rule: ", g.symRule[p], ", prev: ", namePrev, p, p.previousEq)
 		for k, v in pairs(g.symPref[namePrev][p.previousEq]) do
 			io.write(k .. ' ; ')
 		end
 		io.write('\n')
-	end
+	end]==]
 	for k, _ in pairs(inter) do
 		if not sub[k] then
 			-- test if 'k' is also preceded by 'previousEq'
 			print("Nao foi sub", k, k.p1, g.symRule[k])
 			local t = { [k] = true }
 			if not isLastAlternative(g, p, t) then
-				return
+				return false
 			end
 		end 
 	end
@@ -393,43 +393,41 @@ local function isPrefixUniqueEq (g, p, inter, sub, seq)
 end
 
 
-local function isPrefixUnique (g, p, seq)
-	local inter, sub
-
+-- returns a two sets: inter and sub.
+-- inter has the symbols whose prefixes have some elements in commom with p
+-- and some elements different
+-- sub has the symbols whose prefixes are a subset of p's prefix
+local function getPrefInterSub (g, p)
 	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
-		inter, sub = notDisjointPref(g, p, getName(p))
+		return notDisjointPref(g, p, getName(p))
 	else
-		inter, sub = notDisjointPrefSyn(g, p)
+		return notDisjointPrefSyn(g, p)
 	end
+end
+
+
+local function isPrefixUnique (g, p, seq)
+	local inter, sub = getPrefInterSub(g, p)
 
 	print("isPrefixUnique", next(inter), next(sub))
 
 	-- prefix is unique
-	if next(inter) == nil then
-		return true
-	end
+	local unique = next(inter) == nil
 
 	-- prefix is not unique, but appears last
-	if isLastAlternative(g, p, inter) then
-		return true
+	if not unique then
+		unique = isLastAlternative(g, p, inter)
 	end
 
-	isPrefixUniqueEq(g, p, inter, sub, seq)
-	
-	return false
+	return unique, isPrefixUniqueEq(g, p, inter, sub, seq)
 end
 
 
 local function isPrefixUniqueFlw (g, p)
+
+	local inter, sub = getPrefInterSub(g, p)
+
 	local s = getName(p)
-
-	local inter, sub
-	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
-		inter, sub = notDisjointPref(g, p, getName(p))
-	else
-		inter, sub = notDisjointPrefSyn(g, p)
-	end
-
 	local flwInt = {}
 	--print("isPrefixUniqueFlw s = ", s, g.symRule[p])
 	for k, _ in pairs(inter) do
@@ -503,10 +501,8 @@ local function uniquePath (g, p, uPath, flw, seq)
 			setUnique(p, true, seq)
 		end
 	elseif p.tag == 'con' then
-		--print("con 1", p.p1, p.p2, uPath, p.p1.unique, p.p1.p1)
 		uniquePath(g, p.p1, uPath, calck(g, p.p2, flw), seq)
 		uPath = uPath or p.p1.unique
-		--print("con 2", p.p1, p.p2, uPath, p.p1.unique, p.p1.p1)
 		local p1 = lastSymCon(p.p1)
 		if not uPath then
 			if p1.tag == 'var' and not parser.isLexRule(p1.p1) and matchUPath(g.prules[p1.p1]) and isDisjointLast(g, p1, getName(p1)) then

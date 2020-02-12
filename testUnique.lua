@@ -224,6 +224,17 @@ manualLab = [[
 assertEqual(manualLab, autoLab(s))
 
 
+s = [[
+	s <- 'a' 'b' 'c' / 'a' 'b' 'd'
+]]
+
+manualLab = [[
+	s <- ('a' 'b'^Err_001 'c' / 'a'^Err_002 'b'^Err_003 'd'^Err_004)^Err_005
+]]
+
+assertEqual(manualLab, autoLab(s))
+
+
 -- The algorithm must not annotate 'else'
 -- In case the algorithm tries to annotate symbols with the same prefix
 -- and it can annotate, in the first alternative, symbols '(', exp, ')', cmd
