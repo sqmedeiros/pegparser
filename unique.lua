@@ -12,6 +12,7 @@ local changeUnique = false
 local fst, flw
 
 
+-- Assumes concatenation is left associative
 local function lastSymCon (p)
 	if p.tag == 'con' then
 		return p.p2
@@ -19,6 +20,17 @@ local function lastSymCon (p)
 		return p
 	end
 end
+
+-- Assumes choice is right associative
+local function lastAltChoice (p)
+	print('lastAlt', p, p.tag, p.p1.tag, p.p2.tag)
+	if p.p2.tag == 'ord' then
+		return lastSymCon(p.p2) 
+	else
+		return p.p2
+	end
+end
+
 
 
 local function matchUnique (g, p)
@@ -533,7 +545,11 @@ local function uniquePath (g, p, uPath, flw, seq)
 	elseif p.tag == 'ord' then
     local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
 		uniquePath(g, p.p1, flagDisjoint and uPath, flw, false)
-		uniquePath(g, p.p2, uPath, flw, seq and p.p2.tag ~= 'ord')
+		if seq then
+			local p2 = lastAltChoice(p)
+			p2.seq = true
+		end
+		uniquePath(g, p.p2, uPath, flw, p.p2.seq)
 		setUnique(p, uPath or (p.p1.unique and p.p2.unique), seq, flw)
 	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
