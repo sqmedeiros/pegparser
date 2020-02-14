@@ -255,7 +255,7 @@ manualLab = [[
 --assertEqual(manualLab, autoLab(s))
 
 s = [[
-	s  <- 'a' / 'b'
+	s  <- 'a' / 'b' / 'y'
 ]]
 
 manualLab = [[
@@ -263,7 +263,7 @@ manualLab = [[
 ]]
 
 --TODO: Review ord to annotate the last alternative of a choice with more than two alternatives
---assertEqual(manualLab, autoLab(s))
+assertEqual(manualLab, autoLab(s))
 
 
 s = [[

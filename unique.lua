@@ -23,9 +23,8 @@ end
 
 -- Assumes choice is right associative
 local function lastAltChoice (p)
-	print('lastAlt', p, p.tag, p.p1.tag, p.p2.tag)
 	if p.p2.tag == 'ord' then
-		return lastSymCon(p.p2) 
+		return lastAltChoice(p.p2)
 	else
 		return p.p2
 	end
@@ -127,7 +126,10 @@ end
 
 
 local function setLabel (p, flw)
-	print("setLabel", p, p.p1, p.kind, p.unique)
+	--print("setLabel", p, p.p1, p.kind, p.unique)
+	if p.tag == 'var' and parser.matchEmpty(p) then
+		return
+	end
 	if not p.label then
 		changeUnique = true
 	end
@@ -547,9 +549,10 @@ local function uniquePath (g, p, uPath, flw, seq)
 		uniquePath(g, p.p1, flagDisjoint and uPath, flw, false)
 		if seq then
 			local p2 = lastAltChoice(p)
-			p2.seq = true
+			p2.lastAlt = true
 		end
-		uniquePath(g, p.p2, uPath, flw, p.p2.seq)
+		uniquePath(g, p.p2, uPath, flw, p.p2.lastAlt)
+		--uniquePath(g, p.p2, uPath, flw, seq and p.p2.tag ~= 'ord')
 		setUnique(p, uPath or (p.p1.unique and p.p2.unique), seq, flw)
 	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
