@@ -254,6 +254,53 @@ manualLab = [[
 -- TODO: Review isPrefixUniqueEq to annotate '(' in the first alternative
 --assertEqual(manualLab, autoLab(s))
 
+s = [[
+	s  <- 'a' / 'b'
+]]
+
+manualLab = [[
+	s  <- ('a' / 'b' / 'y'^Err_001)^Err_002
+]]
+
+--TODO: Review ord to annotate the last alternative of a choice with more than two alternatives
+--assertEqual(manualLab, autoLab(s))
+
+
+s = [[
+	s  <- a / b
+  a  <- 'a' c / 'z' c
+  b  <- 'a' c 'k' / 'x' 'f'
+  c  <- 'd' 'e'
+]]
+
+manualLab = [[
+	s  <- (a / b^Err_001)^Err_002
+  a  <- 'a' c / 'z' c^Err_003
+  b  <- ('a' c^Err_004 'k'^Err_005 / 'x'^Err_006 'f'^Err_007)^Err_008
+  c  <- 'd' 'e'^Err_009
+]]
+
+assertEqual(manualLab, autoLab(s))
+
+s = [[
+	s  <- a / b / 'y'
+  a  <- 'a' c / 'z' c
+  b  <- 'a' c 'k' / 'x' 'f'
+  c  <- 'd' 'e'
+]]
+
+manualLab = [[
+	s  <- (a / b^Err_001)^Err_002
+  a  <- 'a' c / 'z' c^Err_003
+  b  <- ('a' c^Err_004 'k'^Err_005 / 'x'^Err_006 'f'^Err_007)^Err_008
+  c  <- 'd' 'e'^Err_009
+]]
+
+--TODO: Review ord to annotate the last alternative of a choice with more than two alternatives
+--TODO: update manualLab
+--assertEqual(manualLab, autoLab(s))
+
+
 
 s = [[
   s    <- 'a' x  /  'b' x

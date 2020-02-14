@@ -114,17 +114,18 @@ local function printUnique (t)
 end
 
 
-local function setUPath (p)
-	print("setUPath", p, p.p1, p.kind, p.upath)
-	if not p.upath then
+local function setLabel (p, flw)
+	print("setLabel", p, p.p1, p.kind, p.unique)
+	if not p.label then
 		changeUnique = true
 	end
-	p.upath = true
+	p.label = true
+	p.flw = flw
 end
 
 
-local function setUnique (p, v, seq)
-	if not v then
+local function setUnique (p, unique, seq, flw)
+	if not unique then
 		return
 	end
 	print("setUnique", p, p.p1, p.kind, p.unique, 'seq = ', seq)
@@ -133,8 +134,8 @@ local function setUnique (p, v, seq)
 	end
 	p.unique = true
 	p.seq = seq
-	if v and seq then
-		setUPath(p)
+	if unique and seq then
+		setLabel(p, flw)
 	end
 end
 
@@ -337,10 +338,8 @@ end
 
 
 function isLastAlternative (g, p, t)
-	--print("lastAlt", p, p.p1, g.symRule[p])
 	for k, v in pairs(t) do
 		if k ~= p and g.symRule[p] ~= g.symRule[k] then
-			--print(g.symRule[p], g.symRule[k])
 			return false
 		end
 	end
@@ -349,7 +348,6 @@ function isLastAlternative (g, p, t)
 	t[p] = true
 	local res = isLastAlternativeAux(g.prules[g.symRule[p]], nil, t)
 	t[p] = aux
-	--print("lastAlt2", p.p1, res, res == p)
 	return res == p
 end
 
@@ -404,9 +402,8 @@ local function isPrefixUniqueEq (g, p, inter, sub, seq)
 end
 
 
--- returns a two sets: inter and sub.
--- inter has the symbols whose prefixes have some elements in commom with p
--- and some elements different
+-- returns two sets: inter and sub.
+-- inter has symbols whose prefixes have elements in commom with p
 -- sub has the symbols whose prefixes are a subset of p's prefix
 local function getPrefInterSub (g, p)
 	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
@@ -503,67 +500,51 @@ end
 
 
 local function uniquePath (g, p, uPath, flw, seq)
-	--print("uniquePath", p, p.tag, p.p1, uPath, p.p1.unique)
 	if p.tag == 'char' then
-		setUPath(p, uPath and seq)
+		setUnique(p, uPath, seq, flw)
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
-		setUPath(p, uPath and seq)
+		setUnique(p, uPath, seq, flw)
 	elseif p.tag == 'var' and uPath then
 		print("unique var ", p.p1, seq, p)
-		setUnique(p, true, seq)
-		--if seq then
-			print("uniquePath uniqueUsage", p, p.p1)
-			g.uniqueVar[p.p1] = uniqueUsage(g, p)
-		--end
-	elseif p.tag == 'var' then
-		--print("p.p1", p.p1, #g.varUsage[p.p1])
-		--if matchUnique(g, g.prules[p.p1]) and #g.varUsage[p.p1] == 1 then
-		if matchUPath(g.prules[p.p1]) and #g.varUsage[p.p1] == 1 then
-		--if matchUnique(g, g.prules[p.p1]) then
-			print("unique var2 ", p.p1)
-			setUnique(p, true, seq)
-		end
+		setUnique(p, uPath, seq, flw)
+		print("uniquePath uniqueUsage", p, p.p1)
+		g.uniqueVar[p.p1] = uniqueUsage(g, p)
 	elseif p.tag == 'con' then
 		uniquePath(g, p.p1, uPath, calck(g, p.p2, flw), seq)
 		uPath = uPath or p.p1.unique
 		local p1 = lastSymCon(p.p1)
 		if not uPath then
-			if p1.tag == 'var' and not parser.isLexRule(p1.p1) and matchUPath(g.prules[p1.p1]) and isDisjointLast(g, p1, getName(p1)) then
-				print("Vai ser agora", p1.p1, g.symRule[p1])
-			end
 			-- it seems this condition has verty little impact
 			if p1.tag == 'var' and not parser.isLexRule(p1.p1) and matchUPath(g.prules[p1.p1]) and isDisjointLast(g, p1, getName(p1)) then
-				setUnique(p1, true, seq)
+				print("Vai ser agora", p1.p1, g.symRule[p1])
 				uPath = true
-			elseif (p1.tag == 'char' or (p1.tag == 'var' and parser.isLexRule(p1.p1))) and isDisjointLast(g, p1, getName(p1)) then
-				setUnique(p1, true, seq)
-				uPath = true
+				setUnique(p1, uPath, seq, flw)
+				setUnique(p.p1, uPath, seq, flw)
 			end
 		end
 		if p1.uniqueEq then
 			print("upathEq", p1.p1)
 			p.p2.previousEq = p1
 		end
-		print("p.p2", uPath, p.p2.p1)
-		uniquePath(g, p.p2, uPath, flw, seq or not parser.matchEmpty(p.p1))
-		setUnique(p, uPath or p.p2.unique)
+		seq = seq or (p.p1.unique and not parser.matchEmpty(p.p1))
+		uniquePath(g, p.p2, uPath, flw, seq)
+		uPath = uPath or p.p2.unique
+		setUnique(p, uPath, seq, flw)
 	elseif p.tag == 'ord' then
     local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
-		print('ord', flagDisjoint, uPath)
 		uniquePath(g, p.p1, flagDisjoint and uPath, flw, false)
-		print('p2 ord', uPath)
 		uniquePath(g, p.p2, uPath, flw, seq and p.p2.tag ~= 'ord')
-		setUnique(p, uPath or (p.p1.unique and p.p2.unique))
+		setUnique(p, uPath or (p.p1.unique and p.p2.unique), seq, flw)
 	elseif p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus' then
 		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
 		if p.tag == 'star' or p.tag == 'plus' then
-			flw = union(calcfirst(g, p.p1), flw)
+			--flw = union(calcfirst(g, p.p1), flw)
 		end
 		uniquePath(g, p.p1, flagDisjoint and uPath, flw, false)
 		if p.tag == 'plus' then
-			setUnique(p, uPath or p.p1.unique)
+			setUnique(p, uPath or p.p1.unique, seq, flw)
 		else
-			setUnique(p, uPath)
+			setUnique(p, uPath, seq, flw)
 		end
 	end
 end
