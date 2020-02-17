@@ -3,7 +3,6 @@ local first = require'pegparser.first'
 local unique = require'pegparser.unique'
 local pretty = require'pegparser.pretty'
 local label = require'pegparser.label'
-local ban = require'pegparser.ban'
 
 
 local newNode = parser.newNode
@@ -17,60 +16,6 @@ local matchUPath = unique.matchUPath
 local matchUniqueEq = unique.matchUniqueEq
 local union = first.union
 local calcfirst = first.calcfirst
-
-local function annotateUniqueAux (g, p, seq, afterU, flw)
-	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and afterU then
-		return label.markerror(p, flw)
-	elseif ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and p.uniqueEq then
-		return label.markerror(p, flw)
-	elseif p.tag == 'con' then
-		local p1 = annotateUniqueAux(g, p.p1, seq, afterU, calck(g, p.p2, flw))
-		local p2 = annotateUniqueAux(g, p.p2, seq or not matchEmpty(p.p1), afterU or matchUnique(g, p.p1), flw)
-		return newNode(p, p1, p2)
-	elseif p.tag == 'ord' then
-    local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
-		local p1 = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, flw)
-		local p2 = annotateUniqueAux(g, p.p2, false, afterU, flw)
-		if seq and afterU and not matchEmpty(p) then
-			return label.markerror(newNode(p, p1, p2), flw)
-		else
-      return newNode(p, p1, p2)
-		end
-	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then
-		local flagDisjoint = disjoint(calcfirst(g, p.p1), flw)
-		--local newp = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, flw)
-		if p.tag == 'star' or p.tag == 'plus' then
-			flw = union(calcfirst(g, p.p1), flw)
-		end
-		local newp = annotateUniqueAux(g, p.p1, false, flagDisjoint and afterU, flw)
-    if p.tag == 'star' or p.tag == 'opt' then
-			return newNode(p, newp)
-    else --plus
-      if seq and afterU then
-				return label.markerror(newNode(p, newp), flw)
-			else
-				return newNode(p, newp)
-			end
-		end
-	else
-		return p
-	end
-end
-
-
-local function annotateUnique (g)
-	local fst = first.calcFst(g)
-	local flw = first.calcFlw(g)
-	g.unique = unique.uniqueTk(g)
-	local newg = parser.initgrammar(g)
-	for i, v in ipairs(g.plist) do
-		if not parser.isLexRule(v) then
-			newg.prules[v] = annotateUniqueAux(g, g.prules[v], false, false, flw[v])
-		end
-	end
-
-	return newg
-end
 
 
 local function annotateUPathAux (g, p)
@@ -115,84 +60,11 @@ local function annotateUPath (g)
 	return newg
 end
 
-
-local function addlabAll (g, p, seq, flw)
-	if ((p.tag == 'var' and not matchEmpty(p)) or p.tag == 'char' or p.tag == 'any') and seq and not p.ban then
-    return label.markerror(p, flw)
-	elseif p.tag == 'con' then
-		local newseq = seq or not matchEmpty(p.p1)
-		--return newSeq(addlab(g, p.p1, seq, calck(g, p.p2, flw)), addlab(g, p.p2, newseq, flw))
-		return newNode(p, addlabAll(g, p.p1, seq, calck(g, p.p2, flw)), addlabAll(g, p.p2, newseq, flw))
-	elseif p.tag == 'ord' then
-    local flagDisjoint = disjoint(calcfirst(g, p.p1), calck(g, p.p2, flw))
-		local p1 = p.p1
-    --if flagDisjoint then
-      p1 = addlabAll(g, p.p1, false, flw)
-    --end
-		local p2 = addlabAll(g, p.p2, false, flw)
-		if seq and not matchEmpty(p) and not p.ban then
-			return label.markerror(newNode(p, p1, p2), flw)
-		else
-      return newNode(p, p1, p2)
-		end
-	elseif (p.tag == 'star' or p.tag == 'opt' or p.tag == 'plus') then  --and disjoint(calcfirst(g, p.p1), flw) then
-		--local newp = addlabAll(g, p.p1, false, flw)
-		if p.tag == 'star' or p.tag == 'plus' then
-			flw = union(calcfirst(g, p.p1), flw)
-		end
-		local newp = addlabAll(g, p.p1, false, flw)
-    if p.tag == 'star' or p.tag == 'opt' then
-			return newNode(p, newp)
-    else --plus
-      if seq and not p.ban then
-				return label.markerror(newNode(p, newp), flw)
-			else
-				return newNode(p, newp)
-			end
-		end
-	else
-		return p
-	end
-end
-
-
-local function annotateAll (g)
-	local fst = first.calcFst(g)
-	local flw = first.calcFlw(g)
-	local newg = parser.initgrammar(g)
-
-	for i, v in ipairs(g.plist) do
-		if not parser.isLexRule(v) then
-			newg.prules[v] = addlabAll(g, g.prules[v], false, flw[v])
-		end
-	end
-
-	return newg
-end
-
-
-
 local function putlabels (g, f, rec)
-	if f == 'unique' then
-		return labelgrammar(annotateUnique(g), rec)
-	elseif f == 'upath' then
+	if f == 'upath' then
 		return labelgrammar(annotateUPath(g), rec)
-	elseif f == 'deep' then
-		ban.ban(g, f)
-		return labelgrammar(ban.annotateBan(g), rec)
-	elseif f == 'deepupath' then
-		ban.ban(g, 'deep')
-		local newg = ban.annotateBan(g)
-		return labelgrammar(annotateUPath(newg), rec) --tanto faz passar 'g' ou 'newg' (normalizar uso de funções que alteram ou não 'g')
-	elseif f == 'upathdeep' then
-		local newg = annotateUPath(g)
-		ban.ban(newg, 'upathdeep')
-		newg = ban.annotateBan(newg)
-		return labelgrammar(newg, rec)
-	elseif f == 'all' then  -- regular
-		return labelgrammar(annotateAll(g), rec)
-	else  -- regular
-		return labelgrammar(ban.annotateBan(g), rec)
+	else
+		assert(false, tostring(f))
 	end	
 end
 

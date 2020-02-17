@@ -6,7 +6,6 @@ local property
 
 local function printProp (p)
 	if property and p[property] then
-		--if p.ban then assert(false, p.tag .. ', ' .. tostring(property) .. ', ' .. tostring(p[property])) end
 		return '_' .. tostring(property)
 	end
 	return ''
