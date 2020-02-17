@@ -1,21 +1,11 @@
 local parser = require'pegparser.parser'
 local first = require'pegparser.first'
 local unique = require'pegparser.unique'
-local pretty = require'pegparser.pretty'
 local label = require'pegparser.label'
 
 
 local newNode = parser.newNode
-local calcfirst = first.calcfirst
-local disjoint = first.disjoint
-local matchEmpty = parser.matchEmpty
-local calck = first.calck
 local labelgrammar = label.labelgrammar
-local matchUnique = unique.matchUnique
-local matchUPath = unique.matchUPath
-local matchUniqueEq = unique.matchUniqueEq
-local union = first.union
-local calcfirst = first.calcfirst
 
 
 local function annotateUPathAux (g, p)
