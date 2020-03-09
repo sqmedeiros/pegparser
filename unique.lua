@@ -235,15 +235,12 @@ end
 
 
 local function uniqueUsage (g, p)
-	print("testing uniqueUsage ", p.p1)
 	local upath, seq = true, true
 	for k, v in pairs(g.varUsage[p.p1]) do
-		print(k, v, v.unique, v.uniqueEq, v.seq)
-		--if not v.unique then 
+		--print(k, v, v.unique, v.uniqueEq, v.seq)
 		upath = upath and (v.unique or v.uniqueEq)
 		seq = seq and v.seq
 	end
-	print("Unique usage", p.p1, 'upath = ', upath, 'seq = ', seq)
 	return { upath = upath, seq = seq }
 end
 
@@ -366,7 +363,7 @@ function isLastAlternative (g, p, t)
 end
 
 
-local function isPrefixUniqueEq (g, p, inter, sub, seq)
+local function isPrefixUniqueEq (g, p, inter, sub)
 	--[==[local flw = g.symFlw[s][p]
 	local flwEq = {}
 	local nFlwEq = 0
@@ -428,7 +425,7 @@ local function getPrefInterSub (g, p)
 end
 
 
-local function isPrefixUnique (g, p, seq)
+local function isPrefixUnique (g, p)
 	local inter, sub = getPrefInterSub(g, p)
 
 	print("isPrefixUnique", next(inter), next(sub))
@@ -441,7 +438,7 @@ local function isPrefixUnique (g, p, seq)
 		unique = isLastAlternative(g, p, inter)
 	end
 
-	return unique, isPrefixUniqueEq(g, p, inter, sub, seq)
+	return unique, isPrefixUniqueEq(g, p, inter, sub)
 end
 
 
@@ -468,26 +465,26 @@ local function isPrefixUniqueFlw (g, p)
 end
 
 
-local function uniquePrefixAux (g, p, seq)
+local function uniquePrefixAux (g, p)
 	if p.tag == 'char' or p.tag == 'var' then
 		--assert(not p.unique or (p.unique == true and isPrefixUnique(g, p) == true))
 		print("uniquePrefixAux", p.p1, p, isPrefixUnique(g, p))
-		setUnique(p, p.unique or isPrefixUnique(g, p, seq))
+		setUnique(p, p.unique or isPrefixUnique(g, p))
 	elseif p.tag == 'con' then
-		uniquePrefixAux(g, p.p1, seq)
+		uniquePrefixAux(g, p.p1)
 		if not p.p2.unique then
 			local last = lastSymCon(p.p1)
 			if (last.tag == 'char' or  last.tag == 'var') and isPrefixUniqueFlw(g, last) then
 				setUnique(p.p2, true)
 			end
 		end
-		uniquePrefixAux(g, p.p2, seq or not parser.matchEmpty(p.p1))
+		uniquePrefixAux(g, p.p2)
 	elseif p.tag == 'ord' then
-		uniquePrefixAux(g, p.p1, false)
-		uniquePrefixAux(g, p.p2, false)
+		uniquePrefixAux(g, p.p1)
+		uniquePrefixAux(g, p.p2)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		--uniquePrefixAux(g, p.p1, pflw, true)
-		uniquePrefixAux(g, p.p1, false)
+		uniquePrefixAux(g, p.p1)
 	end
 end
 
@@ -495,7 +492,7 @@ end
 local function uniquePrefix (g)
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			uniquePrefixAux(g, g.prules[v], false)
+			uniquePrefixAux(g, g.prules[v])
 		end
 	end
 end
@@ -519,9 +516,7 @@ local function uniquePath (g, p, uPath, flw, seq)
 	elseif p.tag == 'var' and parser.isLexRule(p.p1) then
 		setUnique(p, uPath, seq, flw)
 	elseif p.tag == 'var' and uPath then
-		print("unique var ", p.p1, seq, p)
 		setUnique(p, uPath, seq, flw)
-		print("uniquePath uniqueUsage", p, p.p1)
 		g.uniqueVar[p.p1] = uniqueUsage(g, p)
 	elseif p.tag == 'con' then
 		uniquePath(g, p.p1, uPath, calck(g, p.p2, flw), seq)
@@ -575,6 +570,8 @@ local function calcUniquePath (g)
 		g.uniqueVar[v] = {}
 	end
 
+	g.uniqueVar[g.plist[1]] = { upath = true, seq = true }
+
 	fst = first.calcFst(g)
 	flw = first.calcFlw(g)	
 
@@ -587,7 +584,6 @@ local function calcUniquePath (g)
 		end
 	end
 
-	g.uniqueVar[g.plist[1]] = { upath = true, seq = true }
 	varUsage(g)
 	first.calcTail(g)
 	first.calcPrefix(g)
