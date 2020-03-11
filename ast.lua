@@ -84,8 +84,26 @@ local function printAST (t, tab)
 end
 
 
+local function getTokens_aux (ast, tabTk)
+	if type(ast) == 'table' then
+		for i, v in ipairs(ast) do
+			getTokens_aux(v, tabTk)
+		end
+	else
+		table.insert(tabTk, ast)
+	end
+end
+
+local function getTokens (ast)
+	local tabTk = {}
+	getTokens_aux(ast, tabTk)
+	return tabTk
+end
+
+
 return {
 	buildAST = buildAST,
 	printAST = printAST,
+	getTokens = getTokens,
 }
 	

@@ -146,10 +146,50 @@ local function testNoRec (dir, ext, p)
 end
 
 
+local function testNoRecDist (dir, ext, p)
+	local irec, ifail = 0, 0
+	local tfail = {}
+
+	for i, file in ipairs(getFiles(dir, ext)) do
+		print("No: ", file)
+		local r, lab, pos = testFile(dir .. file, p)
+		if not r then
+			local line, col = re.calcline(getText(dir .. file), pos)
+			io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
+      io.write(' line: ' .. line .. ' col: ' .. col)
+			io.write('\n')
+			ifail = ifail + 1
+			tfail[ifail] = { file = file, lab = lab, line = line, col = col }
+		else
+			if verbose then
+				io.write(getText(dir .. file))
+			end
+			irec = irec + 1
+			if type(r) == 'table' then
+				local tokens = ast.getTokens(r)
+				print("Tokens")
+				for i, v in ipairs(tokens) do
+					io.write(v .. ' ')
+				end
+				io.write('\n')
+				io.write('\n')
+			end
+		end
+	end
+
+	print('irec: ', irec, ' ifail: ', ifail)
+	for i, v in ipairs(tfail) do
+		print(v.file, v.lab, 'line: ', v.line, 'col: ', v.col)
+	end
+end
+
+
+
 return {
 	testYes = testYes,
 	testNo = testNo,
 	testNoRec = testNoRec,
+	testNoRecDist = testNoRecDist,
 	testFile = testFile,
 	setVerbose = setVerbose,
 	getFileName = getFileName,
