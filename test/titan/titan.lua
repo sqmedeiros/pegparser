@@ -78,42 +78,10 @@ local s = [[
 --print(pretty.printg(g), '\n')
 
 
---local gast = ast.buildAST(g)
---print("With annotations to build AST")
---print(pretty.printg(gast), '\n')
-
-
---print("Regular Annotation (SBLP paper)")
---g = m.match(s)
---local greg = recovery.putlabels(g, 'regular', true)
---print(pretty.printg(greg, true), '\n')
---print("End Regular\n")
-
---print("Annotating All expressions")
---g = m.match(s)
---local greg = recovery.putlabels(g, 'all', true)
---print(pretty.printg(greg, true), '\n')
---print("End All\n")
-
---print("Deep Ban")
---g = m.match(s)
---local gdeep = recovery.putlabels(g, 'deep', true)
---print(pretty.printg(gdeep, true), '\n')
-----print(pretty.printg(gdeep, true, 'ban'), '\n')
---print("End Deep\n")
-
-
---print("Unique Labels")
---g = m.match(s)
-----m.uniqueTk(g)
---local gunique = recovery.putlabels(g, 'unique', true)
---print(pretty.printg(gunique, true), '\n')
---print("End Unique\n")
-
 
 print("Unique Path (UPath)")
 g = m.match(s)
-local gupath = recovery.putlabels(g, 'upath', false)
+local gupath = recovery.putlabels(g, 'upath', true)
 print(pretty.printg(gupath, true), '\n')
 print(pretty.printg(gupath, true, 'unique'), '\n')
 print(pretty.printg(gupath, true, 'uniqueEq'), '\n')
@@ -121,29 +89,15 @@ pretty.printToFile(g, nil, 'titan')
 
 print("End UPath\n")
 
---[==[
-print("Deep UPath")
-g = m.match(s)
-local gupath = recovery.putlabels(g, 'deepupath', true)
-print(pretty.printg(gupath, true), '\n')
-print("End DeepUPath\n")
-]==]
-
-print("UPath Deep")
---m.uniqueTk(g)
-g = m.match(s)
-local gupath = recovery.putlabels(g, 'upathdeep', true)
-print(pretty.printg(gupath, true), '\n')
-print(pretty.printg(gupath, true, 'ban'), '\n')
-print("End UPathDeep\n")
-
 
 g = m.match(s)
 local p = coder.makeg(g, 'ast')
 
 local dir = util.getPath(arg[0])
 
-util.testYes(dir .. '/test/yes/', 'titan', p)
+--util.testYes(dir .. '/test/yes/', 'titan', p)
 
-util.testNo(dir .. '/test/no/', 'titan', p)
+--util.testNo(dir .. '/test/no/', 'titan', p)
+
+util.testNoRecDist(dir .. '/test/noTmp/', 'titan', p)
 
