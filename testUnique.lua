@@ -254,6 +254,9 @@ manualLab = [[
 -- TODO: Review isPrefixUniqueEq to annotate '(' in the first alternative
 --assertEqual(manualLab, autoLab(s))
 
+
+
+-- Annottating a choice with more than two alternatives. It should annotate the last alternative
 s = [[
 	s  <- 'a' / 'b' / 'y'
 ]]
@@ -262,7 +265,6 @@ manualLab = [[
 	s  <- ('a' / 'b' / 'y'^Err_001)^Err_002
 ]]
 
---TODO: Review ord to annotate the last alternative of a choice with more than two alternatives
 assertEqual(manualLab, autoLab(s))
 
 
@@ -335,7 +337,7 @@ s = [[
 ]]
 
 manualLab = [[
-  s    <- ('a'* x  /  ('a' / !'read' %{Err_001} .)* y^Err_002)^Err_003
+  s    <- ('a'* x  /  ('a' / !('read' / !.) %{Err_001} .)* y^Err_002)^Err_003
   x  <- 'print'
   y  <- 'read'^Err_004
 ]]
