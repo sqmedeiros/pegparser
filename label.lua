@@ -14,15 +14,16 @@ local ierr
 -- tkDelete / (!FOLLOW(p) eatToken space)*
 -- tkDelete <- &(eatToken p) eatToken p
 
+
 local function adderror (g, p, rec)
   local s = 'Err_' .. string.format("%03d", ierr)
-	ierr = ierr + 1
+  ierr = ierr + 1
 	if rec then
 		local pred = parser.newNot(set2choice(p.flw))
 		local seq = newNode('var', 'EatToken')
 		table.insert(g.plist, s)
-		--local tkDelete = parser.newSeq(seq, p)
-		--tkDelete = parser.newSeq(parser.newAnd(tkDelete), parser.newSeq(tkDelete, parser.newNode('var', "SKIP")))
+		local tkDelete = parser.newSeq(seq, p)
+		tkDelete = parser.newSeq(parser.newAnd(tkDelete), parser.newSeq(tkDelete, parser.newNode('var', "SKIP")))
 		local tkInsert = newNode('star', parser.newSeq(pred, seq))
 		--g.prules[s] = parser.newOrd(tkDelete, tkInsert)
 		g.prules[s] = parser.newOrd(tkInsert)
@@ -35,15 +36,16 @@ local function adderrorstar (g, p, rec)
   local s = 'Err_' .. string.format("%03d", ierr)
 	ierr = ierr + 1
 	--local pred = parser.newNot(set2choice(first.setdiff(p.flw, first.calcfirst(g, p.p1))))
-	local pred = parser.newNot(set2choice(p.flw))
+  local pred = parser.newNot(parser.newOrd(set2choice(p.flw), parser.newNot(parser.newAny())))
 	local seqRec = parser.newAny()
 	if rec then
-		--local srec = s .. '_Rec'
-		--seqRec = newNode('var', srec)
+		local srec = s .. '_Rec'
+		seqRec = newNode('var', srec)
 		local seq = newNode('var', 'EatToken')
 		table.insert(g.plist, s)
-		--table.insert(g.plist, s .. '_Rec')
-		g.prules[s] = newNode('star', parser.newSeq(pred, seq))
+		table.insert(g.plist, srec)
+		g.prules[s] = parser.newString('')
+		g.prules[srec] = newNode('star', parser.newSeq(pred, seq))
 	end
 	local p2 = parser.newSeq(pred, parser.newSeq(parser.newThrow(s), seqRec))
 	local choice = parser.newOrd(p.p1, p2)
