@@ -36,7 +36,10 @@ local function adderrorstar (g, p, rec)
   local s = 'Err_' .. string.format("%03d", ierr)
 	ierr = ierr + 1
 	--local pred = parser.newNot(set2choice(first.setdiff(p.flw, first.calcfirst(g, p.p1))))
-  local pred = parser.newNot(parser.newOrd(set2choice(p.flw), parser.newNot(parser.newAny())))
+  local aux = p.flw['$']
+	p.flw['$'] = true
+	local pred = parser.newNot(set2choice(p.flw))
+	p.flw['$'] = aux
 	local seqRec = parser.newAny()
 	if rec then
 		local srec = s .. '_Rec'
