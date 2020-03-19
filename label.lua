@@ -2,58 +2,130 @@ local first = require'pegparser.first'
 local parser = require'pegparser.parser'
 
 local newNode = parser.newNode
+local newSeq = parser.newSeq
+local newOrd = parser.newOrd
+local newNot = parser.newNot
+local newAnd = parser.newAnd
+local newThrow = parser.newThrow
+local newString = parser.newString
 local set2choice = first.set2choice
 	
 local ierr
 
+
+local currentRecPolicy = nil
+
+local panicRecPolicy, delPanicRecPolicy
+
+local function getLabelName ()
+  local s = 'Err_' .. string.format("%03d", ierr)
+	ierr = ierr + 1
+	return s
+end
+
+
+-- p SKIP
+local function addSkip (p)
+	return newSeq(p, newNode('var', 'SKIP'))
+end
+
+-- &(eatToken p) eatToken p
+local function getTkDeleteRec (g, p)
+	local eatTK = newNode('var', 'EatToken')
+	local tkDelete = newSeq(eatTk, p)
+	return newSeq(newAnd(tkDelete), tkDelete)
+end
+
+-- (!FOLLOW(p) eatToken space)*
+local function getTkInsertRec (g, p)
+	local eatTk = newNode('var', 'EatToken')
+	local predFlw = parser.newNot(set2choice(p.flw))
+	local insertTk = addSkip(newSeq(predFlw, eatTk))
+	return newNode('star', insertTk)
+end
+
+
 -- recovery rule for expression p
 -- (!FOLLOW(p) eatToken space)*
 -- eatToken  <-  token / (!space .)+
+function panicRecPolicy (g, p)
+	return getTkInsertRec(g, p)
+end
+
+
+function delPanicRecPolicy (g, p)
+local pred = parser.newNot(set2choice(p.flw))
+	local tkInsert = getTkInsertRec(g, p)
+	local tkDelete = addSkip(getTkDeleteRec(g, p))
+	return newOrd(tkDelete, tkInsert)
+end
+
 
 -- new recovery rule for p
 -- tkDelete / (!FOLLOW(p) eatToken space)*
 -- tkDelete <- &(eatToken p) eatToken p
-
-
 local function adderror (g, p, rec)
-  local s = 'Err_' .. string.format("%03d", ierr)
-  ierr = ierr + 1
-	if rec then
-		local pred = parser.newNot(set2choice(p.flw))
-		local seq = newNode('var', 'EatToken')
+  local s = getLabelName()
+	if currentRecPolicy then
 		table.insert(g.plist, s)
-		local tkDelete = parser.newSeq(seq, p)
-		tkDelete = parser.newSeq(parser.newAnd(tkDelete), parser.newSeq(tkDelete, parser.newNode('var', "SKIP")))
-		local tkInsert = newNode('star', parser.newSeq(pred, seq))
-		--g.prules[s] = parser.newOrd(tkDelete, tkInsert)
-		g.prules[s] = parser.newOrd(tkInsert)
+		g.prules[s] = currentRecPolicy(g, p)
 	end
-	return parser.newOrd(p, parser.newThrow(s))
+	return newOrd(p, newThrow(s))	
 end
 
+local function getFail (g, p)
+	return newSeq(newNot(newAny()), newAny())
+end
 
-local function adderrorstar (g, p, rec)
-  local s = 'Err_' .. string.format("%03d", ierr)
-	ierr = ierr + 1
-	--local pred = parser.newNot(set2choice(first.setdiff(p.flw, first.calcfirst(g, p.p1))))
+local function getFlwRepRec (g, p)
   local aux = p.flw['$']
 	p.flw['$'] = true
-	local pred = parser.newNot(set2choice(p.flw))
+	local predFlw = set2choice(p.flw)
 	p.flw['$'] = aux
+	return predFlw
+end
+
+local function getFstRepRec (g, p)
+	return set2choice(first.calcfirst(g, p.p1))
+end
+
+
+-- p*      -> (p / !FOLLOW(p) %{Err} eatTk Err_Rec)*
+-- Err     -> ''
+-- Err_Rec -> (!FIRST(p) !FOLLOW(p*) eatTk)*
+local function recRepPolicy(g, p, s)
+	table.insert(g.plist, s)
+	g.prules[s] = newString('')
+	
+	local srec = s .. '_Rec'
+	table.insert(g.plist, srec)
+
+	local varRec = newNode('var', srec)
+	local eatTk = newNode('var', 'EatToken')
+	local predFst = newNot(getFstRepRec(g, p))
+	local predFlw = newNot(getFlwRepRec(g, p))
+	local seqRec = newSeq(predFst, newSeq(predFlw, eatTk))
+	local tag = 'star'
+	if p.tag == 'opt' then
+		tag = 'opt'
+	end
+	g.prules[srec] = newNode(tag, seqRec)
+
+	return newSeq(eatTk, varRec)
+end
+
+local function adderrorstar (g, p, rec)
+  local s = getLabelName()
+	local pflw = getFlwRepRec(g, p)
 	local seqRec = parser.newAny()
 	if rec then
-		local srec = s .. '_Rec'
-		seqRec = newNode('var', srec)
-		local seq = newNode('var', 'EatToken')
-		table.insert(g.plist, s)
-		table.insert(g.plist, srec)
-		g.prules[s] = parser.newString('')
-		g.prules[srec] = newNode('star', parser.newSeq(pred, seq))
+		g.prules[s] = newString('')
+		seqRec = recRepPolicy(g, p, s)
 	end
-	local p2 = parser.newSeq(pred, parser.newSeq(parser.newThrow(s), seqRec))
-	local choice = parser.newOrd(p.p1, p2)
-	return newNode(p, choice)
+	local p2 = newSeq(newNot(pflw), newSeq(newThrow(s), seqRec))
+	return newNode(p, newOrd(p.p1, p2))
 end
+
 
 
 local function markerror (p, flw)	
@@ -133,8 +205,22 @@ local function addEatTkRule (g)
 end
 
 
+local function setRecPolicy (rec)
+	if rec == 'panic' then
+		currentRecPolicy = panicRecPolicy
+	elseif rec == 'delpanic' then
+		currentRecPolicy = delPanicPolicy
+	elseif rec then
+		currentRecPolicy = panicRecPolicy
+	else
+		currentRecPolicy = nil
+	end
+end
+
+
 local function labelgrammar (g, rec)
 	if rec then
+		setRecPolicy(rec)
 		addTkRule(g)
 		addEatTkRule(g)
 	end
@@ -152,6 +238,7 @@ local function labelgrammar (g, rec)
 	io.write("\n\n")
 	return g
 end
+
 
 return {
 	labelgrammar = labelgrammar,

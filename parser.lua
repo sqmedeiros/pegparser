@@ -74,6 +74,7 @@ defs.newAnd = function (p)
 end
 
 defs.newNot = function (p)
+	assert(p ~= nil)
 	return newNode('not', p)
 end
 

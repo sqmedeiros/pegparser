@@ -183,7 +183,6 @@ local function unfoldset (l)
 end
 
 function calcfirst (g, p)
-	--print(p.tag, p.p1.tag, p.p1)
 	if p.tag == 'empty' then
 		return { [empty] = true }
 	elseif p.tag == 'char' then

@@ -85,7 +85,7 @@ local gupath = recovery.putlabels(g, 'upath', true)
 print(pretty.printg(gupath, true), '\n')
 print(pretty.printg(gupath, true, 'unique'), '\n')
 print(pretty.printg(gupath, true, 'uniqueEq'), '\n')
-pretty.printToFile(g, nil, 'titan')
+pretty.printToFile(g, nil, 'titan', 'rec')
 
 print("End UPath\n")
 
@@ -99,5 +99,5 @@ local dir = util.getPath(arg[0])
 
 --util.testNo(dir .. '/test/no/', 'titan', p)
 
-util.testNoRecDist(dir .. '/test/noTmp/', 'titan', p)
+util.testNoRecDist(dir .. '/test/no/', 'titan', p)
 

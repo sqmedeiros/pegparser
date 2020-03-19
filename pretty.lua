@@ -140,12 +140,19 @@ local p = coder.makeg(g, 'ast')
 local dir = util.getPath(arg[0])
 
 util.testYes(dir .. '/test/yes/', 'source', p)
+]==]
 
+local endDefaultNoRecovery = [==[
 util.testNo(dir .. '/test/no/', 'source', p)
 ]==]
 
+local endDefaultWithRecovery = [==[
+util.setVerbose(true)
+util.testNoRec(dir .. '/test/no/', 'source', p)
+]==]
 
-local function printToFile (g, file, ext, pre, pos)
+
+local function printToFile (g, file, ext, rec, pre, pos)
 	file = file or 'out.lua'
 	local f = io.open(file, "w")
 
@@ -154,6 +161,11 @@ local function printToFile (g, file, ext, pre, pos)
 	print(f)
 	if not pos then
 		pos = string.gsub(posDefault, 'source', ext)
+		local endPos = endDefaultNoRecovery
+		if rec then
+			endPos = endDefaultWithRecovery
+		end
+		pos = pos .. string.gsub(endPos, 'source', ext)
 	end
 
 	f:write(s .. '\n' .. pos)
