@@ -1,6 +1,7 @@
 local parser = require'pegparser.parser'
 local first = require'pegparser.first'
 local unique = require'pegparser.unique'
+local usimple = require'pegparser.uniqueSimple'
 local label = require'pegparser.label'
 
 
@@ -36,10 +37,14 @@ local function annotateUPathAux (g, p)
 end
 
 
-local function annotateUPath (g)
+local function annotateUPath (g, f)
 	local fst = first.calcFst(g)
-	local flw = first.calcFlw(g)	
-	unique.calcUniquePath(g)
+	local flw = first.calcFlw(g)
+	if f == 'upath' then
+		unique.calcUniquePath(g)
+	elseif f == 'usimple' then
+		usimple.calcUniquePath(g)
+	end
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
@@ -50,9 +55,13 @@ local function annotateUPath (g)
 	return newg
 end
 
+
+
 local function putlabels (g, f, rec)
 	if f == 'upath' then
-		return labelgrammar(annotateUPath(g), rec)
+		return labelgrammar(annotateUPath(g, f), rec)
+	elseif f == 'usimple' then
+		return labelgrammar(annotateUPath(g, f), nil)
 	else
 		assert(false, tostring(f))
 	end	
