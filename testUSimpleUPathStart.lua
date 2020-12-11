@@ -6,7 +6,7 @@ local util = require 'pegparser.util'
 
 local function autoLab (s)
   local g = m.match(s)
-  local gupath = recovery.putlabels(g, 'upath', false)
+  local gupath = recovery.putlabels(g, 'usimple', false, true)
   return pretty.printg(gupath, true, nil, "notLex")
 end
 
@@ -19,13 +19,14 @@ end
 
 -- The matching of the start rule must succeed.
 local s = [[
-s <- 'a'
+s <- 'a' 'b'
 ]]
 
 local manualLab = [[
-s <- 'a'^Err_001
+s <- 'a'^Err_001 'b'^Err_002
 ]]
 
+assertEqual(manualLab, autoLab(s))
 
 -- The alternatives of this choice are disjoint.
 -- The choice must succeed, since that the start rule
@@ -43,6 +44,7 @@ s <- ('a' 'b'^Err_001 / 'c'^Err_002 'd'^Err_003)^Err_004
 ]]
 
 assertEqual(manualLab, autoLab(s))
+
 
 
 -- The alternatives of this choice are not disjoint.
@@ -79,6 +81,7 @@ x <- 'a' / 'A'
 
 assertEqual(manualLab, autoLab(s))
 
+
 s = [[
 s <- (x  / y)*
 x <- 'a' 'b'
@@ -86,9 +89,9 @@ y <- 'a' 'c' 'd'
 ]]
 
 manualLab = [[
-s <- (x  / y / !(!.) %{Err_001} .)*
+s <- (x  / y)*
 x <- 'a' 'b'
-y <- 'a' 'c'^Err_002 'd'^Err_003
+y <- 'a' 'c' 'd'^Err_001
 ]]
 
 assertEqual(manualLab, autoLab(s))
@@ -104,32 +107,38 @@ foreign         <-  'local' 'name' '=' 'foreign' 'import' ('(' 'string' ')'  /  
 ]]
 
 manualLab = [[
-program         <-  (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign / !(!.) %{Err_001} .)* 
-toplevelfunc    <-  localopt 'function' 'name'^Err_002 '('^Err_003 ')'^Err_004 'return'^Err_005 'end'^Err_006
+program         <-  (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* 
+toplevelfunc    <-  localopt 'function' 'name'^Err_001 '('^Err_002 ')'^Err_003 'return'^Err_004 'end'^Err_005
 toplevelvar     <-  localopt 'name' '=' 'x'
-toplevelrecord  <-  'record' 'name'^Err_007 '{'^Err_008 '}'^Err_009 'end'^Err_010
+toplevelrecord  <-  'record' 'name'^Err_006 '{'^Err_007 '}'^Err_008 'end'^Err_009
 localopt        <-  'local'?
-import          <-  'local' 'name' '=' 'import' ('(' 'string'^Err_011 ')'^Err_012  /  'string'^Err_013)^Err_014
-foreign         <-  'local' 'name'^Err_015 '='^Err_016 'foreign'^Err_017 'import'^Err_018 ('(' 'string'^Err_019 ')'^Err_020  /  'string'^Err_021)^Err_022
+import          <-  'local' 'name' '=' 'import' ('(' 'string' ')'  /  'string')
+foreign         <-  'local' 'name' '=' 'foreign' 'import'^Err_010 ('(' 'string'^Err_011 ')'^Err_012  /  'string'^Err_013)^Err_014
+]]
+assertEqual(manualLab, autoLab(s))
+
+
+s = [[
+s <- ('a'  / 'b')*
+]]
+
+manualLab = [[
+s <- ('a'  / 'b')*
 ]]
 
 assertEqual(manualLab, autoLab(s))
 
 
+
 -- The start rule must succeed, so we should only
 -- leave the repetition when it is possible to match
 -- the a symbol that must follow it.
--- TODO: Currently I am putting an extra '.' after
--- throwing a label in a repetition because an expression
--- as !. %{Err_001} may succeed withtout consuming the input,
--- which leads LPegLabel to complain about a repetition
--- matching an empty expression
 s = [[
 s <- ('a' 'b' / 'a' 'c')*
 ]]
 
 manualLab = [[
-s <- ('a' 'b' / 'a' 'c'^Err_001 / !(!.) %{Err_002} .)*
+s <- ('a' 'b' / 'a' 'c'^Err_001)*
 ]]
 
 assertEqual(manualLab, autoLab(s))
@@ -143,7 +152,7 @@ s <- ('a' 'b' / 'a' 'c')* 'd'?
 ]]
 
 manualLab = [[
-s <- ('a' 'b' / 'a' 'c'^Err_001 / !('d' / !.) %{Err_002} .)* ('d' / !(!.) %{Err_003} .)?
+s <- ('a' 'b' / 'a' 'c'^Err_001)* 'd'?
 ]]
 
 assertEqual(manualLab, autoLab(s))
@@ -157,7 +166,7 @@ s <- ('a' 'b' / 'a' 'c')* 'a'?
 ]]
 
 manualLab = [[
-s <- ('a' 'b' / 'a' 'c' / !('a' / !.) %{Err_001} .)* ('a' / !(!.) %{Err_002} .)?
+s <- ('a' 'b' / 'a' 'c')* 'a'?
 ]]
 
 assertEqual(manualLab, autoLab(s))
@@ -215,9 +224,9 @@ s = [[
 ]]
 
 manualLab = [[
-  inicio         <-  ('A' regra1  'x'^Err_001 /  'A' regra2  /  'A' 'id'^Err_002 / regra3 / !(!.) %{Err_003} .)* !.
-  regra1         <-  'a' 'b' 'y'^Err_004 / 'a' 'c'^Err_005 / 'd' 'a'^Err_006
-  regra2         <-  'G' 'H'^Err_007
+  inicio         <-  ('A' regra1  'x' /  'A' regra2  /  'A' 'id'^Err_001 / regra3 )* !.
+  regra1         <-  'a' 'b' 'y'^Err_002 / 'a' 'c' / 'd' 'a'^Err_003
+  regra2         <-  'G' 'H'^Err_004
   regra3         <- regra1
 ]]
 
@@ -229,11 +238,11 @@ s = [[
 ]]
 
 manualLab = [[
-	s <- ('a' 'b'^Err_001 'c' / 'a'^Err_002 'b'^Err_003 'd'^Err_004)^Err_005
+	s <- ('a' 'b' 'c' / 'a'^Err_001 'b'^Err_002 'd'^Err_003)^Err_004
 ]]
 
---TODO: fix this case (should annotate 'b' in first alternative)
---assertEqual(manualLab, autoLab(s))
+
+assertEqual(manualLab, autoLab(s))
 
 
 -- The algorithm must not annotate 'else'
@@ -246,13 +255,12 @@ s = [[
 ]]
 
 manualLab = [[
-  s    <- ('if' '('^Err_001 exp^Err_002 ')'^Err_003 cmd^Err_004 'else' cmd^Err_005  /  'if' '('^Err_006 exp^Err_007 ')'^Err_008 cmd^Err_009)^Err_010
-  exp  <- ('0' / '1')^Err_011
-  cmd  <- 'print'^Err_012
+  s    <- ('if' '(' exp ')' cmd 'else' cmd^Err_001  /  'if'^Err_002 '('^Err_003 exp^Err_004 ')'^Err_005 cmd^Err_006)^Err_007
+  exp  <- '0' / '1'
+  cmd  <- 'print'
 ]]
 
--- TODO: Review isPrefixUniqueEq to annotate '(' in the first alternative
---assertEqual(manualLab, autoLab(s))
+assertEqual(manualLab, autoLab(s))
 
 
 
@@ -262,7 +270,7 @@ s = [[
 ]]
 
 manualLab = [[
-	s  <- ('a' / 'b' / 'y'^Err_001)^Err_002
+	s  <- ('a' / ('b' / 'y'^Err_001)^Err_002)^Err_003
 ]]
 
 assertEqual(manualLab, autoLab(s))
@@ -278,8 +286,8 @@ s = [[
 manualLab = [[
 	s  <- (a / b^Err_001)^Err_002
   a  <- 'a' c / 'z' c^Err_003
-  b  <- ('a' c^Err_004 'k'^Err_005 / 'x'^Err_006 'f'^Err_007)^Err_008
-  c  <- 'd' 'e'^Err_009
+  b  <- 'a' c 'k' / 'x' 'f'^Err_004
+  c  <- 'd' 'e'^Err_005
 ]]
 
 assertEqual(manualLab, autoLab(s))
@@ -292,15 +300,15 @@ s = [[
 ]]
 
 manualLab = [[
-	s  <- (a / b^Err_001)^Err_002
-  a  <- 'a' c / 'z' c^Err_003
-  b  <- ('a' c^Err_004 'k'^Err_005 / 'x'^Err_006 'f'^Err_007)^Err_008
-  c  <- 'd' 'e'^Err_009
+	s  <- (a / (b / 'y'^Err_001)^Err_002)^Err_003
+  a  <- 'a' c / 'z' c^Err_004
+  b  <- 'a' c 'k' / 'x' 'f'^Err_005
+  c  <- 'd' 'e'^Err_006
 ]]
 
 --TODO: Review ord to annotate the last alternative of a choice with more than two alternatives
 --TODO: update manualLab
---assertEqual(manualLab, autoLab(s))
+assertEqual(manualLab, autoLab(s))
 
 
 
@@ -311,7 +319,7 @@ s = [[
 
 manualLab = [[
   s    <- ('a' x^Err_001  /  'b'^Err_002 x^Err_003)^Err_004
-  x  <- 'print'^Err_005
+  x  <- 'print'
 ]]
 
 assertEqual(manualLab, autoLab(s))
@@ -337,9 +345,9 @@ s = [[
 ]]
 
 manualLab = [[
-  s    <- ('a'* x  /  ('a' / !('read' / !.) %{Err_001} .)* y^Err_002)^Err_003
+  s    <- ('a'* x  /  'a'* y^Err_001)^Err_002
   x  <- 'print'
-  y  <- 'read'^Err_004
+  y  <- 'read'
 ]]
 
 assertEqual(manualLab, autoLab(s))
@@ -350,7 +358,9 @@ s = [[
 ]]
 
 manualLab = [[
-    s    <- ('a' s 'a'^Err_001  /  'b' s 'b'^Err_002 / '')^Err_003
+    s    <- 'a' s 'a'  /  'b' s 'b' / ''
 ]]
 
 assertEqual(manualLab, autoLab(s))
+
+

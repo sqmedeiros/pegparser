@@ -37,13 +37,13 @@ local function annotateUPathAux (g, p)
 end
 
 
-local function annotateUPath (g, f)
+local function annotateUPath (g, f, upathStart)
 	local fst = first.calcFst(g)
 	local flw = first.calcFlw(g)
 	if f == 'upath' then
 		unique.calcUniquePath(g)
 	elseif f == 'usimple' then
-		usimple.calcUniquePath(g)
+		usimple.calcUniquePath(g, upathStart)
 	end
 	local newg = parser.initgrammar(g)
 	for i, v in ipairs(g.plist) do
@@ -57,11 +57,11 @@ end
 
 
 
-local function putlabels (g, f, rec)
+local function putlabels (g, f, rec, upathStart)
 	if f == 'upath' then
 		return labelgrammar(annotateUPath(g, f), rec)
 	elseif f == 'usimple' then
-		return labelgrammar(annotateUPath(g, f), nil)
+		return labelgrammar(annotateUPath(g, f, upathStart), nil)
 	else
 		assert(false, tostring(f))
 	end	

@@ -199,13 +199,15 @@ local function uniquePath (g, p, upath, flw)
 end
 
 
-local function calcUniquePath (g)
+local function calcUniquePath (g, upathStart)
 	g.uniqueVar = {}
 	for i, v in ipairs(g.plist) do
-		g.uniqueVar[v] = {}
+		g.uniqueVar[v] = OFF
 	end
 
-	g.uniqueVar[g.plist[1]] = { upath = true, seq = true }
+	if upathStart then
+		g.uniqueVar[g.plist[1]] = ON
+	end
 
 	fst = first.calcFst(g)
 	flw = first.calcFlw(g)	
@@ -222,7 +224,7 @@ local function calcUniquePath (g)
 	varUsage(g)
 	for i, v in ipairs(g.plist) do		
 		if not parser.isLexRule(v) then
-			uniquePath(g, g.prules[v], OFF, flw[v])
+			uniquePath(g, g.prules[v], g.uniqueVar[v], flw[v])
 		end
 	end
 	
