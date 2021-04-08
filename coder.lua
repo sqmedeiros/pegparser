@@ -45,6 +45,8 @@ local function makep (p)
 		return m.Cg(makep(p.p2), p.p1)
 	elseif p.tag == 'anonCap' then
 		return m.Cg(makep(p.p1))
+	elseif p.tag == 'funCap' then
+		return makep(p.p1) / function () return end
 	elseif p.tag == 'var' then
 		return m.V(p.p1)
 	elseif p.tag == 'ord' then
@@ -136,6 +138,9 @@ local function makeg (g, tree)
 			local p = g.prules[v]
 			if not parser.isLexRule(v) then
 				p = autoskip(p, g)
+				if v == g.plist[1] then
+					p = parser.newSeq(parser.newVar('SKIP'), p)
+				end
 			end
 			peg[v] = makep(p)
 		else
