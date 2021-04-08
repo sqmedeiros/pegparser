@@ -136,6 +136,9 @@ local function makeg (g, tree)
 			local p = g.prules[v]
 			if not parser.isLexRule(v) then
 				p = autoskip(p, g)
+				if v == g.plist[1] then
+					p = parser.newSeq(parser.newVar('SKIP'), p)
+				end
 			end
 			peg[v] = makep(p)
 		else
