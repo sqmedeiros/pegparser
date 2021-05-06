@@ -710,6 +710,7 @@ local function getNonDisjRep (g, p, flw)
 		local flwRep = flw
 		if not disjoint(first1, flwRep) then
 			print("Non-disjoint repetition: ", pretty.printp(p))
+			io.write("Intersection with FOLLOW: ")
 			local conflict = inter(first1, flwRep)
 			for k, v in pairs(conflict) do
 				io.write(k .. ', ')
@@ -745,6 +746,9 @@ local function getNonDisjChoice (g, p, flw)
 		local first2 = calck(g, p.p2, flw)
 		if not disjoint(first1, first2) then
 			print("Non-disjoint choice: ", pretty.printp(p))
+		end
+		if parser.matchEmpty(p.p1)  then
+			print("Non-disjoint choice, first alternative matches empty string: ", pretty.printp(p))
 		end
 		local x = getNonDisjChoice(g, p.p1, flw)
 		local y = getNonDisjChoice(g, p.p2, flw)
