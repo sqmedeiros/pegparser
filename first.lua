@@ -695,31 +695,38 @@ end
 
 
 
-local function getNonDisjRep (g, p, flw)
+local function getNonDisjRep (g, p, flw, rule)
 	if p.tag == 'var' or p.tag == 'char' then
 		return 0
 	elseif p.tag == 'ord' then
-		return getNonDisjRep(g, p.p1, flw) + getNonDisjRep(g, p.p2, flw)
+		return getNonDisjRep(g, p.p1, flw, rule) + getNonDisjRep(g, p.p2, flw, rule)
 	elseif p.tag == 'con' then
-		local x = getNonDisjRep(g, p.p1, calck(g, p.p2, flw))
-		local y = getNonDisjRep(g, p.p2, flw)
+		local x = getNonDisjRep(g, p.p1, calck(g, p.p2, flw), rule)
+		local y = getNonDisjRep(g, p.p2, flw, rule)
 		return x + y
-	elseif p.tag == 'star' or p.tag == 'plus' then
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		local first1 = calcfirst(g, p.p1)
 		--local flwRep = union(calcfirst(g, p.p1), flw, true)
 		local flwRep = flw
 		if not disjoint(first1, flwRep) then
-			print("Non-disjoint repetition: ", pretty.printp(p))
+			print("Non-disjoint repetition (" .. rule .. "): ", pretty.printp(p))
+			io.write("Follow repetition: ")
+			for k, v in pairs(flw) do
+				io.write(k .. ', ')
+			end
+			io.write('\n')
 			io.write("Intersection with FOLLOW: ")
 			local conflict = inter(first1, flwRep)
 			for k, v in pairs(conflict) do
 				io.write(k .. ', ')
 			end
 			io.write('\n')
+		else
+			p.disjoint = true
 		end
-    return 1 + getNonDisjRep(g, p.p1, flwRep)
+    return 1 + getNonDisjRep(g, p.p1, flwRep, rule)
 	elseif p.tag == 'opt' then
-		return 0 + getNonDisjRep(g, p.p1, flw)
+		return 0 + getNonDisjRep(g, p.p1, flw, rule)
 	else
 		return 0
 	end
@@ -730,7 +737,7 @@ local function getRepReport (g)
 	local total = 0
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			total = total + getNonDisjRep(g, g.prules[v], g.FOLLOW[v])
+			total = total + getNonDisjRep(g, g.prules[v], g.FOLLOW[v], v)
 		end
   end
   
@@ -738,29 +745,34 @@ local function getRepReport (g)
 end
 
 
-local function getNonDisjChoice (g, p, flw)
+local function getNonDisjChoice (g, p, flw, rule)
 	if p.tag == 'var' or p.tag == 'char' then
 		return 0
 	elseif p.tag == 'ord' then
 		local first1 = calck(g, p.p1, flw)
 		local first2 = calck(g, p.p2, flw)
-		if not disjoint(first1, first2) then
-			print("Non-disjoint choice: ", pretty.printp(p))
+		local isDisj = disjoint(first1, first2)
+		local empty1 = parser.matchEmpty(p.p1)
+		if not isDisj then
+			print("Non-disjoint choice (" .. rule .. "): ", pretty.printp(p))
 		end
-		if parser.matchEmpty(p.p1)  then
-			print("Non-disjoint choice, first alternative matches empty string: ", pretty.printp(p))
+		if empty1 then
+			print("Non-disjoint choice (" .. rule .. "), first alternative matches empty string: ", pretty.printp(p))
 		end
-		local x = getNonDisjChoice(g, p.p1, flw)
-		local y = getNonDisjChoice(g, p.p2, flw)
+		if isDisj and not empty1 then
+			p.disjoint = true
+		end
+		local x = getNonDisjChoice(g, p.p1, flw, rule)
+		local y = getNonDisjChoice(g, p.p2, flw, rule)
 		return 1 + x + y
 	elseif p.tag == 'con' then
-		local x = getNonDisjChoice(g, p.p1, calck(g, p.p2, flw))
-		local y = getNonDisjChoice(g, p.p2, flw)
+		local x = getNonDisjChoice(g, p.p1, calck(g, p.p2, flw), rule)
+		local y = getNonDisjChoice(g, p.p2, flw, rule)
 		return x + y
 	elseif p.tag == 'star' or p.tag == 'plus' then
-    return getNonDisjChoice(g, p.p1, union(calcfirst(g, p.p1), flw, true))
+    return getNonDisjChoice(g, p.p1, union(calcfirst(g, p.p1), flw, true), rule)
 	elseif p.tag == 'opt' then
-		return getNonDisjChoice(g, p.p1, flw)
+		return getNonDisjChoice(g, p.p1, flw, rule)
 	else
 		return 0
 	end
@@ -771,7 +783,7 @@ local function getChoiceReport (g)
 	local total = 0
 	for i, v in ipairs(g.plist) do
 		if not parser.isLexRule(v) then
-			total = total + getNonDisjChoice(g, g.prules[v], g.FOLLOW[v])
+			total = total + getNonDisjChoice(g, g.prules[v], g.FOLLOW[v], v)
 		end
   end
   
