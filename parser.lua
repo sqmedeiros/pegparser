@@ -26,6 +26,11 @@ local newNode = function (tag, p1, p2)
 	end
 end
 
+defs.newEsqSeq = function (v1, v2)
+	--print ("newEsqSeq = ", v1, v2)
+	return "\r"
+end
+
 defs.newString = function (v, quote)
 	if #v == 0 then
 		return newNode('empty')
@@ -123,6 +128,11 @@ end
 defs.newNameCap = function (p1, p2)
 	return newNode('nameCap', p1, p2)
 end
+
+defs.newDiscardCap = function (p)
+	return newNode('funCap', p)
+end
+
 
 defs.newSuffix = function (p, ...)
   local l = { ... }
@@ -244,6 +254,14 @@ local function setSkip (g)
 	g.prules[s] = skip
 end
 
+local function setEOF (g, s)
+	s = s or 'EOF'
+	if not g.prules[s] then
+		g.plist[#g.plist+1] = s
+	end
+	g.prules[s] = defs.newNot(defs.newAny())
+end
+
 
 local peg = [[
 	grammar       <-   S rule+^Rule (!.)^Extra
@@ -261,12 +279,16 @@ local peg = [[
 
   primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var / def / throw 
 
-  string        <-   ("'" {(!"'"  .)*} {"'"}^SingQuote  S  /
-                      '"' {(!'"'  .)*} {'"'}^DoubQuote  S) -> newString
+  string        <-   ("'" {escseq / (!"'"  .)*} {"'"}^SingQuote  S  /
+                      '"' {escseq / (!'"'  .)*} {'"'}^DoubQuote  S) -> newString
 
 	class         <-   '[' {| (({(.'-'.)} / (!']' {.}))+)^EmptyClass |} -> newClass ']'^RBraClass S
 
   any           <-   '.' -> newAny S
+  
+  esc           <-   [\\]
+  
+  escseq        <-    '\\' 'r' -> newEsqSeq
 
   var           <-    name -> newVar !arrow  
 
@@ -311,6 +333,7 @@ defs.match = function (s)
 		return r, msg .. (errinfo[lab] or lab), pos
 	else
 		setSkip(g)
+		setEOF(g)
 		for i, v in ipairs(g.vars) do
 			assert(g.prules[v] ~= nil, "Rule '" .. v .. "' was not defined")
 		end
