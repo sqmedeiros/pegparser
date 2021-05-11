@@ -142,7 +142,7 @@ local function setUnique (p, unique, seq, flw)
 	if not unique then
 		return
 	end
-	print("setUnique", p, p.p1, p.kind, p.unique, 'seq = ', seq)
+	--print("setUnique", p, p.p1, p.kind, p.unique, 'seq = ', seq)
 	if not p.unique then
 		changeUnique = true
 	end
@@ -272,6 +272,7 @@ local function notDisjointPref (g, p, s)
 	local sub = {}
 	local pref = g.symPref[getName(p)][p]
 	
+	--print("notDisjointPref s ", s, g.symPref[s])
 	for k, v in pairs(g.symPref[s]) do
 		if k ~= p then
 			if not disjoint(pref, v) then
@@ -385,7 +386,7 @@ local function isPrefixUniqueEq (g, p, inter, sub)
 	for k, _ in pairs(inter) do
 		if not sub[k] then
 			-- test if 'k' is also preceded by 'previousEq'
-			print("Nao foi sub", k, k.p1, g.symRule[k])
+			--print("Nao foi sub", k, k.p1, g.symRule[k])
 			local t = { [k] = true }
 			if not isLastAlternative(g, p, t) then
 				return false
@@ -393,7 +394,7 @@ local function isPrefixUniqueEq (g, p, inter, sub)
 		end 
 	end
 	
-	print("foi uniqueEq", p.p1, g.symRule[p], seq)
+	--print("foi uniqueEq", p.p1, g.symRule[p], seq)
 	for k, v in pairs(g.symPref[getName(p)][p]) do
 			io.write(k .. ' ; ')
 	end
@@ -407,7 +408,7 @@ local function isPrefixUniqueEq (g, p, inter, sub)
 	-- TODO: review the following line, it crashes the C parser (annotates rule assignment_operator)
 	--p.seq = seq 
 	if p.tag == 'var' then
-		print("Mais um: prefixUniqueEq uniqueUsage", p.p1, p)
+		--print("Mais um: prefixUniqueEq uniqueUsage", p.p1, p)
 		g.uniqueVar[p.p1] = uniqueUsage(g, p)
 	end
 end
@@ -428,7 +429,7 @@ end
 local function isPrefixUnique (g, p)
 	local inter, sub = getPrefInterSub(g, p)
 
-	print("isPrefixUnique", next(inter), next(sub))
+	--print("isPrefixUnique", next(inter), next(sub))
 
 	-- prefix is unique
 	local unique = next(inter) == nil
@@ -468,7 +469,7 @@ end
 local function uniquePrefixAux (g, p)
 	if p.tag == 'char' or p.tag == 'var' then
 		--assert(not p.unique or (p.unique == true and isPrefixUnique(g, p) == true))
-		print("uniquePrefixAux", p.p1, p, isPrefixUnique(g, p))
+		--print("uniquePrefixAux", p.p1, p, isPrefixUnique(g, p))
 		setUnique(p, p.unique or isPrefixUnique(g, p))
 	elseif p.tag == 'con' then
 		uniquePrefixAux(g, p.p1)
@@ -525,14 +526,14 @@ local function uniquePath (g, p, uPath, flw, seq)
 		if not uPath then
 			-- it seems this condition has verty little impact
 			if p1.tag == 'var' and not parser.isLexRule(p1.p1) and matchUPath(g.prules[p1.p1]) and isDisjointLast(g, p1, getName(p1)) then
-				print("Vai ser agora", p1.p1, g.symRule[p1])
+				--print("Vai ser agora", p1.p1, g.symRule[p1])
 				uPath = true
 				setUnique(p1, uPath, seq, flw)
 				setUnique(p.p1, uPath, seq, flw)
 			end
 		end
 		if p1.uniqueEq then
-			print("upathEq", p1.p1)
+			--print("upathEq", p1.p1)
 			p.p2.previousEq = p1
 		end
 		seq = seq or (p.p1.unique and not parser.matchEmpty(p.p1))
