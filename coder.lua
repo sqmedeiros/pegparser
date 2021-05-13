@@ -26,7 +26,16 @@ local function makep (p)
 	if p.tag == 'empty' then
 		return m.P""
 	elseif p.tag == 'char' then
-		return m.P(p.p1)
+		--print("makeppp", p.p1, p.p1 == '\\t')
+		if p.p1 == '\\t' then
+			return m.P'\t'
+		elseif p.p1 == '\\r' then
+			return m.P'\r'
+		elseif p.p1 == '\\n' then
+			return m.P'\n'
+		else
+			return m.P(p.p1)
+		end
 	elseif p.tag == 'def' then
 		return predef[p.p1]
 	elseif p.tag == 'set' then
