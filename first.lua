@@ -16,6 +16,29 @@ local newOrd = parser.newOrd
 local printfirst, printsymbols, calcfirst, calck
 
 
+local function isIDBegin (ch)
+	return (ch >= 'a' and ch <= 'z') or (ch >= 'A' and ch <= 'Z') or ch == '_'
+end
+
+local function matchIDBegin (p)
+	if p.tag == 'char' then
+		return isIDBegin(string.sub(p.p1, 1, 1))
+	elseif p.tag == 'set' then
+		for k, v in pairs(p.p1) do
+			if #v == 1 then
+				if isIDBegin(string.sub(v, 1, 1)) then
+					return true
+				end
+			elseif isIDBegin(string.sub(v, 1, 1)) or isIDBegin(string.sub(v, 3, 3)) then
+				return true
+			end
+		end
+		return false
+	else
+		return false
+	end
+end
+
 function lexKey (p)
 	return prefixLex .. p.p1
 end
@@ -401,10 +424,10 @@ local function calcTail (g)
     end
 	end	
 
-	print("calcTail")
+	--[=[print("calcTail")
 	for i1, v1 in ipairs(g.plist) do
 		print(v1 .. ': ', table.concat(sortset(TAIL[v1]), ", "))
-	end
+	end]=]
 
 
 	g.TAIL = TAIL
@@ -463,10 +486,10 @@ local function calcGlobalPrefix (g)
     end
   end
 
-	print("Global Prefix")
+	--[==[print("Global Prefix")
 	for i, v in ipairs(g.plist) do
 		print(v .. ': ', table.concat(sortset(PREFIX[v]), ", "))
-	end
+	end]==]
 
 
 	g.PREFIX = PREFIX
@@ -525,13 +548,13 @@ local function calcPrefix (g)
   end
 	--calcPrefixAux(g, g.prules['import'], { [empty] = true })
 
-	print("calcPrefix")
+	--[==[print("calcPrefix")
 	for k1, v1 in pairs(g.symPref) do
 		print(k1, ' -> ')
 		for k2, v2 in pairs(v1) do
 			print('\t(' .. k1 .. ', ' .. g.symRule[k2] .. '): ', table.concat(sortset(v2), ", "))
 		end
-	end
+	end]==]
 end
 
 
@@ -818,5 +841,6 @@ return {
 	notDisjointFirst = notDisjointFirst,
 	getChoiceReport = getChoiceReport,
 	getRepReport = getRepReport,
+	matchIDBegin = matchIDBegin
 }
 

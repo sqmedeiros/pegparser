@@ -27,8 +27,9 @@ local newNode = function (tag, p1, p2)
 end
 
 defs.newEsqSeq = function (v1, v2)
-	--print ("newEsqSeq = ", v1, v2)
-	return "\r"
+	--print ("newEsqSeq = ", v1, #v1, #"\t")
+	--return "\t"
+	return v1
 end
 
 defs.newString = function (v, quote)
@@ -176,6 +177,15 @@ defs.newRule = function (k, v)
 	lasttk = {}
 end
 
+defs.addRuleG = function (g, k, v, frag)
+	g.prules[k] = v
+	g.plist[#g.plist + 1] = k
+	if defs.isLexRule(k) and not frag then
+	  g.tokens[k] = true
+	end
+end
+
+
 defs.isSimpleExp = function (p)
 	local tag = p.tag
 	return tag == 'empty' or tag == 'char' or tag == 'any' or
@@ -288,7 +298,8 @@ local peg = [[
   
   esc           <-   [\\]
   
-  escseq        <-    '\\' 'r' -> newEsqSeq
+  --escseq        <-    '\t' -> newEsqSeq
+  escseq        <-    !'\t''\t' -> newEsqSeq
 
   var           <-    name -> newVar !arrow  
 
