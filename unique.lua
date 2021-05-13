@@ -162,11 +162,10 @@ local function uniqueTk (g)
 		end
 	end
 
-	print("Uunique")
 	local cont = {}
 	local unique = {}
 	for k, v in pairs(t) do
-		print(k, " = ", v)
+		--print(k, " = ", v)
 		unique[k] = (v == 1) or nil
 		if not cont[v] then
 			cont[v] = 1
@@ -175,12 +174,12 @@ local function uniqueTk (g)
 		end
 	end
 	
-	for i = 1, 10 do
+	--[=[for i = 1, 10 do
 		print("Token ", i, " = ", cont[i])
-	end
+	end]=]
 
 	unique['SKIP'] = nil 
-	printUnique(unique)
+	--printUnique(unique)
 	return unique
 end
 
@@ -395,10 +394,10 @@ local function isPrefixUniqueEq (g, p, inter, sub)
 	end
 	
 	--print("foi uniqueEq", p.p1, g.symRule[p], seq)
-	for k, v in pairs(g.symPref[getName(p)][p]) do
-			io.write(k .. ' ; ')
-	end
-	io.write('\n')
+	--for k, v in pairs(g.symPref[getName(p)][p]) do
+	--		io.write(k .. ' ; ')
+	--end
+	--io.write('\n')
 
 	if not seq then
 		return
@@ -601,7 +600,7 @@ local function calcUniquePath (g)
 	end
 	
 
-	io.write("Unique vars: ")
+	--[==[io.write("Unique vars: ")
 	for i, v in ipairs(g.plist) do
 		if g.uniqueVar[v].upath then
 			io.write(v .. '(' .. tostring(g.uniqueVar[v].upath) .. ';' .. tostring(g.uniqueVar[v].seq) .. ')' .. ', ')
@@ -615,7 +614,7 @@ local function calcUniquePath (g)
 			io.write(v .. ', ')
 		end
 	end
-	io.write('\n')
+	io.write('\n')]==]
 
 end
 
