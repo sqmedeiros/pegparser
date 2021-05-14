@@ -54,7 +54,7 @@ end
 
 
 function delPanicRecPolicy (g, p)
-local pred = parser.newNot(set2choice(p.flw))
+	local pred = parser.newNot(set2choice(p.flw))
 	local tkInsert = getTkInsertRec(g, p)
 	local tkDelete = addSkip(getTkDeleteRec(g, p))
 	return newOrd(tkDelete, tkInsert)
