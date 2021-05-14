@@ -317,12 +317,12 @@ local function isDisjointLast (g, p, s)
 		if k ~= p then
 			if not disjoint(pref, v) then
 				inter[k] = true
-				print("inter = true", s, p)
+				--print("inter = true", s, p)
 			end
 		end
 	end
 
-	print("isDisjointLast", p, s, next(inter))
+	--print("isDisjointLast", p, s, next(inter))
 	return isLastAlternative(g, p, inter)
 end
 
