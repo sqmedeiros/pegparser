@@ -157,15 +157,15 @@ end
 
 
 function solveChoiceConflict (g, p1, p2)
-	local solved = false
+	local solved = nil
 	if unique.matchUPath(p1) then
 		print("Alternative 1 match unique", pretty.printp(p1))
-		solved = true
+		solved = 1
 	end
 
 	if unique.matchUPath(p2) then
 		print("Alternative 2 match unique", pretty.printp(p2))
-		solved = true
+		solved = solved or 2
 	end
 
 	local tkPath1 = {}
@@ -180,12 +180,12 @@ function solveChoiceConflict (g, p1, p2)
 
 	if (matchTkNotInPath(g, p1, tkPath2, {})) then
 		print("Alternative 1 match tkpath different, should come first")
-		solved = true
+		solved = 1
 	end
 
 	if (matchTkNotInPath(g, p2, tkPath1, {})) then
 		print("Alternative 2 match tkpath different, should come first")
-		solved = true
+		solved = solved or 2
 	end
 
 	return solved
@@ -196,10 +196,13 @@ function getChoicePeg (g, peg, p, flw, rule)
 
 	local n = #t
 	local tDisj = {}
+	local conflict = {}
+	local newt = {}
 
 	print("Before ordering")
 	for i, v in pairs(t) do
 		print("Alt " .. i .. ": ", pretty.printp(v))
+		conflict[i] = {}
 	end
 
 	for i = 1, n -1 do
@@ -208,11 +211,12 @@ function getChoicePeg (g, peg, p, flw, rule)
 			local p2 = t[j]
 			local first1 = calcfirst(g, p1)
 			local first2 = calcfirst(g, p2)
-			print("p1", pretty.printp(p1))
-			print("p2", pretty.printp(p2))
 			if not first.disjoint(first1, first2) then
+				print("p1", pretty.printp(p1))
+			  print("p2", pretty.printp(p2))
 				print("Conflict ", i, j)
-				if solveChoiceConflict(g, p1, p2) then
+				local solved = solveChoiceConflict(g, p1, p2)
+				if solved then
 					print("Conflict solved")
 				end
 			end
