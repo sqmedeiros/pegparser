@@ -188,6 +188,9 @@ function printfirst (g)
 	end
 end
 
+function printktable (t)
+	print(table.concat(sortset(t), ", "))
+end
 
 local function unfoldset (l)
 	local t = {}
@@ -204,6 +207,98 @@ local function unfoldset (l)
 	end
 	return t
 end
+
+
+function calcTkPath (g, p, tkSet, marked)
+	if p.tag == 'empty' then
+		return
+	elseif p.tag == 'char' then
+    tkSet[p.p1] = true
+	elseif p.tag == 'any' then
+		tkSet[any] = true
+	elseif p.tag == 'set' then
+		local set = unfoldset(p.p1)
+		for k, v in pairs(set) do
+			tkSet[k] = v
+		end
+	elseif p.tag == 'ord' or p.tag == 'con' then
+		calcTkPath(g, p.p1, tkSet, marked)
+		calcTkPath(g, p.p2, tkSet, marked)
+	elseif p.tag == 'var' then
+		local v = p.p1
+		if not marked[v] then
+			marked[v] = true
+			if parser.isLexRule(v) then
+				tkSet[v] = true
+			else
+				calcTkPath(g, g.prules[v], tkSet, marked)
+			end
+		end
+	elseif p.tag == 'throw' then
+		return
+	elseif p.tag == 'and' then
+		return
+	elseif p.tag == 'not' then
+		return
+	elseif p.tag == 'opt' or p.tag == 'star' or p.tag == 'plus' then
+    return calcTkPath(g, p.p1, tkSet, marked)
+	elseif p.tag == 'def' then
+		return
+	else
+		print(p, p.tag, p.empty, p.any)
+		error("Unknown tag: " .. p.tag)
+	end
+end
+
+
+function matchTkNotInPath (g, p, tkSet, marked)
+	if p.tag == 'empty' then
+		return false
+	elseif p.tag == 'char' then
+		if not tkSet[p.p1] then
+			print("nao tkpath", p.p1)
+		end
+		return not tkSet[p.p1]
+	elseif p.tag == 'any' then
+		return not tkSet[any]
+	elseif p.tag == 'set' then
+		local set = unfoldset(p.p1)
+		for k, v in pairs(set) do
+			if not tkSet[k] then
+				return true
+			end
+		end
+		return false
+	elseif p.tag == 'ord' then
+		return matchTkNotInPath(g, p.p1, tkSet, marked) and
+		       matchTkNotInPath(g, p.p2, tkSet, marked)
+	elseif p.tag == 'con' then
+		return matchTkNotInPath(g, p.p1, tkSet, marked) or
+		       matchTkNotInPath(g, p.p2, tkSet, marked)
+	elseif p.tag == 'var' then
+		local v = p.p1
+		if not marked[v] then
+			marked[v] = true
+			if parser.isLexRule(v) then
+				return not tkSet[v]
+			else
+				return matchTkNotInPath(g, g.prules[v], tkSet, marked)
+			end
+		end
+	elseif p.tag == 'throw' or p.tag == 'not' or p.tag == 'and' or
+	       p.tag == 'opt' or p.tag == 'star' then
+		return false
+	elseif p.tag == 'plus' then
+    return matchTkNotInPath(g, p.p1, tkSet, marked)
+	elseif p.tag == 'def' then
+		return false
+	else
+		print(p, p.tag, p.empty, p.any)
+		error("Unknown tag: " .. p.tag)
+	end
+end
+
+
 
 function calcfirst (g, p)
 	if p.tag == 'empty' then
@@ -822,6 +917,7 @@ return {
 	calcfirst = calcfirst,
 	printfollow = printfollow,
 	printfirst = printfirst,
+	printktable = printktable,
 	disjoint = disjoint,
 	set2choice = set2choice,
 	calck = calck,
@@ -841,6 +937,8 @@ return {
 	notDisjointFirst = notDisjointFirst,
 	getChoiceReport = getChoiceReport,
 	getRepReport = getRepReport,
-	matchIDBegin = matchIDBegin
+	matchIDBegin = matchIDBegin,
+	calcTkPath = calcTkPath,
+	matchTkNotInPath = matchTkNotInPath,
 }
 

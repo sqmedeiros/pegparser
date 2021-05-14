@@ -27,6 +27,14 @@ local function getRepName ()
 	return s
 end
 
+
+function tableSwap (t, i, j)
+	local aux = t[i]
+	t[i] = t[j]
+	t[j] = aux
+end
+
+
 function newNonLL1Rep(g, peg, p, flw, rule)
 	assert(p ~= nil)
 	print("newNonLL1Rep", pretty.printp(p))
@@ -47,6 +55,234 @@ function newNonLL1Rep(g, peg, p, flw, rule)
 	end
 end
 
+--[==[function getLexPeg (g, peg, p, pflw, rule)
+	if p.tag == 'var' or p.tag == 'char' or p.tag == 'any' or p.tag == 'set' then
+		return newNode(p, p.p1, p.p2)
+	elseif p.tag == 'ord' then
+		local p1 = getLexPeg(g, peg, p.p1, pflw, rule)
+		local p2 = getLexPeg(g, peg, p.p1, pflw, rule)
+		return newNode(p, p1, p2)
+	end
+	elseif p.tag == 'con' then
+		local p1 = getLexPeg(g, peg, p.p1, newSeq(p.p2, pflw)), rule)
+		local p2 = getLexPeg(g, peg, p.p2, pflw, rule)
+		return newNode(p, p1, p2)
+	elseif p.tag == 'star' or p.tag == 'plus' then
+		return newNode(p, getLexPeg(g, peg, p.p1, pflw, rule))
+	elseif p.tag == 'opt' then
+		if p.p1.tag == 'opt' or p.p1.tag == 'star' or p.p1.tag == 'plus' then
+			local
+		else
+			return newNode(p, getLexPeg(g, peg, p.p1, pflw, rule))
+		end
+	elseif p.tag == 'not' then
+		return newNode(p, getLexPeg(g, peg, p.p1, pflw, rule))
+	elseif p.tag == 'def' then
+		return newNode(p, p.p1, p.p2)
+	else
+		assert(false, p.tag .. ': ' .. pretty.printp(p))
+	end
+end
+--]==]
+
+-- given a list of expressions, generates a left-associateve con
+function getConFromList (l)
+	local n = #l
+
+	if n == 1 then
+		return l[1]
+	else
+		local p2 = l[n]
+		return newSeq(getConFromList(table.pack(table.unpack(l, 1, n - 1))), p2)
+	end
+end
+
+
+-- assumes concatenation is left-associative
+function getListFromCon (p)
+	local t = {}
+
+	local aux = p
+	while aux.tag == 'con' do
+		table.insert(t, aux.p2)
+		aux = aux.p1
+	end
+	table.insert(t, aux)
+
+	local n = #t
+	for i = 1, n/2 do
+		tableSwap(t, i, n - i + 1)
+	end
+
+	return t
+end
+
+function isLazyRep (p)
+	return p.tag == 'opt' and
+	       (p.p1.tag == 'opt' or p.p1.tag == 'star' or p.p1.tag == 'plus')
+end
+
+-- Assumes a few simplifications
+-- 1. there is no other transformation related to lexical rules
+-- 2. there is no lazy repetition inside another one
+function convertLazyRepetition(g, peg, p)
+	local t = getListFromCon(p)
+	local n = #t
+
+	for i = n, 1, -1 do
+		local v = t[i]
+		if isLazyRep(v) then
+			local newt = table.pack(table.unpack(t, i + 1, n))
+			local p = getConFromList(newt)
+			t[i] = newNode(v.p1, newSeq(newNot(p), v.p1.p1))
+		end
+	end
+
+	return getConFromList(t)
+end
+
+-- assumes the choice is right-associative
+function getChoiceAlternatives (p)
+	local t = {}
+
+	local aux = p
+	while aux.tag == 'ord' do
+		table.insert(t, aux.p1)
+		aux = aux.p2
+	end
+	table.insert(t, aux)
+
+	return t
+end
+
+
+function solveChoiceConflict (g, p1, p2)
+	local solved = false
+	if unique.matchUPath(p1) then
+		print("Alternative 1 match unique", pretty.printp(p1))
+		solved = true
+	end
+
+	if unique.matchUPath(p2) then
+		print("Alternative 2 match unique", pretty.printp(p2))
+		solved = true
+	end
+
+	local tkPath1 = {}
+	first.calcTkPath(g, p1, tkPath1, {})
+	io.write("tkpath1: ")
+	printktable(tkPath1)
+
+	local tkPath2 = {}
+	first.calcTkPath(g, p2, tkPath2, {})
+	io.write("tkpath2: ")
+	printktable(tkPath2)
+
+	if (matchTkNotInPath(g, p1, tkPath2, {})) then
+		print("Alternative 1 match tkpath different, should come first")
+		solved = true
+	end
+
+	if (matchTkNotInPath(g, p2, tkPath1, {})) then
+		print("Alternative 2 match tkpath different, should come first")
+		solved = true
+	end
+
+	return solved
+end
+
+function getChoicePeg (g, peg, p, flw, rule)
+	local t = getChoiceAlternatives(p)
+
+	local n = #t
+	local tDisj = {}
+
+	print("Before ordering")
+	for i, v in pairs(t) do
+		print("Alt " .. i .. ": ", pretty.printp(v))
+	end
+
+	for i = 1, n -1 do
+		local p1 = t[i]
+		for j = i + 1, n do
+			local p2 = t[j]
+			local first1 = calcfirst(g, p1)
+			local first2 = calcfirst(g, p2)
+			print("p1", pretty.printp(p1))
+			print("p2", pretty.printp(p2))
+			if not first.disjoint(first1, first2) then
+				print("Conflict ", i, j)
+				if solveChoiceConflict(g, p1, p2) then
+					print("Conflict solved")
+				end
+			end
+		end
+	end
+
+	return
+
+	--[===[
+	print("Conflicts")
+	for i, v in pairs(t) do
+		local first1 = calcfirst(g, p1)
+		local first2 = calcfirst(g, p2)
+		print("p1", pretty.printp(p1))
+		print("p2", pretty.printp(p2))
+		if not first.disjoint(first1, first2) then
+	end
+
+
+	local last = n
+	while last > 1 do
+		local j = 1
+		while j < last do
+			local p1 = t[j]
+			local p2 = t[j+1]
+			local first1 = calcfirst(g, p1)
+			local first2 = calcfirst(g, p2)
+			print("p1", pretty.printp(p1))
+			print("p2", pretty.printp(p2))
+			if not first.disjoint(first1, first2) then
+				if unique.matchUPath(p1) then
+					print("Alternative 1 match unique", pretty.printp(p1))
+				end
+			end
+			if unique.matchUPath(p.p2) then
+			  print("Alternative 2 match unique", pretty.printp(p2))
+			  tableSwap(t, j, j + 1)
+			end
+			local tkPath1 = {}
+			first.calcTkPath(g, p1, tkPath1, {})
+			io.write("tkpath1: ")
+			printktable(tkPath1)
+
+			local tkPath2 = {}
+			first.calcTkPath(g, p2, tkPath2, {})
+			io.write("tkpath2: ")
+			printktable(tkPath2)
+
+			if (matchTkNotInPath(g, p1, tkPath2, {})) then
+				print("Alternative 1 match tkpath different, should come first")
+			end
+
+			if (matchTkNotInPath(g, p2, tkPath1, {})) then
+				print("Alternative 2 match tkpath different, should come first")
+				tableSwap(t, j, j + 1)
+			end
+			j = j + 1
+		end
+		last = last - 1
+	end
+
+	print("After ordering")
+	for i, v in pairs(t) do
+		print("Alt " .. i .. ": ", pretty.printp(v))
+	end
+	return t
+	]===]
+
+end
+
 
 function getPeg (g, peg, p, flw, rule)
 	if p.tag == 'var' or p.tag == 'char' or p.tag == 'any' or p.tag == 'set' then
@@ -56,17 +292,21 @@ function getPeg (g, peg, p, flw, rule)
 			return newNode(p, getPeg(g, peg, p.p1, flw, rule), getPeg(g, peg, p.p2, flw, rule))
 		else
 			print("Non-ll(1) choice", pretty.printp(p))
-			if unique.matchUPath(p.p1) then
-				print("Alternative 1 match unique", pretty.printp(p.p1))
-				return newNode(p, getPeg(g, peg, p.p1, flw, rule), getPeg(g, peg, p.p2, flw, rule))
-			end
-			if unique.matchUPath(p.p2) then
-			  print("Alternative 2 match unique", pretty.printp(p.p2))
-			  return newNode(p, getPeg(g, peg, p.p2, flw, rule), getPeg(g, peg, p.p1, flw, rule))
-			end
-			--print("rule123", rule)
-			return newNode(p, getPeg(g, peg, p.p1, flw, rule), getPeg(g, peg, p.p2, flw, rule))
+			getChoicePeg(g, peg, p, flw, rule)
 		end
+
+			--[==[if p.p2.tag == 'ord' then
+				local first1 = calcfirst(g, p.p1)
+				local first21 = calcfirst(g, p.p2.p1)
+				if first.disjoint(first1, first21) then
+				  print("tkpath inverter")
+					return newNode(p, getPeg(g, peg, p.p2.p1, flw, rule),
+					                  getPeg(g, peg, newOrd(p.p1, p.p2.p2), flw, rule))
+				end
+			end]==]
+
+			--print("rule123", rule)
+		return newNode(p, getPeg(g, peg, p.p1, flw, rule), getPeg(g, peg, p.p2, flw, rule))
 	elseif p.tag == 'con' then
 		local p1 = getPeg(g, peg, p.p1, calck(g, p.p2, flw, rule), rule)
 		local p2 = getPeg(g, peg, p.p2, flw, rule)
@@ -211,7 +451,7 @@ local function convert (g, ruleID)
 	local peg = parser.initgrammar(g)
 	convertLexRule(g, peg, ruleID)
 	unique.calcUniquePath(g)
-  --print(pretty.printg(gupath, true), '\n')
+  print(pretty.printg(g, true, 'unique'), '\n')
   local n = #g.plist
 	--for i = 1, n, v in ipairs(g.plist) do
 	for i = 1, n do
@@ -219,6 +459,8 @@ local function convert (g, ruleID)
 		if not parser.isLexRule(v) then
 		--if v ~= 'SKIP' then
 			peg.prules[v] = getPeg(g, peg, g.prules[v], g.FOLLOW[v], v)
+		elseif v ~= 'SKIP' then
+			peg.prules[v] = convertLazyRepetition(g, peg, g.prules[v])
 		end
   end
   return peg
