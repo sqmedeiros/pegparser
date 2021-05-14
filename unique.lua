@@ -271,7 +271,10 @@ local function notDisjointPref (g, p, s)
 	local sub = {}
 	local pref = g.symPref[getName(p)][p]
 	
-	--print("notDisjointPref s ", s, g.symPref[s])
+	--print("notDisjointPref s ", s, g.symPref[s], g.varUsage[s])
+	if not g.symPref[s] then --in case a symbol is not used, g.symPref[s] is nil
+		return {}, {}
+	end
 	for k, v in pairs(g.symPref[s]) do
 		if k ~= p then
 			if not disjoint(pref, v) then
@@ -419,6 +422,9 @@ end
 local function getPrefInterSub (g, p)
 	if p.tag == 'char' or (p.tag == 'var' and parser.isLexRule(p.p1)) then
 		return notDisjointPref(g, p, getName(p))
+	elseif not g.varUsage[p.p1] then
+		print("Not used", p.p1)
+		return {}, {}
 	else
 		return notDisjointPrefSyn(g, p)
 	end
