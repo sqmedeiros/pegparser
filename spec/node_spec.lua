@@ -1,114 +1,184 @@
-local node = require"node"
+local Node = require"node"
+local Grammar = require"grammar"
 
 describe("Testing #node", function()
 	
 	test("Creating nodes", function()
 		-- Empty
 		local nodeEmpty = { tag = "empty" }
-		assert.same(node.newEmpty(), nodeEmpty)
-		assert.same(node.new"empty", nodeEmpty)
+		assert.same(Node.empty(), nodeEmpty)
+		assert.same(Node.new"empty", nodeEmpty)
 		
 		-- Any
 		local nodeAny = { tag = "any" }
-		assert.same(node.newAny(), nodeAny)
-		assert.same(node.new"any", nodeAny)
+		assert.same(Node.any(), nodeAny)
+		assert.same(Node.new"any", nodeAny)
 		
 		-- Char
-		local nodeChar = { tag = "char", p = "'foo'" }
-		assert.same(node.newChar"'foo'", nodeChar)
-		assert.same(node.new("char", "'foo'"), nodeChar)
+		local nodeChar = { tag = "char", v = "'foo'" }
+		assert.same(Node.char"'foo'", nodeChar)
+		assert.same(Node.new("char", "'foo'"), nodeChar)
 		
 		-- Class/Set of Characteres
-		local nodeSet =  { tag = "set", p = { "a-e", "0-9", 42 } } 
-		assert.same(node.newSet{"a-e", "0-9", 42}, nodeSet)
-		assert.same(node.new("set", {"a-e", "0-9", 42}), nodeSet)
+		local nodeSet =  { tag = "set", v = { "a-e", "0-9", 42 } } 
+		assert.same(Node.set{"a-e", "0-9", 42}, nodeSet)
+		assert.same(Node.new("set", {"a-e", "0-9", 42}), nodeSet)
 		
 		-- Var
-		local nodeVar = { tag = "var", p = "foo" }
-		assert.same(node.newVar("foo"), nodeVar)
-		assert.same(node.new("var", "foo"), nodeVar)
+		local nodeVar = { tag = "var", v = "foo" }
+		assert.same(Node.var("foo"), nodeVar)
+		assert.same(Node.new("var", "foo"), nodeVar)
 		
 		-- And predicate
-		local nodeAnd = { tag = "and", p = nodeVar }
-		assert.same(node.newAnd(node.newVar"foo"), nodeAnd)
-		assert.same(node.new("and", node.new("var", "foo")), nodeAnd)
+		local nodeAnd = { tag = "and", v = nodeVar }
+		assert.same(Node.andd(Node.var"foo"), nodeAnd)
+		assert.same(Node.new("and", Node.new("var", "foo")), nodeAnd)
 		
 		-- Not predicate
-		local nodeNot = { tag = "not", p = nodeChar }
-		assert.same(node.newNot(node.newChar"'foo'"), nodeNot)
-		assert.same(node.new("not", node.new("char", "'foo'")), nodeNot)
+		local nodeNot = { tag = "not", v = nodeChar }
+		assert.same(Node.nott(Node.char"'foo'"), nodeNot)
+		assert.same(Node.new("not", Node.new("char", "'foo'")), nodeNot)
 		
 		-- Concatetation
-		local nodeCon = { tag = "con", p = { nodeChar, nodeVar } }
-		local char = node.newChar
-		local var = node.newVar
-		assert.same(node.newCon(char"'foo'", var"foo"), nodeCon)
-		assert.same(node.new("con", { char"'foo'", var"foo"} ), nodeCon)
+		local nodeCon = { tag = "con", v = { nodeChar, nodeVar } }
+		assert.same(Node.con(Node.char"'foo'", Node.var"foo"), nodeCon)
+		assert.same(Node.new("con", { Node.char"'foo'", Node.var"foo"} ), nodeCon)
 		
 		-- Choice
-		local nodeChoice = { tag = "choice", p = { nodeSet, nodeAnd } }
-		assert.same(node.newChoice(nodeSet, nodeAnd), nodeChoice)
-		assert.same(node.new("choice", { nodeSet, nodeAnd } ), nodeChoice)
+		local nodeChoice = { tag = "choice", v = { nodeSet, nodeAnd } }
+		assert.same(Node.choice(nodeSet, nodeAnd), nodeChoice)
+		assert.same(Node.new("choice", { nodeSet, nodeAnd } ), nodeChoice)
 		
 		-- "a" A / B "B"
-		local con1 = { tag = "con", p = { { tag = "char", p = "a" }, { tag = "var", p = "A" } } }
-		local con2 = { tag = "con", p = { { tag = "var", p = "B" }, { tag = "char", p = "B" } } }  
-		local choice = { tag = "choice", p = { con1, con2 } }  
-		assert.same(node.newChoice(node.newCon(char"a", var"A"), node.newCon(var"B", char"B")), choice)
+		local con1 = { tag = "con", v = { { tag = "char", v = "a" }, { tag = "var", v = "A" } } }
+		local con2 = { tag = "con", v = { { tag = "var", v = "B" }, { tag = "char", v = "B" } } }  
+		local choice = { tag = "choice", v = { con1, con2 } }  
+		assert.same(Node.choice(Node.con(Node.char"a", Node.var"A"), Node.con(Node.var"B", Node.char"B")), choice)
 		
 		-- Optional: p?
-		local nodeOpt = { tag = "opt", p = nodeVar }
-		assert.same(node.newOpt(node.newVar"foo"), nodeOpt)
-		assert.same(node.new("opt", node.new("var", "foo")), nodeOpt)
+		local nodeOpt = { tag = "opt", v = nodeVar }
+		assert.same(Node.opt(Node.var"foo"), nodeOpt)
+		assert.same(Node.new("opt", Node.new("var", "foo")), nodeOpt)
 		
 		-- Zero or more: p*
-		local nodeStar = { tag = "star", p = nodeChar }
-		assert.same(node.newStar(node.newChar"'foo'"), nodeStar)
-		assert.same(node.new("star", node.new("char", "'foo'")), nodeStar)
+		local nodeStar = { tag = "star", v = nodeChar }
+		assert.same(Node.star(Node.char"'foo'"), nodeStar)
+		assert.same(Node.new("star", Node.new("char", "'foo'")), nodeStar)
 		
 		-- One or more: p*
-		local nodePlus = { tag = "plus", p = nodeVar }
-		assert.same(node.newPlus(node.newVar"foo"), nodePlus)
-		assert.same(node.new("plus", node.new("var", "foo")), nodePlus)
+		local nodePlus = { tag = "plus", v = nodeVar }
+		assert.same(Node.plus(Node.var"foo"), nodePlus)
+		assert.same(Node.new("plus", Node.new("var", "foo")), nodePlus)
 		
 		-- Throw
-		local nodeThrow = { tag = "throw", p = "lua" }
-		assert.same(node.newThrow"lua", nodeThrow)
-		assert.same(node.new("throw", "lua"), nodeThrow)
+		local nodeThrow = { tag = "throw", v = "lua" }
+		assert.same(Node.throw"lua", nodeThrow)
+		assert.same(Node.new("throw", "lua"), nodeThrow)
 		
 		-- Def
-		local nodeDef = { tag = "def", p = "lua" }
-		assert.same(node.newDef"lua", nodeDef)
-		assert.same(node.new("def", "lua"), nodeDef)
+		local nodeDef = { tag = "def", v = "lua" }
+		assert.same(Node.def"lua", nodeDef)
+		assert.same(Node.new("def", "lua"), nodeDef)
 		
 		-- Captures
-		local nodeConstCap = { tag = "constCap", p = nodeChar }
-		assert.same(node.newConstCap(nodeChar), nodeConstCap)
-		assert.same(node.new("constCap", nodeChar), nodeConstCap)
+		local nodeConstCap = { tag = "constCap", v = nodeChar }
+		assert.same(Node.constCap(nodeChar), nodeConstCap)
+		assert.same(Node.new("constCap", nodeChar), nodeConstCap)
 		
 		local nodePosCap = { tag = "posCap" }
-		assert.same(node.newPosCap(), nodePosCap)
-		assert.same(node.new("posCap"), nodePosCap)
+		assert.same(Node.posCap(), nodePosCap)
+		assert.same(Node.new("posCap"), nodePosCap)
 
-		local nodeSimpCap = { tag = "simpCap", p = nodeChar }
-		assert.same(node.newSimpCap(nodeChar), nodeSimpCap)
-		assert.same(node.new("simpCap", nodeChar), nodeSimpCap)
+		local nodeSimpCap = { tag = "simpCap", v = nodeChar }
+		assert.same(Node.simpCap(nodeChar), nodeSimpCap)
+		assert.same(Node.new("simpCap", nodeChar), nodeSimpCap)
 
-		local nodeTabCap = { tag = "tabCap", p = nodeChar }
-		assert.same(node.newTabCap(nodeChar), nodeTabCap)
-		assert.same(node.new("tabCap", nodeChar), nodeTabCap)
+		local nodeTabCap = { tag = "tabCap", v = nodeChar }
+		assert.same(Node.tabCap(nodeChar), nodeTabCap)
+		assert.same(Node.new("tabCap", nodeChar), nodeTabCap)
 
-		local nodeAnonCap = { tag = "anonCap", p = nodeChar }
-		assert.same(node.newAnonCap(nodeChar), nodeAnonCap)
-		assert.same(node.new("anonCap", nodeChar), nodeAnonCap)
+		local nodeAnonCap = { tag = "anonCap", v = nodeChar }
+		assert.same(Node.anonCap(nodeChar), nodeAnonCap)
+		assert.same(Node.new("anonCap", nodeChar), nodeAnonCap)
 
-		local nodeNameCap = { tag = "nameCap", p = nodeChar }
-		assert.same(node.newNameCap(nodeChar), nodeNameCap)
-		assert.same(node.new("nameCap", nodeChar), nodeNameCap)
+		local nodeNamedCap = { tag = "namedCap", v = { "name", nodeChar } }
+		assert.same(Node.namedCap("name", nodeChar), nodeNamedCap)
+		assert.same(Node.new("namedCap", {"name", nodeChar}), nodeNamedCap)
 
-		local nodeDiscardCap = { tag = "funCap", p = nodeChar }
-		assert.same(node.newDiscardCap(nodeChar), nodeDiscardCap)
-		assert.same(node.new("funCap", nodeChar), nodeDiscardCap)
+		local nodeDiscardCap = { tag = "funCap", v = nodeChar }
+		assert.same(Node.discardCap(nodeChar), nodeDiscardCap)
+		assert.same(Node.new("funCap", nodeChar), nodeDiscardCap)
+		
+	end)
+	
+	test("Testing if an expression (without non-terminals) matches the empty string", function()
+		local nodeEmpty = Node.empty()
+		assert.True(nodeEmpty:matchEmpty())
+		
+		local nodeAny = Node.any()
+		assert.False(nodeAny:matchEmpty())
+		
+		local nodeChar = Node.char("bola")
+		assert.False(nodeChar:matchEmpty())
+
+		local nodeSet = Node.set({"0-9"})
+		assert.False(nodeSet:matchEmpty())
+		
+		local nodeAnd = Node.andd(nodeChar)
+		assert.True(nodeAnd:matchEmpty())
+		
+		local nodeNot = Node.nott(nodeChar)
+		assert.True(nodeNot:matchEmpty())
+		
+		local nodeCon = Node.con(nodeChar, nodeEmpty)
+		assert.False(nodeCon:matchEmpty())
+		
+		nodeCon = Node.con(nodeEmpty, nodeChar)
+		assert.False(nodeCon:matchEmpty())
+		
+		nodeCon = Node.con(nodeChar, nodeChar)
+		assert.False(nodeCon:matchEmpty())
+		
+		nodeCon = Node.con(nodeNot, nodeAnd)
+		assert.True(nodeCon:matchEmpty())
+		
+		local nodeChoice = Node.choice(nodeChar, nodeEmpty)
+		assert.True(nodeChoice:matchEmpty())
+		
+		nodeChoice = Node.choice(nodeEmpty, nodeChar)
+		assert.True(nodeChoice:matchEmpty())
+		
+		nodeChoice = Node.choice(nodeChar, nodeChar)
+		assert.False(nodeChoice:matchEmpty())
+		
+		nodeChoice = Node.choice(nodeNot, nodeAnd)
+		assert.True(nodeChoice:matchEmpty())
+		
+		local nodeStar = Node.star(nodeChar)
+		assert.True(nodeStar:matchEmpty())
+		
+		local nodePlus = Node.plus(nodeChar)
+		assert.False(nodePlus:matchEmpty())
+		
+		local nodeOpt = Node.opt(nodeChar)
+		assert.True(nodeOpt:matchEmpty())
+		
+		local nodeThrow = Node.throw("foo")
+		assert.True(nodeThrow:matchEmpty())
+	end)
+	
+	test("Testing if a non-terminal matches the empty string", function()
+		local g = Grammar.new()
+		local rhs = Node.con(Node.var"a", Node.var"b")
+		g:addRule("s", rhs)
+		g:addRule("a", Node.var"c")
+		g:addRule("b", Node.char"a")
+		g:addRule("c", Node.empty())
+		
+		assert.False(Node.var"s":matchEmpty(g))
+		assert.True(Node.var"a":matchEmpty(g))
+		assert.False(Node.var"b":matchEmpty(g))
+		assert.True(Node.var"c":matchEmpty(g))
 		
 	end)
 	

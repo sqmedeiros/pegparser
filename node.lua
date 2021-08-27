@@ -2,52 +2,61 @@ local Node = {}
 Node.__index = Node
 
 
-function Node.new (tag, p)
-	return { tag = tag, p = p }
+function Node.new (tag, v)
+	local self = { tag = tag, v = v }
+	return setmetatable(self, Node)
 end
 
+--function Node.copy (node)
+--	if type.node(v) ~= "table" then
+--		return Node.new(node.tag, node.v)
+--	else
+--		
+--	end	
+--end
 
-function Node.newEmpty ()
+
+function Node.empty ()
 	return Node.new('empty')
 end
 
 
-function Node.newAny ()
+function Node.any ()
 	return Node.new('any')
 end
 
 
-function Node.newChar (v)
+function Node.char (v)
 	assert(v)
 	return Node.new('char', v)
 end
 
 
-function Node.newSet (l)
+function Node.set (l)
 	assert(l)
 	return Node.new('set', l)
 end
 
 
-function Node.newVar (v)
+function Node.var (v)
 	assert(v)
 	return Node.new('var', v)
 end
 
 
-function Node.newAnd (p)
-	assert(p)
-	return Node.new('and', p)
+function Node.andd (exp)
+	assert(exp)
+	return Node.new('and', exp)
 end
 
 
-function Node.newNot (p)
-	assert(p)
-	return Node.new('not', p)
+function Node.nott (exp)
+	assert(exp)
+	return Node.new('not', exp)
 end
 
 
-function Node.newCon (...)
+function Node.con (...)
 	local l = {...}
 	
 	if #l > 1 then
@@ -58,7 +67,7 @@ function Node.newCon (...)
 end
 
 
-function Node.newChoice (...)
+function Node.choice (...)
 	local l = {...}
 	
 	if #l > 1 then
@@ -69,59 +78,137 @@ function Node.newChoice (...)
 end
 
 
-function Node.newOpt (p)
-	return Node.new('opt', p)
+function Node.opt (exp)
+	return Node.new('opt', exp)
 end
 
 
-function Node.newStar (p)
-	return Node.new('star', p)
+function Node.star (exp)
+	return Node.new('star', exp)
 end
 
 
-function Node.newPlus (p)
-	return Node.new('plus', p)
+function Node.plus (exp)
+	return Node.new('plus', exp)
 end
 
 
-function Node.newThrow (lab)
+function Node.throw (lab)
 	return Node.new('throw', lab)
 end
 
 
-function Node.newDef (v)
+function Node.def (v)
 	return Node.new('def', v)
 end
 
 
-function Node.newConstCap (p)
-	return Node.new('constCap', p)
+function Node.constCap (v)
+	return Node.new('constCap', v)
 end
 
-function Node.newPosCap ()
+
+function Node.posCap ()
 	return Node.new('posCap')
 end
 
-function Node.newSimpCap (p)
-	return Node.new('simpCap', p)
+
+function Node.simpCap (exp)
+	return Node.new('simpCap', exp)
 end
 
-function Node.newTabCap(p)
-	return Node.new('tabCap', p)
+
+function Node.tabCap (exp)
+	return Node.new('tabCap', exp)
 end
 
-function Node.newAnonCap (p)
-	return Node.new('anonCap', p)
+
+function Node.anonCap (exp)
+	return Node.new('anonCap', exp)
 end
 
-function Node.newNameCap (p1, p2)
-	return Node.new('nameCap', p1, p2)
+
+function Node.namedCap (v, exp)
+	return Node.new('namedCap', {v, exp} )
 end
 
-function Node.newDiscardCap (p)
-	return Node.new('funCap', p)
+
+function Node.discardCap (exp)
+	return Node.new('funCap', exp)
 end
 
+
+function Node:isSimple ()
+	local tag = self.tag
+	return tag == 'empty' or tag == 'char' or tag == 'any' or
+         tag == 'set' or tag == 'var' or tag == 'throw' or
+         tag == 'posCap' or tag == 'def'
+end
+
+
+function Node:getRepOp ()
+	local tag = self.tag
+	assert(tag == 'opt' or tag == 'plus' or tag == 'star', tag)
+	if tag == 'star' then
+		return '*'
+	elseif tag == 'plus' then
+		return '+'
+	else
+		return '?'
+	end
+end
+
+
+function Node:getPredOp ()
+	local tag = self.tag
+	assert(tag == 'not' or tag == 'and', tag)
+	if self.tag == 'not' then
+		return '!'
+	else
+		return '&'
+	end
+end
+
+
+function Node:matchEmpty (g)
+	local tag = self.tag
+	if tag == 'empty' or tag == 'not' or tag == 'and' or
+     tag == 'posCap' or tag == 'star' or tag == 'opt' or
+		 tag == 'throw' then
+		return true
+	elseif tag == 'def' then
+		return false
+	elseif tag == 'char' or tag == 'set' or tag == 'any' or
+         tag == 'plus' then
+		return false
+	elseif tag == 'con' then
+		for _, iExp in ipairs(self.v) do
+			if not iExp:matchEmpty(g) then
+				return false
+			end
+		end
+		return true
+	elseif tag == 'choice' then
+		for _, iExp in ipairs(self.v) do
+			if iExp:matchEmpty(g) then
+				return true
+			end
+		end
+		return false
+	elseif tag == 'var' then
+		assert(g ~= nil)
+		local rhs = g:getRHS(self)
+		return rhs:matchEmpty(g)
+	elseif tag == 'simpCap' or tag == 'tabCap' or tag == 'anonCap' then
+		return self.v:matchEmpty(g)
+	elseif tag == 'nameCap' then
+		local exp = self.v[2]
+		return exp:matchEmpty(g)
+	else
+		print(self)
+		error("Unknown tag" .. tostring(self.tag))
+	end
+end
 
 
 return Node

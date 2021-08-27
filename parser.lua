@@ -1,60 +1,42 @@
-local m = require'lpeglabel'
-local re = require'relabel'
-local errinfo = require'pegparser.syntax_errors'
-local predef = require'pegparser.predef'
+local Parser = {}
+Parser.__index = Parser
 
-local g = {}
-local defs = {}
+local M = require'lpeglabel'
+local Re = require'relabel'
+local ErrMsg = require'pegparser.syntax_errors'
+local Predef = require'pegparser.predef'
+local Node = require"node"
+local Grammar = require"grammar"
+
+local g = nil -- the resulting grammar
+local varRef = {} -- variables that appeared in right-hand side of grammar rules
 local lasttk = {}
 
-local function copyp (p)
-	local aux = p
-	for k, v in pairs(p) do
-		aux.k = v
-	end
-	aux.p1, aux.p2 = nil, nil
-	return aux
-end
 
-local newNode = function (tag, p1, p2)
-	if type(tag) == "table" then
-		local newp = copyp(tag)
-		newp.p1, newp.p2 = p1, p2
-		return newp	
-	else
-		return { tag = tag, p1 = p1, p2 = p2 }
-	end
-end
-
-defs.newEsqSeq = function (v1, v2)
+function Parser.newEsqSeq (v1, v2)
 	--print ("newEsqSeq = ", v1, #v1, #"\t")
 	--return "\t"
 	return v1
 end
 
-defs.newString = function (v, quote)
-	if #v == 0 then
-		return newNode('empty')
+
+function Parser.newLiteral (v)
+	if #v == 2 then
+		return Node.empty()
 	end
-	g.tokens[v] = true
+	g:addToken(v)
 	lasttk[v] = true
-	return newNode('char', v, quote or "'")
+	return Node.newString(v)
 end
 
-defs.newAny = function (v)
-	return newNode('any')
-end
 
-defs.newVar = function (v)
-	g.vars[#g.vars + 1] = v
+function Parser.newVar (v)
+	table.insert(varRef, v)
 	return newNode('var', v)
 end
 
-defs.newClass = function (l)
-	return newNode('set', l)
-end
 
-local function binOpLeft (tag, l)
+function Parser.binOpLeft (tag, l)
   --build a left-associateve AST for an operator  
 	local p = l[1]
   for i=2, #l do 
@@ -64,7 +46,8 @@ local function binOpLeft (tag, l)
 	return p
 end
 
-local function binOpRight (tag, l)
+
+function Parser.binOpRight (tag, l)
   --build a right-associateve AST for an operator  
   local n = #l
   local p = l[n]
@@ -75,215 +58,74 @@ local function binOpRight (tag, l)
 	return p
 end
 
-defs.newAnd = function (p)
-	return newNode('and', p)
-end
 
-defs.newNot = function (p)
-	assert(p ~= nil)
-	return newNode('not', p)
-end
-
-defs.newSeq = function (...)
+function Parser.newCon (...)
 	return binOpLeft('con', {...})
 end
+
 
 -- the algorithm that inserts labels
 -- gives  a better result when we consider
 -- a right-associative choice
-defs.newOrd = function (...)
+function Parser.newOrd (...)
 	return binOpRight('ord', {...})
 end
 
-defs.newDef = function (v)
+
+function Parser.newDef (v)
 	if not predef[v] then
 		error("undefined name: " .. tostring(v))
 	end
-	return newNode('def', v)
-end
-
-defs.newThrow = function (lab)
-	return newNode('throw', lab)
-end
-
-defs.newConstCap = function (p)
-	return newNode('constCap', p)
-end
-
-defs.newPosCap = function ()
-	return newNode('posCap')
-end
-
-defs.newSimpCap = function (p)
-	return newNode('simpCap', p)
-end
-
-defs.newTabCap = function (p)
-	return newNode('tabCap', p)
-end
-
-defs.newAnonCap = function (p)
-	return newNode('anonCap', p)
-end
-
-defs.newNameCap = function (p1, p2)
-	return newNode('nameCap', p1, p2)
-end
-
-defs.newDiscardCap = function (p)
-	return newNode('funCap', p)
+	return Node.newDef(v)
 end
 
 
-defs.newSuffix = function (p, ...)
+function Parser.newSuffix (exp, ...)
   local l = { ... }
 	local i = 1
 	while i <= #l do
 		local v = l[i]
 		if v == '*' then
-			p = newNode('star', p)
+			exp = Node.newStar(exp)
 			i = i + 1
 		elseif v == '+' then
-			p = newNode('plus', p)
+			exp = Node.newPlus(exp)
 			i = i + 1
 		elseif v == '?' then
-			p = newNode('opt', p)
+			exp = Node.newOpt(exp)
 			i = i + 1
 		else
-			p = newNode('ord', p, defs.newThrow(l[i+1]))
+			exp = Node.newChoice{exp, Node.newThrow(l[i+1])}
 			i = i + 2
 		end
 	end
-	return p
+	return exp
 end 
 
-defs.isLexRule = function (s)
-	local ch = string.sub(s, 1, 1)
-	return ch >= 'A' and ch <= 'Z'
-end
 
-defs.isErrRule = function (s)
-	return string.find(s, 'Err_')
-end
-
-defs.newRule = function (k, v)
-	g.prules[k] = v
-	g.plist[#g.plist + 1] = k
-	if defs.isLexRule(k) then
+function Parser.newRule (var, rhs)
+	g:addRule(var, rhs)
+	
+	if Grammar.isLexRule(var) then
 		for k, v in pairs(lasttk) do
-			g.tokens[k] = nil
+			g:removeToken(tk)
 		end
 	end
 	lasttk = {}
 end
 
-defs.addRuleG = function (g, k, v, frag)
-	g.prules[k] = v
-	g.plist[#g.plist + 1] = k
-	if defs.isLexRule(k) and not frag then
-	  g.tokens[k] = true
-	end
-end
 
-
-defs.isSimpleExp = function (p)
-	local tag = p.tag
-	return tag == 'empty' or tag == 'char' or tag == 'any' or
-         tag == 'set' or tag == 'var' or tag == 'throw' or
-         tag == 'posCap' or tag == 'def'
-end
-
-defs.repSymbol = function (p)
-	local tag = p.tag
-	assert(tag == 'opt' or tag == 'plus' or tag == 'star', p.tag)
-	if p.tag == 'star' then
-		return '*'
-	elseif p.tag == 'plus' then
-		return '+'
-	else
-		return '?'
-	end
-end
-
-defs.predSymbol = function (p)
-	local tag = p.tag
-	assert(tag == 'not' or tag == 'and', p.tag)
-	if p.tag == 'not' then
-		return '!'
-	else
-		return '&'
-	end
-end
-
-
-defs.matchEmpty = function (p)
-	local tag = p.tag
-	if tag == 'empty' or tag == 'not' or tag == 'and' or
-     tag == 'posCap' or tag == 'star' or tag == 'opt' or
-		 tag == 'throw' then
-		return true
-	elseif tag == 'def' then
-		return false
-	elseif tag == 'char' or tag == 'set' or tag == 'any' or
-         tag == 'plus' then
-		return false
-	elseif tag == 'con' then
-		return defs.matchEmpty(p.p1) and defs.matchEmpty(p.p2)
-	elseif tag == 'ord' then
-		return defs.matchEmpty(p.p1) or defs.matchEmpty(p.p2)
-	elseif tag == 'var' then
-		return defs.matchEmpty(g.prules[p.p1])
-	elseif tag == 'simpCap' or tag == 'tabCap' or tag == 'anonCap' then
-		return defs.matchEmpty(p.p1)
-	elseif tag == 'nameCap' then
-		return defs.matchEmpty(p.p2)
-	else
-		print(p)
-		error("Unknown tag" .. tostring(p.tag))
-	end
-end
-
-
-local function setSkip (g)
-	local space = defs.newClass{' ','\t','\n','\v','\f','\r'}
-	if g.prules['COMMENT'] then
-		space =	defs.newOrd(space, defs.newVar('COMMENT'))
-	end
-	local skip = defs.newSuffix(space, '*')
-
-	local s = 'SPACE'
-	if not g.prules[s] then
-		g.plist[#g.plist+1] = s
-	end
-	g.prules[s] = space
-
-	local s = 'SKIP'
-	if not g.prules[s] then
-		g.plist[#g.plist+1] = s
-	end
-	g.prules[s] = skip
-end
-
-local function setEOF (g, s)
-	s = s or 'EOF'
-	if not g.prules[s] then
-		g.plist[#g.plist+1] = s
-	end
-	g.prules[s] = defs.newNot(defs.newAny())
-end
-
-
-local peg = [[
+local pegGrammar = [[
 	grammar       <-   S rule+^Rule (!.)^Extra
 
-  rule          <-   (name S arrow^Arrow exp^ExpRule)   -> newRule
+  rule          <-   (name S arrow^Arrow exp^ExpRule)   -> Parser.newRule
 
-  exp           <-   (seq ('/' S seq^SeqExp)*) -> newOrd
+  exp           <-   (seq ('/' S seq^SeqExp)*) -> Node.choice
 
-  seq           <-   (prefix (S prefix)*) -> newSeq
+  seq           <-   (prefix (S prefix)*) -> Node.con
 
-  prefix        <-   '&' S prefix^AndPred -> newAnd  / 
-                     '!' S prefix^NotPred -> newNot  /  suffix
+  prefix        <-   '&' S prefix^AndPred -> Node.andd  / 
+                     '!' S prefix^NotPred -> Node.nott  /  suffix
 
   suffix        <-   (primary ({'+'} S /  {'*'} S /  {'?'} S /  {'^'} S name)*) -> newSuffix
 
@@ -314,45 +156,28 @@ local peg = [[
   S             <-   (%s  /  '--' [^%nl]*)*  --spaces and comments
 ]]
 
-local ppk = re.compile(peg, defs)
 
-defs.initgrammar = function(t)
-	local g = {}
-	if t then
-		for k, v in pairs(t) do
-			g[k] = v
-		end
-	else
-		g.plist = {}
-		g.prules = {}
-		g.tokens = {}
-		g.vars = {}
-		g.unique = {}
-	end
-
-	return g
-end
+local pegParser = Re.compile(pegGrammar, defs)
 
 
-
-defs.match = function (s)
-	g = defs.initgrammar()
-	local r, lab, pos = ppk:match(s)
+function Parser.match (s)
+	g = Grammar.new()
+	local r, lab, pos = pegParser:match(s)
+  
   if not r then
-		local line, col = re.calcline(s, pos)
+		local line, col = Re.calcline(s, pos)
 		local msg = line .. ':' .. col .. ':'
-		return r, msg .. (errinfo[lab] or lab), pos
+		return r, msg .. (Err[lab] or lab), pos
 	else
-		setSkip(g)
-		setEOF(g)
-		for i, v in ipairs(g.vars) do
-			assert(g.prules[v] ~= nil, "Rule '" .. v .. "' was not defined")
+		local gRules = g:getRuleMap()
+		for _, var in ipairs(varRef) do
+			assert(gRules[v] ~= nil, "Rule '" .. var .. "' was not defined")
 		end
-		g.init = g.plist[1]
+		g:setStartRule()
 		return g 
 	end
+
 end
 
 
-defs.newNode = newNode
-return defs
+return Parser
