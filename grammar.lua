@@ -17,25 +17,51 @@ end
 
 
 function Grammar:getRHS (exp)
-	assert(exp.tag == 'var')
-	return self.ruleMap[exp.v]
+	local var = Grammar.getVarName(exp, true)
+	
+	local rhs = self.ruleMap[var]
+	assert(rhs ~= nil, "Rule '" .. var .. "' was not defined")
+	
+	return rhs
 end
 
 
-function Grammar:getRuleMap ()
+function Grammar:getRules ()
 	return self.ruleMap
 end
 
 
-function Grammar:getRuleList ()
-	return self.ruleMap
+function Grammar:getVars ()
+	return self.ruleList
+end
+
+
+function Grammar.getVarName (exp)
+	local var = exp
+	if type(exp) == "table" then
+		assert(exp.tag == 'var')
+		var = exp.v
+	end
+	assert(type(var) == "string", "Type of 'var' was " .. type(var))
+	
+	return var
 end
 
 
 function Grammar:setStartRule (var)
-	var = var or self.ruleList[1]
-	assert(self.ruleMap[v] ~= nil, "Rule '" .. var .. "' was not defined")
-	self.startRule = var	
+	var = Grammar.getVarName(var, true)
+	self.startRule = var
+end
+
+
+function Grammar:getStartRule ()
+	assert(#self.ruleList >= 1, "Grammar does not have rules")
+		
+	if not self.startRule then
+		self.startRule = self.ruleList[1]
+	end
+	
+	return self.startRule
 end
 
 
@@ -43,7 +69,7 @@ function Grammar:addRule (var, rhs, frag)
 	table.insert(self.ruleList, var)
 	self.ruleMap[var] = rhs
 
-	if Grammar.isVarLexRule(var) and not frag then
+	if Grammar.isLexRule(var) and not frag then
 	  self:addToken(var)
 	end
 end
@@ -59,21 +85,22 @@ function Grammar:removeToken (tk)
 end
 
 
-function Grammar.isLexRule (exp)
-	assert(exp.tag == 'var')
-	return Grammar.isVarLexRule(exp.v)
+function Grammar:getTokens (tk)
+	return self.tokenSet
 end
 
 
-function Grammar.isVarLexRule (var)
+function Grammar.isLexRule (exp)
+	local var = Grammar.getVarName(exp)
+
 	local ch = string.sub(var, 1, 1)
 	return ch >= 'A' and ch <= 'Z'
 end
 
 
 function Grammar.isErrRule (exp)
-	assert(exp.tag == 'var')
-	return string.find(exp.v, Grammar.prefErrRule)
+	local var = Grammar.getVarName(exp)
+	return string.find(var, Grammar.prefErrRule) ~= nil
 end
 
 
