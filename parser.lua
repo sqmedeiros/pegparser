@@ -34,7 +34,7 @@ end
 
 
 function Parser.newSet (l)
-	return Node.set(table.unpack(l))
+	return Node.set(l)
 end
 
 
@@ -104,7 +104,7 @@ function Parser.newSuffix (exp, ...)
 			exp = Node.opt(exp)
 			i = i + 1
 		else
-			exp = Node.choice(exp, Node.throw(l[i+1]))
+			exp = Node.choice{exp, Node.throw(l[i+1])}
 			i = i + 2
 		end
 	end
@@ -129,9 +129,9 @@ local pegGrammar = [[
 
   rule          <-   (name S arrow^Arrow exp^ExpRule)   -> newRule
 
-  exp           <-   (seq ('/' S seq^SeqExp)*) -> newChoice
+  exp           <-   {| (seq ('/' S seq^SeqExp)*) |} -> newChoice
 
-  seq           <-   (prefix (S prefix)*) -> newCon
+  seq           <-   {| (prefix (S prefix)*) |} -> newCon
 
   prefix        <-   '&' S prefix^AndPred -> newAnd  /
                      '!' S prefix^NotPred -> newNot  /  suffix

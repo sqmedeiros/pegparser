@@ -32,8 +32,7 @@ function Node.char (v)
 end
 
 
-function Node.set (...)
-	local l = { ... }
+function Node.set (l)
 	assert(#l >= 1)
 	return Node.new('set', l)
 end
@@ -57,24 +56,20 @@ function Node.nott (exp)
 end
 
 
-function Node.con (...)
-	local l = {...}
-	
+function Node.con (l)
 	if #l > 1 then
 		return Node.new('con', l)
 	else
-		return ...
+		return l[1]
 	end
 end
 
 
-function Node.choice (...)
-	local l = {...}
-	
+function Node.choice (l)
 	if #l > 1 then
 		return Node.new('choice', l)
 	else
-		return ...
+		return l[1]
 	end
 end
 

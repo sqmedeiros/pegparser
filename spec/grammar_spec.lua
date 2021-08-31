@@ -45,7 +45,7 @@ describe("Testing #grammar", function()
 	
 	test("Creating a grammar with several rules", function()
 		local g = Grammar.new()
-		local rhs = Node.con(Node.var"a", Node.var"b")
+		local rhs = Node.con{Node.var"a", Node.var"b"}
 		g:addRule("s", rhs)
 		g:addRule("a", Node.var"c")
 		g:addRule("b", Node.char"a")
@@ -81,7 +81,7 @@ describe("Testing #grammar", function()
 		g:addRule("c", Node.empty())
 		g:addRule("D", Node.empty())
 		
-		assert.same(g:getTokens(), { A = 1, B = true, D = true })
+		assert.same(g:getTokens(), { A = true, B = true, D = true })
 		
 		g:removeToken("B")
 		assert.same(g:getTokens(), { A = true, D = true })

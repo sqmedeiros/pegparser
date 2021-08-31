@@ -21,7 +21,7 @@ describe("Testing #node", function()
 		
 		-- Class/Set of Characteres
 		local nodeSet =  { tag = "set", v = { "a-e", "0-9", 42 } } 
-		assert.same(Node.set("a-e", "0-9", 42), nodeSet)
+		assert.same(Node.set{"a-e", "0-9", 42}, nodeSet)
 		assert.same(Node.new("set", {"a-e", "0-9", 42}), nodeSet)
 		
 		-- Var
@@ -41,19 +41,19 @@ describe("Testing #node", function()
 		
 		-- Concatetation
 		local nodeCon = { tag = "con", v = { nodeChar, nodeVar } }
-		assert.same(Node.con(Node.char"'foo'", Node.var"foo"), nodeCon)
+		assert.same(Node.con{Node.char"'foo'", Node.var"foo"}, nodeCon)
 		assert.same(Node.new("con", { Node.char"'foo'", Node.var"foo"} ), nodeCon)
 		
 		-- Choice
 		local nodeChoice = { tag = "choice", v = { nodeSet, nodeAnd } }
-		assert.same(Node.choice(nodeSet, nodeAnd), nodeChoice)
+		assert.same(Node.choice{nodeSet, nodeAnd}, nodeChoice)
 		assert.same(Node.new("choice", { nodeSet, nodeAnd } ), nodeChoice)
 		
 		-- "a" A / B "B"
 		local con1 = { tag = "con", v = { { tag = "char", v = "a" }, { tag = "var", v = "A" } } }
 		local con2 = { tag = "con", v = { { tag = "var", v = "B" }, { tag = "char", v = "B" } } }  
 		local choice = { tag = "choice", v = { con1, con2 } }  
-		assert.same(Node.choice(Node.con(Node.char"a", Node.var"A"), Node.con(Node.var"B", Node.char"B")), choice)
+		assert.same(Node.choice{Node.con{Node.char"a", Node.var"A"}, Node.con{Node.var"B", Node.char"B"}}, choice)
 		
 		-- Optional: p?
 		local nodeOpt = { tag = "opt", v = nodeVar }
@@ -121,7 +121,7 @@ describe("Testing #node", function()
 		local nodeChar = Node.char("bola")
 		assert.False(nodeChar:matchEmpty())
 
-		local nodeSet = Node.set({"0-9"})
+		local nodeSet = Node.set{"0-9"}
 		assert.False(nodeSet:matchEmpty())
 		
 		local nodeAnd = Node.andd(nodeChar)
@@ -130,28 +130,28 @@ describe("Testing #node", function()
 		local nodeNot = Node.nott(nodeChar)
 		assert.True(nodeNot:matchEmpty())
 		
-		local nodeCon = Node.con(nodeChar, nodeEmpty)
+		local nodeCon = Node.con{nodeChar, nodeEmpty}
 		assert.False(nodeCon:matchEmpty())
 		
-		nodeCon = Node.con(nodeEmpty, nodeChar)
+		nodeCon = Node.con{nodeEmpty, nodeChar}
 		assert.False(nodeCon:matchEmpty())
 		
-		nodeCon = Node.con(nodeChar, nodeChar)
+		nodeCon = Node.con{nodeChar, nodeChar}
 		assert.False(nodeCon:matchEmpty())
 		
-		nodeCon = Node.con(nodeNot, nodeAnd)
+		nodeCon = Node.con{nodeNot, nodeAnd}
 		assert.True(nodeCon:matchEmpty())
 		
-		local nodeChoice = Node.choice(nodeChar, nodeEmpty)
+		local nodeChoice = Node.choice{nodeChar, nodeEmpty}
 		assert.True(nodeChoice:matchEmpty())
 		
-		nodeChoice = Node.choice(nodeEmpty, nodeChar)
+		nodeChoice = Node.choice{nodeEmpty, nodeChar}
 		assert.True(nodeChoice:matchEmpty())
 		
-		nodeChoice = Node.choice(nodeChar, nodeChar)
+		nodeChoice = Node.choice{nodeChar, nodeChar}
 		assert.False(nodeChoice:matchEmpty())
 		
-		nodeChoice = Node.choice(nodeNot, nodeAnd)
+		nodeChoice = Node.choice{nodeNot, nodeAnd}
 		assert.True(nodeChoice:matchEmpty())
 		
 		local nodeStar = Node.star(nodeChar)
@@ -169,7 +169,7 @@ describe("Testing #node", function()
 	
 	test("Testing if a non-terminal matches the empty string", function()
 		local g = Grammar.new()
-		local rhs = Node.con(Node.var"a", Node.var"b")
+		local rhs = Node.con{Node.var"a", Node.var"b"}
 		g:addRule("s", rhs)
 		g:addRule("a", Node.var"c")
 		g:addRule("b", Node.char"a")

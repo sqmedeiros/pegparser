@@ -66,7 +66,7 @@ describe("Testing #parser", function()
     assert.not_nil(g)
 
     local ruleMap = {
-      a = Node.choice(Node.con(Node.char"'a'", Node.var"b"), Node.var"C"),
+      a = Node.choice{Node.con{Node.char"'a'", Node.var"b"}, Node.var"C"},
       b = Node.star(Node.char"'b'"),
       C = Node.char"'c'"
     }
@@ -92,8 +92,8 @@ describe("Testing #parser", function()
      assert.not_nil(g)
 
      local ruleMap = {
-      x = Node.choice(Node.con(Node.char"'a'", Node.var"B"), Node.char"'c'"),
-      B = Node.choice(Node.var"x", Node.char"'d'"),
+      x = Node.choice{Node.con{Node.char"'a'", Node.var"B"}, Node.char"'c'"},
+      B = Node.choice{Node.var"x", Node.char"'d'"},
       C = Node.var"B"
     }
 
@@ -107,7 +107,46 @@ describe("Testing #parser", function()
     assert.same(g:getStartRule(), "x")
   end)
 
+	test("Testing the syntactic sugar p^l = p / %{l})", function()
+    local s = [[a <- 'bd' / %{foo}
+                d <- 'a'^bola]]
+	
+    local g = Parser.match(s)
+    assert.not_nil(g)
 
+    local ruleMap = {
+      a = Node.choice{Node.char"'bd'", Node.throw"foo"},
+      d = Node.choice{Node.char"'a'", Node.throw"bola"}
+    }
+
+    assert.same(g:getRules(), ruleMap)
+    assert.same(g:getVars(), { "a", "d" })
+    assert.same(g:getTokens(), { ["'bd'"] = true, ["'a'"] = true,  })
+    assert.same(g:getStartRule(), "a")
+	end)
+	
+	
+	test("Testing grouping", function()
+    local s = [[a <- 'b' ('c' / d) / 'e'
+                b <- &('b' 'd') 'b' 
+                d <- ('a' / 'b') (b 'd')* ]]
+	
+    local g = Parser.match(s)
+    assert.not_nil(g)
+
+    local ruleMap = {
+      a = Node.choice{Node.con{Node.char"'b'", Node.choice{Node.char"'c'", Node.var"d"}}, Node.char"'e'"},
+      b = Node.con{Node.andd(Node.con{Node.char"'b'", Node.char"'d'"}), Node.char"'b'"},
+      d = Node.con{Node.choice{Node.char"'a'", Node.char"'b'"}, Node.star(Node.con{Node.var"b", Node.char"'d'"})},
+    }
+
+    assert.same(g:getRules(), ruleMap)
+    assert.same(g:getVars(), { "a", "b", "d" })
+    assert.same(g:getTokens(), { ["'b'"] = true, ["'a'"] = true, ["'c'"] = true, ["'e'"] = true, ["'d'"] = true,})
+    assert.same(g:getStartRule(), "a")
+	end)
+	
+	
   test("Testing a grammar with all the expressions (not including captures)", function()
     local s = [[ x <- '' B / !.
                  B <- C? 'c'*
@@ -117,14 +156,14 @@ describe("Testing #parser", function()
 
     local g, msg = Parser.match(s)
 
-     assert.not_nil(g)
+    assert.not_nil(g)
 
-     local ruleMap = {
-      x = Node.choice(Node.con(Node.empty(), Node.var"B"), Node.nott(Node.any())),
-      B = Node.con(Node.opt(Node.var"C"), Node.star(Node.char"'c'")),
-      C = Node.plus(Node.con(Node.char"'d'", Node.throw"foo")),
-      d = Node.con(Node.andd(Node.set("0-9", "a-z")), Node.any()),
-      e = Node.choice(Node.char"'a'", Node.throw"bola")
+    local ruleMap = {
+      x = Node.choice{Node.con{Node.empty(), Node.var"B"}, Node.nott(Node.any())},
+      B = Node.con{Node.opt(Node.var"C"), Node.star(Node.char"'c'")},
+      C = Node.plus(Node.con{Node.char"'d'", Node.throw"foo"}),
+      d = Node.con{Node.andd(Node.set{"0-9", "a-z"}), Node.any()},
+      e = Node.choice{Node.char"'a'", Node.throw"bola"}
     }
 
     assert.same(g:getRules(), ruleMap)
@@ -138,28 +177,24 @@ describe("Testing #parser", function()
   end)
 
 
---]==]
-
 --[==[
+  test("Testing simple, position, and table capture", function()
+    local s = [[ start   <- {.} Z
+                 --start <- {.} {} Z
+                 --Z     <- {| 'a'+ |} ]]
+	
+    local g = Parser.match(s)
+    assert.not_nil(g)
 
-local r, l, pos =  m.match[[a <- 'b' / 'c'  d <- 'a'^bola]]
-print(pretty.printg(r, l))
+    local ruleMap = {
+      start = Node.con(Node.simpCap(Node.any()), Node.posCap(), Node.var"Z"),
+      Z     = Node.tabCap(Node.plus(Node.char"'a'")),
+    }
 
-local r, l, pos =  m.match[[a <- 'bc' 'd' 'c' [a-zA-Z0-9_] ]]
-print(pretty.printg(r, l))
-
-
-local r, l, pos = m.match([[a <- 'b' ('c' / 'd') / 'e']])
-print(pretty.printg(r, l))
-
-local r, l, pos = m.match([[new <- 'x' ('c' / 'd') / 'e' %{Nada}]])
-print(pretty.printg(r, l))
-
-local r, l, pos = m.match([[
-Start <- X ('c' / 'd') / 'e' %{Nada}
-X     <- &'a' !'b' {.} {} {| [a-z]* |} Z
-Z     <- 'a'? 'b'* 'c'+]])
-print(pretty.printg(r, l))
-]==]
+    assert.same(g:getRules(), ruleMap)
+    assert.same(g:getVars(), { "start", "Z" })
+    assert.same(g:getTokens(), { ["'a'"] = true, Z = true })
+    assert.same(g:getStartRule(), "start")
+	end)]==]
 
 end)
