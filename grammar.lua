@@ -49,7 +49,12 @@ end
 
 
 function Grammar:setStartRule (var)
-	var = Grammar.getVarName(var, true)
+	assert(#self.ruleList >= 1, "Grammar does not have rules")
+	if not var then
+		var = self.ruleList[1]
+	else
+		var = Grammar.getVarName(var, true)
+	end
 	self.startRule = var
 end
 
@@ -76,12 +81,22 @@ end
 
 
 function Grammar:addToken (tk)
+	if self.tokenSet[tk] then
+		return false
+	end
+
 	self.tokenSet[tk] = true
+	return true
 end
 
 
 function Grammar:removeToken (tk)
+	if not self.tokenSet[tk] then
+		return false
+	end
+
 	self.tokenSet[tk] = nil
+	return true
 end
 
 

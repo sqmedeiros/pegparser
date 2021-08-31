@@ -21,7 +21,7 @@ describe("Testing #node", function()
 		
 		-- Class/Set of Characteres
 		local nodeSet =  { tag = "set", v = { "a-e", "0-9", 42 } } 
-		assert.same(Node.set{"a-e", "0-9", 42}, nodeSet)
+		assert.same(Node.set("a-e", "0-9", 42), nodeSet)
 		assert.same(Node.new("set", {"a-e", "0-9", 42}), nodeSet)
 		
 		-- Var

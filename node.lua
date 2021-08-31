@@ -32,8 +32,9 @@ function Node.char (v)
 end
 
 
-function Node.set (l)
-	assert(l)
+function Node.set (...)
+	local l = { ... }
+	assert(#l >= 1)
 	return Node.new('set', l)
 end
 

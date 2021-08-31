@@ -81,7 +81,7 @@ describe("Testing #grammar", function()
 		g:addRule("c", Node.empty())
 		g:addRule("D", Node.empty())
 		
-		assert.same(g:getTokens(), { A = true, B = true, D = true })
+		assert.same(g:getTokens(), { A = 1, B = true, D = true })
 		
 		g:removeToken("B")
 		assert.same(g:getTokens(), { A = true, D = true })

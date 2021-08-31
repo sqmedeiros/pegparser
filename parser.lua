@@ -24,15 +24,24 @@ function Parser.newLiteral (v)
 	if #v == 2 then
 		return Node.empty()
 	end
-	g:addToken(v)
-	lasttk[v] = true
-	return Node.newString(v)
+
+	if g:addToken(v) then
+		lasttk[v] = true
+	end
+
+	return Node.char(v)
 end
+
+
+function Parser.newSet (l)
+	return Node.set(table.unpack(l))
+end
+
 
 
 function Parser.newVar (v)
 	table.insert(varRef, v)
-	return newNode('var', v)
+	return Node.var(v)
 end
 
 
@@ -86,16 +95,16 @@ function Parser.newSuffix (exp, ...)
 	while i <= #l do
 		local v = l[i]
 		if v == '*' then
-			exp = Node.newStar(exp)
+			exp = Node.star(exp)
 			i = i + 1
 		elseif v == '+' then
-			exp = Node.newPlus(exp)
+			exp = Node.plus(exp)
 			i = i + 1
 		elseif v == '?' then
-			exp = Node.newOpt(exp)
+			exp = Node.opt(exp)
 			i = i + 1
 		else
-			exp = Node.newChoice{exp, Node.newThrow(l[i+1])}
+			exp = Node.choice(exp, Node.throw(l[i+1]))
 			i = i + 2
 		end
 	end
@@ -107,7 +116,7 @@ function Parser.newRule (var, rhs)
 	g:addRule(var, rhs)
 	
 	if Grammar.isLexRule(var) then
-		for k, v in pairs(lasttk) do
+		for tk, _ in pairs(lasttk) do
 			g:removeToken(tk)
 		end
 	end
@@ -118,30 +127,29 @@ end
 local pegGrammar = [[
 	grammar       <-   S rule+^Rule (!.)^Extra
 
-  rule          <-   (name S arrow^Arrow exp^ExpRule)   -> Parser.newRule
+  rule          <-   (name S arrow^Arrow exp^ExpRule)   -> newRule
 
-  exp           <-   (seq ('/' S seq^SeqExp)*) -> Node.choice
+  exp           <-   (seq ('/' S seq^SeqExp)*) -> newChoice
 
-  seq           <-   (prefix (S prefix)*) -> Node.con
+  seq           <-   (prefix (S prefix)*) -> newCon
 
-  prefix        <-   '&' S prefix^AndPred -> Node.andd  / 
-                     '!' S prefix^NotPred -> Node.nott  /  suffix
+  prefix        <-   '&' S prefix^AndPred -> newAnd  /
+                     '!' S prefix^NotPred -> newNot  /  suffix
 
   suffix        <-   (primary ({'+'} S /  {'*'} S /  {'?'} S /  {'^'} S name)*) -> newSuffix
 
   primary       <-   '(' S exp^ExpPri ')'^RParPri S  /  string  /  class  /  any  /  var / def / throw 
 
-  string        <-   ("'" {escseq / (!"'"  .)*} {"'"}^SingQuote  S  /
-                      '"' {escseq / (!'"'  .)*} {'"'}^DoubQuote  S) -> newString
+  string        <-   ({"'" (escseq / (!"'"  .))* "'"^SingQuote}  S  /
+                      {'"' (escseq / (!'"'  .))* '"'^DoubQuote}  S) -> newLiteral
 
-	class         <-   '[' {| (({(.'-'!']'.)} / (!']' {.}))+)^EmptyClass |} -> newClass ']'^RBraClass S
+	class         <-   '[' {| (({(.'-'!']'.)} / (!']' {.}))+)^EmptyClass |} -> newSet ']'^RBraClass S
 
   any           <-   '.' -> newAny S
   
   esc           <-   [\\]
   
-  --escseq        <-    '\t' -> newEsqSeq
-  escseq        <-    !'\t''\t' -> newEsqSeq
+  escseq        <-  '\t' -> newEsqSeq
 
   var           <-    name -> newVar !arrow  
 
@@ -157,23 +165,39 @@ local pegGrammar = [[
 ]]
 
 
-local pegParser = Re.compile(pegGrammar, defs)
+local pegParser = Re.compile(pegGrammar, {
+	newRule = Parser.newRule,
+  newChoice = Node.choice,
+  newCon = Node.con,
+  newAnd = Node.andd,
+  newNot = Node.nott,
+  newSuffix = Parser.newSuffix,
+  newLiteral = Parser.newLiteral,
+  newSet = Parser.newSet,
+  newAny = Node.any,
+  newEsqSeq = Parser.newEsqSeq,
+  newVar = Parser.newVar,
+  newDef = Parser.newDef,
+  newThrow = Node.throw
+})
 
 
 function Parser.match (s)
-	g = Grammar.new()
-	local r, lab, pos = pegParser:match(s)
-  
+  g = Grammar.new()
+  varRef = {}
+  lasttk = {}
+  local r, lab, pos = pegParser:match(s)
+
   if not r then
 		local line, col = Re.calcline(s, pos)
 		local msg = line .. ':' .. col .. ':'
-		return r, msg .. (Err[lab] or lab), pos
+		return r, msg .. (ErrMsg[lab] or lab), pos
 	else
-		local gRules = g:getRuleMap()
+		local gRules = g:getRules()
 		for _, var in ipairs(varRef) do
-			assert(gRules[v] ~= nil, "Rule '" .. var .. "' was not defined")
+			assert(gRules[var] ~= nil, "Rule '" .. var .. "' was not defined")
 		end
-		g:setStartRule()
+
 		return g 
 	end
 
