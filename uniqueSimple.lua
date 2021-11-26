@@ -5,8 +5,7 @@ local disjoint = first.disjoint
 local calck = first.calck
 local calcfirst = first.calcfirst
 local union = first.union
-local getName = first.getName
-local isLastAlternativeAux
+
 
 local fst, flw
 local ON = 'on'
