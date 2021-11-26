@@ -80,6 +80,17 @@ function Grammar:addRule (var, rhs, frag)
 end
 
 
+function Grammar:updateRule (var, rhs)
+	if not self:hasRule(var) then
+		return false
+	end
+	
+	self.ruleMap[var] = rhs
+	return true
+end
+
+
+
 function Grammar:addToken (tk)
 	if self.tokenSet[tk] then
 		return false
@@ -102,6 +113,12 @@ end
 
 function Grammar:getTokens (tk)
 	return self.tokenSet
+end
+
+
+function Grammar:hasRule (var)
+	local var = Grammar.getVarName(var)
+	return self.ruleMap[var] ~= nil
 end
 
 

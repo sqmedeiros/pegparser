@@ -31,7 +31,7 @@ g = [[
 	setType 				<- SET OF^OfErr ordinalType^OrdinalTypeErr
 	fileType 				<- FILE OF^OfErr type^TypeErr
 	ordinalType 			<- newOrdinalType / Id
-	fieldList 				<- ((fixedPart (Semi variantPart)? / variantPart) Semi?)?
+	fieldList 				<- ((fixedPart (Semi variantPart^erro33)? / variantPart) Semi?)?
 	fixedPart				<- varDec (Semi varDec)*
 	variantPart 			<- CASE Id^IdErr (Colon Id^IdErr)? OF^OfErr variant^ConstErr (Semi variant)*
 	variant 				<- consts Colon^ColonErr LPar^LParErr fieldList RPar^RParErr
@@ -41,9 +41,9 @@ g = [[
 	varDec					<- ids Colon^ColonErr type^TypeErr
 
 	procAndFuncDecs			<- ((procDec / funcDec) Semi^SemiErr)*
-	procDec					<- procHeading Semi^SemiErr (decs block / Id)^ProcBodyErr
+	procDec					<- procHeading Semi^SemiErr (decs block^Erro48 / Id)^ProcBodyErr
 	procHeading 			<- PROCEDURE Id^IdErr formalParams?
-	funcDec 	 			<- funcHeading Semi^SemiErr (decs block / Id)^FuncBodyErr
+	funcDec 	 			<- funcHeading Semi^SemiErr (decs block^Erro49 / Id)^FuncBodyErr
 	funcHeading				<- FUNCTION Id^IdErr formalParams? Colon^ColonErr type^TypeErr
 	formalParams 			<- LPar formalParamsSection^FormalParamErr (Semi formalParamsSection^FormalParamErr)* RPar^RParErr
 	formalParamsSection 	<- VAR? ids Colon^ColonErr Id^IdErr / procHeading / funcHeading

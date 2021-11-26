@@ -33,6 +33,8 @@ describe("Testing #grammar", function()
 		}
 		assert.same(g:getRules(), ruleMap)
 		assert.same(g:getVars(), { "s" })
+		assert.True(g:hasRule"s")
+		assert.False(g:hasRule"S")
 		      
 		assert.same(g:getRHS"s", Node.char"a")
 		

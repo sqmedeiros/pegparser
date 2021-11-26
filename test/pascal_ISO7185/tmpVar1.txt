@@ -1,0 +1,3200 @@
+Unique Path (UPath)
+insideLoop: ids, label, constDef, typeDef, fixedPart, variantPart, varDec, procDec, procHeading, funcDec, funcHeading, formalParams, block, simpleStmt, assignStmt, var, procStmt, params, param, gotoStmt, structuredStmt, conditionalStmt, ifStmt, caseStmt, repetitiveStmt, repeatStmt, whileStmt, forStmt, withStmt, expr, simpleExpr, term, factor, unsignedConst, funcCall, setConstructor, memberDesignator, 
+Uunique
+IF	 = 	1
+NIL	 = 	1
+OF	 = 	5
+WHILE	 = 	1
+DotDot	 = 	2
+ARRAY	 = 	1
+String	 = 	2
+PROGRAM	 = 	1
+AddOp	 = 	1
+DOWNTO	 = 	1
+UNTIL	 = 	1
+FUNCTION	 = 	1
+SKIP	 = 	1
+Eq	 = 	2
+ELSE	 = 	1
+Semi	 = 	19
+Comma	 = 	8
+UInt	 = 	1
+SET	 = 	1
+CASE	 = 	2
+FILE	 = 	1
+Id	 = 	22
+REPEAT	 = 	1
+RPar	 = 	6
+GOTO	 = 	1
+CONST	 = 	1
+MultOp	 = 	1
+Sign	 = 	2
+RelOp	 = 	1
+UNumber	 = 	2
+Dot	 = 	2
+TO	 = 	1
+BEGIN	 = 	1
+FOR	 = 	1
+TYPE	 = 	1
+DO	 = 	3
+Colon	 = 	9
+Assign	 = 	2
+VAR	 = 	2
+LABEL	 = 	1
+END	 = 	3
+LPar	 = 	6
+RECORD	 = 	1
+THEN	 = 	1
+PROCEDURE	 = 	1
+WITH	 = 	1
+Pointer	 = 	2
+LBrack	 = 	3
+RBrack	 = 	3
+NOT	 = 	1
+PACKED	 = 	1
+Token 	1	 = 	30
+Token 	2	 = 	10
+Token 	3	 = 	4
+Token 	4	 = 	nil
+Token 	5	 = 	1
+Token 	6	 = 	2
+Token 	7	 = 	nil
+Token 	8	 = 	1
+Token 	9	 = 	1
+Token 	10	 = 	nil
+Unique tokens (# 29): ARRAY, AddOp, BEGIN, CONST, DOWNTO, ELSE, FILE, FOR, FUNCTION, GOTO, IF, LABEL, MultOp, NIL, NOT, PACKED, PROCEDURE, PROGRAM, RECORD, REPEAT, RelOp, SET, THEN, TO, TYPE, UInt, UNTIL, WHILE, WITH
+calcTail
+program: 	__Dot
+head: 	__Semi
+decs: 	__Semi, __empty
+ids: 	__Id
+labelDecs: 	__Semi, __empty
+labels: 	__UInt
+label: 	__UInt
+constDefs: 	__Semi, __empty
+constDef: 	__Id, __String, __UNumber
+const: 	__Id, __String, __UNumber
+typeDefs: 	__Semi, __empty
+typeDef: 	__END, __Id, __RPar, __String, __UNumber
+type: 	__END, __Id, __RPar, __String, __UNumber
+newType: 	__END, __Id, __RPar, __String, __UNumber
+newOrdinalType: 	__Id, __RPar, __String, __UNumber
+newStructuredType: 	__END, __Id, __RPar, __String, __UNumber
+newPointerType: 	__Id
+enumType: 	__RPar
+subrangeType: 	__Id, __String, __UNumber
+unpackedStructuredType: 	__END, __Id, __RPar, __String, __UNumber
+arrayType: 	__END, __Id, __RPar, __String, __UNumber
+recordType: 	__END
+setType: 	__Id, __RPar, __String, __UNumber
+fileType: 	__END, __Id, __RPar, __String, __UNumber
+ordinalType: 	__Id, __RPar, __String, __UNumber
+fieldList: 	__END, __Id, __RPar, __Semi, __String, __UNumber, __empty
+fixedPart: 	__END, __Id, __RPar, __String, __UNumber
+variantPart: 	__RPar
+variant: 	__RPar
+consts: 	__Id, __String, __UNumber
+varDecs: 	__Semi, __empty
+varDec: 	__END, __Id, __RPar, __String, __UNumber
+procAndFuncDecs: 	__Semi, __empty
+procDec: 	__END, __Id
+procHeading: 	__Id, __RPar
+funcDec: 	__END, __Id
+funcHeading: 	__END, __Id, __RPar, __String, __UNumber
+formalParams: 	__RPar
+formalParamsSection: 	__END, __Id, __RPar, __String, __UNumber
+block: 	__END
+stmts: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+stmt: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+simpleStmt: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UInt, __UNumber
+assignStmt: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+var: 	__Id, __Pointer, __RBrack
+procStmt: 	__Id, __RPar
+params: 	__RPar
+param: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+gotoStmt: 	__UInt
+structuredStmt: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+conditionalStmt: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+ifStmt: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+caseStmt: 	__END
+caseListElement: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+repetitiveStmt: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+repeatStmt: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+whileStmt: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+forStmt: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+withStmt: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+expr: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+simpleExpr: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+term: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+factor: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+unsignedConst: 	__Id, __NIL, __String, __UNumber
+funcCall: 	__RPar
+setConstructor: 	__RBrack
+memberDesignator: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+AddOp: 	+, -, __OR
+Assign: 	:=
+Dot: 	.
+DotDot: 	..
+CloseComment: 	*), }
+Colon: 	:
+Comma: 	,
+COMMENT: 	__CloseComment
+Eq: 	=
+BodyId: 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+Id: 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+LBrack: 	[
+LPar: 	(
+MultOp: 	*, /, __AND, __DIV, __MOD
+OpenComment: 	(*, {
+Pointer: 	^
+RBrack: 	]
+RelOp: 	<, <=, <>, =, >, >=, __IN
+RPar: 	)
+Semi: 	;
+Sign: 	+, -
+String: 	'
+UInt: 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+UNumber: 	__UInt, __UReal
+UReal: 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+Reserved: 	__AND, __ARRAY, __BEGIN, __CASE, __CONST, __DIV, __DO, __DOWNTO, __ELSE, __END, __FILE, __FOR, __FUNCTION, __GOTO, __IF, __IN, __LABEL, __MOD, __NIL, __NOT, __OF, __OR, __PACKED, __PROCEDURE, __PROGRAM, __RECORD, __REPEAT, __SET, __THEN, __TO, __TYPE, __UNTIL, __VAR, __WHILE, __WITH
+AND: 	D, d
+ARRAY: 	Y, y
+BEGIN: 	N, n
+CASE: 	E, e
+CONST: 	T, t
+DIV: 	V, v
+DO: 	O, o
+DOWNTO: 	O, o
+ELSE: 	E, e
+END: 	D, d
+FILE: 	E, e
+FOR: 	R, r
+FUNCTION: 	N, n
+GOTO: 	O, o
+IF: 	F, f
+IN: 	N, n
+LABEL: 	L, l
+MOD: 	D, d
+NIL: 	L, l
+NOT: 	T, t
+OF: 	F, f
+OR: 	R, r
+PACKED: 	D, d
+PROCEDURE: 	E, e
+PROGRAM: 	M, m
+RECORD: 	D, d
+REPEAT: 	T, t
+SET: 	T, t
+THEN: 	N, n
+TO: 	O, o
+TYPE: 	E, e
+UNTIL: 	L, l
+VAR: 	R, r
+WHILE: 	E, e
+WITH: 	H, h
+SPACE: 		, 
+, , , ,  , __COMMENT
+SKIP: 		, 
+, , , ,  , __COMMENT, __empty
+Global Prefix
+program: 	
+head: 	__SKIP
+decs: 	__Semi
+ids: 	__LPar, __RECORD, __Semi, __VAR
+labelDecs: 	__Semi
+labels: 	__LABEL
+label: 	__BEGIN, __Colon, __Comma, __DO, __ELSE, __GOTO, __LABEL, __REPEAT, __Semi, __THEN
+constDefs: 	__Semi, __empty
+constDef: 	__CONST, __Semi
+const: 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi
+typeDefs: 	__Semi, __empty
+typeDef: 	__Semi, __TYPE
+type: 	__Colon, __Eq, __OF
+newType: 	__Colon, __Eq, __OF
+newOrdinalType: 	__Colon, __Comma, __Eq, __LBrack, __OF
+newStructuredType: 	__Colon, __Eq, __OF
+newPointerType: 	__Colon, __Eq, __OF
+enumType: 	__Colon, __Comma, __Eq, __LBrack, __OF
+subrangeType: 	__Colon, __Comma, __Eq, __LBrack, __OF
+unpackedStructuredType: 	__Colon, __Eq, __OF, __PACKED
+arrayType: 	__Colon, __Eq, __OF, __PACKED
+recordType: 	__Colon, __Eq, __OF, __PACKED
+setType: 	__Colon, __Eq, __OF, __PACKED
+fileType: 	__Colon, __Eq, __OF, __PACKED
+ordinalType: 	__Comma, __LBrack, __OF
+fieldList: 	__LPar, __RECORD
+fixedPart: 	__LPar, __RECORD
+variantPart: 	__LPar, __RECORD, __Semi
+variant: 	__OF, __Semi
+consts: 	__OF, __Semi
+varDecs: 	__Semi, __empty
+varDec: 	__LPar, __RECORD, __Semi, __VAR
+procAndFuncDecs: 	__Semi, __empty
+procDec: 	__Semi, __empty
+procHeading: 	__LPar, __Semi, __empty
+funcDec: 	__Semi, __empty
+funcHeading: 	__LPar, __Semi, __empty
+formalParams: 	__Id
+formalParamsSection: 	__LPar, __Semi
+block: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN, __empty
+stmts: 	__BEGIN, __REPEAT
+stmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+simpleStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+assignStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+var: 	__AddOp, __Assign, __BEGIN, __CASE, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __IF, __LBrack, __LPar, __MultOp, __NOT, __REPEAT, __RelOp, __Semi, __Sign, __THEN, __TO, __UNTIL, __WHILE, __WITH
+procStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+params: 	__Id
+param: 	__Comma, __LPar
+gotoStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+structuredStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+conditionalStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+ifStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+caseStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+caseListElement: 	__OF, __Semi
+repetitiveStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+repeatStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+whileStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+forStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+withStmt: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+expr: 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __TO, __UNTIL, __WHILE
+simpleExpr: 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __RelOp, __TO, __UNTIL, __WHILE
+term: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+factor: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+unsignedConst: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+funcCall: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+setConstructor: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+memberDesignator: 	__Comma, __LBrack
+AddOp: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+Assign: 	__Id, __Pointer, __RBrack
+Dot: 	__END, __Id, __Pointer, __RBrack
+DotDot: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+CloseComment: 	__OpenComment, __any
+Colon: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UInt, __UNumber
+Comma: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UInt, __UNumber
+COMMENT: 		, 
+, , , ,  , __COMMENT
+Eq: 	__Id
+BodyId: 	
+Id: 	__AddOp, __Assign, __BEGIN, __CASE, __CONST, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __Eq, __FOR, __FUNCTION, __IF, __LBrack, __LPar, __MultOp, __NOT, __OF, __PROCEDURE, __PROGRAM, __Pointer, __RECORD, __REPEAT, __RelOp, __Semi, __Sign, __THEN, __TO, __TYPE, __UNTIL, __VAR, __WHILE, __WITH
+LBrack: 	__ARRAY, __AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __Id, __LBrack, __LPar, __MultOp, __NOT, __Pointer, __RBrack, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+LPar: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __Eq, __IF, __Id, __LBrack, __LPar, __MultOp, __NOT, __OF, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+MultOp: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+OpenComment: 		, 
+, , , ,  , __COMMENT
+Pointer: 	__Colon, __Eq, __Id, __OF, __Pointer, __RBrack
+RBrack: 	__Id, __LBrack, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+RelOp: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+RPar: 	__END, __Id, __LPar, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __UNumber, __empty
+Semi: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+Sign: 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __Eq, __IF, __LBrack, __LPar, __OF, __RelOp, __Semi, __TO, __UNTIL, __WHILE
+String: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __Eq, __IF, __LBrack, __LPar, __MultOp, __NOT, __OF, __RelOp, __Semi, __Sign, __TO, __UNTIL, __WHILE
+UInt: 	__AddOp, __Assign, __BEGIN, __CASE, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __Eq, __GOTO, __IF, __LABEL, __LBrack, __LPar, __MultOp, __NOT, __OF, __REPEAT, __RelOp, __Semi, __Sign, __THEN, __TO, __UNTIL, __WHILE
+UNumber: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __Eq, __IF, __LBrack, __LPar, __MultOp, __NOT, __OF, __RelOp, __Semi, __Sign, __TO, __UNTIL, __WHILE
+UReal: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __Eq, __IF, __LBrack, __LPar, __MultOp, __NOT, __OF, __RelOp, __Semi, __Sign, __TO, __UNTIL, __WHILE
+Reserved: 	
+AND: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+ARRAY: 	__Colon, __Eq, __OF, __PACKED
+BEGIN: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN, __empty
+CASE: 	__BEGIN, __Colon, __DO, __ELSE, __LPar, __RECORD, __REPEAT, __Semi, __THEN
+CONST: 	__Semi, __empty
+DIV: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+DO: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+DOWNTO: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+ELSE: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+END: 	__BEGIN, __Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RECORD, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+FILE: 	__Colon, __Eq, __OF, __PACKED
+FOR: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+FUNCTION: 	__LPar, __Semi, __empty
+GOTO: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+IF: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+IN: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+LABEL: 	__Semi
+MOD: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+NIL: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+NOT: 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+OF: 	__FILE, __Id, __NIL, __Pointer, __RBrack, __RPar, __SET, __String, __UNumber
+OR: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+PACKED: 	__Colon, __Eq, __OF
+PROCEDURE: 	__LPar, __Semi, __empty
+PROGRAM: 	__SKIP
+RECORD: 	__Colon, __Eq, __OF, __PACKED
+REPEAT: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+SET: 	__Colon, __Eq, __OF, __PACKED
+THEN: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+TO: 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+TYPE: 	__Semi, __empty
+UNTIL: 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __REPEAT, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+VAR: 	__LPar, __Semi, __empty
+WHILE: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+WITH: 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+SPACE: 	
+SKIP: 	
+calcPrefix
+IF	 -> 
+	(IF, ifStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+withStmt	 -> 
+	(withStmt, structuredStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+OF	 -> 
+	(OF, variantPart): 	__Id
+	(OF, fileType): 	__FILE
+	(OF, caseStmt): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(OF, arrayType): 	__RBrack
+	(OF, setType): 	__SET
+WHILE	 -> 
+	(WHILE, whileStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+ordinalType	 -> 
+	(ordinalType, arrayType): 	__Comma
+	(ordinalType, setType): 	__OF
+	(ordinalType, arrayType): 	__LBrack
+ARRAY	 -> 
+	(ARRAY, arrayType): 	__Colon, __Eq, __OF, __PACKED
+Dot	 -> 
+	(Dot, program): 	__END
+	(Dot, var): 	__Id, __Pointer, __RBrack
+PROGRAM	 -> 
+	(PROGRAM, head): 	__SKIP
+fieldList	 -> 
+	(fieldList, recordType): 	__RECORD
+	(fieldList, variant): 	__LPar
+DOWNTO	 -> 
+	(DOWNTO, forStmt): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+UNTIL	 -> 
+	(UNTIL, repeatStmt): 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __REPEAT, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+funcHeading	 -> 
+	(funcHeading, funcDec): 	__Semi, __empty
+	(funcHeading, formalParamsSection): 	__LPar, __Semi
+Eq	 -> 
+	(Eq, constDef): 	__Id
+	(Eq, typeDef): 	__Id
+varDec	 -> 
+	(varDec, fixedPart): 	__Semi
+	(varDec, varDecs): 	__VAR
+	(varDec, varDecs): 	__Semi
+	(varDec, fixedPart): 	__LPar, __RECORD
+program	 -> 
+RPar	 -> 
+	(RPar, enumType): 	__Id
+	(RPar, params): 	__Id, __LPar, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(RPar, factor): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(RPar, head): 	__Id
+	(RPar, variant): 	__END, __Id, __LPar, __RPar, __Semi, __String, __UNumber, __empty
+	(RPar, formalParams): 	__END, __Id, __RPar, __String, __UNumber
+forStmt	 -> 
+	(forStmt, repetitiveStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+type	 -> 
+	(type, fileType): 	__OF
+	(type, varDec): 	__Colon
+	(type, arrayType): 	__OF
+	(type, typeDef): 	__Eq
+	(type, funcHeading): 	__Colon
+newType	 -> 
+	(newType, type): 	__Colon, __Eq, __OF
+consts	 -> 
+	(consts, variant): 	__OF, __Semi
+	(consts, caseListElement): 	__OF, __Semi
+NIL	 -> 
+	(NIL, unsignedConst): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+setConstructor	 -> 
+	(setConstructor, factor): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+head	 -> 
+	(head, program): 	__SKIP
+Id	 -> 
+	(Id, head): 	__PROGRAM
+	(Id, procHeading): 	__PROCEDURE
+	(Id, type): 	__Colon, __Eq, __OF
+	(Id, forStmt): 	__FOR
+	(Id, const): 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi, __Sign
+	(Id, var): 	__Dot
+	(Id, typeDef): 	__Semi, __TYPE
+	(Id, newPointerType): 	__Pointer
+	(Id, unsignedConst): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+	(Id, ids): 	__LPar, __RECORD, __Semi, __VAR
+	(Id, funcCall): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+	(Id, procStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+	(Id, procDec): 	__Semi
+	(Id, variantPart): 	__CASE
+	(Id, ids): 	__Comma
+	(Id, formalParamsSection): 	__Colon
+	(Id, var): 	__AddOp, __Assign, __BEGIN, __CASE, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __IF, __LBrack, __LPar, __MultOp, __NOT, __REPEAT, __RelOp, __Semi, __Sign, __THEN, __TO, __UNTIL, __WHILE, __WITH
+	(Id, variantPart): 	__Colon
+	(Id, ordinalType): 	__Comma, __LBrack, __OF
+	(Id, funcDec): 	__Semi
+	(Id, constDef): 	__CONST, __Semi
+	(Id, funcHeading): 	__FUNCTION
+fixedPart	 -> 
+	(fixedPart, fieldList): 	__LPar, __RECORD
+unsignedConst	 -> 
+	(unsignedConst, factor): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+formalParamsSection	 -> 
+	(formalParamsSection, formalParams): 	__LPar
+	(formalParamsSection, formalParams): 	__Semi
+GOTO	 -> 
+	(GOTO, gotoStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+CONST	 -> 
+	(CONST, constDefs): 	__Semi, __empty
+NOT	 -> 
+	(NOT, factor): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+Sign	 -> 
+	(Sign, const): 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi
+	(Sign, simpleExpr): 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __RelOp, __TO, __UNTIL, __WHILE
+MultOp	 -> 
+	(MultOp, term): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+UNumber	 -> 
+	(UNumber, const): 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi, __Sign
+	(UNumber, unsignedConst): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+LBrack	 -> 
+	(LBrack, var): 	__Id, __Pointer, __RBrack
+	(LBrack, arrayType): 	__ARRAY
+	(LBrack, setConstructor): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+AddOp	 -> 
+	(AddOp, simpleExpr): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+Semi	 -> 
+	(Semi, constDefs): 	__Id, __String, __UNumber
+	(Semi, constDefs): 	__Id, __String, __UNumber
+	(Semi, procDec): 	__Id, __RPar
+	(Semi, varDecs): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, fixedPart): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, caseStmt): 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+	(Semi, funcDec): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, variantPart): 	__RPar
+	(Semi, formalParams): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, caseStmt): 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+	(Semi, fieldList): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, stmts): 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+	(Semi, labelDecs): 	__UInt
+	(Semi, typeDefs): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, typeDefs): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, varDecs): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, fieldList): 	__END, __Id, __RPar, __String, __UNumber
+	(Semi, procAndFuncDecs): 	__END, __Id
+	(Semi, head): 	__Id, __RPar
+RelOp	 -> 
+	(RelOp, expr): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+newPointerType	 -> 
+	(newPointerType, newType): 	__Colon, __Eq, __OF
+const	 -> 
+	(const, consts): 	__Comma
+	(const, subrangeType): 	__DotDot
+	(const, constDef): 	__Eq
+	(const, subrangeType): 	__Colon, __Comma, __Eq, __LBrack, __OF
+	(const, consts): 	__OF, __Semi
+simpleStmt	 -> 
+	(simpleStmt, stmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+stmts	 -> 
+	(stmts, block): 	__BEGIN
+	(stmts, repeatStmt): 	__REPEAT
+term	 -> 
+	(term, simpleExpr): 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+	(term, simpleExpr): 	__AddOp
+TO	 -> 
+	(TO, forStmt): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+enumType	 -> 
+	(enumType, newOrdinalType): 	__Colon, __Comma, __Eq, __LBrack, __OF
+FOR	 -> 
+	(FOR, forStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+funcDec	 -> 
+	(funcDec, procAndFuncDecs): 	__Semi, __empty
+typeDefs	 -> 
+	(typeDefs, decs): 	__Semi, __empty
+DO	 -> 
+	(DO, forStmt): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(DO, withStmt): 	__Id, __Pointer, __RBrack
+	(DO, whileStmt): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+procHeading	 -> 
+	(procHeading, procDec): 	__Semi, __empty
+	(procHeading, formalParamsSection): 	__LPar, __Semi
+unpackedStructuredType	 -> 
+	(unpackedStructuredType, newStructuredType): 	__Colon, __Eq, __OF, __PACKED
+REPEAT	 -> 
+	(REPEAT, repeatStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+memberDesignator	 -> 
+	(memberDesignator, setConstructor): 	__LBrack
+	(memberDesignator, setConstructor): 	__Comma
+label	 -> 
+	(label, labels): 	__Comma
+	(label, gotoStmt): 	__GOTO
+	(label, labels): 	__LABEL
+	(label, stmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+PACKED	 -> 
+	(PACKED, newStructuredType): 	__Colon, __Eq, __OF
+whileStmt	 -> 
+	(whileStmt, repetitiveStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+repeatStmt	 -> 
+	(repeatStmt, repetitiveStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+gotoStmt	 -> 
+	(gotoStmt, simpleStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+caseListElement	 -> 
+	(caseListElement, caseStmt): 	__OF
+	(caseListElement, caseStmt): 	__Semi
+ELSE	 -> 
+	(ELSE, ifStmt): 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty
+THEN	 -> 
+	(THEN, ifStmt): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+variantPart	 -> 
+	(variantPart, fieldList): 	__Semi
+	(variantPart, fieldList): 	__LPar, __RECORD
+ifStmt	 -> 
+	(ifStmt, conditionalStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+DotDot	 -> 
+	(DotDot, subrangeType): 	__Id, __String, __UNumber
+	(DotDot, memberDesignator): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+RBrack	 -> 
+	(RBrack, var): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(RBrack, setConstructor): 	__Id, __LBrack, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(RBrack, arrayType): 	__Id, __RPar, __String, __UNumber
+String	 -> 
+	(String, const): 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi
+	(String, unsignedConst): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+constDef	 -> 
+	(constDef, constDefs): 	__CONST
+	(constDef, constDefs): 	__Semi
+stmt	 -> 
+	(stmt, whileStmt): 	__DO
+	(stmt, withStmt): 	__DO
+	(stmt, ifStmt): 	__ELSE
+	(stmt, forStmt): 	__DO
+	(stmt, stmts): 	__BEGIN, __REPEAT
+	(stmt, ifStmt): 	__THEN
+	(stmt, caseListElement): 	__Colon
+	(stmt, stmts): 	__Semi
+repetitiveStmt	 -> 
+	(repetitiveStmt, structuredStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+Pointer	 -> 
+	(Pointer, newPointerType): 	__Colon, __Eq, __OF
+	(Pointer, var): 	__Id, __Pointer, __RBrack
+typeDef	 -> 
+	(typeDef, typeDefs): 	__TYPE
+	(typeDef, typeDefs): 	__Semi
+FUNCTION	 -> 
+	(FUNCTION, funcHeading): 	__LPar, __Semi, __empty
+SKIP	 -> 
+	(SKIP, program): 	
+param	 -> 
+	(param, params): 	__LPar
+	(param, params): 	__Comma
+varDecs	 -> 
+	(varDecs, decs): 	__Semi, __empty
+ids	 -> 
+	(ids, head): 	__LPar
+	(ids, formalParamsSection): 	__LPar, __Semi, __VAR
+	(ids, enumType): 	__LPar
+	(ids, varDec): 	__LPar, __RECORD, __Semi, __VAR
+params	 -> 
+	(params, procStmt): 	__Id
+	(params, funcCall): 	__Id
+labelDecs	 -> 
+	(labelDecs, decs): 	__Semi
+labels	 -> 
+	(labels, labelDecs): 	__LABEL
+variant	 -> 
+	(variant, variantPart): 	__OF
+	(variant, variantPart): 	__Semi
+Comma	 -> 
+	(Comma, ids): 	__Id
+	(Comma, withStmt): 	__Id, __Pointer, __RBrack
+	(Comma, setConstructor): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(Comma, consts): 	__Id, __String, __UNumber
+	(Comma, arrayType): 	__Id, __RPar, __String, __UNumber
+	(Comma, labels): 	__UInt
+	(Comma, params): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(Comma, var): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+UInt	 -> 
+	(UInt, label): 	__BEGIN, __Colon, __Comma, __DO, __ELSE, __GOTO, __LABEL, __REPEAT, __Semi, __THEN
+Colon	 -> 
+	(Colon, variant): 	__Id, __String, __UNumber
+	(Colon, formalParamsSection): 	__Id
+	(Colon, funcHeading): 	__Id, __RPar
+	(Colon, varDec): 	__Id
+	(Colon, variantPart): 	__Id
+	(Colon, stmt): 	__UInt
+	(Colon, param): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+	(Colon, caseListElement): 	__Id, __String, __UNumber
+	(Colon, param): 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber
+procStmt	 -> 
+	(procStmt, simpleStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+expr	 -> 
+	(expr, param): 	__Colon
+	(expr, caseStmt): 	__CASE
+	(expr, param): 	__Colon
+	(expr, ifStmt): 	__IF
+	(expr, repeatStmt): 	__UNTIL
+	(expr, assignStmt): 	__Assign
+	(expr, forStmt): 	__Assign
+	(expr, var): 	__LBrack
+	(expr, memberDesignator): 	__DotDot
+	(expr, memberDesignator): 	__Comma, __LBrack
+	(expr, param): 	__Comma, __LPar
+	(expr, factor): 	__LPar
+	(expr, forStmt): 	__DOWNTO, __TO
+	(expr, var): 	__Comma
+	(expr, whileStmt): 	__WHILE
+Assign	 -> 
+	(Assign, assignStmt): 	__Id, __Pointer, __RBrack
+	(Assign, forStmt): 	__Id
+var	 -> 
+	(var, withStmt): 	__Comma
+	(var, assignStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+	(var, withStmt): 	__WITH
+	(var, factor): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+constDefs	 -> 
+	(constDefs, decs): 	__Semi, __empty
+procAndFuncDecs	 -> 
+	(procAndFuncDecs, decs): 	__Semi, __empty
+simpleExpr	 -> 
+	(simpleExpr, expr): 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __TO, __UNTIL, __WHILE
+	(simpleExpr, expr): 	__RelOp
+arrayType	 -> 
+	(arrayType, unpackedStructuredType): 	__Colon, __Eq, __OF, __PACKED
+BEGIN	 -> 
+	(BEGIN, block): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN, __empty
+funcCall	 -> 
+	(funcCall, factor): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+formalParams	 -> 
+	(formalParams, procHeading): 	__Id
+	(formalParams, funcHeading): 	__Id
+structuredStmt	 -> 
+	(structuredStmt, stmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+procDec	 -> 
+	(procDec, procAndFuncDecs): 	__Semi, __empty
+VAR	 -> 
+	(VAR, varDecs): 	__Semi, __empty
+	(VAR, formalParamsSection): 	__LPar, __Semi
+END	 -> 
+	(END, block): 	__BEGIN, __Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+	(END, recordType): 	__END, __Id, __RECORD, __RPar, __Semi, __String, __UNumber, __empty
+	(END, caseStmt): 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty
+CASE	 -> 
+	(CASE, variantPart): 	__LPar, __RECORD, __Semi
+	(CASE, caseStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+decs	 -> 
+	(decs, procDec): 	__Semi
+	(decs, program): 	__Semi
+	(decs, funcDec): 	__Semi
+fileType	 -> 
+	(fileType, unpackedStructuredType): 	__Colon, __Eq, __OF, __PACKED
+LPar	 -> 
+	(LPar, params): 	__Id
+	(LPar, formalParams): 	__Id
+	(LPar, enumType): 	__Colon, __Comma, __Eq, __LBrack, __OF
+	(LPar, head): 	__Id
+	(LPar, factor): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+	(LPar, variant): 	__Colon
+assignStmt	 -> 
+	(assignStmt, simpleStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+caseStmt	 -> 
+	(caseStmt, conditionalStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+newStructuredType	 -> 
+	(newStructuredType, newType): 	__Colon, __Eq, __OF
+factor	 -> 
+	(factor, term): 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __RelOp, __Sign, __TO, __UNTIL, __WHILE
+	(factor, term): 	__MultOp
+FILE	 -> 
+	(FILE, fileType): 	__Colon, __Eq, __OF, __PACKED
+LABEL	 -> 
+	(LABEL, labelDecs): 	__Semi
+newOrdinalType	 -> 
+	(newOrdinalType, newType): 	__Colon, __Eq, __OF
+	(newOrdinalType, ordinalType): 	__Comma, __LBrack, __OF
+block	 -> 
+	(block, program): 	__Semi, __empty
+	(block, procDec): 	__Semi, __empty
+	(block, funcDec): 	__Semi, __empty
+	(block, structuredStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+RECORD	 -> 
+	(RECORD, recordType): 	__Colon, __Eq, __OF, __PACKED
+SET	 -> 
+	(SET, setType): 	__Colon, __Eq, __OF, __PACKED
+PROCEDURE	 -> 
+	(PROCEDURE, procHeading): 	__LPar, __Semi, __empty
+WITH	 -> 
+	(WITH, withStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+setType	 -> 
+	(setType, unpackedStructuredType): 	__Colon, __Eq, __OF, __PACKED
+recordType	 -> 
+	(recordType, unpackedStructuredType): 	__Colon, __Eq, __OF, __PACKED
+conditionalStmt	 -> 
+	(conditionalStmt, structuredStmt): 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN
+subrangeType	 -> 
+	(subrangeType, newOrdinalType): 	__Colon, __Comma, __Eq, __LBrack, __OF
+TYPE	 -> 
+	(TYPE, typeDefs): 	__Semi, __empty
+SKIP	 pref := 		 flw := 	__PROGRAM
+true33	SKIP
+foi true22	SKIP	head	nil
+symPrefUniVar	head	program	true
+passou um
+passou três	head	program
+UniqueFlwVar	head	rule = 	program	pref = 	__SKIP	flw = 	__BEGIN, __CONST, __FUNCTION, __LABEL, __PROCEDURE, __TYPE, __VAR	rep = 	nil
+symPrefUniVar	decs	program	false
+symPrefUniVar	block	program	false
+UniqueFlwVar	block	rule = 	program	pref = 	__Semi, __empty	flw = 	__Dot	rep = 	nil
+Dot	 pref := 	__END	 flw := 	$
+true33	Dot
+foi true22	Dot	table: 0x555d6506c160	true
+PROGRAM	 pref := 	__SKIP	 flw := 	__Id
+true33	PROGRAM
+foi true22	PROGRAM	Id	nil
+Id	 pref := 	__PROGRAM	 flw := 	__LPar, __Semi
+true33	Id
+foi true22	Id	table: 0x555d650737f0	true
+LPar	 pref := 	__Id	 flw := 	__Id
+symPrefUniVar	ids	head	false
+RPar	 pref := 	__Id	 flw := 	__Semi
+Semi	 pref := 	__Id, __RPar	 flw := 	__BEGIN, __CONST, __FUNCTION, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	labelDecs	decs	true
+passou um
+passou três	labelDecs	decs
+symPrefUniVar	constDefs	decs	true
+passou um
+passou três	constDefs	decs
+symPrefUniVar	typeDefs	decs	true
+passou um
+passou três	typeDefs	decs
+symPrefUniVar	varDecs	decs	true
+passou um
+symPrefUniVar	procAndFuncDecs	decs	true
+passou um
+passou três	procAndFuncDecs	decs
+Id	 pref := 	__LPar, __RECORD, __Semi, __VAR	 flw := 	__Colon, __Comma, __RPar
+Comma	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Comma	 flw := 	__Colon, __Comma, __RPar
+LABEL	 pref := 	__Semi	 flw := 	__UInt
+true33	LABEL
+symPrefUniVar	labels	labelDecs	true
+passou um
+passou três	labels	labelDecs
+Semi	 pref := 	__UInt	 flw := 	__BEGIN, __CONST, __FUNCTION, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	label	labels	true
+passou um
+passou três	label	labels
+Comma	 pref := 	__UInt	 flw := 	__UInt
+true33	Comma
+symPrefUniVar	label	labels	true
+passou um
+passou três	label	labels
+UInt	 pref := 	__BEGIN, __Colon, __Comma, __DO, __ELSE, __GOTO, __LABEL, __REPEAT, __Semi, __THEN	 flw := 	__Colon, __Comma, __ELSE, __END, __Semi, __UNTIL
+true33	UInt
+CONST	 pref := 	__Semi, __empty	 flw := 	__Id
+true33	CONST
+symPrefUniVar	constDef	constDefs	true
+passou um
+passou três	constDef	constDefs
+UniqueFlwVar	constDef	rule = 	constDefs	pref = 	__CONST	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	constDef	constDefs	true
+passou um
+Semi	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __TYPE, __VAR
+Id	 pref := 	__CONST, __Semi	 flw := 	__Eq
+Eq	 pref := 	__Id	 flw := 	__Id, __Sign, __String, __UNumber
+Subset	Eq	rule = 	constDef	total = 	2
+symPrefUniVar	const	constDef	false
+Sign	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi	 flw := 	__Id, __UNumber
+UNumber	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi, __Sign	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+Id	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi, __Sign	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+String	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+TYPE	 pref := 	__Semi, __empty	 flw := 	__Id
+true33	TYPE
+symPrefUniVar	typeDef	typeDefs	true
+passou um
+passou três	typeDef	typeDefs
+UniqueFlwVar	typeDef	rule = 	typeDefs	pref = 	__TYPE	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	typeDef	typeDefs	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __VAR
+Id	 pref := 	__Semi, __TYPE	 flw := 	__Eq
+Eq	 pref := 	__Id	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+Subset	Eq	rule = 	typeDef	total = 	2
+symPrefUniVar	type	typeDef	true
+passou um
+passou três	type	typeDef
+symPrefUniVar	newType	type	true
+passou um
+Id	 pref := 	__Colon, __Eq, __OF	 flw := 	__END, __RPar, __Semi
+symPrefUniVar	newOrdinalType	newType	false
+symPrefUniVar	newStructuredType	newType	true
+passou um
+passou três	newStructuredType	newType
+symPrefUniVar	newPointerType	newType	true
+passou um
+passou três	newPointerType	newType
+symPrefUniVar	enumType	newOrdinalType	true
+passou um
+symPrefUniVar	subrangeType	newOrdinalType	true
+passou um
+PACKED	 pref := 	__Colon, __Eq, __OF	 flw := 	__ARRAY, __FILE, __RECORD, __SET
+true33	PACKED
+symPrefUniVar	unpackedStructuredType	newStructuredType	true
+passou um
+passou três	unpackedStructuredType	newStructuredType
+Pointer	 pref := 	__Colon, __Eq, __OF	 flw := 	__Id
+true33	Pointer
+foi true22	Pointer	Id	nil
+Id	 pref := 	__Pointer	 flw := 	__END, __RPar, __Semi
+true33	Id
+LPar	 pref := 	__Colon, __Comma, __Eq, __LBrack, __OF	 flw := 	__Id
+symPrefUniVar	ids	enumType	false
+RPar	 pref := 	__Id	 flw := 	__Comma, __END, __RBrack, __RPar, __Semi
+symPrefUniVar	const	subrangeType	false
+DotDot	 pref := 	__Id, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	const	subrangeType	true
+passou um
+symPrefUniVar	arrayType	unpackedStructuredType	true
+passou um
+passou três	arrayType	unpackedStructuredType
+symPrefUniVar	recordType	unpackedStructuredType	true
+passou um
+passou três	recordType	unpackedStructuredType
+symPrefUniVar	setType	unpackedStructuredType	true
+passou um
+passou três	setType	unpackedStructuredType
+symPrefUniVar	fileType	unpackedStructuredType	true
+passou um
+passou três	fileType	unpackedStructuredType
+ARRAY	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__LBrack
+true33	ARRAY
+foi true22	ARRAY	LBrack	nil
+LBrack	 pref := 	__ARRAY	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+true33	LBrack
+foi true22	LBrack	ordinalType	true
+symPrefUniVar	ordinalType	arrayType	true
+passou um
+Comma	 pref := 	__Id, __RPar, __String, __UNumber	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+symPrefUniVar	ordinalType	arrayType	true
+passou um
+RBrack	 pref := 	__Id, __RPar, __String, __UNumber	 flw := 	__OF
+OF	 pref := 	__RBrack	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	arrayType	false
+RECORD	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__CASE, __END, __Id
+true33	RECORD
+foi true22	RECORD	fieldList	nil
+symPrefUniVar	fieldList	recordType	true
+passou um
+passou três	fieldList	recordType
+END	 pref := 	__END, __Id, __RECORD, __RPar, __Semi, __String, __UNumber, __empty	 flw := 	__END, __RPar, __Semi
+SET	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__OF
+true33	SET
+foi true22	SET	OF	nil
+OF	 pref := 	__SET	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+true33	OF
+foi true22	OF	ordinalType	true
+symPrefUniVar	ordinalType	setType	true
+passou um
+FILE	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__OF
+true33	FILE
+foi true22	FILE	OF	nil
+OF	 pref := 	__FILE	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+true33	OF
+foi true22	OF	type	true
+symPrefUniVar	type	fileType	false
+symPrefUniVar	newOrdinalType	ordinalType	false
+Id	 pref := 	__Comma, __LBrack, __OF	 flw := 	__Comma, __END, __RBrack, __RPar, __Semi
+symPrefUniVar	fixedPart	fieldList	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__CASE
+symPrefUniVar	variantPart	fieldList	true
+passou um
+symPrefUniVar	variantPart	fieldList	true
+passou um
+passou três	variantPart	fieldList
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__END, __RPar
+symPrefUniVar	varDec	fixedPart	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__Id
+symPrefUniVar	varDec	fixedPart	false
+CASE	 pref := 	__LPar, __RECORD, __Semi	 flw := 	__Id
+Id	 pref := 	__CASE	 flw := 	__Colon, __OF
+Colon	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Colon	 flw := 	__OF
+OF	 pref := 	__Id	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	variant	variantPart	true
+passou um
+Semi	 pref := 	__RPar	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	variant	variantPart	true
+passou um
+symPrefUniVar	consts	variant	false
+Colon	 pref := 	__Id, __String, __UNumber	 flw := 	__LPar
+LPar	 pref := 	__Colon	 flw := 	__CASE, __Id, __RPar
+symPrefUniVar	fieldList	variant	true
+passou um
+RPar	 pref := 	__END, __Id, __LPar, __RPar, __Semi, __String, __UNumber, __empty	 flw := 	__END, __RPar, __Semi
+symPrefUniVar	const	consts	false
+Comma	 pref := 	__Id, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	const	consts	false
+VAR	 pref := 	__Semi, __empty	 flw := 	__Id
+symPrefUniVar	varDec	varDecs	true
+passou um
+passou três	varDec	varDecs
+UniqueFlwVar	varDec	rule = 	varDecs	pref = 	__VAR	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE
+symPrefUniVar	varDec	varDecs	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE
+symPrefUniVar	ids	varDec	false
+Colon	 pref := 	__Id	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	varDec	false
+symPrefUniVar	procDec	procAndFuncDecs	true
+passou um
+passou três	procDec	procAndFuncDecs
+symPrefUniVar	funcDec	procAndFuncDecs	true
+passou um
+passou três	funcDec	procAndFuncDecs
+Semi	 pref := 	__END, __Id	 flw := 	__BEGIN, __FUNCTION, __PROCEDURE
+symPrefUniVar	procHeading	procDec	false
+Semi	 pref := 	__Id, __RPar	 flw := 	__BEGIN, __CONST, __FUNCTION, __Id, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	decs	procDec	false
+symPrefUniVar	block	procDec	false
+Id	 pref := 	__Semi	 flw := 	__Semi
+PROCEDURE	 pref := 	__LPar, __Semi, __empty	 flw := 	__Id
+true33	PROCEDURE
+foi true22	PROCEDURE	Id	nil
+Id	 pref := 	__PROCEDURE	 flw := 	__LPar, __RPar, __Semi
+true33	Id
+foi true22	Id	table: 0x555d650d7170	true
+symPrefUniVar	formalParams	procHeading	false
+symPrefUniVar	funcHeading	funcDec	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CONST, __FUNCTION, __Id, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	decs	funcDec	false
+symPrefUniVar	block	funcDec	false
+Id	 pref := 	__Semi	 flw := 	__Semi
+FUNCTION	 pref := 	__LPar, __Semi, __empty	 flw := 	__Id
+true33	FUNCTION
+foi true22	FUNCTION	Id	nil
+Id	 pref := 	__FUNCTION	 flw := 	__Colon, __LPar
+true33	Id
+foi true22	Id	table: 0x555d65082d50	true
+symPrefUniVar	formalParams	funcHeading	false
+Colon	 pref := 	__Id, __RPar	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	funcHeading	false
+LPar	 pref := 	__Id	 flw := 	__FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	formalParamsSection	formalParams	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	formalParamsSection	formalParams	true
+passou um
+RPar	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__Colon, __RPar, __Semi
+VAR	 pref := 	__LPar, __Semi	 flw := 	__Id
+symPrefUniVar	ids	formalParamsSection	false
+Colon	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Colon	 flw := 	__RPar, __Semi
+symPrefUniVar	procHeading	formalParamsSection	false
+symPrefUniVar	funcHeading	formalParamsSection	false
+BEGIN	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN, __empty	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __WHILE, __WITH
+true33	BEGIN
+foi true22	BEGIN	stmts	nil
+symPrefUniVar	stmts	block	true
+passou um
+passou três	stmts	block
+END	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Dot, __ELSE, __END, __Semi, __UNTIL
+symPrefUniVar	stmt	stmts	true
+passou um
+passou três	stmt	stmts
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+symPrefUniVar	stmt	stmts	true
+passou um
+symPrefUniVar	label	stmt	true
+passou um
+passou três	label	stmt
+UniqueFlwVar	label	rule = 	stmt	pref = 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	flw = 	__Colon	rep = 	true
+Colon	 pref := 	__UInt	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UNTIL, __WHILE, __WITH
+true33	Colon
+foi true22	Colon	table: 0x555d650853c0	nil
+symPrefUniVar	simpleStmt	stmt	true
+passou um
+symPrefUniVar	structuredStmt	stmt	true
+passou um
+symPrefUniVar	assignStmt	simpleStmt	true
+passou um
+symPrefUniVar	procStmt	simpleStmt	true
+passou um
+symPrefUniVar	gotoStmt	simpleStmt	true
+passou um
+passou três	gotoStmt	simpleStmt
+symPrefUniVar	var	assignStmt	false
+UniqueFlwVar	var	rule = 	assignStmt	pref = 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	flw = 	__Assign	rep = 	nil
+Assign	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+Subset	Assign	rule = 	assignStmt	total = 	2
+symPrefUniVar	expr	assignStmt	false
+Id	 pref := 	__AddOp, __Assign, __BEGIN, __CASE, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __IF, __LBrack, __LPar, __MultOp, __NOT, __REPEAT, __RelOp, __Semi, __Sign, __THEN, __TO, __UNTIL, __WHILE, __WITH	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+LBrack	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	LBrack
+symPrefUniVar	expr	var	false
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	var	false
+RBrack	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Dot	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id
+true33	Dot
+Id	 pref := 	__Dot	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	Id
+Pointer	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	Pointer
+Id	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__ELSE, __END, __LPar, __Semi, __UNTIL
+symPrefUniVar	params	procStmt	false
+LPar	 pref := 	__Id	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __RPar, __Sign, __String, __UNumber
+symPrefUniVar	param	params	true
+passou um
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	param	params	true
+passou um
+RPar	 pref := 	__Id, __LPar, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+symPrefUniVar	expr	param	false
+Colon	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	param	false
+Colon	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	param	true
+passou um
+GOTO	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__UInt
+true33	GOTO
+foi true22	GOTO	label	nil
+symPrefUniVar	label	gotoStmt	true
+passou um
+passou três	label	gotoStmt
+symPrefUniVar	block	structuredStmt	false
+symPrefUniVar	conditionalStmt	structuredStmt	true
+passou um
+symPrefUniVar	repetitiveStmt	structuredStmt	true
+passou um
+passou três	repetitiveStmt	structuredStmt
+symPrefUniVar	withStmt	structuredStmt	true
+passou um
+passou três	withStmt	structuredStmt
+symPrefUniVar	ifStmt	conditionalStmt	true
+passou um
+passou três	ifStmt	conditionalStmt
+symPrefUniVar	caseStmt	conditionalStmt	true
+passou um
+IF	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	IF
+foi true22	IF	expr	nil
+symPrefUniVar	expr	ifStmt	true
+passou um
+passou três	expr	ifStmt
+THEN	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	THEN
+foi true22	THEN	stmt	nil
+symPrefUniVar	stmt	ifStmt	true
+passou um
+passou três	stmt	ifStmt
+ELSE	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	ELSE
+symPrefUniVar	stmt	ifStmt	true
+passou um
+passou três	stmt	ifStmt
+CASE	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	caseStmt	true
+passou um
+OF	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	caseListElement	caseStmt	true
+passou um
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Id, __Sign, __String, __UNumber
+Subset	Semi	rule = 	caseStmt	total = 	19
+symPrefUniVar	caseListElement	caseStmt	true
+passou um
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__END
+Subset	Semi	rule = 	caseStmt	total = 	19
+END	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__ELSE, __END, __Semi, __UNTIL
+symPrefUniVar	consts	caseListElement	false
+Colon	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __WHILE, __WITH
+symPrefUniVar	stmt	caseListElement	true
+passou um
+symPrefUniVar	repeatStmt	repetitiveStmt	true
+passou um
+passou três	repeatStmt	repetitiveStmt
+symPrefUniVar	whileStmt	repetitiveStmt	true
+passou um
+passou três	whileStmt	repetitiveStmt
+symPrefUniVar	forStmt	repetitiveStmt	true
+passou um
+passou três	forStmt	repetitiveStmt
+REPEAT	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__BEGIN, __CASE, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	REPEAT
+foi true22	REPEAT	stmts	nil
+symPrefUniVar	stmts	repeatStmt	true
+passou um
+passou três	stmts	repeatStmt
+UNTIL	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __REPEAT, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	UNTIL
+foi true22	UNTIL	expr	nil
+symPrefUniVar	expr	repeatStmt	true
+passou um
+passou três	expr	repeatStmt
+WHILE	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	WHILE
+foi true22	WHILE	expr	nil
+symPrefUniVar	expr	whileStmt	true
+passou um
+passou três	expr	whileStmt
+DO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+Subset	DO	rule = 	whileStmt	total = 	3
+symPrefUniVar	stmt	whileStmt	false
+FOR	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id
+true33	FOR
+foi true22	FOR	Id	nil
+Id	 pref := 	__FOR	 flw := 	__Assign
+true33	Id
+foi true22	Id	Assign	true
+Assign	 pref := 	__Id	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	forStmt	false
+TO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	TO
+foi true22	TO	expr	nil
+DOWNTO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	DOWNTO
+foi true22	DOWNTO	expr	nil
+symPrefUniVar	expr	forStmt	true
+passou um
+passou três	expr	forStmt
+DO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+Subset	DO	rule = 	forStmt	total = 	3
+symPrefUniVar	stmt	forStmt	false
+WITH	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id
+true33	WITH
+foi true22	WITH	var	nil
+symPrefUniVar	var	withStmt	true
+passou um
+passou três	var	withStmt
+UniqueFlwVar	var	rule = 	withStmt	pref = 	__WITH	flw = 	__Comma, __DO	rep = 	nil
+Comma	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id
+symPrefUniVar	var	withStmt	false
+DO	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+symPrefUniVar	stmt	withStmt	false
+symPrefUniVar	simpleExpr	expr	true
+passou um
+RelOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	RelOp
+symPrefUniVar	simpleExpr	expr	true
+passou um
+passou três	simpleExpr	expr
+Sign	 pref := 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __RelOp, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+symPrefUniVar	term	simpleExpr	true
+passou um
+AddOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	AddOp
+symPrefUniVar	term	simpleExpr	true
+passou um
+passou três	term	simpleExpr
+symPrefUniVar	factor	term	true
+passou um
+MultOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	MultOp
+symPrefUniVar	factor	term	true
+passou um
+passou três	factor	term
+NOT	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	NOT
+symPrefUniVar	funcCall	factor	true
+passou um
+symPrefUniVar	var	factor	false
+symPrefUniVar	unsignedConst	factor	true
+passou um
+symPrefUniVar	setConstructor	factor	true
+passou um
+passou três	setConstructor	factor
+LPar	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	factor	false
+RPar	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+UNumber	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+String	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Id	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+NIL	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	NIL
+Id	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__LPar
+symPrefUniVar	params	funcCall	false
+LBrack	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __RBrack, __Sign, __String, __UNumber
+true33	LBrack
+foi true22	LBrack	table: 0x555d6509cfa0	nil
+symPrefUniVar	memberDesignator	setConstructor	true
+passou um
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	memberDesignator	setConstructor	true
+passou um
+RBrack	 pref := 	__Id, __LBrack, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Subset	RBrack	rule = 	setConstructor	total = 	3
+symPrefUniVar	expr	memberDesignator	false
+DotDot	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+Subset	DotDot	rule = 	memberDesignator	total = 	2
+symPrefUniVar	expr	memberDesignator	true
+passou um
+unique var 	head
+Unique usage	head
+unique var 	decs
+unique var 	block
+unique var 	ids
+unique var 	constDefs
+Unique usage	constDefs
+unique var 	typeDefs
+Unique usage	typeDefs
+unique var 	varDecs
+Unique usage	varDecs
+unique var 	procAndFuncDecs
+Unique usage	procAndFuncDecs
+unique var 	labels
+Unique usage	labels
+unique var 	label
+Unique usage	label
+unique var 	label
+Unique usage	label
+unique var 	constDef
+unique var 	constDef
+Unique usage	constDef
+unique var 	const
+unique var 	typeDef
+unique var 	typeDef
+Unique usage	typeDef
+unique var 	type
+unique var 	ordinalType
+unique var 	ordinalType
+Unique usage	ordinalType
+unique var 	type
+unique var 	fieldList
+unique var 	ordinalType
+Unique usage	ordinalType
+unique var 	type
+unique var 	varDec
+unique var 	varDec
+unique var 	procDec
+Unique usage	procDec
+unique var 	funcDec
+Unique usage	funcDec
+unique var 	procHeading
+unique var 	decs
+unique var 	block
+unique var 	formalParams
+unique var 	funcHeading
+unique var 	decs
+Unique usage	decs
+unique var 	block
+unique var 	formalParams
+Unique usage	formalParams
+unique var 	type
+unique var 	formalParamsSection
+unique var 	formalParamsSection
+Unique usage	formalParamsSection
+unique var 	ids
+unique var 	procHeading
+Unique usage	procHeading
+unique var 	funcHeading
+Unique usage	funcHeading
+unique var 	stmts
+Unique usage	stmts
+unique var 	stmt
+unique var 	stmt
+unique var 	expr
+unique var 	expr
+unique var 	expr
+unique var 	label
+Unique usage	label
+unique var 	expr
+unique var 	stmt
+unique var 	stmt
+unique var 	stmts
+Unique usage	stmts
+unique var 	expr
+unique var 	expr
+unique var 	stmt
+unique var 	expr
+unique var 	expr
+unique var 	stmt
+unique var 	var
+unique var 	var
+unique var 	stmt
+unique var 	simpleExpr
+unique var 	term
+unique var 	factor
+unique var 	memberDesignator
+unique var 	memberDesignator
+Unique usage	memberDesignator
+unique var 	expr
+unique var 	expr
+SKIP	 pref := 		 flw := 	__PROGRAM
+true33	SKIP
+foi true22	SKIP	head	true
+symPrefUniVar	head	program	true
+passou um
+passou três	head	program
+UniqueFlwVar	head	rule = 	program	pref = 	__SKIP	flw = 	__BEGIN, __CONST, __FUNCTION, __LABEL, __PROCEDURE, __TYPE, __VAR	rep = 	nil
+symPrefUniVar	decs	program	false
+symPrefUniVar	block	program	false
+UniqueFlwVar	block	rule = 	program	pref = 	__Semi, __empty	flw = 	__Dot	rep = 	nil
+Dot	 pref := 	__END	 flw := 	$
+true33	Dot
+foi true22	Dot	table: 0x555d6506c160	true
+PROGRAM	 pref := 	__SKIP	 flw := 	__Id
+true33	PROGRAM
+foi true22	PROGRAM	Id	true
+Id	 pref := 	__PROGRAM	 flw := 	__LPar, __Semi
+true33	Id
+foi true22	Id	table: 0x555d650737f0	true
+LPar	 pref := 	__Id	 flw := 	__Id
+symPrefUniVar	ids	head	false
+RPar	 pref := 	__Id	 flw := 	__Semi
+Semi	 pref := 	__Id, __RPar	 flw := 	__BEGIN, __CONST, __FUNCTION, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	labelDecs	decs	true
+passou um
+passou três	labelDecs	decs
+symPrefUniVar	constDefs	decs	true
+passou um
+passou três	constDefs	decs
+symPrefUniVar	typeDefs	decs	true
+passou um
+passou três	typeDefs	decs
+symPrefUniVar	varDecs	decs	true
+passou um
+symPrefUniVar	procAndFuncDecs	decs	true
+passou um
+passou três	procAndFuncDecs	decs
+Id	 pref := 	__LPar, __RECORD, __Semi, __VAR	 flw := 	__Colon, __Comma, __RPar
+Comma	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Comma	 flw := 	__Colon, __Comma, __RPar
+LABEL	 pref := 	__Semi	 flw := 	__UInt
+true33	LABEL
+symPrefUniVar	labels	labelDecs	true
+passou um
+passou três	labels	labelDecs
+Semi	 pref := 	__UInt	 flw := 	__BEGIN, __CONST, __FUNCTION, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	label	labels	true
+passou um
+passou três	label	labels
+Comma	 pref := 	__UInt	 flw := 	__UInt
+true33	Comma
+symPrefUniVar	label	labels	true
+passou um
+passou três	label	labels
+UInt	 pref := 	__BEGIN, __Colon, __Comma, __DO, __ELSE, __GOTO, __LABEL, __REPEAT, __Semi, __THEN	 flw := 	__Colon, __Comma, __ELSE, __END, __Semi, __UNTIL
+true33	UInt
+CONST	 pref := 	__Semi, __empty	 flw := 	__Id
+true33	CONST
+symPrefUniVar	constDef	constDefs	true
+passou um
+passou três	constDef	constDefs
+UniqueFlwVar	constDef	rule = 	constDefs	pref = 	__CONST	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	constDef	constDefs	true
+passou um
+Semi	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __TYPE, __VAR
+Id	 pref := 	__CONST, __Semi	 flw := 	__Eq
+Eq	 pref := 	__Id	 flw := 	__Id, __Sign, __String, __UNumber
+Subset	Eq	rule = 	constDef	total = 	2
+symPrefUniVar	const	constDef	false
+Sign	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi	 flw := 	__Id, __UNumber
+UNumber	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi, __Sign	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+Id	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi, __Sign	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+String	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+TYPE	 pref := 	__Semi, __empty	 flw := 	__Id
+true33	TYPE
+symPrefUniVar	typeDef	typeDefs	true
+passou um
+passou três	typeDef	typeDefs
+UniqueFlwVar	typeDef	rule = 	typeDefs	pref = 	__TYPE	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	typeDef	typeDefs	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __VAR
+Id	 pref := 	__Semi, __TYPE	 flw := 	__Eq
+Eq	 pref := 	__Id	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+Subset	Eq	rule = 	typeDef	total = 	2
+symPrefUniVar	type	typeDef	true
+passou um
+passou três	type	typeDef
+symPrefUniVar	newType	type	true
+passou um
+Id	 pref := 	__Colon, __Eq, __OF	 flw := 	__END, __RPar, __Semi
+symPrefUniVar	newOrdinalType	newType	false
+symPrefUniVar	newStructuredType	newType	true
+passou um
+passou três	newStructuredType	newType
+symPrefUniVar	newPointerType	newType	true
+passou um
+passou três	newPointerType	newType
+symPrefUniVar	enumType	newOrdinalType	true
+passou um
+symPrefUniVar	subrangeType	newOrdinalType	true
+passou um
+PACKED	 pref := 	__Colon, __Eq, __OF	 flw := 	__ARRAY, __FILE, __RECORD, __SET
+true33	PACKED
+symPrefUniVar	unpackedStructuredType	newStructuredType	true
+passou um
+passou três	unpackedStructuredType	newStructuredType
+Pointer	 pref := 	__Colon, __Eq, __OF	 flw := 	__Id
+true33	Pointer
+foi true22	Pointer	Id	true
+Id	 pref := 	__Pointer	 flw := 	__END, __RPar, __Semi
+true33	Id
+LPar	 pref := 	__Colon, __Comma, __Eq, __LBrack, __OF	 flw := 	__Id
+symPrefUniVar	ids	enumType	false
+RPar	 pref := 	__Id	 flw := 	__Comma, __END, __RBrack, __RPar, __Semi
+symPrefUniVar	const	subrangeType	false
+DotDot	 pref := 	__Id, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	const	subrangeType	true
+passou um
+symPrefUniVar	arrayType	unpackedStructuredType	true
+passou um
+passou três	arrayType	unpackedStructuredType
+symPrefUniVar	recordType	unpackedStructuredType	true
+passou um
+passou três	recordType	unpackedStructuredType
+symPrefUniVar	setType	unpackedStructuredType	true
+passou um
+passou três	setType	unpackedStructuredType
+symPrefUniVar	fileType	unpackedStructuredType	true
+passou um
+passou três	fileType	unpackedStructuredType
+ARRAY	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__LBrack
+true33	ARRAY
+foi true22	ARRAY	LBrack	true
+LBrack	 pref := 	__ARRAY	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+true33	LBrack
+foi true22	LBrack	ordinalType	true
+symPrefUniVar	ordinalType	arrayType	true
+passou um
+Comma	 pref := 	__Id, __RPar, __String, __UNumber	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+symPrefUniVar	ordinalType	arrayType	true
+passou um
+RBrack	 pref := 	__Id, __RPar, __String, __UNumber	 flw := 	__OF
+OF	 pref := 	__RBrack	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	arrayType	false
+RECORD	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__CASE, __END, __Id
+true33	RECORD
+foi true22	RECORD	fieldList	true
+symPrefUniVar	fieldList	recordType	true
+passou um
+passou três	fieldList	recordType
+END	 pref := 	__END, __Id, __RECORD, __RPar, __Semi, __String, __UNumber, __empty	 flw := 	__END, __RPar, __Semi
+SET	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__OF
+true33	SET
+foi true22	SET	OF	true
+OF	 pref := 	__SET	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+true33	OF
+foi true22	OF	ordinalType	true
+symPrefUniVar	ordinalType	setType	true
+passou um
+FILE	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__OF
+true33	FILE
+foi true22	FILE	OF	true
+OF	 pref := 	__FILE	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+true33	OF
+foi true22	OF	type	true
+symPrefUniVar	type	fileType	false
+symPrefUniVar	newOrdinalType	ordinalType	false
+Id	 pref := 	__Comma, __LBrack, __OF	 flw := 	__Comma, __END, __RBrack, __RPar, __Semi
+symPrefUniVar	fixedPart	fieldList	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__CASE
+symPrefUniVar	variantPart	fieldList	true
+passou um
+symPrefUniVar	variantPart	fieldList	true
+passou um
+passou três	variantPart	fieldList
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__END, __RPar
+symPrefUniVar	varDec	fixedPart	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__Id
+symPrefUniVar	varDec	fixedPart	false
+CASE	 pref := 	__LPar, __RECORD, __Semi	 flw := 	__Id
+Id	 pref := 	__CASE	 flw := 	__Colon, __OF
+Colon	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Colon	 flw := 	__OF
+OF	 pref := 	__Id	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	variant	variantPart	true
+passou um
+Semi	 pref := 	__RPar	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	variant	variantPart	true
+passou um
+symPrefUniVar	consts	variant	false
+Colon	 pref := 	__Id, __String, __UNumber	 flw := 	__LPar
+LPar	 pref := 	__Colon	 flw := 	__CASE, __Id, __RPar
+symPrefUniVar	fieldList	variant	true
+passou um
+RPar	 pref := 	__END, __Id, __LPar, __RPar, __Semi, __String, __UNumber, __empty	 flw := 	__END, __RPar, __Semi
+symPrefUniVar	const	consts	false
+Comma	 pref := 	__Id, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	const	consts	false
+VAR	 pref := 	__Semi, __empty	 flw := 	__Id
+symPrefUniVar	varDec	varDecs	true
+passou um
+passou três	varDec	varDecs
+UniqueFlwVar	varDec	rule = 	varDecs	pref = 	__VAR	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE
+symPrefUniVar	varDec	varDecs	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE
+symPrefUniVar	ids	varDec	false
+Colon	 pref := 	__Id	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	varDec	false
+symPrefUniVar	procDec	procAndFuncDecs	true
+passou um
+passou três	procDec	procAndFuncDecs
+symPrefUniVar	funcDec	procAndFuncDecs	true
+passou um
+passou três	funcDec	procAndFuncDecs
+Semi	 pref := 	__END, __Id	 flw := 	__BEGIN, __FUNCTION, __PROCEDURE
+symPrefUniVar	procHeading	procDec	false
+Semi	 pref := 	__Id, __RPar	 flw := 	__BEGIN, __CONST, __FUNCTION, __Id, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	decs	procDec	false
+symPrefUniVar	block	procDec	false
+Id	 pref := 	__Semi	 flw := 	__Semi
+PROCEDURE	 pref := 	__LPar, __Semi, __empty	 flw := 	__Id
+true33	PROCEDURE
+foi true22	PROCEDURE	Id	true
+Id	 pref := 	__PROCEDURE	 flw := 	__LPar, __RPar, __Semi
+true33	Id
+foi true22	Id	table: 0x555d650d7170	true
+symPrefUniVar	formalParams	procHeading	false
+symPrefUniVar	funcHeading	funcDec	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CONST, __FUNCTION, __Id, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	decs	funcDec	false
+symPrefUniVar	block	funcDec	false
+Id	 pref := 	__Semi	 flw := 	__Semi
+FUNCTION	 pref := 	__LPar, __Semi, __empty	 flw := 	__Id
+true33	FUNCTION
+foi true22	FUNCTION	Id	true
+Id	 pref := 	__FUNCTION	 flw := 	__Colon, __LPar
+true33	Id
+foi true22	Id	table: 0x555d65082d50	true
+symPrefUniVar	formalParams	funcHeading	false
+Colon	 pref := 	__Id, __RPar	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	funcHeading	false
+LPar	 pref := 	__Id	 flw := 	__FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	formalParamsSection	formalParams	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	formalParamsSection	formalParams	true
+passou um
+RPar	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__Colon, __RPar, __Semi
+VAR	 pref := 	__LPar, __Semi	 flw := 	__Id
+symPrefUniVar	ids	formalParamsSection	false
+Colon	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Colon	 flw := 	__RPar, __Semi
+symPrefUniVar	procHeading	formalParamsSection	false
+symPrefUniVar	funcHeading	formalParamsSection	false
+BEGIN	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN, __empty	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __WHILE, __WITH
+true33	BEGIN
+foi true22	BEGIN	stmts	true
+symPrefUniVar	stmts	block	true
+passou um
+passou três	stmts	block
+END	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Dot, __ELSE, __END, __Semi, __UNTIL
+symPrefUniVar	stmt	stmts	true
+passou um
+passou três	stmt	stmts
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+symPrefUniVar	stmt	stmts	true
+passou um
+symPrefUniVar	label	stmt	true
+passou um
+passou três	label	stmt
+UniqueFlwVar	label	rule = 	stmt	pref = 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	flw = 	__Colon	rep = 	true
+Colon	 pref := 	__UInt	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UNTIL, __WHILE, __WITH
+true33	Colon
+foi true22	Colon	table: 0x555d650853c0	true
+symPrefUniVar	simpleStmt	stmt	true
+passou um
+symPrefUniVar	structuredStmt	stmt	true
+passou um
+symPrefUniVar	assignStmt	simpleStmt	true
+passou um
+symPrefUniVar	procStmt	simpleStmt	true
+passou um
+symPrefUniVar	gotoStmt	simpleStmt	true
+passou um
+passou três	gotoStmt	simpleStmt
+symPrefUniVar	var	assignStmt	false
+UniqueFlwVar	var	rule = 	assignStmt	pref = 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	flw = 	__Assign	rep = 	nil
+Assign	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+Subset	Assign	rule = 	assignStmt	total = 	2
+symPrefUniVar	expr	assignStmt	false
+Id	 pref := 	__AddOp, __Assign, __BEGIN, __CASE, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __IF, __LBrack, __LPar, __MultOp, __NOT, __REPEAT, __RelOp, __Semi, __Sign, __THEN, __TO, __UNTIL, __WHILE, __WITH	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+LBrack	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	LBrack
+symPrefUniVar	expr	var	false
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	var	false
+RBrack	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Dot	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id
+true33	Dot
+Id	 pref := 	__Dot	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	Id
+Pointer	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	Pointer
+Id	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__ELSE, __END, __LPar, __Semi, __UNTIL
+symPrefUniVar	params	procStmt	false
+LPar	 pref := 	__Id	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __RPar, __Sign, __String, __UNumber
+symPrefUniVar	param	params	true
+passou um
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	param	params	true
+passou um
+RPar	 pref := 	__Id, __LPar, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+symPrefUniVar	expr	param	false
+Colon	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	param	false
+Colon	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	param	true
+passou um
+GOTO	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__UInt
+true33	GOTO
+foi true22	GOTO	label	true
+symPrefUniVar	label	gotoStmt	true
+passou um
+passou três	label	gotoStmt
+symPrefUniVar	block	structuredStmt	false
+symPrefUniVar	conditionalStmt	structuredStmt	true
+passou um
+symPrefUniVar	repetitiveStmt	structuredStmt	true
+passou um
+passou três	repetitiveStmt	structuredStmt
+symPrefUniVar	withStmt	structuredStmt	true
+passou um
+passou três	withStmt	structuredStmt
+symPrefUniVar	ifStmt	conditionalStmt	true
+passou um
+passou três	ifStmt	conditionalStmt
+symPrefUniVar	caseStmt	conditionalStmt	true
+passou um
+IF	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	IF
+foi true22	IF	expr	true
+symPrefUniVar	expr	ifStmt	true
+passou um
+passou três	expr	ifStmt
+THEN	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	THEN
+foi true22	THEN	stmt	true
+symPrefUniVar	stmt	ifStmt	true
+passou um
+passou três	stmt	ifStmt
+ELSE	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	ELSE
+symPrefUniVar	stmt	ifStmt	true
+passou um
+passou três	stmt	ifStmt
+CASE	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	caseStmt	true
+passou um
+OF	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	caseListElement	caseStmt	true
+passou um
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Id, __Sign, __String, __UNumber
+Subset	Semi	rule = 	caseStmt	total = 	19
+symPrefUniVar	caseListElement	caseStmt	true
+passou um
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__END
+Subset	Semi	rule = 	caseStmt	total = 	19
+END	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__ELSE, __END, __Semi, __UNTIL
+symPrefUniVar	consts	caseListElement	false
+Colon	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __WHILE, __WITH
+symPrefUniVar	stmt	caseListElement	true
+passou um
+symPrefUniVar	repeatStmt	repetitiveStmt	true
+passou um
+passou três	repeatStmt	repetitiveStmt
+symPrefUniVar	whileStmt	repetitiveStmt	true
+passou um
+passou três	whileStmt	repetitiveStmt
+symPrefUniVar	forStmt	repetitiveStmt	true
+passou um
+passou três	forStmt	repetitiveStmt
+REPEAT	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__BEGIN, __CASE, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	REPEAT
+foi true22	REPEAT	stmts	true
+symPrefUniVar	stmts	repeatStmt	true
+passou um
+passou três	stmts	repeatStmt
+UNTIL	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __REPEAT, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	UNTIL
+foi true22	UNTIL	expr	true
+symPrefUniVar	expr	repeatStmt	true
+passou um
+passou três	expr	repeatStmt
+WHILE	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	WHILE
+foi true22	WHILE	expr	true
+symPrefUniVar	expr	whileStmt	true
+passou um
+passou três	expr	whileStmt
+DO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+Subset	DO	rule = 	whileStmt	total = 	3
+symPrefUniVar	stmt	whileStmt	false
+FOR	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id
+true33	FOR
+foi true22	FOR	Id	true
+Id	 pref := 	__FOR	 flw := 	__Assign
+true33	Id
+foi true22	Id	Assign	true
+Assign	 pref := 	__Id	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	forStmt	false
+TO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	TO
+foi true22	TO	expr	true
+DOWNTO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	DOWNTO
+foi true22	DOWNTO	expr	true
+symPrefUniVar	expr	forStmt	true
+passou um
+passou três	expr	forStmt
+DO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+Subset	DO	rule = 	forStmt	total = 	3
+symPrefUniVar	stmt	forStmt	false
+WITH	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id
+true33	WITH
+foi true22	WITH	var	true
+symPrefUniVar	var	withStmt	true
+passou um
+passou três	var	withStmt
+UniqueFlwVar	var	rule = 	withStmt	pref = 	__WITH	flw = 	__Comma, __DO	rep = 	nil
+Comma	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id
+symPrefUniVar	var	withStmt	false
+DO	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+symPrefUniVar	stmt	withStmt	false
+symPrefUniVar	simpleExpr	expr	true
+passou um
+RelOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	RelOp
+symPrefUniVar	simpleExpr	expr	true
+passou um
+passou três	simpleExpr	expr
+Sign	 pref := 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __RelOp, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+symPrefUniVar	term	simpleExpr	true
+passou um
+AddOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	AddOp
+symPrefUniVar	term	simpleExpr	true
+passou um
+passou três	term	simpleExpr
+symPrefUniVar	factor	term	true
+passou um
+MultOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	MultOp
+symPrefUniVar	factor	term	true
+passou um
+passou três	factor	term
+NOT	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	NOT
+symPrefUniVar	funcCall	factor	true
+passou um
+symPrefUniVar	var	factor	false
+symPrefUniVar	unsignedConst	factor	true
+passou um
+symPrefUniVar	setConstructor	factor	true
+passou um
+passou três	setConstructor	factor
+LPar	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	factor	false
+RPar	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+UNumber	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+String	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Id	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+NIL	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	NIL
+Id	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__LPar
+symPrefUniVar	params	funcCall	false
+LBrack	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __RBrack, __Sign, __String, __UNumber
+true33	LBrack
+foi true22	LBrack	table: 0x555d6509cfa0	true
+symPrefUniVar	memberDesignator	setConstructor	true
+passou um
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	memberDesignator	setConstructor	true
+passou um
+RBrack	 pref := 	__Id, __LBrack, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Subset	RBrack	rule = 	setConstructor	total = 	3
+symPrefUniVar	expr	memberDesignator	false
+DotDot	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+Subset	DotDot	rule = 	memberDesignator	total = 	2
+symPrefUniVar	expr	memberDesignator	true
+passou um
+unique var 	head
+Unique usage	head
+unique var 	decs
+Unique usage	decs
+unique var 	block
+unique var 	ids
+unique var 	labelDecs
+Unique usage	labelDecs
+unique var 	constDefs
+Unique usage	constDefs
+unique var 	typeDefs
+Unique usage	typeDefs
+unique var 	varDecs
+Unique usage	varDecs
+unique var 	procAndFuncDecs
+Unique usage	procAndFuncDecs
+unique var 	labels
+Unique usage	labels
+unique var 	label
+Unique usage	label
+unique var 	label
+Unique usage	label
+unique var 	constDef
+Unique usage	constDef
+unique var 	constDef
+Unique usage	constDef
+unique var 	const
+unique var 	typeDef
+Unique usage	typeDef
+unique var 	typeDef
+Unique usage	typeDef
+unique var 	type
+unique var2 	newStructuredType
+unique var2 	newPointerType
+unique var2 	unpackedStructuredType
+unique var2 	arrayType
+unique var2 	recordType
+unique var2 	setType
+unique var2 	fileType
+unique var 	ordinalType
+Unique usage	ordinalType
+unique var 	ordinalType
+Unique usage	ordinalType
+unique var 	type
+unique var 	fieldList
+unique var 	ordinalType
+Unique usage	ordinalType
+unique var 	type
+unique var 	varDec
+unique var 	varDec
+unique var 	procDec
+Unique usage	procDec
+unique var 	funcDec
+Unique usage	funcDec
+unique var 	procHeading
+Unique usage	procHeading
+unique var 	decs
+Unique usage	decs
+unique var 	block
+unique var 	formalParams
+Unique usage	formalParams
+unique var 	funcHeading
+Unique usage	funcHeading
+unique var 	decs
+Unique usage	decs
+unique var 	block
+unique var 	formalParams
+Unique usage	formalParams
+unique var 	type
+unique var 	formalParamsSection
+Unique usage	formalParamsSection
+unique var 	formalParamsSection
+Unique usage	formalParamsSection
+unique var 	ids
+unique var 	procHeading
+Unique usage	procHeading
+unique var 	funcHeading
+Unique usage	funcHeading
+unique var 	stmts
+Unique usage	stmts
+unique var 	stmt
+unique var 	stmt
+unique var2 	assignStmt
+unique var2 	gotoStmt
+unique var 	expr
+unique var 	expr
+unique var 	expr
+unique var 	label
+Unique usage	label
+unique var2 	repetitiveStmt
+unique var2 	withStmt
+unique var2 	ifStmt
+unique var 	expr
+unique var 	stmt
+unique var 	stmt
+unique var2 	repeatStmt
+unique var2 	whileStmt
+unique var2 	forStmt
+unique var 	stmts
+Unique usage	stmts
+unique var 	expr
+unique var 	expr
+unique var 	stmt
+unique var 	expr
+unique var 	expr
+unique var 	stmt
+unique var 	var
+unique var 	var
+unique var 	stmt
+unique var 	simpleExpr
+unique var 	term
+unique var 	factor
+unique var2 	setConstructor
+unique var 	memberDesignator
+Unique usage	memberDesignator
+unique var 	memberDesignator
+Unique usage	memberDesignator
+unique var 	expr
+unique var 	expr
+SKIP	 pref := 		 flw := 	__PROGRAM
+true33	SKIP
+foi true22	SKIP	head	true
+symPrefUniVar	head	program	true
+passou um
+passou três	head	program
+UniqueFlwVar	head	rule = 	program	pref = 	__SKIP	flw = 	__BEGIN, __CONST, __FUNCTION, __LABEL, __PROCEDURE, __TYPE, __VAR	rep = 	nil
+symPrefUniVar	decs	program	false
+symPrefUniVar	block	program	false
+UniqueFlwVar	block	rule = 	program	pref = 	__Semi, __empty	flw = 	__Dot	rep = 	nil
+Dot	 pref := 	__END	 flw := 	$
+true33	Dot
+foi true22	Dot	table: 0x555d6506c160	true
+PROGRAM	 pref := 	__SKIP	 flw := 	__Id
+true33	PROGRAM
+foi true22	PROGRAM	Id	true
+Id	 pref := 	__PROGRAM	 flw := 	__LPar, __Semi
+true33	Id
+foi true22	Id	table: 0x555d650737f0	true
+LPar	 pref := 	__Id	 flw := 	__Id
+symPrefUniVar	ids	head	false
+RPar	 pref := 	__Id	 flw := 	__Semi
+Semi	 pref := 	__Id, __RPar	 flw := 	__BEGIN, __CONST, __FUNCTION, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	labelDecs	decs	true
+passou um
+passou três	labelDecs	decs
+symPrefUniVar	constDefs	decs	true
+passou um
+passou três	constDefs	decs
+symPrefUniVar	typeDefs	decs	true
+passou um
+passou três	typeDefs	decs
+symPrefUniVar	varDecs	decs	true
+passou um
+symPrefUniVar	procAndFuncDecs	decs	true
+passou um
+passou três	procAndFuncDecs	decs
+Id	 pref := 	__LPar, __RECORD, __Semi, __VAR	 flw := 	__Colon, __Comma, __RPar
+Comma	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Comma	 flw := 	__Colon, __Comma, __RPar
+LABEL	 pref := 	__Semi	 flw := 	__UInt
+true33	LABEL
+symPrefUniVar	labels	labelDecs	true
+passou um
+passou três	labels	labelDecs
+Semi	 pref := 	__UInt	 flw := 	__BEGIN, __CONST, __FUNCTION, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	label	labels	true
+passou um
+passou três	label	labels
+Comma	 pref := 	__UInt	 flw := 	__UInt
+true33	Comma
+symPrefUniVar	label	labels	true
+passou um
+passou três	label	labels
+UInt	 pref := 	__BEGIN, __Colon, __Comma, __DO, __ELSE, __GOTO, __LABEL, __REPEAT, __Semi, __THEN	 flw := 	__Colon, __Comma, __ELSE, __END, __Semi, __UNTIL
+true33	UInt
+CONST	 pref := 	__Semi, __empty	 flw := 	__Id
+true33	CONST
+symPrefUniVar	constDef	constDefs	true
+passou um
+passou três	constDef	constDefs
+UniqueFlwVar	constDef	rule = 	constDefs	pref = 	__CONST	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	constDef	constDefs	true
+passou um
+Semi	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __TYPE, __VAR
+Id	 pref := 	__CONST, __Semi	 flw := 	__Eq
+Eq	 pref := 	__Id	 flw := 	__Id, __Sign, __String, __UNumber
+Subset	Eq	rule = 	constDef	total = 	2
+symPrefUniVar	const	constDef	false
+Sign	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi	 flw := 	__Id, __UNumber
+UNumber	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi, __Sign	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+Id	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi, __Sign	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+String	 pref := 	__Colon, __Comma, __DotDot, __Eq, __LBrack, __OF, __Semi	 flw := 	__Colon, __Comma, __DotDot, __END, __RBrack, __RPar, __Semi
+TYPE	 pref := 	__Semi, __empty	 flw := 	__Id
+true33	TYPE
+symPrefUniVar	typeDef	typeDefs	true
+passou um
+passou três	typeDef	typeDefs
+UniqueFlwVar	typeDef	rule = 	typeDefs	pref = 	__TYPE	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	typeDef	typeDefs	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE, __VAR
+Id	 pref := 	__Semi, __TYPE	 flw := 	__Eq
+Eq	 pref := 	__Id	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+Subset	Eq	rule = 	typeDef	total = 	2
+symPrefUniVar	type	typeDef	true
+passou um
+passou três	type	typeDef
+symPrefUniVar	newType	type	true
+passou um
+Id	 pref := 	__Colon, __Eq, __OF	 flw := 	__END, __RPar, __Semi
+symPrefUniVar	newOrdinalType	newType	false
+symPrefUniVar	newStructuredType	newType	true
+passou um
+passou três	newStructuredType	newType
+symPrefUniVar	newPointerType	newType	true
+passou um
+passou três	newPointerType	newType
+symPrefUniVar	enumType	newOrdinalType	true
+passou um
+symPrefUniVar	subrangeType	newOrdinalType	true
+passou um
+PACKED	 pref := 	__Colon, __Eq, __OF	 flw := 	__ARRAY, __FILE, __RECORD, __SET
+true33	PACKED
+symPrefUniVar	unpackedStructuredType	newStructuredType	true
+passou um
+passou três	unpackedStructuredType	newStructuredType
+Pointer	 pref := 	__Colon, __Eq, __OF	 flw := 	__Id
+true33	Pointer
+foi true22	Pointer	Id	true
+Id	 pref := 	__Pointer	 flw := 	__END, __RPar, __Semi
+true33	Id
+LPar	 pref := 	__Colon, __Comma, __Eq, __LBrack, __OF	 flw := 	__Id
+symPrefUniVar	ids	enumType	false
+RPar	 pref := 	__Id	 flw := 	__Comma, __END, __RBrack, __RPar, __Semi
+symPrefUniVar	const	subrangeType	false
+DotDot	 pref := 	__Id, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	const	subrangeType	true
+passou um
+symPrefUniVar	arrayType	unpackedStructuredType	true
+passou um
+passou três	arrayType	unpackedStructuredType
+symPrefUniVar	recordType	unpackedStructuredType	true
+passou um
+passou três	recordType	unpackedStructuredType
+symPrefUniVar	setType	unpackedStructuredType	true
+passou um
+passou três	setType	unpackedStructuredType
+symPrefUniVar	fileType	unpackedStructuredType	true
+passou um
+passou três	fileType	unpackedStructuredType
+ARRAY	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__LBrack
+true33	ARRAY
+foi true22	ARRAY	LBrack	true
+LBrack	 pref := 	__ARRAY	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+true33	LBrack
+foi true22	LBrack	ordinalType	true
+symPrefUniVar	ordinalType	arrayType	true
+passou um
+Comma	 pref := 	__Id, __RPar, __String, __UNumber	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+symPrefUniVar	ordinalType	arrayType	true
+passou um
+RBrack	 pref := 	__Id, __RPar, __String, __UNumber	 flw := 	__OF
+OF	 pref := 	__RBrack	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	arrayType	false
+RECORD	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__CASE, __END, __Id
+true33	RECORD
+foi true22	RECORD	fieldList	true
+symPrefUniVar	fieldList	recordType	true
+passou um
+passou três	fieldList	recordType
+END	 pref := 	__END, __Id, __RECORD, __RPar, __Semi, __String, __UNumber, __empty	 flw := 	__END, __RPar, __Semi
+SET	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__OF
+true33	SET
+foi true22	SET	OF	true
+OF	 pref := 	__SET	 flw := 	__Id, __LPar, __Sign, __String, __UNumber
+true33	OF
+foi true22	OF	ordinalType	true
+symPrefUniVar	ordinalType	setType	true
+passou um
+FILE	 pref := 	__Colon, __Eq, __OF, __PACKED	 flw := 	__OF
+true33	FILE
+foi true22	FILE	OF	true
+OF	 pref := 	__FILE	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+true33	OF
+foi true22	OF	type	true
+symPrefUniVar	type	fileType	false
+symPrefUniVar	newOrdinalType	ordinalType	false
+Id	 pref := 	__Comma, __LBrack, __OF	 flw := 	__Comma, __END, __RBrack, __RPar, __Semi
+symPrefUniVar	fixedPart	fieldList	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__CASE
+symPrefUniVar	variantPart	fieldList	true
+passou um
+symPrefUniVar	variantPart	fieldList	true
+passou um
+passou três	variantPart	fieldList
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__END, __RPar
+symPrefUniVar	varDec	fixedPart	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__Id
+symPrefUniVar	varDec	fixedPart	false
+CASE	 pref := 	__LPar, __RECORD, __Semi	 flw := 	__Id
+Id	 pref := 	__CASE	 flw := 	__Colon, __OF
+Colon	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Colon	 flw := 	__OF
+OF	 pref := 	__Id	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	variant	variantPart	true
+passou um
+Semi	 pref := 	__RPar	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	variant	variantPart	true
+passou um
+symPrefUniVar	consts	variant	false
+Colon	 pref := 	__Id, __String, __UNumber	 flw := 	__LPar
+LPar	 pref := 	__Colon	 flw := 	__CASE, __Id, __RPar
+symPrefUniVar	fieldList	variant	true
+passou um
+RPar	 pref := 	__END, __Id, __LPar, __RPar, __Semi, __String, __UNumber, __empty	 flw := 	__END, __RPar, __Semi
+symPrefUniVar	const	consts	false
+Comma	 pref := 	__Id, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	const	consts	false
+VAR	 pref := 	__Semi, __empty	 flw := 	__Id
+symPrefUniVar	varDec	varDecs	true
+passou um
+passou três	varDec	varDecs
+UniqueFlwVar	varDec	rule = 	varDecs	pref = 	__VAR	flw = 	__Semi	rep = 	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE
+symPrefUniVar	varDec	varDecs	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __FUNCTION, __Id, __PROCEDURE
+symPrefUniVar	ids	varDec	false
+Colon	 pref := 	__Id	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	varDec	false
+symPrefUniVar	procDec	procAndFuncDecs	true
+passou um
+passou três	procDec	procAndFuncDecs
+symPrefUniVar	funcDec	procAndFuncDecs	true
+passou um
+passou três	funcDec	procAndFuncDecs
+Semi	 pref := 	__END, __Id	 flw := 	__BEGIN, __FUNCTION, __PROCEDURE
+symPrefUniVar	procHeading	procDec	false
+Semi	 pref := 	__Id, __RPar	 flw := 	__BEGIN, __CONST, __FUNCTION, __Id, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	decs	procDec	false
+symPrefUniVar	block	procDec	false
+Id	 pref := 	__Semi	 flw := 	__Semi
+PROCEDURE	 pref := 	__LPar, __Semi, __empty	 flw := 	__Id
+true33	PROCEDURE
+foi true22	PROCEDURE	Id	true
+Id	 pref := 	__PROCEDURE	 flw := 	__LPar, __RPar, __Semi
+true33	Id
+foi true22	Id	table: 0x555d650d7170	true
+symPrefUniVar	formalParams	procHeading	false
+symPrefUniVar	funcHeading	funcDec	false
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CONST, __FUNCTION, __Id, __LABEL, __PROCEDURE, __TYPE, __VAR
+symPrefUniVar	decs	funcDec	false
+symPrefUniVar	block	funcDec	false
+Id	 pref := 	__Semi	 flw := 	__Semi
+FUNCTION	 pref := 	__LPar, __Semi, __empty	 flw := 	__Id
+true33	FUNCTION
+foi true22	FUNCTION	Id	true
+Id	 pref := 	__FUNCTION	 flw := 	__Colon, __LPar
+true33	Id
+foi true22	Id	table: 0x555d65082d50	true
+symPrefUniVar	formalParams	funcHeading	false
+Colon	 pref := 	__Id, __RPar	 flw := 	__ARRAY, __FILE, __Id, __LPar, __PACKED, __Pointer, __RECORD, __SET, __Sign, __String, __UNumber
+symPrefUniVar	type	funcHeading	false
+LPar	 pref := 	__Id	 flw := 	__FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	formalParamsSection	formalParams	true
+passou um
+Semi	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__FUNCTION, __Id, __PROCEDURE, __VAR
+symPrefUniVar	formalParamsSection	formalParams	true
+passou um
+RPar	 pref := 	__END, __Id, __RPar, __String, __UNumber	 flw := 	__Colon, __RPar, __Semi
+VAR	 pref := 	__LPar, __Semi	 flw := 	__Id
+symPrefUniVar	ids	formalParamsSection	false
+Colon	 pref := 	__Id	 flw := 	__Id
+Id	 pref := 	__Colon	 flw := 	__RPar, __Semi
+symPrefUniVar	procHeading	formalParamsSection	false
+symPrefUniVar	funcHeading	formalParamsSection	false
+BEGIN	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN, __empty	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __WHILE, __WITH
+true33	BEGIN
+foi true22	BEGIN	stmts	true
+symPrefUniVar	stmts	block	true
+passou um
+passou três	stmts	block
+END	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Dot, __ELSE, __END, __Semi, __UNTIL
+symPrefUniVar	stmt	stmts	true
+passou um
+passou três	stmt	stmts
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+symPrefUniVar	stmt	stmts	true
+passou um
+symPrefUniVar	label	stmt	true
+passou um
+passou três	label	stmt
+UniqueFlwVar	label	rule = 	stmt	pref = 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	flw = 	__Colon	rep = 	true
+Colon	 pref := 	__UInt	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UNTIL, __WHILE, __WITH
+true33	Colon
+foi true22	Colon	table: 0x555d650853c0	true
+symPrefUniVar	simpleStmt	stmt	true
+passou um
+symPrefUniVar	structuredStmt	stmt	true
+passou um
+symPrefUniVar	assignStmt	simpleStmt	true
+passou um
+symPrefUniVar	procStmt	simpleStmt	true
+passou um
+symPrefUniVar	gotoStmt	simpleStmt	true
+passou um
+passou três	gotoStmt	simpleStmt
+symPrefUniVar	var	assignStmt	false
+UniqueFlwVar	var	rule = 	assignStmt	pref = 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	flw = 	__Assign	rep = 	nil
+Assign	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+Subset	Assign	rule = 	assignStmt	total = 	2
+symPrefUniVar	expr	assignStmt	false
+Id	 pref := 	__AddOp, __Assign, __BEGIN, __CASE, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __IF, __LBrack, __LPar, __MultOp, __NOT, __REPEAT, __RelOp, __Semi, __Sign, __THEN, __TO, __UNTIL, __WHILE, __WITH	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+LBrack	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	LBrack
+symPrefUniVar	expr	var	false
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	var	false
+RBrack	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Dot	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id
+true33	Dot
+Id	 pref := 	__Dot	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	Id
+Pointer	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__AddOp, __Assign, __Colon, __Comma, __DO, __DOWNTO, __Dot, __DotDot, __ELSE, __END, __LBrack, __MultOp, __OF, __Pointer, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	Pointer
+Id	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__ELSE, __END, __LPar, __Semi, __UNTIL
+symPrefUniVar	params	procStmt	false
+LPar	 pref := 	__Id	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __RPar, __Sign, __String, __UNumber
+symPrefUniVar	param	params	true
+passou um
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	param	params	true
+passou um
+RPar	 pref := 	__Id, __LPar, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+symPrefUniVar	expr	param	false
+Colon	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	param	false
+Colon	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	param	true
+passou um
+GOTO	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__UInt
+true33	GOTO
+foi true22	GOTO	label	true
+symPrefUniVar	label	gotoStmt	true
+passou um
+passou três	label	gotoStmt
+symPrefUniVar	block	structuredStmt	false
+symPrefUniVar	conditionalStmt	structuredStmt	true
+passou um
+symPrefUniVar	repetitiveStmt	structuredStmt	true
+passou um
+passou três	repetitiveStmt	structuredStmt
+symPrefUniVar	withStmt	structuredStmt	true
+passou um
+passou três	withStmt	structuredStmt
+symPrefUniVar	ifStmt	conditionalStmt	true
+passou um
+passou três	ifStmt	conditionalStmt
+symPrefUniVar	caseStmt	conditionalStmt	true
+passou um
+IF	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	IF
+foi true22	IF	expr	true
+symPrefUniVar	expr	ifStmt	true
+passou um
+passou três	expr	ifStmt
+THEN	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	THEN
+foi true22	THEN	stmt	true
+symPrefUniVar	stmt	ifStmt	true
+passou um
+passou três	stmt	ifStmt
+ELSE	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __RPar, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	ELSE
+symPrefUniVar	stmt	ifStmt	true
+passou um
+passou três	stmt	ifStmt
+CASE	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	caseStmt	true
+passou um
+OF	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __Sign, __String, __UNumber
+symPrefUniVar	caseListElement	caseStmt	true
+passou um
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Id, __Sign, __String, __UNumber
+Subset	Semi	rule = 	caseStmt	total = 	19
+symPrefUniVar	caseListElement	caseStmt	true
+passou um
+Semi	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__END
+Subset	Semi	rule = 	caseStmt	total = 	19
+END	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __OF, __Pointer, __RBrack, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__ELSE, __END, __Semi, __UNTIL
+symPrefUniVar	consts	caseListElement	false
+Colon	 pref := 	__Id, __String, __UNumber	 flw := 	__BEGIN, __CASE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __WHILE, __WITH
+symPrefUniVar	stmt	caseListElement	true
+passou um
+symPrefUniVar	repeatStmt	repetitiveStmt	true
+passou um
+passou três	repeatStmt	repetitiveStmt
+symPrefUniVar	whileStmt	repetitiveStmt	true
+passou um
+passou três	whileStmt	repetitiveStmt
+symPrefUniVar	forStmt	repetitiveStmt	true
+passou um
+passou três	forStmt	repetitiveStmt
+REPEAT	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__BEGIN, __CASE, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+true33	REPEAT
+foi true22	REPEAT	stmts	true
+symPrefUniVar	stmts	repeatStmt	true
+passou um
+passou três	stmts	repeatStmt
+UNTIL	 pref := 	__Colon, __DO, __ELSE, __END, __Id, __NIL, __Pointer, __RBrack, __REPEAT, __RPar, __Semi, __String, __THEN, __UInt, __UNumber, __empty	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	UNTIL
+foi true22	UNTIL	expr	true
+symPrefUniVar	expr	repeatStmt	true
+passou um
+passou três	expr	repeatStmt
+WHILE	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	WHILE
+foi true22	WHILE	expr	true
+symPrefUniVar	expr	whileStmt	true
+passou um
+passou três	expr	whileStmt
+DO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+Subset	DO	rule = 	whileStmt	total = 	3
+symPrefUniVar	stmt	whileStmt	false
+FOR	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id
+true33	FOR
+foi true22	FOR	Id	true
+Id	 pref := 	__FOR	 flw := 	__Assign
+true33	Id
+foi true22	Id	Assign	true
+Assign	 pref := 	__Id	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	forStmt	false
+TO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	TO
+foi true22	TO	expr	true
+DOWNTO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	DOWNTO
+foi true22	DOWNTO	expr	true
+symPrefUniVar	expr	forStmt	true
+passou um
+passou três	expr	forStmt
+DO	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+Subset	DO	rule = 	forStmt	total = 	3
+symPrefUniVar	stmt	forStmt	false
+WITH	 pref := 	__BEGIN, __Colon, __DO, __ELSE, __REPEAT, __Semi, __THEN	 flw := 	__Id
+true33	WITH
+foi true22	WITH	var	true
+symPrefUniVar	var	withStmt	true
+passou um
+passou três	var	withStmt
+UniqueFlwVar	var	rule = 	withStmt	pref = 	__WITH	flw = 	__Comma, __DO	rep = 	nil
+Comma	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__Id
+symPrefUniVar	var	withStmt	false
+DO	 pref := 	__Id, __Pointer, __RBrack	 flw := 	__BEGIN, __CASE, __ELSE, __END, __FOR, __GOTO, __IF, __Id, __REPEAT, __Semi, __UInt, __UNTIL, __WHILE, __WITH
+symPrefUniVar	stmt	withStmt	false
+symPrefUniVar	simpleExpr	expr	true
+passou um
+RelOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+true33	RelOp
+symPrefUniVar	simpleExpr	expr	true
+passou um
+passou três	simpleExpr	expr
+Sign	 pref := 	__Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __RelOp, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+symPrefUniVar	term	simpleExpr	true
+passou um
+AddOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	AddOp
+symPrefUniVar	term	simpleExpr	true
+passou um
+passou três	term	simpleExpr
+symPrefUniVar	factor	term	true
+passou um
+MultOp	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	MultOp
+symPrefUniVar	factor	term	true
+passou um
+passou três	factor	term
+NOT	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __String, __UNumber
+true33	NOT
+symPrefUniVar	funcCall	factor	true
+passou um
+symPrefUniVar	var	factor	false
+symPrefUniVar	unsignedConst	factor	true
+passou um
+symPrefUniVar	setConstructor	factor	true
+passou um
+passou três	setConstructor	factor
+LPar	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	expr	factor	false
+RPar	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+UNumber	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+String	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Id	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+NIL	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+true33	NIL
+Id	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__LPar
+symPrefUniVar	params	funcCall	false
+LBrack	 pref := 	__AddOp, __Assign, __CASE, __Colon, __Comma, __DOWNTO, __DotDot, __IF, __LBrack, __LPar, __MultOp, __NOT, __RelOp, __Sign, __TO, __UNTIL, __WHILE	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __RBrack, __Sign, __String, __UNumber
+true33	LBrack
+foi true22	LBrack	table: 0x555d6509cfa0	true
+symPrefUniVar	memberDesignator	setConstructor	true
+passou um
+Comma	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+symPrefUniVar	memberDesignator	setConstructor	true
+passou um
+RBrack	 pref := 	__Id, __LBrack, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__AddOp, __Colon, __Comma, __DO, __DOWNTO, __DotDot, __ELSE, __END, __MultOp, __OF, __RBrack, __RPar, __RelOp, __Semi, __THEN, __TO, __UNTIL
+Subset	RBrack	rule = 	setConstructor	total = 	3
+symPrefUniVar	expr	memberDesignator	false
+DotDot	 pref := 	__Id, __NIL, __Pointer, __RBrack, __RPar, __String, __UNumber	 flw := 	__Id, __LBrack, __LPar, __NIL, __NOT, __Sign, __String, __UNumber
+Subset	DotDot	rule = 	memberDesignator	total = 	2
+symPrefUniVar	expr	memberDesignator	true
+passou um
+unique var 	head
+Unique usage	head
+unique var 	decs
+Unique usage	decs
+unique var 	block
+unique var 	ids
+unique var 	labelDecs
+Unique usage	labelDecs
+unique var 	constDefs
+Unique usage	constDefs
+unique var 	typeDefs
+Unique usage	typeDefs
+unique var 	varDecs
+Unique usage	varDecs
+unique var 	procAndFuncDecs
+Unique usage	procAndFuncDecs
+unique var 	labels
+Unique usage	labels
+unique var 	label
+Unique usage	label
+unique var 	label
+Unique usage	label
+unique var 	constDef
+Unique usage	constDef
+unique var 	constDef
+Unique usage	constDef
+unique var 	const
+unique var 	typeDef
+Unique usage	typeDef
+unique var 	typeDef
+Unique usage	typeDef
+unique var 	type
+unique var2 	newStructuredType
+unique var2 	newPointerType
+unique var2 	unpackedStructuredType
+unique var2 	arrayType
+unique var2 	recordType
+unique var2 	setType
+unique var2 	fileType
+unique var 	ordinalType
+Unique usage	ordinalType
+unique var 	ordinalType
+Unique usage	ordinalType
+unique var 	type
+unique var 	fieldList
+unique var 	ordinalType
+Unique usage	ordinalType
+unique var 	type
+unique var 	varDec
+unique var 	varDec
+unique var 	procDec
+Unique usage	procDec
+unique var 	funcDec
+Unique usage	funcDec
+unique var 	procHeading
+Unique usage	procHeading
+unique var 	decs
+Unique usage	decs
+unique var 	block
+unique var 	formalParams
+Unique usage	formalParams
+unique var 	funcHeading
+Unique usage	funcHeading
+unique var 	decs
+Unique usage	decs
+unique var 	block
+unique var 	formalParams
+Unique usage	formalParams
+unique var 	type
+unique var 	formalParamsSection
+Unique usage	formalParamsSection
+unique var 	formalParamsSection
+Unique usage	formalParamsSection
+unique var 	ids
+unique var 	procHeading
+Unique usage	procHeading
+unique var 	funcHeading
+Unique usage	funcHeading
+unique var 	stmts
+Unique usage	stmts
+unique var 	stmt
+unique var 	stmt
+unique var2 	assignStmt
+unique var2 	gotoStmt
+unique var 	expr
+unique var 	expr
+unique var 	expr
+unique var 	label
+Unique usage	label
+unique var2 	repetitiveStmt
+unique var2 	withStmt
+unique var2 	ifStmt
+unique var 	expr
+unique var 	stmt
+unique var 	stmt
+unique var2 	repeatStmt
+unique var2 	whileStmt
+unique var2 	forStmt
+unique var 	stmts
+Unique usage	stmts
+unique var 	expr
+unique var 	expr
+unique var 	stmt
+unique var 	expr
+unique var 	expr
+unique var 	stmt
+unique var 	var
+unique var 	var
+unique var 	stmt
+unique var 	simpleExpr
+unique var 	term
+unique var 	factor
+unique var2 	setConstructor
+unique var 	memberDesignator
+Unique usage	memberDesignator
+unique var 	memberDesignator
+Unique usage	memberDesignator
+unique var 	expr
+unique var 	expr
+Unique vars: program, head, decs, labelDecs, labels, label, constDefs, constDef, typeDefs, typeDef, ordinalType, varDecs, procAndFuncDecs, procDec, procHeading, funcDec, funcHeading, formalParams, formalParamsSection, stmts, memberDesignator, 
+matchUPath: program, head, decs, labels, label, constDef, typeDef, newStructuredType, newPointerType, unpackedStructuredType, arrayType, recordType, setType, fileType, ordinalType, procDec, procHeading, funcDec, funcHeading, formalParams, formalParamsSection, block, stmts, stmt, assignStmt, gotoStmt, ifStmt, repetitiveStmt, repeatStmt, whileStmt, forStmt, withStmt, setConstructor, memberDesignator, 
+Adding labels: Err_1, Err_2, Err_3, Err_4, Err_5, Err_6, Err_7, Err_8, Err_9, Err_10, Err_11, Err_12, Err_13, Err_14, Err_15, Err_16, Err_17, Err_18, Err_19, Err_20, Err_21, Err_22, Err_23, Err_24, Err_25, Err_26, Err_27, Err_28, Err_29, Err_30, Err_31, Err_32, Err_33, Err_34, Err_35, Err_36, Err_37, Err_38, Err_39, Err_40, Err_41, Err_42, Err_43, Err_44, Err_45, Err_46, Err_47, Err_48, Err_49, Err_50, Err_51, Err_52, Err_53, Err_54, Err_55, Err_56, Err_57, Err_58, Err_59, Err_60, Err_61, Err_62, Err_63, Err_64, Err_65, Err_66, Err_67, Err_68, Err_69, Err_70, Err_71, Err_72, Err_73, Err_74, Err_75, Err_76, Err_77, Err_78, Err_79, Err_80, Err_81, Err_82, Err_83, 
+
+Property 	nil
+program         <-  SKIP head^Err_001 decs block^Err_002 Dot^Err_003 !.
+head            <-  PROGRAM^Err_004 Id^Err_005 (LPar ids^Err_006 RPar^Err_007)? Semi^Err_008
+decs            <-  labelDecs constDefs typeDefs varDecs procAndFuncDecs
+ids             <-  Id (Comma Id)*
+labelDecs       <-  (LABEL labels^Err_009 Semi^Err_010)?
+labels          <-  label^Err_011 (Comma label^Err_012)*
+label           <-  UInt
+constDefs       <-  (CONST constDef^Err_013 Semi^Err_014 (constDef Semi^Err_015)*)?
+constDef        <-  Id Eq^Err_016 const^Err_017
+const           <-  Sign? (UNumber  /  Id)  /  String
+typeDefs        <-  (TYPE typeDef^Err_018 Semi^Err_019 (typeDef Semi^Err_020)*)?
+typeDef         <-  Id Eq^Err_021 type^Err_022
+type            <-  newType  /  Id
+newType         <-  newOrdinalType  /  newStructuredType  /  newPointerType
+newOrdinalType  <-  enumType  /  subrangeType
+newStructuredType <-  PACKED? unpackedStructuredType
+newPointerType  <-  Pointer Id^Err_023
+enumType        <-  LPar ids RPar
+subrangeType    <-  const DotDot const
+unpackedStructuredType <-  arrayType  /  recordType  /  setType  /  fileType
+arrayType       <-  ARRAY LBrack^Err_024 ordinalType^Err_025 (Comma ordinalType^Err_026)* RBrack^Err_027 OF^Err_028 type^Err_029
+recordType      <-  RECORD fieldList END^Err_030
+setType         <-  SET OF^Err_031 ordinalType^Err_032
+fileType        <-  FILE OF^Err_033 type^Err_034
+ordinalType     <-  (newOrdinalType  /  Id)^Err_035
+fieldList       <-  ((fixedPart (Semi variantPart)?  /  variantPart) Semi?)?
+fixedPart       <-  varDec (Semi varDec)*
+variantPart     <-  CASE Id (Colon Id)? OF variant (Semi variant)*
+variant         <-  consts Colon LPar fieldList RPar
+consts          <-  const (Comma const)*
+varDecs         <-  (VAR varDec^Err_036 Semi^Err_037 (varDec Semi^Err_038)*)?
+varDec          <-  ids Colon type
+procAndFuncDecs <-  ((procDec  /  funcDec) Semi^Err_039)*
+procDec         <-  procHeading Semi^Err_040 (decs block  /  Id)^Err_041
+procHeading     <-  PROCEDURE Id^Err_042 formalParams?
+funcDec         <-  funcHeading Semi^Err_043 (decs block  /  Id)^Err_044
+funcHeading     <-  FUNCTION Id^Err_045 formalParams? Colon^Err_046 type^Err_047
+formalParams    <-  LPar formalParamsSection^Err_048 (Semi formalParamsSection^Err_049)* RPar^Err_050
+formalParamsSection <-  (VAR? ids Colon^Err_051 Id^Err_052  /  procHeading  /  funcHeading)^Err_053
+block           <-  BEGIN stmts END^Err_054
+stmts           <-  stmt (Semi stmt)*
+stmt            <-  (label Colon^Err_055)? (simpleStmt  /  structuredStmt)?
+simpleStmt      <-  assignStmt  /  procStmt  /  gotoStmt
+assignStmt      <-  var Assign expr^Err_056
+var             <-  Id (LBrack expr^Err_057 (Comma expr^Err_058)* RBrack^Err_059  /  Dot Id^Err_060  /  Pointer)*
+procStmt        <-  Id params?
+params          <-  LPar (param (Comma param^Err_061)*)? RPar
+param           <-  expr (Colon expr)? (Colon expr)?
+gotoStmt        <-  GOTO label^Err_062
+structuredStmt  <-  block  /  conditionalStmt  /  repetitiveStmt  /  withStmt
+conditionalStmt <-  ifStmt  /  caseStmt
+ifStmt          <-  IF expr^Err_063 THEN^Err_064 stmt (ELSE stmt)?
+caseStmt        <-  CASE expr OF caseListElement (Semi caseListElement)* Semi? END
+caseListElement <-  consts Colon stmt
+repetitiveStmt  <-  repeatStmt  /  whileStmt  /  forStmt
+repeatStmt      <-  REPEAT stmts UNTIL^Err_065 expr^Err_066
+whileStmt       <-  WHILE expr^Err_067 DO^Err_068 stmt
+forStmt         <-  FOR Id^Err_069 Assign^Err_070 expr^Err_071 (TO  /  DOWNTO)^Err_072 expr^Err_073 DO^Err_074 stmt
+withStmt        <-  WITH var^Err_075 (Comma var^Err_076)* DO^Err_077 stmt
+expr            <-  simpleExpr (RelOp simpleExpr^Err_078)?
+simpleExpr      <-  Sign? term (AddOp term^Err_079)*
+term            <-  factor (MultOp factor^Err_080)*
+factor          <-  NOT* (funcCall  /  var  /  unsignedConst  /  setConstructor  /  LPar expr RPar)
+unsignedConst   <-  UNumber  /  String  /  Id  /  NIL
+funcCall        <-  Id params
+setConstructor  <-  LBrack (memberDesignator (Comma memberDesignator^Err_081)*)? RBrack^Err_082
+memberDesignator <-  expr (DotDot expr^Err_083)?
+AddOp           <-  '+'  /  '-'  /  OR
+Assign          <-  ':='
+Dot             <-  '.'
+DotDot          <-  '..'
+CloseComment    <-  '*)'  /  '}'
+Colon           <-  ':'
+Comma           <-  ','
+COMMENT         <-  OpenComment (!CloseComment .)* CloseComment
+Eq              <-  '='
+BodyId          <-  [a-zA-Z0-9]
+Id              <-  !Reserved [a-zA-Z] [a-zA-Z0-9]*
+LBrack          <-  '['
+LPar            <-  '('
+MultOp          <-  '*'  /  '/'  /  DIV  /  MOD  /  AND
+OpenComment     <-  '(*'  /  '{'
+Pointer         <-  '^'
+RBrack          <-  ']'
+RelOp           <-  '<='  /  '='  /  '<>'  /  '>='  /  '>'  /  '<'  /  IN
+RPar            <-  ')'
+Semi            <-  ';'
+Sign            <-  '+'  /  '-'
+String          <-  "'" (!"'" .)* "'"
+UInt            <-  [0-9]+
+UNumber         <-  UReal  /  UInt
+UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
+Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
+AND             <-  [Aa] [Nn] [Dd] !BodyId
+ARRAY           <-  [Aa] [Rr] [Rr] [Aa] [Yy] !BodyId
+BEGIN           <-  [Bb] [Ee] [Gg] [Ii] [Nn] !BodyId
+CASE            <-  [Cc] [Aa] [Ss] [Ee] !BodyId
+CONST           <-  [Cc] [Oo] [Nn] [Ss] [Tt] !BodyId
+DIV             <-  [Dd] [Ii] [Vv] !BodyId
+DO              <-  [Dd] [Oo] !BodyId
+DOWNTO          <-  [Dd] [Oo] [Ww] [Nn] [Tt] [Oo] !BodyId
+ELSE            <-  [Ee] [Ll] [Ss] [Ee] !BodyId
+END             <-  [Ee] [Nn] [Dd] !BodyId
+FILE            <-  [Ff] [Ii] [Ll] [Ee] !BodyId
+FOR             <-  [Ff] [Oo] [Rr] !BodyId
+FUNCTION        <-  [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn] !BodyId
+GOTO            <-  [Gg] [Oo] [Tt] [Oo] !BodyId
+IF              <-  [Ii] [Ff] !BodyId
+IN              <-  [Ii] [Nn] !BodyId
+LABEL           <-  [Ll] [Aa] [Bb] [Ee] [Ll] !BodyId
+MOD             <-  [Mm] [Oo] [Dd] !BodyId
+NIL             <-  [Nn] [Ii] [Ll] !BodyId
+NOT             <-  [Nn] [Oo] [Tt] !BodyId
+OF              <-  [Oo] [Ff] !BodyId
+OR              <-  [Oo] [Rr] !BodyId
+PACKED          <-  [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] !BodyId
+PROCEDURE       <-  [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
+PROGRAM         <-  [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] !BodyId
+RECORD          <-  [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] !BodyId
+REPEAT          <-  [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] !BodyId
+SET             <-  [Ss] [Ee] [Tt] !BodyId
+THEN            <-  [Tt] [Hh] [Ee] [Nn] !BodyId
+TO              <-  [Tt] [Oo] !BodyId
+TYPE            <-  [Tt] [Yy] [Pp] [Ee] !BodyId
+UNTIL           <-  [Uu] [Nn] [Tt] [Ii] [Ll] !BodyId
+VAR             <-  [Vv] [Aa] [Rr] !BodyId
+WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
+WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
+SPACE           <-  [ 	
+]  /  COMMENT
+SKIP            <-  ([ 	
+]  /  COMMENT)*
+Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_002         <-  (!Dot EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!Id EatToken)*
+Err_005         <-  (!(Semi  /  LPar) EatToken)*
+Err_006         <-  (!RPar EatToken)*
+Err_007         <-  (!Semi EatToken)*
+Err_008         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_009         <-  (!Semi EatToken)*
+Err_010         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_011         <-  (!(Semi  /  Comma) EatToken)*
+Err_012         <-  (!(Semi  /  Comma) EatToken)*
+Err_013         <-  (!Semi EatToken)*
+Err_014         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_015         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_016         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
+Err_017         <-  (!Semi EatToken)*
+Err_018         <-  (!Semi EatToken)*
+Err_019         <-  (!(VAR  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_020         <-  (!(VAR  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_021         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_022         <-  (!Semi EatToken)*
+Err_023         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_024         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
+Err_025         <-  (!(RBrack  /  Comma) EatToken)*
+Err_026         <-  (!(RBrack  /  Comma) EatToken)*
+Err_027         <-  (!OF EatToken)*
+Err_028         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_029         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_030         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_031         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
+Err_032         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_033         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_034         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_035         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
+Err_036         <-  (!Semi EatToken)*
+Err_037         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_038         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_039         <-  (!(PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
+Err_040         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_041         <-  (!Semi EatToken)*
+Err_042         <-  (!(Semi  /  RPar  /  LPar) EatToken)*
+Err_043         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_044         <-  (!Semi EatToken)*
+Err_045         <-  (!(LPar  /  Colon) EatToken)*
+Err_046         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_047         <-  (!(Semi  /  RPar) EatToken)*
+Err_048         <-  (!(Semi  /  RPar) EatToken)*
+Err_049         <-  (!(Semi  /  RPar) EatToken)*
+Err_050         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
+Err_051         <-  (!Id EatToken)*
+Err_052         <-  (!(Semi  /  RPar) EatToken)*
+Err_053         <-  (!(Semi  /  RPar) EatToken)*
+Err_054         <-  (!(UNTIL  /  Semi  /  END  /  ELSE  /  Dot) EatToken)*
+Err_055         <-  (!(WITH  /  WHILE  /  UNTIL  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_056         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_057         <-  (!(RBrack  /  Comma) EatToken)*
+Err_058         <-  (!(RBrack  /  Comma) EatToken)*
+Err_059         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  Pointer  /  OF  /  MultOp  /  LBrack  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
+Err_060         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  Pointer  /  OF  /  MultOp  /  LBrack  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
+Err_061         <-  (!(RPar  /  Comma) EatToken)*
+Err_062         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_063         <-  (!THEN EatToken)*
+Err_064         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_065         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_066         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_067         <-  (!DO EatToken)*
+Err_068         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_069         <-  (!Assign EatToken)*
+Err_070         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_071         <-  (!(TO  /  DOWNTO) EatToken)*
+Err_072         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_073         <-  (!DO EatToken)*
+Err_074         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_075         <-  (!(DO  /  Comma) EatToken)*
+Err_076         <-  (!(DO  /  Comma) EatToken)*
+Err_077         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_078         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
+Err_079         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_080         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_081         <-  (!(RBrack  /  Comma) EatToken)*
+Err_082         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_083         <-  (!(RBrack  /  Comma) EatToken)*	
+
+Property 	unique
+program         <-  SKIP_unique head_unique^Err_001 decs_unique block_unique^Err_002 Dot_unique^Err_003 !.
+head            <-  PROGRAM_unique^Err_004 Id_unique^Err_005 (LPar_unique ids_unique^Err_006 RPar_unique^Err_007)?_unique Semi_unique^Err_008
+decs            <-  labelDecs_unique constDefs_unique typeDefs_unique varDecs_unique procAndFuncDecs_unique
+ids             <-  Id (Comma Id)*
+labelDecs       <-  (LABEL_unique labels_unique^Err_009 Semi_unique^Err_010)?_unique
+labels          <-  label_unique^Err_011 (Comma_unique label_unique^Err_012)*_unique
+label           <-  UInt_unique
+constDefs       <-  (CONST_unique constDef_unique^Err_013 Semi_unique^Err_014 (constDef_unique Semi_unique^Err_015)*_unique)?_unique
+constDef        <-  Id_unique Eq_unique^Err_016 const_unique^Err_017
+const           <-  Sign? (UNumber  /  Id)  /  String
+typeDefs        <-  (TYPE_unique typeDef_unique^Err_018 Semi_unique^Err_019 (typeDef_unique Semi_unique^Err_020)*_unique)?_unique
+typeDef         <-  Id_unique Eq_unique^Err_021 type_unique^Err_022
+type            <-  newType  /  Id
+newType         <-  newOrdinalType  /  (newStructuredType_unique  /  newPointerType_unique)_unique
+newOrdinalType  <-  enumType  /  subrangeType
+newStructuredType <-  PACKED_unique? unpackedStructuredType_unique
+newPointerType  <-  Pointer_unique Id_unique^Err_023
+enumType        <-  LPar ids RPar
+subrangeType    <-  const DotDot const
+unpackedStructuredType <-  (arrayType_unique  /  (recordType_unique  /  (setType_unique  /  fileType_unique)_unique)_unique)_unique
+arrayType       <-  ARRAY_unique LBrack_unique^Err_024 ordinalType_unique^Err_025 (Comma_unique ordinalType_unique^Err_026)*_unique RBrack_unique^Err_027 OF_unique^Err_028 type_unique^Err_029
+recordType      <-  RECORD_unique fieldList_unique END_unique^Err_030
+setType         <-  SET_unique OF_unique^Err_031 ordinalType_unique^Err_032
+fileType        <-  FILE_unique OF_unique^Err_033 type_unique^Err_034
+ordinalType     <-  ((newOrdinalType  /  Id_unique)_unique)^Err_035
+fieldList       <-  ((fixedPart (Semi variantPart)?  /  variantPart_unique) Semi?)?
+fixedPart       <-  varDec (Semi varDec)*
+variantPart     <-  CASE Id (Colon Id)? OF variant (Semi variant)*
+variant         <-  consts Colon LPar fieldList RPar
+consts          <-  const (Comma const)*
+varDecs         <-  (VAR_unique varDec_unique^Err_036 Semi_unique^Err_037 (varDec_unique Semi_unique^Err_038)*_unique)?_unique
+varDec          <-  ids Colon type
+procAndFuncDecs <-  (((procDec_unique  /  funcDec_unique)_unique) Semi_unique^Err_039)*_unique
+procDec         <-  procHeading_unique Semi_unique^Err_040 ((decs_unique block_unique  /  Id_unique)_unique)^Err_041
+procHeading     <-  PROCEDURE_unique Id_unique^Err_042 formalParams_unique?_unique
+funcDec         <-  funcHeading_unique Semi_unique^Err_043 ((decs_unique block_unique  /  Id_unique)_unique)^Err_044
+funcHeading     <-  FUNCTION_unique Id_unique^Err_045 formalParams_unique?_unique Colon_unique^Err_046 type_unique^Err_047
+formalParams    <-  LPar_unique formalParamsSection_unique^Err_048 (Semi_unique formalParamsSection_unique^Err_049)*_unique RPar_unique^Err_050
+formalParamsSection <-  ((VAR_unique?_unique ids_unique Colon_unique^Err_051 Id_unique^Err_052  /  (procHeading_unique  /  funcHeading_unique)_unique)_unique)^Err_053
+block           <-  BEGIN_unique stmts_unique END_unique^Err_054
+stmts           <-  stmt_unique (Semi_unique stmt_unique)*_unique
+stmt            <-  (label_unique Colon_unique^Err_055)? (simpleStmt  /  structuredStmt)?_unique
+simpleStmt      <-  assignStmt_unique  /  procStmt  /  gotoStmt_unique
+assignStmt      <-  var Assign_unique expr_unique^Err_056
+var             <-  Id ((LBrack_unique expr_unique^Err_057 (Comma_unique expr_unique^Err_058)*_unique RBrack_unique^Err_059  /  (Dot_unique Id_unique^Err_060  /  Pointer_unique)_unique)_unique)*
+procStmt        <-  Id params?
+params          <-  LPar (param (Comma param^Err_061)*)? RPar
+param           <-  expr (Colon expr)? (Colon expr)?
+gotoStmt        <-  GOTO_unique label_unique^Err_062
+structuredStmt  <-  block  /  conditionalStmt  /  (repetitiveStmt_unique  /  withStmt_unique)_unique
+conditionalStmt <-  ifStmt_unique  /  caseStmt
+ifStmt          <-  IF_unique expr_unique^Err_063 THEN_unique^Err_064 stmt_unique (ELSE_unique stmt_unique)?_unique
+caseStmt        <-  CASE expr OF caseListElement (Semi caseListElement)* Semi? END
+caseListElement <-  consts Colon stmt
+repetitiveStmt  <-  (repeatStmt_unique  /  (whileStmt_unique  /  forStmt_unique)_unique)_unique
+repeatStmt      <-  REPEAT_unique stmts_unique UNTIL_unique^Err_065 expr_unique^Err_066
+whileStmt       <-  WHILE_unique expr_unique^Err_067 DO_unique^Err_068 stmt_unique
+forStmt         <-  FOR_unique Id_unique^Err_069 Assign_unique^Err_070 expr_unique^Err_071 ((TO_unique  /  DOWNTO_unique)_unique)^Err_072 expr_unique^Err_073 DO_unique^Err_074 stmt_unique
+withStmt        <-  WITH_unique var_unique^Err_075 (Comma_unique var_unique^Err_076)*_unique DO_unique^Err_077 stmt_unique
+expr            <-  simpleExpr (RelOp_unique simpleExpr_unique^Err_078)?
+simpleExpr      <-  Sign? term (AddOp_unique term_unique^Err_079)*
+term            <-  factor (MultOp_unique factor_unique^Err_080)*
+factor          <-  NOT_unique* (funcCall  /  var  /  unsignedConst  /  setConstructor_unique  /  LPar expr RPar)
+unsignedConst   <-  UNumber  /  String  /  Id  /  NIL_unique
+funcCall        <-  Id params
+setConstructor  <-  LBrack_unique (memberDesignator_unique (Comma_unique memberDesignator_unique^Err_081)*_unique)?_unique RBrack_unique^Err_082
+memberDesignator <-  expr_unique (DotDot_unique expr_unique^Err_083)?_unique
+AddOp           <-  '+'  /  '-'  /  OR
+Assign          <-  ':='
+Dot             <-  '.'
+DotDot          <-  '..'
+CloseComment    <-  '*)'  /  '}'
+Colon           <-  ':'
+Comma           <-  ','
+COMMENT         <-  OpenComment (!CloseComment .)* CloseComment
+Eq              <-  '='
+BodyId          <-  [a-zA-Z0-9]
+Id              <-  !Reserved [a-zA-Z] [a-zA-Z0-9]*
+LBrack          <-  '['
+LPar            <-  '('
+MultOp          <-  '*'  /  '/'  /  DIV  /  MOD  /  AND
+OpenComment     <-  '(*'  /  '{'
+Pointer         <-  '^'
+RBrack          <-  ']'
+RelOp           <-  '<='  /  '='  /  '<>'  /  '>='  /  '>'  /  '<'  /  IN
+RPar            <-  ')'
+Semi            <-  ';'
+Sign            <-  '+'  /  '-'
+String          <-  "'" (!"'" .)* "'"
+UInt            <-  [0-9]+
+UNumber         <-  UReal  /  UInt
+UReal           <-  [0-9]+ ('.' [0-9]+ ([Ee] ('+'  /  '-') [0-9]+)?  /  [Ee] ('+'  /  '-') [0-9]+)
+Reserved        <-  AND  /  ARRAY  /  BEGIN  /  CONST  /  CASE  /  DIV  /  DO  /  DOWNTO  /  ELSE  /  END  /  FILE  /  FOR  /  FUNCTION  /  GOTO  /  IF  /  IN  /  LABEL  /  MOD  /  NIL  /  NOT  /  OF  /  OR  /  PACKED  /  PROCEDURE  /  PROGRAM  /  RECORD  /  REPEAT  /  SET  /  THEN  /  TO  /  TYPE  /  UNTIL  /  VAR  /  WHILE  /  WITH
+AND             <-  [Aa] [Nn] [Dd] !BodyId
+ARRAY           <-  [Aa] [Rr] [Rr] [Aa] [Yy] !BodyId
+BEGIN           <-  [Bb] [Ee] [Gg] [Ii] [Nn] !BodyId
+CASE            <-  [Cc] [Aa] [Ss] [Ee] !BodyId
+CONST           <-  [Cc] [Oo] [Nn] [Ss] [Tt] !BodyId
+DIV             <-  [Dd] [Ii] [Vv] !BodyId
+DO              <-  [Dd] [Oo] !BodyId
+DOWNTO          <-  [Dd] [Oo] [Ww] [Nn] [Tt] [Oo] !BodyId
+ELSE            <-  [Ee] [Ll] [Ss] [Ee] !BodyId
+END             <-  [Ee] [Nn] [Dd] !BodyId
+FILE            <-  [Ff] [Ii] [Ll] [Ee] !BodyId
+FOR             <-  [Ff] [Oo] [Rr] !BodyId
+FUNCTION        <-  [Ff] [Uu] [Nn] [Cc] [Tt] [Ii] [Oo] [Nn] !BodyId
+GOTO            <-  [Gg] [Oo] [Tt] [Oo] !BodyId
+IF              <-  [Ii] [Ff] !BodyId
+IN              <-  [Ii] [Nn] !BodyId
+LABEL           <-  [Ll] [Aa] [Bb] [Ee] [Ll] !BodyId
+MOD             <-  [Mm] [Oo] [Dd] !BodyId
+NIL             <-  [Nn] [Ii] [Ll] !BodyId
+NOT             <-  [Nn] [Oo] [Tt] !BodyId
+OF              <-  [Oo] [Ff] !BodyId
+OR              <-  [Oo] [Rr] !BodyId
+PACKED          <-  [Pp] [Aa] [Cc] [Kk] [Ee] [Dd] !BodyId
+PROCEDURE       <-  [Pp] [Rr] [Oo] [Cc] [Ee] [Dd] [Uu] [Rr] [Ee] !BodyId
+PROGRAM         <-  [Pp] [Rr] [Oo] [Gg] [Rr] [Aa] [Mm] !BodyId
+RECORD          <-  [Rr] [Ee] [Cc] [Oo] [Rr] [Dd] !BodyId
+REPEAT          <-  [Rr] [Ee] [Pp] [Ee] [Aa] [Tt] !BodyId
+SET             <-  [Ss] [Ee] [Tt] !BodyId
+THEN            <-  [Tt] [Hh] [Ee] [Nn] !BodyId
+TO              <-  [Tt] [Oo] !BodyId
+TYPE            <-  [Tt] [Yy] [Pp] [Ee] !BodyId
+UNTIL           <-  [Uu] [Nn] [Tt] [Ii] [Ll] !BodyId
+VAR             <-  [Vv] [Aa] [Rr] !BodyId
+WHILE           <-  [Ww] [Hh] [Ii] [Ll] [Ee] !BodyId
+WITH            <-  [Ww] [Ii] [Tt] [Hh] !BodyId
+SPACE           <-  [ 	
+]  /  COMMENT
+SKIP            <-  ([ 	
+]  /  COMMENT)*
+Token           <-  WITH  /  WHILE  /  VAR  /  UReal  /  UNumber  /  UNTIL  /  UInt  /  TYPE  /  TO  /  THEN  /  String  /  Sign  /  Semi  /  SET  /  Reserved  /  RelOp  /  RPar  /  REPEAT  /  RECORD  /  RBrack  /  Pointer  /  PROGRAM  /  PROCEDURE  /  PACKED  /  OpenComment  /  OR  /  OF  /  NOT  /  NIL  /  MultOp  /  MOD  /  LPar  /  LBrack  /  LABEL  /  Id  /  IN  /  IF  /  GOTO  /  FUNCTION  /  FOR  /  FILE  /  Eq  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  DIV  /  Comma  /  Colon  /  CloseComment  /  CONST  /  COMMENT  /  CASE  /  BodyId  /  BEGIN  /  Assign  /  AddOp  /  ARRAY  /  AND
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_002         <-  (!Dot EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!Id EatToken)*
+Err_005         <-  (!(Semi  /  LPar) EatToken)*
+Err_006         <-  (!RPar EatToken)*
+Err_007         <-  (!Semi EatToken)*
+Err_008         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_009         <-  (!Semi EatToken)*
+Err_010         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_011         <-  (!(Semi  /  Comma) EatToken)*
+Err_012         <-  (!(Semi  /  Comma) EatToken)*
+Err_013         <-  (!Semi EatToken)*
+Err_014         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_015         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_016         <-  (!(UNumber  /  String  /  Sign  /  Id) EatToken)*
+Err_017         <-  (!Semi EatToken)*
+Err_018         <-  (!Semi EatToken)*
+Err_019         <-  (!(VAR  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_020         <-  (!(VAR  /  PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_021         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_022         <-  (!Semi EatToken)*
+Err_023         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_024         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
+Err_025         <-  (!(RBrack  /  Comma) EatToken)*
+Err_026         <-  (!(RBrack  /  Comma) EatToken)*
+Err_027         <-  (!OF EatToken)*
+Err_028         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_029         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_030         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_031         <-  (!(UNumber  /  String  /  Sign  /  LPar  /  Id) EatToken)*
+Err_032         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_033         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_034         <-  (!(Semi  /  RPar  /  END) EatToken)*
+Err_035         <-  (!(Semi  /  RPar  /  RBrack  /  END  /  Comma) EatToken)*
+Err_036         <-  (!Semi EatToken)*
+Err_037         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_038         <-  (!(PROCEDURE  /  Id  /  FUNCTION  /  BEGIN) EatToken)*
+Err_039         <-  (!(PROCEDURE  /  FUNCTION  /  BEGIN) EatToken)*
+Err_040         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_041         <-  (!Semi EatToken)*
+Err_042         <-  (!(Semi  /  RPar  /  LPar) EatToken)*
+Err_043         <-  (!(VAR  /  TYPE  /  PROCEDURE  /  LABEL  /  Id  /  FUNCTION  /  CONST  /  BEGIN) EatToken)*
+Err_044         <-  (!Semi EatToken)*
+Err_045         <-  (!(LPar  /  Colon) EatToken)*
+Err_046         <-  (!(UNumber  /  String  /  Sign  /  SET  /  RECORD  /  Pointer  /  PACKED  /  LPar  /  Id  /  FILE  /  ARRAY) EatToken)*
+Err_047         <-  (!(Semi  /  RPar) EatToken)*
+Err_048         <-  (!(Semi  /  RPar) EatToken)*
+Err_049         <-  (!(Semi  /  RPar) EatToken)*
+Err_050         <-  (!(Semi  /  RPar  /  Colon) EatToken)*
+Err_051         <-  (!Id EatToken)*
+Err_052         <-  (!(Semi  /  RPar) EatToken)*
+Err_053         <-  (!(Semi  /  RPar) EatToken)*
+Err_054         <-  (!(UNTIL  /  Semi  /  END  /  ELSE  /  Dot) EatToken)*
+Err_055         <-  (!(WITH  /  WHILE  /  UNTIL  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_056         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_057         <-  (!(RBrack  /  Comma) EatToken)*
+Err_058         <-  (!(RBrack  /  Comma) EatToken)*
+Err_059         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  Pointer  /  OF  /  MultOp  /  LBrack  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
+Err_060         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  Pointer  /  OF  /  MultOp  /  LBrack  /  END  /  ELSE  /  DotDot  /  Dot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  Assign  /  AddOp) EatToken)*
+Err_061         <-  (!(RPar  /  Comma) EatToken)*
+Err_062         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_063         <-  (!THEN EatToken)*
+Err_064         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_065         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_066         <-  (!(UNTIL  /  Semi  /  END  /  ELSE) EatToken)*
+Err_067         <-  (!DO EatToken)*
+Err_068         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_069         <-  (!Assign EatToken)*
+Err_070         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_071         <-  (!(TO  /  DOWNTO) EatToken)*
+Err_072         <-  (!(UNumber  /  String  /  Sign  /  NOT  /  NIL  /  LPar  /  LBrack  /  Id) EatToken)*
+Err_073         <-  (!DO EatToken)*
+Err_074         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_075         <-  (!(DO  /  Comma) EatToken)*
+Err_076         <-  (!(DO  /  Comma) EatToken)*
+Err_077         <-  (!(WITH  /  WHILE  /  UNTIL  /  UInt  /  Semi  /  REPEAT  /  Id  /  IF  /  GOTO  /  FOR  /  END  /  ELSE  /  CASE  /  BEGIN) EatToken)*
+Err_078         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon) EatToken)*
+Err_079         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_080         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_081         <-  (!(RBrack  /  Comma) EatToken)*
+Err_082         <-  (!(UNTIL  /  TO  /  THEN  /  Semi  /  RelOp  /  RPar  /  RBrack  /  OF  /  MultOp  /  END  /  ELSE  /  DotDot  /  DOWNTO  /  DO  /  Comma  /  Colon  /  AddOp) EatToken)*
+Err_083         <-  (!(RBrack  /  Comma) EatToken)*	
+
+End UPath
+
+Yes: 	HelloWorld.pas
+Yes: 	PlayingWithDice.pas
+Yes: 	Teste.pas
+Yes: 	aprovado.pas
+Yes: 	bubble.pas
+Yes: 	cubo.pas
+Yes: 	gasolina.pas
+Yes: 	maior.pas
+Yes: 	operators.pas
+Yes: 	posneg.pas
+Yes: 	quadrado.pas
+Yes: 	quick.pas
+Yes: 	retangulo.pas
+Yes: 	sched.pas
+Yes: 	somaEProduto.pas
+Yes: 	somaParImpar.pas
+Yes: 	triangulo.pas
+No: 	AssignErr.pas
+r = nil lab = fail line: 4 col: 8
+No: 	BeginErr.pas
+r = nil lab = fail line: 4 col: 1
+No: 	ColonErr1.pas
+r = nil lab = fail line: 4 col: 33
+No: 	ColonErr2.pas
+r = nil lab = fail line: 4 col: 7
+No: 	ColonErr3.pas
+r = nil lab = fail line: 3 col: 12
+No: 	ColonErr4.pas
+r = nil lab = fail line: 3 col: 15
+No: 	ColonErr5.pas
+r = nil lab = fail line: 4 col: 4
+No: 	ColonErr6.pas
+r = nil lab = fail line: 5 col: 5
+No: 	ConstErr1.pas
+r = nil lab = fail line: 4 col: 7
+No: 	ConstErr2.pas
+r = nil lab = fail line: 4 col: 13
+No: 	ConstErr3.pas
+r = nil lab = fail line: 4 col: 31
+No: 	ConstErr4.pas
+r = nil lab = fail line: 4 col: 34
+No: 	ConstErr5.pas
+r = nil lab = fail line: 5 col: 3
+No: 	DoErr1.pas
+r = nil lab = fail line: 5 col: 1
+No: 	DoErr2.pas
+r = nil lab = fail line: 5 col: 1
+No: 	DoErr3.pas
+r = nil lab = fail line: 4 col: 9
+No: 	DotErr.pas
+r = nil lab = fail line: 5 col: 3
+No: 	EndErr1.pas
+r = nil lab = fail line: 4 col: 27
+No: 	EndErr2.pas
+r = nil lab = fail line: 5 col: 4
+No: 	EndErr3.pas
+r = nil lab = fail line: 6 col: 5
+No: 	EndInputErr.pas
+r = nil lab = fail line: 7 col: 1
+No: 	EqErr1.pas
+r = nil lab = fail line: 4 col: 4
+No: 	EqErr2.pas
+r = nil lab = fail line: 4 col: 4
+No: 	ExprErr1.pas
+r = nil lab = fail line: 4 col: 7
+No: 	ExprErr10.pas
+r = nil lab = fail line: 4 col: 20
+No: 	ExprErr11.pas
+r = nil lab = fail line: 4 col: 12
+No: 	ExprErr12.pas
+r = nil lab = fail line: 4 col: 11
+No: 	ExprErr13.pas
+r = nil lab = fail line: 4 col: 15
+No: 	ExprErr2.pas
+r = nil lab = fail line: 4 col: 4
+No: 	ExprErr3.pas
+r = nil lab = fail line: 4 col: 7
+No: 	ExprErr4.pas
+r = nil lab = fail line: 4 col: 12
+No: 	ExprErr5.pas
+r = nil lab = fail line: 4 col: 5
+No: 	ExprErr6.pas
+r = nil lab = fail line: 4 col: 7
+No: 	ExprErr7.pas
+r = nil lab = fail line: 6 col: 8
+No: 	ExprErr8.pas
+r = nil lab = fail line: 4 col: 8
+No: 	ExprErr9.pas
+r = nil lab = fail line: 4 col: 11
+No: 	FactorErr.pas
+r = nil lab = fail line: 4 col: 11
+No: 	FormalParamErr1.pas
+r = nil lab = fail line: 3 col: 13
+No: 	FormalParamErr2.pas
+r = nil lab = fail line: 3 col: 23
+No: 	FuncBodyErr.pas
+r = nil lab = fail line: 4 col: 4
+No: 	IdErr1.pas
+r = nil lab = fail line: 1 col: 22
+No: 	IdErr10.pas
+r = nil lab = fail line: 3 col: 17
+No: 	IdErr11.pas
+r = nil lab = fail line: 4 col: 4
+No: 	IdErr12.pas
+r = nil lab = fail line: 4 col: 6
+No: 	IdErr2.pas
+r = nil lab = fail line: 4 col: 2
+No: 	IdErr3.pas
+r = nil lab = fail line: 4 col: 2
+No: 	IdErr4.pas
+r = nil lab = fail line: 4 col: 7
+No: 	IdErr5.pas
+r = nil lab = fail line: 4 col: 11
+No: 	IdErr6.pas
+r = nil lab = fail line: 4 col: 22
+No: 	IdErr7.pas
+r = nil lab = fail line: 4 col: 26
+No: 	IdErr8.pas
+r = nil lab = fail line: 3 col: 11
+No: 	IdErr9.pas
+r = nil lab = fail line: 3 col: 10
+No: 	LBrackErr.pas
+r = nil lab = fail line: 4 col: 12
+No: 	LParErr.pas
+r = nil lab = fail line: 7 col: 12
+No: 	LabelErr1.pas
+r = nil lab = fail line: 4 col: 2
+No: 	LabelErr2.pas
+r = nil lab = fail line: 4 col: 5
+No: 	LabelErr3.pas
+r = nil lab = fail line: 4 col: 7
+No: 	OfErr1.pas
+r = nil lab = fail line: 4 col: 19
+No: 	OfErr2.pas
+r = nil lab = fail line: 4 col: 10
+No: 	OfErr3.pas
+r = nil lab = fail line: 4 col: 11
+No: 	OfErr4.pas
+r = nil lab = fail line: 4 col: 29
+No: 	OfErr5.pas
+r = nil lab = fail line: 4 col: 11
+No: 	OrdinalTypeErr1.pas
+r = nil lab = fail line: 4 col: 13
+No: 	OrdinalTypeErr2.pas
+r = nil lab = fail line: 4 col: 19
+No: 	OrdinalTypeErr3.pas
+r = nil lab = fail line: 4 col: 14
+No: 	ProcBodyErr.pas
+r = nil lab = fail line: 4 col: 4
+No: 	ProgErr.pas
+r = nil lab = fail line: 1 col: 5
+No: 	ProgNameErr.pas
+r = nil lab = fail line: 1 col: 9
+No: 	RBrackErr1.pas
+r = nil lab = fail line: 4 col: 18
+No: 	RBrackErr2.pas
+r = nil lab = fail line: 4 col: 9
+No: 	RBrackErr3.pas
+r = nil lab = fail line: 4 col: 12
+No: 	RParErr1.pas
+r = nil lab = fail line: 1 col: 27
+No: 	RParErr2.pas
+r = nil lab = fail line: 4 col: 18
+No: 	RParErr3.pas
+r = nil lab = fail line: 7 col: 5
+No: 	RParErr4.pas
+r = nil lab = fail line: 3 col: 20
+No: 	RParErr5.pas
+r = nil lab = fail line: 5 col: 1
+No: 	RParErr6.pas
+r = nil lab = fail line: 4 col: 19
+No: 	RealParamErr.pas
+r = nil lab = fail line: 4 col: 12
+No: 	SemiErr1.pas
+r = nil lab = fail line: 3 col: 1
+No: 	SemiErr10.pas
+r = nil lab = fail line: 4 col: 1
+No: 	SemiErr11.pas
+r = nil lab = fail line: 4 col: 1
+No: 	SemiErr2.pas
+r = nil lab = fail line: 6 col: 1
+No: 	SemiErr3.pas
+r = nil lab = fail line: 6 col: 1
+No: 	SemiErr4.pas
+r = nil lab = fail line: 7 col: 1
+No: 	SemiErr5.pas
+r = nil lab = fail line: 5 col: 2
+No: 	SemiErr6.pas
+r = nil lab = fail line: 7 col: 1
+No: 	SemiErr7.pas
+r = nil lab = fail line: 4 col: 9
+No: 	SemiErr8.pas
+r = nil lab = fail line: 6 col: 1
+No: 	SemiErr9.pas
+r = nil lab = fail line: 8 col: 1
+No: 	SimpleExprErr.pas
+r = nil lab = fail line: 5 col: 1
+No: 	TermErr.pas
+r = nil lab = fail line: 4 col: 11
+No: 	ThenErr.pas
+r = nil lab = fail line: 5 col: 1
+No: 	ToDownToErr.pas
+r = nil lab = fail line: 4 col: 14
+No: 	TypeErr1.pas
+r = nil lab = fail line: 4 col: 10
+No: 	TypeErr2.pas
+r = nil lab = fail line: 4 col: 23
+No: 	TypeErr3.pas
+r = nil lab = fail line: 4 col: 18
+No: 	TypeErr4.pas
+r = nil lab = fail line: 4 col: 7
+No: 	TypeErr5.pas
+r = nil lab = fail line: 3 col: 15
+No: 	UntilErr.pas
+r = nil lab = fail line: 6 col: 6
+No: 	VarErr1.pas
+r = nil lab = fail line: 4 col: 7
+No: 	VarErr2.pas
+r = nil lab = fail line: 4 col: 10

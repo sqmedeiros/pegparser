@@ -1,0 +1,13 @@
+O parser de ANTLR para DOT (e todos os parsers ANTLR gerados por pegparser) não está reconhecendo comentários. 
+
+No parser para DOT, não reconhecendo a regra LINE_COMMENT:
+LINE_COMMENT
+   : '//' .*? '\r'? '\n' -> skip
+   ;
+
+Para reconhecer DOT.g4 tive que deixar a regra como:
+LINE_COMMENT
+   : '//' .*?   -> skip
+   ;
+   
+   

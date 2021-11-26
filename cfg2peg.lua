@@ -472,4 +472,5 @@ end
 
 return {
 	convert = convert,
+	getChoiceAlternatives = getChoiceAlternatives,
 }

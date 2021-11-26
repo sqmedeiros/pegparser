@@ -1,0 +1,233 @@
+Unique Path (UPath)
+insideLoop: regra1, regra3, 
+Uunique
+id	 = 	1
+y	 = 	1
+H	 = 	1
+c	 = 	1
+A	 = 	3
+x	 = 	1
+G	 = 	1
+b	 = 	1
+a	 = 	3
+d	 = 	1
+SKIP	 = 	1
+Token 	1	 = 	9
+Token 	2	 = 	nil
+Token 	3	 = 	2
+Token 	4	 = 	nil
+Token 	5	 = 	nil
+Token 	6	 = 	nil
+Token 	7	 = 	nil
+Token 	8	 = 	nil
+Token 	9	 = 	nil
+Token 	10	 = 	nil
+Unique tokens (# 8): G, H, b, c, d, id, x, y
+calcTail
+inicio: 	H, __SKIP, a, c, id, x, y
+regra1: 	a, c, y
+regra2: 	H
+regra3: 	a, c, y
+SPACE: 		, 
+, , , ,  
+SKIP: 		, 
+, , , ,  , __empty
+Global Prefix
+inicio: 	
+regra1: 	A, H, __SKIP, a, c, id, x, y
+regra2: 	A
+regra3: 	H, __SKIP, a, c, id, x, y
+SPACE: 	
+SKIP: 	
+calcPrefix
+__a	 -> 
+	(__a, regra1): 	A, H, __SKIP, a, c, id, x, y
+	(__a, regra1): 	A, H, __SKIP, a, c, id, x, y
+	(__a, regra1): 	d
+regra1	 -> 
+	(regra1, inicio): 	A
+	(regra1, regra3): 	H, __SKIP, a, c, id, x, y
+regra3	 -> 
+	(regra3, inicio): 	H, __SKIP, a, c, id, x, y
+inicio	 -> 
+__H	 -> 
+	(__H, regra2): 	G
+__G	 -> 
+	(__G, regra2): 	A
+__A	 -> 
+	(__A, inicio): 	H, __SKIP, a, c, id, x, y
+	(__A, inicio): 	H, __SKIP, a, c, id, x, y
+	(__A, inicio): 	H, __SKIP, a, c, id, x, y
+__b	 -> 
+	(__b, regra1): 	a
+__id	 -> 
+	(__id, inicio): 	A
+regra2	 -> 
+	(regra2, inicio): 	A
+__d	 -> 
+	(__d, regra1): 	A, H, __SKIP, a, c, id, x, y
+__c	 -> 
+	(__c, regra1): 	a
+__y	 -> 
+	(__y, regra1): 	b
+__x	 -> 
+	(__x, inicio): 	a, c, y
+SKIP	 -> 
+	(SKIP, inicio): 	
+SKIP	 pref := 		 flw := 	$, A, a, d
+true33	SKIP
+foi true22	SKIP	table: 0x55667f6ae8c0	nil
+__A	 pref := 	H, __SKIP, a, c, id, x, y	 flw := 	a, d
+Subset	__A	rule = 	inicio	total = 	3
+UniqueFlw	__A	rule = 	inicio	pref = 	H, __SKIP, a, c, id, x, y	flw = 	a, d	nInt = 	2	nEq = 	2	pflw = 	table: 0x55667f6adab0
+symPrefUniVar	regra1	inicio	true
+passou um
+passou três	regra1	inicio
+UniqueFlwVar	regra1	rule = 	inicio	pref = 	A	flw = 	x	rep = 	false
+__x	 pref := 	a, c, y	 flw := 	$, A, a, d
+true33	x
+foi true22	x	table: 0x55667f6aeaa0	true
+__A	 pref := 	H, __SKIP, a, c, id, x, y	 flw := 	G
+Subset	__A	rule = 	inicio	total = 	3
+UniqueFlw	__A	rule = 	inicio	pref = 	H, __SKIP, a, c, id, x, y	flw = 	G	nInt = 	2	nEq = 	2	pflw = 	table: 0x55667f6adef0
+symPrefUniVar	regra2	inicio	true
+passou um
+passou três	regra2	inicio
+UniqueFlwVar	regra2	rule = 	inicio	pref = 	A	flw = 	$, A, a, d	rep = 	false
+__A	 pref := 	H, __SKIP, a, c, id, x, y	 flw := 	id
+true33	A
+Subset	__A	rule = 	inicio	total = 	3
+UniqueFlw	__A	rule = 	inicio	pref = 	H, __SKIP, a, c, id, x, y	flw = 	id	nInt = 	2	nEq = 	2	pflw = 	table: 0x55667f6ae340
+__id	 pref := 	A	 flw := 	$, A, a, d
+true33	id
+foi true22	id	table: 0x55667f6aeaa0	nil
+symPrefUniVar	regra3	inicio	true
+passou um
+passou três	regra3	inicio
+__a	 pref := 	A, H, __SKIP, a, c, id, x, y	 flw := 	b
+__b	 pref := 	a	 flw := 	y
+true33	b
+foi true22	b	y	true
+__y	 pref := 	b	 flw := 	$, A, a, d, x
+true33	y
+__a	 pref := 	A, H, __SKIP, a, c, id, x, y	 flw := 	c
+true33	a
+__c	 pref := 	a	 flw := 	$, A, a, d, x
+true33	c
+__d	 pref := 	A, H, __SKIP, a, c, id, x, y	 flw := 	a
+true33	d
+foi true22	d	a	nil
+__a	 pref := 	d	 flw := 	$, A, a, d, x
+true33	a
+__G	 pref := 	A	 flw := 	H
+true33	G
+foi true22	G	H	nil
+__H	 pref := 	G	 flw := 	$, A, a, d
+true33	H
+symPrefUniVar	regra1	regra3	true
+passou um
+passou três	regra1	regra3
+unique var 	regra3
+Unique usage	regra3
+unique var 	regra1
+Unique usage	regra1
+SKIP	 pref := 		 flw := 	$, A, a, d
+true33	SKIP
+foi true22	SKIP	table: 0x55667f6ae8c0	true
+__A	 pref := 	H, __SKIP, a, c, id, x, y	 flw := 	a, d
+Subset	__A	rule = 	inicio	total = 	3
+UniqueFlw	__A	rule = 	inicio	pref = 	H, __SKIP, a, c, id, x, y	flw = 	a, d	nInt = 	2	nEq = 	2	pflw = 	table: 0x55667f6adab0
+symPrefUniVar	regra1	inicio	true
+passou um
+passou três	regra1	inicio
+UniqueFlwVar	regra1	rule = 	inicio	pref = 	A	flw = 	x	rep = 	false
+__x	 pref := 	a, c, y	 flw := 	$, A, a, d
+true33	x
+foi true22	x	table: 0x55667f6aeaa0	true
+__A	 pref := 	H, __SKIP, a, c, id, x, y	 flw := 	G
+Subset	__A	rule = 	inicio	total = 	3
+UniqueFlw	__A	rule = 	inicio	pref = 	H, __SKIP, a, c, id, x, y	flw = 	G	nInt = 	2	nEq = 	2	pflw = 	table: 0x55667f6adef0
+symPrefUniVar	regra2	inicio	true
+passou um
+passou três	regra2	inicio
+UniqueFlwVar	regra2	rule = 	inicio	pref = 	A	flw = 	$, A, a, d	rep = 	false
+__A	 pref := 	H, __SKIP, a, c, id, x, y	 flw := 	id
+true33	A
+Subset	__A	rule = 	inicio	total = 	3
+UniqueFlw	__A	rule = 	inicio	pref = 	H, __SKIP, a, c, id, x, y	flw = 	id	nInt = 	2	nEq = 	2	pflw = 	table: 0x55667f6ae340
+__id	 pref := 	A	 flw := 	$, A, a, d
+true33	id
+foi true22	id	table: 0x55667f6aeaa0	true
+symPrefUniVar	regra3	inicio	true
+passou um
+passou três	regra3	inicio
+__a	 pref := 	A, H, __SKIP, a, c, id, x, y	 flw := 	b
+__b	 pref := 	a	 flw := 	y
+true33	b
+foi true22	b	y	true
+__y	 pref := 	b	 flw := 	$, A, a, d, x
+true33	y
+__a	 pref := 	A, H, __SKIP, a, c, id, x, y	 flw := 	c
+true33	a
+__c	 pref := 	a	 flw := 	$, A, a, d, x
+true33	c
+__d	 pref := 	A, H, __SKIP, a, c, id, x, y	 flw := 	a
+true33	d
+foi true22	d	a	true
+__a	 pref := 	d	 flw := 	$, A, a, d, x
+true33	a
+__G	 pref := 	A	 flw := 	H
+true33	G
+foi true22	G	H	true
+__H	 pref := 	G	 flw := 	$, A, a, d
+true33	H
+symPrefUniVar	regra1	regra3	true
+passou um
+passou três	regra1	regra3
+unique var2 	regra2
+unique var 	regra3
+Unique usage	regra3
+unique var 	regra1
+Unique usage	regra1
+Unique vars: inicio, regra1, regra3, 
+matchUPath: inicio, regra1, regra2, regra3, 
+Adding labels: Err_1, Err_2, Err_3, Err_4, Err_5, Err_6, 
+
+Property 	nil
+inicio          <-  SKIP ('A' regra1 'x'^Err_001  /  'A' regra2  /  'A' 'id'^Err_002  /  regra3)* !.
+regra1          <-  'a' 'b' 'y'^Err_003  /  'a' 'c'^Err_004  /  'd' 'a'^Err_005
+regra2          <-  'G' 'H'^Err_006
+regra3          <-  regra1
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'y'  /  'x'  /  'id'  /  'd'  /  'c'  /  'b'  /  'a'  /  'H'  /  'G'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!('d'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_002         <-  (!('d'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_003         <-  (!('x'  /  'd'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_004         <-  (!('x'  /  'd'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_005         <-  (!('x'  /  'd'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_006         <-  (!('d'  /  'a'  /  'A'  /  !.) EatToken)*	
+
+Property 	unique
+inicio          <-  SKIP_unique (('A' regra1_unique 'x'_unique^Err_001  /  ('A' regra2_unique  /  ('A'_unique 'id'_unique^Err_002  /  regra3_unique)_unique)_unique)_unique)*_unique !.
+regra1          <-  ('a' 'b'_unique 'y'_unique^Err_003  /  ('a'_unique 'c'_unique^Err_004  /  'd'_unique 'a'_unique^Err_005)_unique)_unique
+regra2          <-  'G'_unique 'H'_unique^Err_006
+regra3          <-  regra1_unique
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'y'  /  'x'  /  'id'  /  'd'  /  'c'  /  'b'  /  'a'  /  'H'  /  'G'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!('d'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_002         <-  (!('d'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_003         <-  (!('x'  /  'd'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_004         <-  (!('x'  /  'd'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_005         <-  (!('x'  /  'd'  /  'a'  /  'A'  /  !.) EatToken)*
+Err_006         <-  (!('d'  /  'a'  /  'A'  /  !.) EatToken)*	
+
+End UPath
+

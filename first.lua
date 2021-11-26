@@ -54,96 +54,6 @@ local function getName (p)
 end
 
 
-local function disjoint (s1, s2)
-	for k, _ in pairs(s1) do
-		if s2[k] then
-			return false
-		end
-	end
-	return true
-end
-
-
-local function isequal (s1, s2)
-  for k, _ in pairs(s1) do
-    if not s2[k] then
-      return false
-    end
-  end
-  for k, _ in pairs(s2) do
-    if not s1[k] then
-      return false
-    end
-  end
-  return true
-end
-
-
--- true in case s1 is a subset of s2
-local function issubset (s1, s2)
-  for k, _ in pairs(s1) do
-    if not s2[k] then
-      return false
-    end
-  end
-  return true
-end
-
-
-local function isempty (s)
-	return next(s) == nil
-end
-
-
-local function inter (s1, s2, notEmpty)
-	local s3 = {}
-	for k, _ in pairs(s1) do
-		if s2[k] then
-			s3[k] = true
-		end
-	end
-  if notEmpty then
-		s3[empty] = nil
-	end	
-	return s3
-end
-
-
-local function union (s1, s2, notEmpty)
-	local s3 = {}
-	for k, _ in pairs(s1) do
-		s3[k] = true
-	end
-	for k, _ in pairs(s2) do
-		s3[k] = true
-	end
-  if notEmpty then
-		s3[empty] = nil
-	end	
-	return s3
-end
-
--- returns s1 - s2
-local function setdiff (s1, s2)
-	local s3 = {}
-	for k, _ in pairs(s1) do
-		if not s2[k] then
-			s3[k] = true
-		end
-	end
-	return s3
-end
-
-
-local function sortset(s)
-  local r = {}
-	for k, _ in pairs(s) do
-		table.insert(r, k)
-	end
-	table.sort(r)
-	return r
-end
-
 
 local function getElem (v)
 	if string.sub(v, 1, 2) == prefixLex then
@@ -190,22 +100,6 @@ end
 
 function printktable (t)
 	print(table.concat(sortset(t), ", "))
-end
-
-local function unfoldset (l)
-	local t = {}
-	for i, v in ipairs(l) do
-		if #v == 3 then
-			local x = string.byte(v:sub(1, 1))
-			local y = string.byte(v:sub(3, 3))
-			for i = x, y do
-				t[string.char(i)] = true
-			end
-		else
-			t[v] = true
-		end
-	end
-	return t
 end
 
 
@@ -923,13 +817,6 @@ return {
 	calck = calck,
 	isempty = isempty,
 	any = any,
-	isequal = isequal,
-	issubset = issubset,
-	sortset = sortset,
-	inter = inter,
-	union = union,
-	setdiff = setdiff,
-	empty = empty,
 	calcPrefix = calcPrefix,
 	calcGlobalPrefix = calcGlobalPrefix,
 	calcTail = calcTail,

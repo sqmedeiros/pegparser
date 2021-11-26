@@ -1,0 +1,2497 @@
+Unique Path (UPath)
+insideLoop: toplevelfunc, toplevelvar, toplevelrecord, localopt, import, foreign, param, decl, simpletype, typelist, type, recordfield, statement, elseifstat, returnstat, exp, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, suffixedexp, expsuffix, prefixexp, castexp, simpleexp, var, varlist, funcargs, explist, initlist, fieldlist, field, fieldsep, 
+Uunique
+.	 = 	1
+/	 = 	1
+NUMBER	 = 	1
+|	 = 	1
+#	 = 	1
+integer	 = 	1
+as	 = 	1
+function	 = 	1
+&	 = 	1
+}	 = 	2
+(	 = 	6
+)	 = 	6
+STRINGLIT	 = 	6
++	 = 	1
+,	 = 	8
+-	 = 	2
+>	 = 	1
+;	 = 	4
+^	 = 	1
+string	 = 	1
+false	 = 	1
+until	 = 	1
+<<	 = 	1
+record	 = 	1
+not	 = 	1
+elseif	 = 	1
+foreign	 = 	1
+//	 = 	1
+:	 = 	5
+{	 = 	2
+<	 = 	1
+=	 = 	7
+<=	 = 	1
+repeat	 = 	1
+*	 = 	1
+else	 = 	1
+>>	 = 	1
+boolean	 = 	1
+SKIP	 = 	1
+end	 = 	6
+if	 = 	1
+~	 = 	2
+->	 = 	4
+NAME	 = 	13
+true	 = 	1
+>=	 = 	1
+%%	 = 	1
+or	 = 	1
+==	 = 	1
+~=	 = 	1
+and	 = 	1
+return	 = 	1
+import	 = 	2
+..	 = 	1
+nil	 = 	2
+while	 = 	1
+for	 = 	1
+then	 = 	2
+value	 = 	1
+do	 = 	3
+float	 = 	1
+[	 = 	1
+local	 = 	4
+]	 = 	1
+Token 	1	 = 	45
+Token 	2	 = 	7
+Token 	3	 = 	1
+Token 	4	 = 	3
+Token 	5	 = 	1
+Token 	6	 = 	4
+Token 	7	 = 	1
+Token 	8	 = 	1
+Token 	9	 = 	nil
+Token 	10	 = 	nil
+Unique tokens (# 44): #, %%, &, *, +, ., .., /, //, <, <<, <=, ==, >, >=, >>, NUMBER, [, ], ^, and, as, boolean, else, elseif, false, float, for, foreign, function, if, integer, not, or, record, repeat, return, string, true, until, value, while, |, ~=
+calcTail
+program: 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+toplevelfunc: 	end
+toplevelvar: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+toplevelrecord: 	end
+localopt: 	__empty, local
+import: 	), __STRINGLIT
+foreign: 	), __STRINGLIT
+rettypeopt: 	), __NAME, __empty, boolean, float, integer, nil, string, value, }
+paramlist: 	), __NAME, __empty, boolean, float, integer, nil, string, value, }
+param: 	), __NAME, boolean, float, integer, nil, string, value, }
+decl: 	), __NAME, boolean, float, integer, nil, string, value, }
+decllist: 	), __NAME, boolean, float, integer, nil, string, value, }
+simpletype: 	__NAME, boolean, float, integer, nil, string, value, }
+typelist: 	)
+rettype: 	), __NAME, boolean, float, integer, nil, string, value, }
+type: 	), __NAME, boolean, float, integer, nil, string, value, }
+recordfields: 	), ;, __NAME, boolean, float, integer, nil, string, value, }
+recordfield: 	), ;, __NAME, boolean, float, integer, nil, string, value, }
+block: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, true, value, }
+statement: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+elseifstats: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+elseifstat: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+elseopt: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, else, end, false, float, integer, nil, return, string, true, value, }
+returnstat: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, return, string, true, value, }
+exp: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e1: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e2: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e3: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e4: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e5: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e6: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e7: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e8: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e9: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e10: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e11: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e12: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+suffixedexp: 	), ], __NAME, __STRINGLIT, }
+expsuffix: 	), ], __NAME, __STRINGLIT, }
+prefixexp: 	), __NAME
+castexp: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+simpleexp: 	), ], __NAME, __NUMBER, __STRINGLIT, false, nil, true, }
+var: 	), ], __NAME, __STRINGLIT, }
+varlist: 	), ], __NAME, __STRINGLIT, }
+funcargs: 	), __STRINGLIT, }
+explist: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+initlist: 	}
+fieldlist: 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+field: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+fieldsep: 	,, ;
+STRINGLIT: 	", '
+RESERVED: 	and, as, boolean, break, do, else, elseif, end, false, float, for, foreign, function, goto, if, import, in, integer, local, nil, not, or, record, repeat, return, string, then, true, until, value, while
+NAME: 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, _, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+NUMBER: 	., 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+COMMENT: 	--, __any
+SPACE: 		, 
+, , , ,  , __COMMENT
+SKIP: 		, 
+, , , ,  , __COMMENT, __empty
+Global Prefix
+program: 	
+toplevelfunc: 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+toplevelvar: 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+toplevelrecord: 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+localopt: 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+import: 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+foreign: 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+rettypeopt: 	)
+paramlist: 	(
+param: 	(, ,
+decl: 	,, __empty, for, local
+decllist: 	local
+simpletype: 	(, ,, ->, :, as, {
+typelist: 	(, ,, ->, :, as, {
+rettype: 	->, :
+type: 	(, ,, :, as, {
+recordfields: 	__NAME
+recordfield: 	), ;, __NAME, boolean, float, integer, nil, string, value, }
+block: 	), __NAME, __empty, boolean, do, else, float, integer, nil, repeat, string, then, value, }
+statement: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+elseifstats: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+elseifstat: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+elseopt: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+returnstat: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+exp: 	(, ,, ;, =, [, elseif, if, return, until, while, {
+e1: 	(, ,, ;, =, [, elseif, if, return, until, while, {
+e2: 	(, ,, ;, =, [, elseif, if, or, return, until, while, {
+e3: 	(, ,, ;, =, [, and, elseif, if, or, return, until, while, {
+e4: 	(, ,, ;, <, <=, =, ==, >, >=, [, and, elseif, if, or, return, until, while, {, ~=
+e5: 	(, ,, ;, <, <=, =, ==, >, >=, [, and, elseif, if, or, return, until, while, {, |, ~=
+e6: 	(, ,, ;, <, <=, =, ==, >, >=, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+e7: 	&, (, ,, ;, <, <=, =, ==, >, >=, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+e8: 	&, (, ,, .., ;, <, <<, <=, =, ==, >, >=, >>, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+e9: 	&, (, ,, .., ;, <, <<, <=, =, ==, >, >=, >>, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+e10: 	&, (, +, ,, -, .., ;, <, <<, <=, =, ==, >, >=, >>, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+e11: 	%%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, or, return, until, while, {, |, ~, ~=
+e12: 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+suffixedexp: 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=
+expsuffix: 	), ], __NAME, __STRINGLIT, }
+prefixexp: 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=
+castexp: 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+simpleexp: 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+var: 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+varlist: 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+funcargs: 	), ], __NAME, __STRINGLIT, }
+explist: 	(, =, return
+initlist: 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, elseif, if, not, or, return, until, while, {, |, }, ~, ~=
+fieldlist: 	{
+field: 	,, ;, {
+fieldsep: 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+STRINGLIT: 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, elseif, if, import, not, or, return, until, while, {, |, }, ~, ~=
+RESERVED: 	
+NAME: 	#, %%, &, (, ), *, +, ,, -, ->, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, as, boolean, do, else, elseif, end, false, float, for, function, if, integer, local, nil, not, or, record, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=
+NUMBER: 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+COMMENT: 		, 
+, , , ,  , __COMMENT
+SPACE: 	
+SKIP: 	
+calcPrefix
+suffixedexp	 -> 
+	(suffixedexp, simpleexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+	(suffixedexp, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+	(suffixedexp, var): 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+simpleexp	 -> 
+	(simpleexp, castexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+	(simpleexp, castexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+paramlist	 -> 
+	(paramlist, toplevelfunc): 	(
+__->	 -> 
+	(__->, type): 	__NAME, boolean, float, integer, nil, string, value, }
+	(__->, rettype): 	)
+	(__->, rettype): 	__NAME, boolean, float, integer, nil, string, value, }
+	(__->, type): 	)
+__then	 -> 
+	(__then, statement): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__then, elseifstat): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+recordfield	 -> 
+	(recordfield, recordfields): 	), ;, __NAME, boolean, float, integer, nil, string, value, }
+__<=	 -> 
+	(__<=, e3): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e9	 -> 
+	(e9, e8): 	&, (, ,, .., ;, <, <<, <=, =, ==, >, >=, >>, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+STRINGLIT	 -> 
+	(STRINGLIT, foreign): 	(
+	(STRINGLIT, import): 	import
+	(STRINGLIT, import): 	(
+	(STRINGLIT, foreign): 	import
+	(STRINGLIT, funcargs): 	), ], __NAME, __STRINGLIT, }
+	(STRINGLIT, simpleexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+e1	 -> 
+	(e1, exp): 	(, ,, ;, =, [, elseif, if, return, until, while, {
+fieldlist	 -> 
+	(fieldlist, initlist): 	{
+fieldsep	 -> 
+	(fieldsep, fieldlist): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(fieldsep, fieldlist): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+returnstat	 -> 
+	(returnstat, block): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+varlist	 -> 
+	(varlist, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+foreign	 -> 
+	(foreign, program): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+__while	 -> 
+	(__while, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+__{	 -> 
+	(__{, simpletype): 	(, ,, ->, :, as, {
+	(__{, initlist): 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, elseif, if, not, or, return, until, while, {, |, }, ~, ~=
+e11	 -> 
+	(e11, e10): 	&, (, +, ,, -, .., ;, <, <<, <=, =, ==, >, >=, >>, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+	(e11, e10): 	%%, *, /, //
+	(e11, e12): 	^
+__float	 -> 
+	(__float, simpletype): 	(, ,, ->, :, as, {
+prefixexp	 -> 
+	(prefixexp, suffixedexp): 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=
+	(prefixexp, simpleexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+field	 -> 
+	(field, fieldlist): 	{
+	(field, fieldlist): 	,, ;
+var	 -> 
+	(var, varlist): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+	(var, varlist): 	,
+__(	 -> 
+	(__(, funcargs): 	), ], __NAME, __STRINGLIT, }
+	(__(, import): 	import
+	(__(, typelist): 	(, ,, ->, :, as, {
+	(__(, toplevelfunc): 	__NAME
+	(__(, prefixexp): 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=
+	(__(, foreign): 	import
+e12	 -> 
+	(e12, e11): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+SKIP	 -> 
+	(SKIP, program): 	
+__.	 -> 
+	(__., expsuffix): 	), ], __NAME, __STRINGLIT, }
+e6	 -> 
+	(e6, e5): 	(, ,, ;, <, <=, =, ==, >, >=, [, and, elseif, if, or, return, until, while, {, |, ~=
+	(e6, e5): 	~
+__if	 -> 
+	(__if, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+__=	 -> 
+	(__=, import): 	__NAME
+	(__=, statement): 	), ], __NAME, __STRINGLIT, }
+	(__=, statement): 	), __NAME, boolean, float, integer, nil, string, value, }
+	(__=, foreign): 	__NAME
+	(__=, toplevelvar): 	), __NAME, boolean, float, integer, nil, string, value, }
+	(__=, field): 	__NAME
+	(__=, statement): 	), __NAME, boolean, float, integer, nil, string, value, }
+decl	 -> 
+	(decl, decllist): 	local
+	(decl, decllist): 	,
+	(decl, statement): 	for
+	(decl, toplevelvar): 	__empty, local
+castexp	 -> 
+	(castexp, e12): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+__true	 -> 
+	(__true, simpleexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+__false	 -> 
+	(__false, simpleexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+__>>	 -> 
+	(__>>, e7): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__as	 -> 
+	(__as, castexp): 	), ], __NAME, __NUMBER, __STRINGLIT, false, nil, true, }
+__]	 -> 
+	(__], expsuffix): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+expsuffix	 -> 
+	(expsuffix, suffixedexp): 	), ], __NAME, __STRINGLIT, }
+__import	 -> 
+	(__import, import): 	=
+	(__import, foreign): 	foreign
+__string	 -> 
+	(__string, simpletype): 	(, ,, ->, :, as, {
+toplevelfunc	 -> 
+	(toplevelfunc, program): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+__or	 -> 
+	(__or, e1): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__|	 -> 
+	(__|, e4): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__else	 -> 
+	(__else, elseopt): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+__-	 -> 
+	(__-, e9): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__-, e11): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+__[	 -> 
+	(__[, expsuffix): 	), ], __NAME, __STRINGLIT, }
+__function	 -> 
+	(__function, toplevelfunc): 	__empty, local
+__%%	 -> 
+	(__%%, e10): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__)	 -> 
+	(__), typelist): 	(, ), __NAME, boolean, float, integer, nil, string, value, }
+	(__), funcargs): 	(, ), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__), prefixexp): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__), toplevelfunc): 	(, ), __NAME, __empty, boolean, float, integer, nil, string, value, }
+	(__), foreign): 	__STRINGLIT
+	(__), import): 	__STRINGLIT
+type	 -> 
+	(type, recordfield): 	:
+	(type, typelist): 	,
+	(type, decl): 	:
+	(type, typelist): 	(
+	(type, simpletype): 	{
+	(type, param): 	:
+	(type, castexp): 	as
+NUMBER	 -> 
+	(NUMBER, simpleexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+block	 -> 
+	(block, elseopt): 	else
+	(block, statement): 	do
+	(block, elseifstat): 	then
+	(block, toplevelfunc): 	), __NAME, __empty, boolean, float, integer, nil, string, value, }
+	(block, statement): 	do
+	(block, statement): 	do
+	(block, statement): 	repeat
+	(block, statement): 	then
+initlist	 -> 
+	(initlist, simpleexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+	(initlist, funcargs): 	), ], __NAME, __STRINGLIT, }
+__#	 -> 
+	(__#, e11): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+__not	 -> 
+	(__not, e11): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+statement	 -> 
+	(statement, block): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+simpletype	 -> 
+	(simpletype, rettype): 	->, :
+	(simpletype, rettype): 	->, :
+	(simpletype, type): 	(, ,, :, as, {
+	(simpletype, type): 	(, ,, :, as, {
+__nil	 -> 
+	(__nil, simpletype): 	(, ,, ->, :, as, {
+	(__nil, simpleexp): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+__//	 -> 
+	(__//, e10): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e3	 -> 
+	(e3, e2): 	(, ,, ;, =, [, elseif, if, or, return, until, while, {
+	(e3, e2): 	and
+e7	 -> 
+	(e7, e6): 	(, ,, ;, <, <=, =, ==, >, >=, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+	(e7, e6): 	&
+__/	 -> 
+	(__/, e10): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+rettype	 -> 
+	(rettype, rettypeopt): 	:
+	(rettype, type): 	->
+	(rettype, rettype): 	->
+	(rettype, type): 	->
+	(rettype, rettype): 	->
+__^	 -> 
+	(__^, e12): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+explist	 -> 
+	(explist, statement): 	=
+	(explist, returnstat): 	return
+	(explist, statement): 	=
+	(explist, funcargs): 	(
+__+	 -> 
+	(__+, e9): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e10	 -> 
+	(e10, e9): 	&, (, ,, .., ;, <, <<, <=, =, ==, >, >=, >>, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+	(e10, e9): 	+, -
+__local	 -> 
+	(__local, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+	(__local, import): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+	(__local, foreign): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+	(__local, localopt): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+__==	 -> 
+	(__==, e3): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__..	 -> 
+	(__.., e8): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__elseif	 -> 
+	(__elseif, elseifstat): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+typelist	 -> 
+	(typelist, type): 	(, ,, :, as, {
+	(typelist, rettype): 	->, :
+	(typelist, rettype): 	->, :
+__<<	 -> 
+	(__<<, e7): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+toplevelvar	 -> 
+	(toplevelvar, program): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+e8	 -> 
+	(e8, e7): 	<<, >>
+	(e8, e7): 	&, (, ,, ;, <, <=, =, ==, >, >=, [, and, elseif, if, or, return, until, while, {, |, ~, ~=
+	(e8, e8): 	..
+__;	 -> 
+	(__;, fieldsep): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__;, recordfield): 	), __NAME, boolean, float, integer, nil, string, value, }
+	(__;, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+	(__;, returnstat): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, return, string, true, value, }
+__foreign	 -> 
+	(__foreign, foreign): 	=
+__&	 -> 
+	(__&, e6): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+param	 -> 
+	(param, paramlist): 	(
+	(param, paramlist): 	,
+__record	 -> 
+	(__record, toplevelrecord): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+e2	 -> 
+	(e2, e1): 	(, ,, ;, =, [, elseif, if, return, until, while, {
+	(e2, e1): 	or
+__do	 -> 
+	(__do, statement): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__do, statement): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__do, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+e5	 -> 
+	(e5, e4): 	(, ,, ;, <, <=, =, ==, >, >=, [, and, elseif, if, or, return, until, while, {, ~=
+	(e5, e4): 	|
+__,	 -> 
+	(__,, statement): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__,, fieldsep): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__,, typelist): 	), __NAME, boolean, float, integer, nil, string, value, }
+	(__,, paramlist): 	), __NAME, boolean, float, integer, nil, string, value, }
+	(__,, explist): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__,, varlist): 	), ], __NAME, __STRINGLIT, }
+	(__,, statement): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__,, decllist): 	), __NAME, boolean, float, integer, nil, string, value, }
+__:	 -> 
+	(__:, param): 	__NAME
+	(__:, recordfield): 	__NAME
+	(__:, rettypeopt): 	)
+	(__:, decl): 	__NAME
+	(__:, expsuffix): 	), ], __NAME, __STRINGLIT, }
+__>	 -> 
+	(__>, e3): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__value	 -> 
+	(__value, simpletype): 	(, ,, ->, :, as, {
+__<	 -> 
+	(__<, e3): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__>=	 -> 
+	(__>=, e3): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__~=	 -> 
+	(__~=, e3): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+e4	 -> 
+	(e4, e3): 	(, ,, ;, =, [, and, elseif, if, or, return, until, while, {
+	(e4, e3): 	<, <=, ==, >, >=, ~=
+__and	 -> 
+	(__and, e2): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+__repeat	 -> 
+	(__repeat, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+__~	 -> 
+	(__~, e5): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+	(__~, e11): 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=
+NAME	 -> 
+	(NAME, param): 	(, ,
+	(NAME, var): 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+	(NAME, import): 	local
+	(NAME, toplevelfunc): 	function
+	(NAME, field): 	,, ;, {
+	(NAME, prefixexp): 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=
+	(NAME, expsuffix): 	:
+	(NAME, expsuffix): 	.
+	(NAME, simpletype): 	(, ,, ->, :, as, {
+	(NAME, decl): 	,, __empty, for, local
+	(NAME, toplevelrecord): 	record
+	(NAME, recordfield): 	), ;, __NAME, boolean, float, integer, nil, string, value, }
+	(NAME, foreign): 	local
+decllist	 -> 
+	(decllist, statement): 	local
+__return	 -> 
+	(__return, returnstat): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+__}	 -> 
+	(__}, simpletype): 	), __NAME, boolean, float, integer, nil, string, value, }
+	(__}, initlist): 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, {, }
+exp	 -> 
+	(exp, statement): 	until
+	(exp, toplevelvar): 	=
+	(exp, expsuffix): 	[
+	(exp, field): 	,, ;, =, {
+	(exp, prefixexp): 	(
+	(exp, statement): 	,
+	(exp, statement): 	if
+	(exp, explist): 	(, =, return
+	(exp, explist): 	,
+	(exp, statement): 	=
+	(exp, elseifstat): 	elseif
+	(exp, statement): 	,
+	(exp, statement): 	while
+elseifstat	 -> 
+	(elseifstat, elseifstats): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+__boolean	 -> 
+	(__boolean, simpletype): 	(, ,, ->, :, as, {
+__*	 -> 
+	(__*, e10): 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }
+rettypeopt	 -> 
+	(rettypeopt, toplevelfunc): 	)
+import	 -> 
+	(import, program): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+__integer	 -> 
+	(__integer, simpletype): 	(, ,, ->, :, as, {
+localopt	 -> 
+	(localopt, toplevelfunc): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+	(localopt, toplevelvar): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+elseopt	 -> 
+	(elseopt, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+toplevelrecord	 -> 
+	(toplevelrecord, program): 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }
+program	 -> 
+__until	 -> 
+	(__until, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, repeat, return, string, true, value, }
+__end	 -> 
+	(__end, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }
+	(__end, toplevelfunc): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, true, value, }
+	(__end, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, else, end, false, float, integer, nil, return, string, then, true, value, }
+	(__end, toplevelrecord): 	), ;, __NAME, boolean, float, integer, nil, string, value, }
+	(__end, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }
+	(__end, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }
+elseifstats	 -> 
+	(elseifstats, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }
+funcargs	 -> 
+	(funcargs, expsuffix): 	), ], __NAME, __STRINGLIT, }
+	(funcargs, expsuffix): 	__NAME
+__for	 -> 
+	(__for, statement): 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }
+recordfields	 -> 
+	(recordfields, toplevelrecord): 	__NAME
+SKIP	 pref := 		 flw := 	$, __NAME, function, local, record
+true33	SKIP
+foi true22	SKIP	table: 0x55f753b0a6d0	nil
+symPrefUniVar	toplevelfunc	program	true
+passou um
+symPrefUniVar	toplevelvar	program	true
+passou um
+symPrefUniVar	toplevelrecord	program	true
+passou um
+passou três	toplevelrecord	program
+UniqueFlwVar	toplevelrecord	rule = 	program	pref = 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	flw = 	$, __NAME, function, local, record	rep = 	true
+symPrefUniVar	import	program	true
+passou um
+symPrefUniVar	foreign	program	true
+passou um
+symPrefUniVar	localopt	toplevelfunc	false
+__function	 pref := 	__empty, local	 flw := 	__NAME
+true33	function
+foi true22	function	NAME	nil
+NAME	 pref := 	function	 flw := 	(
+true33	NAME
+foi true22	NAME	(	true
+__(	 pref := 	__NAME	 flw := 	), __NAME
+symPrefUniVar	paramlist	toplevelfunc	true
+passou um
+__)	 pref := 	(, ), __NAME, __empty, boolean, float, integer, nil, string, value, }	 flw := 	(, :, ;, __NAME, do, end, for, if, local, repeat, return, while
+symPrefUniVar	rettypeopt	toplevelfunc	true
+passou um
+symPrefUniVar	block	toplevelfunc	true
+passou um
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, true, value, }	 flw := 	$, __NAME, function, local, record
+symPrefUniVar	localopt	toplevelvar	false
+symPrefUniVar	decl	toplevelvar	false
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	toplevelvar	false
+__record	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+true33	record
+foi true22	record	NAME	nil
+NAME	 pref := 	record	 flw := 	__NAME
+true33	NAME
+foi true22	NAME	recordfields	true
+symPrefUniVar	recordfields	toplevelrecord	true
+passou um
+__end	 pref := 	), ;, __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, __NAME, function, local, record
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME, function
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+NAME	 pref := 	local	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	import
+__import	 pref := 	=	 flw := 	(, __STRINGLIT
+true33	import
+foi true22	import	table: 0x55f753b0de50	true
+__(	 pref := 	import	 flw := 	__STRINGLIT
+STRINGLIT	 pref := 	(	 flw := 	)
+__)	 pref := 	__STRINGLIT	 flw := 	$, __NAME, function, local, record
+STRINGLIT	 pref := 	import	 flw := 	$, __NAME, function, local, record
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+NAME	 pref := 	local	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	foreign
+__foreign	 pref := 	=	 flw := 	import
+true33	foreign
+foi true22	foreign	import	true
+__import	 pref := 	foreign	 flw := 	(, __STRINGLIT
+true33	import
+foi true22	import	table: 0x55f753b0f050	true
+__(	 pref := 	import	 flw := 	__STRINGLIT
+STRINGLIT	 pref := 	(	 flw := 	)
+__)	 pref := 	__STRINGLIT	 flw := 	$, __NAME, function, local, record
+STRINGLIT	 pref := 	import	 flw := 	$, __NAME, function, local, record
+__:	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettypeopt	true
+passou um
+symPrefUniVar	param	paramlist	true
+passou um
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME
+symPrefUniVar	param	paramlist	true
+passou um
+NAME	 pref := 	(, ,	 flw := 	:
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	param	false
+NAME	 pref := 	,, __empty, for, local	 flw := 	,, :, =
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	decl	false
+symPrefUniVar	decl	decllist	false
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME
+symPrefUniVar	decl	decllist	true
+passou um
+__nil	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__boolean	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	boolean
+__integer	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	integer
+__float	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	float
+__string	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	string
+__value	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	value
+NAME	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__{	 pref := 	(, ,, ->, :, as, {	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	simpletype	true
+passou um
+__}	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__(	 pref := 	(, ,, ->, :, as, {	 flw := 	(, ), __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	typelist	true
+passou um
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	typelist	true
+passou um
+__)	 pref := 	(, ), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+symPrefUniVar	typelist	rettype	false
+__->	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettype	false
+symPrefUniVar	simpletype	rettype	false
+__->	 pref := 	__NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettype	false
+symPrefUniVar	typelist	rettype	false
+symPrefUniVar	simpletype	rettype	false
+symPrefUniVar	typelist	type	false
+__->	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	type	false
+symPrefUniVar	simpletype	type	false
+__->	 pref := 	__NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	type	false
+symPrefUniVar	simpletype	type	false
+symPrefUniVar	recordfield	recordfields	true
+passou um
+NAME	 pref := 	), ;, __NAME, boolean, float, integer, nil, string, value, }	 flw := 	:
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	recordfield	false
+__;	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME, end
+symPrefUniVar	statement	block	true
+passou um
+symPrefUniVar	returnstat	block	true
+passou um
+passou três	returnstat	block
+__;	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__do	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+Subset	__do	rule = 	statement	total = 	3
+symPrefUniVar	block	statement	false
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__while	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	while
+foi true22	while	exp	nil
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__do	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+symPrefUniVar	block	statement	false
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__repeat	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, for, if, local, repeat, return, until, while
+true33	repeat
+foi true22	repeat	block	nil
+symPrefUniVar	block	statement	true
+passou um
+passou três	block	statement
+__until	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, repeat, return, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	until
+foi true22	until	exp	nil
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__if	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	if
+foi true22	if	exp	nil
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__then	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, while
+Subset	__then	rule = 	statement	total = 	2
+symPrefUniVar	block	statement	false
+symPrefUniVar	elseifstats	statement	true
+passou um
+passou três	elseifstats	statement
+symPrefUniVar	elseopt	statement	true
+passou um
+passou três	elseopt	statement
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, else, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__for	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	__NAME
+true33	for
+foi true22	for	decl	nil
+symPrefUniVar	decl	statement	true
+passou um
+passou três	decl	statement
+UniqueFlwVar	decl	rule = 	statement	pref = 	for	flw = 	=	rep = 	nil
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	statement	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	statement	total = 	8
+symPrefUniVar	exp	statement	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	statement	total = 	8
+symPrefUniVar	exp	statement	false
+__do	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+true33	do
+symPrefUniVar	block	statement	true
+passou um
+passou três	block	statement
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__local	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	__NAME
+symPrefUniVar	decllist	statement	true
+passou um
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	statement	false
+symPrefUniVar	varlist	statement	true
+passou um
+__=	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	statement	true
+passou um
+passou três	explist	statement
+symPrefUniVar	suffixedexp	statement	false
+symPrefUniVar	elseifstat	elseifstats	true
+passou um
+passou três	elseifstat	elseifstats
+__elseif	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	elseif
+foi true22	elseif	exp	nil
+symPrefUniVar	exp	elseifstat	true
+passou um
+passou três	exp	elseifstat
+__then	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, while
+Subset	__then	rule = 	elseifstat	total = 	2
+symPrefUniVar	block	elseifstat	false
+__else	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+true33	else
+symPrefUniVar	block	elseopt	true
+passou um
+passou três	block	elseopt
+__return	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, ;, __NAME, __NUMBER, __STRINGLIT, else, elseif, end, false, nil, not, true, until, {, ~
+true33	return
+foi true22	return	table: 0x55f753a68290	nil
+symPrefUniVar	explist	returnstat	true
+passou um
+passou três	explist	returnstat
+__;	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, return, string, true, value, }	 flw := 	else, elseif, end, until
+symPrefUniVar	e1	exp	true
+passou um
+symPrefUniVar	e2	e1	true
+passou um
+__or	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	or
+symPrefUniVar	e2	e1	true
+passou um
+passou três	e2	e1
+symPrefUniVar	e3	e2	true
+passou um
+__and	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	and
+symPrefUniVar	e3	e2	true
+passou um
+passou três	e3	e2
+symPrefUniVar	e4	e3	true
+passou um
+__==	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	==
+__~=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~=
+__<=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<=
+__>=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>=
+__<	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<
+__>	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>
+symPrefUniVar	e4	e3	true
+passou um
+passou três	e4	e3
+symPrefUniVar	e5	e4	true
+passou um
+__|	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	|
+symPrefUniVar	e5	e4	true
+passou um
+passou três	e5	e4
+symPrefUniVar	e6	e5	true
+passou um
+__~	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~
+symPrefUniVar	e6	e5	true
+passou um
+passou três	e6	e5
+symPrefUniVar	e7	e6	true
+passou um
+__&	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	&
+symPrefUniVar	e7	e6	true
+passou um
+passou três	e7	e6
+symPrefUniVar	e8	e7	true
+passou um
+__<<	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<<
+__>>	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>>
+symPrefUniVar	e8	e7	true
+passou um
+passou três	e8	e7
+symPrefUniVar	e9	e8	true
+passou um
+__..	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	..
+symPrefUniVar	e8	e8	true
+passou um
+passou três	e8	e8
+symPrefUniVar	e10	e9	true
+passou um
+__+	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	+
+__-	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	-
+symPrefUniVar	e10	e9	true
+passou um
+passou três	e10	e9
+symPrefUniVar	e11	e10	true
+passou um
+__*	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	*
+__%%	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	%%
+__/	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	/
+__//	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	//
+symPrefUniVar	e11	e10	true
+passou um
+passou três	e11	e10
+__not	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	not
+__#	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	#
+__-	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	-
+__~	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~
+symPrefUniVar	e12	e11	true
+passou um
+symPrefUniVar	castexp	e12	true
+passou um
+__^	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	^
+symPrefUniVar	e11	e12	true
+passou um
+passou três	e11	e12
+symPrefUniVar	prefixexp	suffixedexp	false
+symPrefUniVar	expsuffix	suffixedexp	true
+passou um
+symPrefUniVar	funcargs	expsuffix	false
+__:	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	__NAME
+Subset	__:	rule = 	expsuffix	total = 	5
+NAME	 pref := 	:	 flw := 	(, __STRINGLIT, {
+symPrefUniVar	funcargs	expsuffix	true
+passou um
+__[	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	[
+foi true22	[	exp	nil
+symPrefUniVar	exp	expsuffix	true
+passou um
+passou três	exp	expsuffix
+__]	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	]
+__.	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	__NAME
+true33	.
+foi true22	.	table: 0x55f753ac4320	nil
+NAME	 pref := 	.	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	NAME
+NAME	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+__(	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	prefixexp	false
+__)	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+symPrefUniVar	simpleexp	castexp	false
+__as	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, false, nil, true, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+true33	as
+foi true22	as	type	nil
+symPrefUniVar	type	castexp	true
+passou um
+passou três	type	castexp
+symPrefUniVar	simpleexp	castexp	true
+passou um
+__nil	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__false	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	false
+__true	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	true
+NUMBER	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	NUMBER
+STRINGLIT	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+symPrefUniVar	initlist	simpleexp	true
+passou um
+symPrefUniVar	suffixedexp	simpleexp	false
+symPrefUniVar	prefixexp	simpleexp	false
+symPrefUniVar	suffixedexp	var	false
+NAME	 pref := 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	,, =
+symPrefUniVar	var	varlist	true
+passou um
+__,	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	(, __NAME
+symPrefUniVar	var	varlist	true
+passou um
+__(	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, ), -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	funcargs	true
+passou um
+__)	 pref := 	(, ), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+symPrefUniVar	initlist	funcargs	true
+passou um
+passou três	initlist	funcargs
+STRINGLIT	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	STRINGLIT
+symPrefUniVar	exp	explist	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	explist	total = 	8
+symPrefUniVar	exp	explist	false
+__{	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, elseif, if, not, or, return, until, while, {, |, }, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+symPrefUniVar	fieldlist	initlist	true
+passou um
+__}	 pref := 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, {, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+Subset	__}	rule = 	initlist	total = 	2
+symPrefUniVar	field	fieldlist	true
+passou um
+symPrefUniVar	fieldsep	fieldlist	false
+symPrefUniVar	field	fieldlist	true
+passou um
+symPrefUniVar	fieldsep	fieldlist	true
+passou um
+NAME	 pref := 	,, ;, {	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	field	false
+__;	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+Subset	__,	rule = 	fieldsep	total = 	8
+unique var 	toplevelrecord
+Unique usage	toplevelrecord
+unique var 	foreign
+Unique usage	foreign
+unique var 	paramlist
+Unique usage	paramlist
+unique var 	rettypeopt
+Unique usage	rettypeopt
+unique var 	block
+unique var 	recordfields
+Unique usage	recordfields
+unique var 	rettype
+unique var 	param
+unique var 	param
+Unique usage	param
+unique var 	type
+unique var 	recordfield
+Unique usage	recordfield
+unique var 	type
+unique var 	exp
+unique var 	block
+unique var 	block
+unique var 	exp
+setUnique	if	nil	true
+unique var 	exp
+unique var 	block
+unique var 	elseifstats
+Unique usage	elseifstats
+unique var 	elseopt
+Unique usage	elseopt
+unique var 	decl
+unique var 	exp
+unique var 	exp
+unique var 	exp
+unique var 	block
+unique var 	elseifstat
+Unique usage	elseifstat
+unique var 	exp
+unique var 	block
+unique var 	block
+unique var 	explist
+unique var 	e2
+unique var 	e3
+unique var 	e4
+unique var 	e5
+unique var 	e6
+unique var 	e7
+unique var 	e8
+unique var 	e8
+unique var 	e10
+unique var 	e11
+unique var 	e11
+unique var 	exp
+unique var 	type
+SKIP	 pref := 		 flw := 	$, __NAME, function, local, record
+true33	SKIP
+foi true22	SKIP	table: 0x55f753b0a6d0	true
+symPrefUniVar	toplevelfunc	program	true
+passou um
+symPrefUniVar	toplevelvar	program	true
+passou um
+symPrefUniVar	toplevelrecord	program	true
+passou um
+passou três	toplevelrecord	program
+UniqueFlwVar	toplevelrecord	rule = 	program	pref = 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	flw = 	$, __NAME, function, local, record	rep = 	true
+symPrefUniVar	import	program	true
+passou um
+symPrefUniVar	foreign	program	true
+passou um
+symPrefUniVar	localopt	toplevelfunc	false
+__function	 pref := 	__empty, local	 flw := 	__NAME
+true33	function
+foi true22	function	NAME	true
+NAME	 pref := 	function	 flw := 	(
+true33	NAME
+foi true22	NAME	(	true
+__(	 pref := 	__NAME	 flw := 	), __NAME
+symPrefUniVar	paramlist	toplevelfunc	true
+passou um
+__)	 pref := 	(, ), __NAME, __empty, boolean, float, integer, nil, string, value, }	 flw := 	(, :, ;, __NAME, do, end, for, if, local, repeat, return, while
+symPrefUniVar	rettypeopt	toplevelfunc	true
+passou um
+symPrefUniVar	block	toplevelfunc	true
+passou um
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, true, value, }	 flw := 	$, __NAME, function, local, record
+symPrefUniVar	localopt	toplevelvar	false
+symPrefUniVar	decl	toplevelvar	false
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	toplevelvar	false
+__record	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+true33	record
+foi true22	record	NAME	true
+NAME	 pref := 	record	 flw := 	__NAME
+true33	NAME
+foi true22	NAME	recordfields	true
+symPrefUniVar	recordfields	toplevelrecord	true
+passou um
+__end	 pref := 	), ;, __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, __NAME, function, local, record
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME, function
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+NAME	 pref := 	local	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	import
+__import	 pref := 	=	 flw := 	(, __STRINGLIT
+true33	import
+foi true22	import	table: 0x55f753b0de50	true
+__(	 pref := 	import	 flw := 	__STRINGLIT
+STRINGLIT	 pref := 	(	 flw := 	)
+__)	 pref := 	__STRINGLIT	 flw := 	$, __NAME, function, local, record
+STRINGLIT	 pref := 	import	 flw := 	$, __NAME, function, local, record
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+NAME	 pref := 	local	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	foreign
+__foreign	 pref := 	=	 flw := 	import
+true33	foreign
+foi true22	foreign	import	true
+__import	 pref := 	foreign	 flw := 	(, __STRINGLIT
+true33	import
+foi true22	import	table: 0x55f753b0f050	true
+__(	 pref := 	import	 flw := 	__STRINGLIT
+STRINGLIT	 pref := 	(	 flw := 	)
+__)	 pref := 	__STRINGLIT	 flw := 	$, __NAME, function, local, record
+STRINGLIT	 pref := 	import	 flw := 	$, __NAME, function, local, record
+__:	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettypeopt	true
+passou um
+symPrefUniVar	param	paramlist	true
+passou um
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME
+symPrefUniVar	param	paramlist	true
+passou um
+NAME	 pref := 	(, ,	 flw := 	:
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	param	false
+NAME	 pref := 	,, __empty, for, local	 flw := 	,, :, =
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	decl	false
+symPrefUniVar	decl	decllist	false
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME
+symPrefUniVar	decl	decllist	true
+passou um
+__nil	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__boolean	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	boolean
+__integer	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	integer
+__float	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	float
+__string	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	string
+__value	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	value
+NAME	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__{	 pref := 	(, ,, ->, :, as, {	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	simpletype	true
+passou um
+__}	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__(	 pref := 	(, ,, ->, :, as, {	 flw := 	(, ), __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	typelist	true
+passou um
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	typelist	true
+passou um
+__)	 pref := 	(, ), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+symPrefUniVar	typelist	rettype	false
+__->	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettype	false
+symPrefUniVar	simpletype	rettype	false
+__->	 pref := 	__NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettype	false
+symPrefUniVar	typelist	rettype	false
+symPrefUniVar	simpletype	rettype	false
+symPrefUniVar	typelist	type	false
+__->	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	type	false
+symPrefUniVar	simpletype	type	false
+__->	 pref := 	__NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	type	false
+symPrefUniVar	simpletype	type	false
+symPrefUniVar	recordfield	recordfields	true
+passou um
+NAME	 pref := 	), ;, __NAME, boolean, float, integer, nil, string, value, }	 flw := 	:
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	recordfield	false
+__;	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME, end
+symPrefUniVar	statement	block	true
+passou um
+symPrefUniVar	returnstat	block	true
+passou um
+passou três	returnstat	block
+__;	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__do	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+Subset	__do	rule = 	statement	total = 	3
+symPrefUniVar	block	statement	false
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__while	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	while
+foi true22	while	exp	true
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__do	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+symPrefUniVar	block	statement	false
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__repeat	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, for, if, local, repeat, return, until, while
+true33	repeat
+foi true22	repeat	block	true
+symPrefUniVar	block	statement	true
+passou um
+passou três	block	statement
+__until	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, repeat, return, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	until
+foi true22	until	exp	true
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__if	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	if
+foi true22	if	exp	true
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__then	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, while
+Subset	__then	rule = 	statement	total = 	2
+symPrefUniVar	block	statement	false
+symPrefUniVar	elseifstats	statement	true
+passou um
+passou três	elseifstats	statement
+symPrefUniVar	elseopt	statement	true
+passou um
+passou três	elseopt	statement
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, else, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__for	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	__NAME
+true33	for
+foi true22	for	decl	true
+symPrefUniVar	decl	statement	true
+passou um
+passou três	decl	statement
+UniqueFlwVar	decl	rule = 	statement	pref = 	for	flw = 	=	rep = 	nil
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	statement	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	statement	total = 	8
+symPrefUniVar	exp	statement	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	statement	total = 	8
+symPrefUniVar	exp	statement	false
+__do	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+true33	do
+symPrefUniVar	block	statement	true
+passou um
+passou três	block	statement
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__local	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	__NAME
+symPrefUniVar	decllist	statement	true
+passou um
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	statement	false
+symPrefUniVar	varlist	statement	true
+passou um
+__=	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	statement	true
+passou um
+passou três	explist	statement
+symPrefUniVar	suffixedexp	statement	false
+symPrefUniVar	elseifstat	elseifstats	true
+passou um
+passou três	elseifstat	elseifstats
+__elseif	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	elseif
+foi true22	elseif	exp	true
+symPrefUniVar	exp	elseifstat	true
+passou um
+passou três	exp	elseifstat
+__then	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, while
+Subset	__then	rule = 	elseifstat	total = 	2
+symPrefUniVar	block	elseifstat	false
+__else	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+true33	else
+symPrefUniVar	block	elseopt	true
+passou um
+passou três	block	elseopt
+__return	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, ;, __NAME, __NUMBER, __STRINGLIT, else, elseif, end, false, nil, not, true, until, {, ~
+true33	return
+foi true22	return	table: 0x55f753a68290	true
+symPrefUniVar	explist	returnstat	true
+passou um
+passou três	explist	returnstat
+__;	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, return, string, true, value, }	 flw := 	else, elseif, end, until
+symPrefUniVar	e1	exp	true
+passou um
+symPrefUniVar	e2	e1	true
+passou um
+__or	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	or
+symPrefUniVar	e2	e1	true
+passou um
+passou três	e2	e1
+symPrefUniVar	e3	e2	true
+passou um
+__and	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	and
+symPrefUniVar	e3	e2	true
+passou um
+passou três	e3	e2
+symPrefUniVar	e4	e3	true
+passou um
+__==	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	==
+__~=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~=
+__<=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<=
+__>=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>=
+__<	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<
+__>	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>
+symPrefUniVar	e4	e3	true
+passou um
+passou três	e4	e3
+symPrefUniVar	e5	e4	true
+passou um
+__|	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	|
+symPrefUniVar	e5	e4	true
+passou um
+passou três	e5	e4
+symPrefUniVar	e6	e5	true
+passou um
+__~	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~
+symPrefUniVar	e6	e5	true
+passou um
+passou três	e6	e5
+symPrefUniVar	e7	e6	true
+passou um
+__&	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	&
+symPrefUniVar	e7	e6	true
+passou um
+passou três	e7	e6
+symPrefUniVar	e8	e7	true
+passou um
+__<<	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<<
+__>>	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>>
+symPrefUniVar	e8	e7	true
+passou um
+passou três	e8	e7
+symPrefUniVar	e9	e8	true
+passou um
+__..	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	..
+symPrefUniVar	e8	e8	true
+passou um
+passou três	e8	e8
+symPrefUniVar	e10	e9	true
+passou um
+__+	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	+
+__-	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	-
+symPrefUniVar	e10	e9	true
+passou um
+passou três	e10	e9
+symPrefUniVar	e11	e10	true
+passou um
+__*	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	*
+__%%	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	%%
+__/	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	/
+__//	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	//
+symPrefUniVar	e11	e10	true
+passou um
+passou três	e11	e10
+__not	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	not
+__#	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	#
+__-	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	-
+__~	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~
+symPrefUniVar	e12	e11	true
+passou um
+symPrefUniVar	castexp	e12	true
+passou um
+__^	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	^
+symPrefUniVar	e11	e12	true
+passou um
+passou três	e11	e12
+symPrefUniVar	prefixexp	suffixedexp	false
+symPrefUniVar	expsuffix	suffixedexp	true
+passou um
+symPrefUniVar	funcargs	expsuffix	false
+__:	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	__NAME
+Subset	__:	rule = 	expsuffix	total = 	5
+NAME	 pref := 	:	 flw := 	(, __STRINGLIT, {
+symPrefUniVar	funcargs	expsuffix	true
+passou um
+__[	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	[
+foi true22	[	exp	true
+symPrefUniVar	exp	expsuffix	true
+passou um
+passou três	exp	expsuffix
+__]	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	]
+__.	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	__NAME
+true33	.
+foi true22	.	table: 0x55f753ac4320	true
+NAME	 pref := 	.	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	NAME
+NAME	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+__(	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	prefixexp	false
+__)	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+symPrefUniVar	simpleexp	castexp	false
+__as	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, false, nil, true, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+true33	as
+foi true22	as	type	true
+symPrefUniVar	type	castexp	true
+passou um
+passou três	type	castexp
+symPrefUniVar	simpleexp	castexp	true
+passou um
+__nil	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__false	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	false
+__true	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	true
+NUMBER	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	NUMBER
+STRINGLIT	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+symPrefUniVar	initlist	simpleexp	true
+passou um
+symPrefUniVar	suffixedexp	simpleexp	false
+symPrefUniVar	prefixexp	simpleexp	false
+symPrefUniVar	suffixedexp	var	false
+NAME	 pref := 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	,, =
+symPrefUniVar	var	varlist	true
+passou um
+__,	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	(, __NAME
+symPrefUniVar	var	varlist	true
+passou um
+__(	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, ), -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	funcargs	true
+passou um
+__)	 pref := 	(, ), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+symPrefUniVar	initlist	funcargs	true
+passou um
+passou três	initlist	funcargs
+STRINGLIT	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	STRINGLIT
+symPrefUniVar	exp	explist	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	explist	total = 	8
+symPrefUniVar	exp	explist	false
+__{	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, elseif, if, not, or, return, until, while, {, |, }, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+symPrefUniVar	fieldlist	initlist	true
+passou um
+__}	 pref := 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, {, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+Subset	__}	rule = 	initlist	total = 	2
+symPrefUniVar	field	fieldlist	true
+passou um
+symPrefUniVar	fieldsep	fieldlist	false
+symPrefUniVar	field	fieldlist	true
+passou um
+symPrefUniVar	fieldsep	fieldlist	true
+passou um
+NAME	 pref := 	,, ;, {	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	field	false
+__;	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+Subset	__,	rule = 	fieldsep	total = 	8
+unique var2 	toplevelfunc
+unique var 	toplevelrecord
+Unique usage	toplevelrecord
+unique var2 	import
+unique var 	foreign
+Unique usage	foreign
+unique var 	paramlist
+Unique usage	paramlist
+unique var 	rettypeopt
+Unique usage	rettypeopt
+unique var 	block
+unique var 	recordfields
+Unique usage	recordfields
+unique var 	rettype
+unique var 	param
+Unique usage	param
+unique var 	param
+Unique usage	param
+unique var 	type
+unique var 	recordfield
+Unique usage	recordfield
+unique var 	type
+unique var2 	returnstat
+unique var 	exp
+unique var 	block
+unique var 	block
+unique var 	exp
+setUnique	if	nil	true
+unique var 	exp
+unique var 	block
+unique var 	elseifstats
+Unique usage	elseifstats
+unique var 	elseopt
+Unique usage	elseopt
+unique var 	decl
+unique var 	exp
+unique var 	exp
+unique var 	exp
+unique var 	block
+unique var 	elseifstat
+Unique usage	elseifstat
+unique var 	exp
+unique var 	block
+unique var 	block
+unique var 	explist
+unique var 	e2
+unique var 	e3
+unique var 	e4
+unique var 	e5
+unique var 	e6
+unique var 	e7
+unique var 	e8
+unique var 	e8
+unique var 	e10
+unique var 	e11
+unique var 	e11
+unique var 	exp
+unique var 	type
+SKIP	 pref := 		 flw := 	$, __NAME, function, local, record
+true33	SKIP
+foi true22	SKIP	table: 0x55f753b0a6d0	true
+symPrefUniVar	toplevelfunc	program	true
+passou um
+symPrefUniVar	toplevelvar	program	true
+passou um
+symPrefUniVar	toplevelrecord	program	true
+passou um
+passou três	toplevelrecord	program
+UniqueFlwVar	toplevelrecord	rule = 	program	pref = 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	flw = 	$, __NAME, function, local, record	rep = 	true
+symPrefUniVar	import	program	true
+passou um
+symPrefUniVar	foreign	program	true
+passou um
+symPrefUniVar	localopt	toplevelfunc	false
+__function	 pref := 	__empty, local	 flw := 	__NAME
+true33	function
+foi true22	function	NAME	true
+NAME	 pref := 	function	 flw := 	(
+true33	NAME
+foi true22	NAME	(	true
+__(	 pref := 	__NAME	 flw := 	), __NAME
+symPrefUniVar	paramlist	toplevelfunc	true
+passou um
+__)	 pref := 	(, ), __NAME, __empty, boolean, float, integer, nil, string, value, }	 flw := 	(, :, ;, __NAME, do, end, for, if, local, repeat, return, while
+symPrefUniVar	rettypeopt	toplevelfunc	true
+passou um
+symPrefUniVar	block	toplevelfunc	true
+passou um
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, true, value, }	 flw := 	$, __NAME, function, local, record
+symPrefUniVar	localopt	toplevelvar	false
+symPrefUniVar	decl	toplevelvar	false
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	toplevelvar	false
+__record	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+true33	record
+foi true22	record	NAME	true
+NAME	 pref := 	record	 flw := 	__NAME
+true33	NAME
+foi true22	NAME	recordfields	true
+symPrefUniVar	recordfields	toplevelrecord	true
+passou um
+__end	 pref := 	), ;, __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, __NAME, function, local, record
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME, function
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+NAME	 pref := 	local	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	import
+__import	 pref := 	=	 flw := 	(, __STRINGLIT
+true33	import
+foi true22	import	table: 0x55f753b0de50	true
+__(	 pref := 	import	 flw := 	__STRINGLIT
+STRINGLIT	 pref := 	(	 flw := 	)
+__)	 pref := 	__STRINGLIT	 flw := 	$, __NAME, function, local, record
+STRINGLIT	 pref := 	import	 flw := 	$, __NAME, function, local, record
+__local	 pref := 	), ], __NAME, __NUMBER, __SKIP, __STRINGLIT, boolean, end, false, float, integer, nil, string, true, value, }	 flw := 	__NAME
+NAME	 pref := 	local	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	foreign
+__foreign	 pref := 	=	 flw := 	import
+true33	foreign
+foi true22	foreign	import	true
+__import	 pref := 	foreign	 flw := 	(, __STRINGLIT
+true33	import
+foi true22	import	table: 0x55f753b0f050	true
+__(	 pref := 	import	 flw := 	__STRINGLIT
+STRINGLIT	 pref := 	(	 flw := 	)
+__)	 pref := 	__STRINGLIT	 flw := 	$, __NAME, function, local, record
+STRINGLIT	 pref := 	import	 flw := 	$, __NAME, function, local, record
+__:	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettypeopt	true
+passou um
+symPrefUniVar	param	paramlist	true
+passou um
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME
+symPrefUniVar	param	paramlist	true
+passou um
+NAME	 pref := 	(, ,	 flw := 	:
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	param	false
+NAME	 pref := 	,, __empty, for, local	 flw := 	,, :, =
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	decl	false
+symPrefUniVar	decl	decllist	false
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME
+symPrefUniVar	decl	decllist	true
+passou um
+__nil	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__boolean	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	boolean
+__integer	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	integer
+__float	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	float
+__string	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	string
+__value	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	value
+NAME	 pref := 	(, ,, ->, :, as, {	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__{	 pref := 	(, ,, ->, :, as, {	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	simpletype	true
+passou um
+__}	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__(	 pref := 	(, ,, ->, :, as, {	 flw := 	(, ), __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	typelist	true
+passou um
+__,	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	typelist	true
+passou um
+__)	 pref := 	(, ), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ->, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, ], ^, __NAME, and, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+symPrefUniVar	typelist	rettype	false
+__->	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettype	false
+symPrefUniVar	simpletype	rettype	false
+__->	 pref := 	__NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	rettype	false
+symPrefUniVar	typelist	rettype	false
+symPrefUniVar	simpletype	rettype	false
+symPrefUniVar	typelist	type	false
+__->	 pref := 	)	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	type	false
+symPrefUniVar	simpletype	type	false
+__->	 pref := 	__NAME, boolean, float, integer, nil, string, value, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	rettype	type	false
+symPrefUniVar	simpletype	type	false
+symPrefUniVar	recordfield	recordfields	true
+passou um
+NAME	 pref := 	), ;, __NAME, boolean, float, integer, nil, string, value, }	 flw := 	:
+__:	 pref := 	__NAME	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+symPrefUniVar	type	recordfield	false
+__;	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	__NAME, end
+symPrefUniVar	statement	block	true
+passou um
+symPrefUniVar	returnstat	block	true
+passou um
+passou três	returnstat	block
+__;	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__do	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+Subset	__do	rule = 	statement	total = 	3
+symPrefUniVar	block	statement	false
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__while	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	while
+foi true22	while	exp	true
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__do	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+symPrefUniVar	block	statement	false
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__repeat	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	(, ;, __NAME, do, for, if, local, repeat, return, until, while
+true33	repeat
+foi true22	repeat	block	true
+symPrefUniVar	block	statement	true
+passou um
+passou três	block	statement
+__until	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, repeat, return, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	until
+foi true22	until	exp	true
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__if	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	if
+foi true22	if	exp	true
+symPrefUniVar	exp	statement	true
+passou um
+passou três	exp	statement
+__then	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, while
+Subset	__then	rule = 	statement	total = 	2
+symPrefUniVar	block	statement	false
+symPrefUniVar	elseifstats	statement	true
+passou um
+passou três	elseifstats	statement
+symPrefUniVar	elseopt	statement	true
+passou um
+passou três	elseopt	statement
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, else, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__for	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	__NAME
+true33	for
+foi true22	for	decl	true
+symPrefUniVar	decl	statement	true
+passou um
+passou três	decl	statement
+UniqueFlwVar	decl	rule = 	statement	pref = 	for	flw = 	=	rep = 	nil
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	statement	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	statement	total = 	8
+symPrefUniVar	exp	statement	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	statement	total = 	8
+symPrefUniVar	exp	statement	false
+__do	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+true33	do
+symPrefUniVar	block	statement	true
+passou um
+passou três	block	statement
+__end	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, end, false, float, integer, nil, return, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, until, while
+__local	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	__NAME
+symPrefUniVar	decllist	statement	true
+passou um
+__=	 pref := 	), __NAME, boolean, float, integer, nil, string, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	statement	false
+symPrefUniVar	varlist	statement	true
+passou um
+__=	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	statement	true
+passou um
+passou três	explist	statement
+symPrefUniVar	suffixedexp	statement	false
+symPrefUniVar	elseifstat	elseifstats	true
+passou um
+passou três	elseifstat	elseifstats
+__elseif	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	elseif
+foi true22	elseif	exp	true
+symPrefUniVar	exp	elseifstat	true
+passou um
+passou três	exp	elseifstat
+__then	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	(, ;, __NAME, do, else, elseif, end, for, if, local, repeat, return, while
+Subset	__then	rule = 	elseifstat	total = 	2
+symPrefUniVar	block	elseifstat	false
+__else	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, end, false, float, integer, nil, return, string, then, true, value, }	 flw := 	(, ;, __NAME, do, end, for, if, local, repeat, return, while
+true33	else
+symPrefUniVar	block	elseopt	true
+passou um
+passou três	block	elseopt
+__return	 pref := 	), ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	#, (, -, ;, __NAME, __NUMBER, __STRINGLIT, else, elseif, end, false, nil, not, true, until, {, ~
+true33	return
+foi true22	return	table: 0x55f753a68290	true
+symPrefUniVar	explist	returnstat	true
+passou um
+passou três	explist	returnstat
+__;	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, return, string, true, value, }	 flw := 	else, elseif, end, until
+symPrefUniVar	e1	exp	true
+passou um
+symPrefUniVar	e2	e1	true
+passou um
+__or	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	or
+symPrefUniVar	e2	e1	true
+passou um
+passou três	e2	e1
+symPrefUniVar	e3	e2	true
+passou um
+__and	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	and
+symPrefUniVar	e3	e2	true
+passou um
+passou três	e3	e2
+symPrefUniVar	e4	e3	true
+passou um
+__==	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	==
+__~=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~=
+__<=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<=
+__>=	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>=
+__<	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<
+__>	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>
+symPrefUniVar	e4	e3	true
+passou um
+passou três	e4	e3
+symPrefUniVar	e5	e4	true
+passou um
+__|	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	|
+symPrefUniVar	e5	e4	true
+passou um
+passou três	e5	e4
+symPrefUniVar	e6	e5	true
+passou um
+__~	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~
+symPrefUniVar	e6	e5	true
+passou um
+passou três	e6	e5
+symPrefUniVar	e7	e6	true
+passou um
+__&	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	&
+symPrefUniVar	e7	e6	true
+passou um
+passou três	e7	e6
+symPrefUniVar	e8	e7	true
+passou um
+__<<	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	<<
+__>>	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	>>
+symPrefUniVar	e8	e7	true
+passou um
+passou três	e8	e7
+symPrefUniVar	e9	e8	true
+passou um
+__..	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	..
+symPrefUniVar	e8	e8	true
+passou um
+passou três	e8	e8
+symPrefUniVar	e10	e9	true
+passou um
+__+	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	+
+__-	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	-
+symPrefUniVar	e10	e9	true
+passou um
+passou três	e10	e9
+symPrefUniVar	e11	e10	true
+passou um
+__*	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	*
+__%%	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	%%
+__/	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	/
+__//	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	//
+symPrefUniVar	e11	e10	true
+passou um
+passou três	e11	e10
+__not	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	not
+__#	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	#
+__-	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	-
+__~	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	~
+symPrefUniVar	e12	e11	true
+passou um
+symPrefUniVar	castexp	e12	true
+passou um
+__^	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	^
+symPrefUniVar	e11	e12	true
+passou um
+passou três	e11	e12
+symPrefUniVar	prefixexp	suffixedexp	false
+symPrefUniVar	expsuffix	suffixedexp	true
+passou um
+symPrefUniVar	funcargs	expsuffix	false
+__:	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	__NAME
+Subset	__:	rule = 	expsuffix	total = 	5
+NAME	 pref := 	:	 flw := 	(, __STRINGLIT, {
+symPrefUniVar	funcargs	expsuffix	true
+passou um
+__[	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+true33	[
+foi true22	[	exp	true
+symPrefUniVar	exp	expsuffix	true
+passou um
+passou três	exp	expsuffix
+__]	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	]
+__.	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	__NAME
+true33	.
+foi true22	.	table: 0x55f753ac4320	true
+NAME	 pref := 	.	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	NAME
+NAME	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+__(	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __NUMBER, __STRINGLIT, __empty, and, boolean, do, else, elseif, end, false, float, if, integer, nil, not, or, repeat, return, string, then, true, until, value, while, {, |, }, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	prefixexp	false
+__)	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+symPrefUniVar	simpleexp	castexp	false
+__as	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, false, nil, true, }	 flw := 	(, __NAME, boolean, float, integer, nil, string, value, {
+true33	as
+foi true22	as	type	true
+symPrefUniVar	type	castexp	true
+passou um
+passou três	type	castexp
+symPrefUniVar	simpleexp	castexp	true
+passou um
+__nil	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+__false	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	false
+__true	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	true
+NUMBER	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+true33	NUMBER
+STRINGLIT	 pref := 	#, %%, &, (, *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ^, and, elseif, if, not, or, return, until, while, {, |, ~, ~=	 flw := 	$, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, ==, >, >=, >>, ], ^, __NAME, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, |, }, ~, ~=
+symPrefUniVar	initlist	simpleexp	true
+passou um
+symPrefUniVar	suffixedexp	simpleexp	false
+symPrefUniVar	prefixexp	simpleexp	false
+symPrefUniVar	suffixedexp	var	false
+NAME	 pref := 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, __empty, boolean, do, else, end, false, float, integer, nil, repeat, string, then, true, value, }	 flw := 	,, =
+symPrefUniVar	var	varlist	true
+passou um
+__,	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	(, __NAME
+symPrefUniVar	var	varlist	true
+passou um
+__(	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	#, (, ), -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	explist	funcargs	true
+passou um
+__)	 pref := 	(, ), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+symPrefUniVar	initlist	funcargs	true
+passou um
+passou três	initlist	funcargs
+STRINGLIT	 pref := 	), ], __NAME, __STRINGLIT, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+true33	STRINGLIT
+symPrefUniVar	exp	explist	false
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+Subset	__,	rule = 	explist	total = 	8
+symPrefUniVar	exp	explist	false
+__{	 pref := 	#, %%, &, (, ), *, +, ,, -, .., /, //, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, elseif, if, not, or, return, until, while, {, |, }, ~, ~=	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+symPrefUniVar	fieldlist	initlist	true
+passou um
+__}	 pref := 	), ,, ;, ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, {, }	 flw := 	$, %%, &, (, ), *, +, ,, -, ., .., /, //, :, ;, <, <<, <=, =, ==, >, >=, >>, [, ], ^, __NAME, __STRINGLIT, and, as, do, else, elseif, end, for, function, if, local, or, record, repeat, return, then, until, while, {, |, }, ~, ~=
+Subset	__}	rule = 	initlist	total = 	2
+symPrefUniVar	field	fieldlist	true
+passou um
+symPrefUniVar	fieldsep	fieldlist	false
+symPrefUniVar	field	fieldlist	true
+passou um
+symPrefUniVar	fieldsep	fieldlist	true
+passou um
+NAME	 pref := 	,, ;, {	 flw := 	=
+__=	 pref := 	__NAME	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, ~
+symPrefUniVar	exp	field	false
+__;	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+__,	 pref := 	), ], __NAME, __NUMBER, __STRINGLIT, boolean, false, float, integer, nil, string, true, value, }	 flw := 	#, (, -, __NAME, __NUMBER, __STRINGLIT, false, nil, not, true, {, }, ~
+Subset	__,	rule = 	fieldsep	total = 	8
+unique var2 	toplevelfunc
+unique var 	toplevelrecord
+Unique usage	toplevelrecord
+unique var2 	import
+unique var 	foreign
+Unique usage	foreign
+unique var 	paramlist
+Unique usage	paramlist
+unique var 	rettypeopt
+Unique usage	rettypeopt
+unique var 	block
+unique var 	recordfields
+Unique usage	recordfields
+unique var 	rettype
+unique var 	param
+Unique usage	param
+unique var 	param
+Unique usage	param
+unique var 	type
+unique var 	recordfield
+Unique usage	recordfield
+unique var 	type
+unique var2 	returnstat
+unique var 	exp
+unique var 	block
+unique var 	block
+unique var 	exp
+setUnique	if	nil	true
+unique var 	exp
+unique var 	block
+unique var 	elseifstats
+Unique usage	elseifstats
+unique var 	elseopt
+Unique usage	elseopt
+unique var 	decl
+unique var 	exp
+unique var 	exp
+unique var 	exp
+unique var 	block
+unique var 	elseifstat
+Unique usage	elseifstat
+unique var 	exp
+unique var 	block
+unique var 	block
+unique var 	explist
+unique var 	e2
+unique var 	e3
+unique var 	e4
+unique var 	e5
+unique var 	e6
+unique var 	e7
+unique var 	e8
+unique var 	e8
+unique var 	e10
+unique var 	e11
+unique var 	e11
+unique var 	exp
+unique var 	type
+Unique vars: program, toplevelrecord, foreign, rettypeopt, paramlist, param, recordfields, recordfield, elseifstats, elseifstat, elseopt, 
+matchUPath: program, toplevelfunc, toplevelrecord, import, foreign, param, recordfields, recordfield, elseifstat, returnstat, 
+Adding labels: Err_1, Err_2, Err_3, Err_4, Err_5, Err_6, Err_7, Err_8, Err_9, Err_10, Err_11, Err_12, Err_13, Err_14, Err_15, Err_16, Err_17, Err_18, Err_19, Err_20, Err_21, Err_22, Err_23, Err_24, Err_25, Err_26, Err_27, Err_28, Err_29, Err_30, Err_31, Err_32, Err_33, Err_34, Err_35, Err_36, Err_37, Err_38, Err_39, Err_40, Err_41, Err_42, Err_43, Err_44, Err_45, Err_46, Err_47, Err_48, Err_49, Err_50, Err_51, Err_52, Err_53, Err_54, Err_55, Err_56, Err_57, Err_58, Err_59, Err_60, Err_61, 
+
+Property 	nil
+program         <-  SKIP (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* !.
+toplevelfunc    <-  localopt 'function' NAME^Err_001 '('^Err_002 paramlist ')'^Err_003 rettypeopt block 'end'^Err_004
+toplevelvar     <-  localopt decl '=' exp
+toplevelrecord  <-  'record' NAME^Err_005 recordfields^Err_006 'end'^Err_007
+localopt        <-  'local'?
+import          <-  'local' NAME '=' 'import' ('(' STRINGLIT^Err_008 ')'^Err_009  /  STRINGLIT)^Err_010
+foreign         <-  'local' NAME^Err_011 '='^Err_012 'foreign'^Err_013 'import'^Err_014 ('(' STRINGLIT^Err_015 ')'^Err_016  /  STRINGLIT)^Err_017
+rettypeopt      <-  (':' rettype^Err_018)?
+paramlist       <-  (param (',' param^Err_019)*)?
+param           <-  NAME ':'^Err_020 type^Err_021
+decl            <-  NAME (':' type)?
+decllist        <-  decl (',' decl)*
+simpletype      <-  'nil'  /  'boolean'  /  'integer'  /  'float'  /  'string'  /  'value'  /  NAME  /  '{' type '}'
+typelist        <-  '(' (type (',' type)*)? ')'
+rettype         <-  typelist '->' rettype^Err_022  /  simpletype '->' rettype^Err_023  /  typelist  /  simpletype
+type            <-  typelist '->' rettype^Err_024  /  simpletype '->' rettype^Err_025  /  simpletype
+recordfields    <-  recordfield+^Err_026
+recordfield     <-  NAME ':'^Err_027 type^Err_028 ';'?
+block           <-  statement* returnstat?
+statement       <-  ';'  /  'do' block 'end'  /  'while' exp^Err_029 'do'^Err_030 block 'end'^Err_031  /  'repeat' block 'until'^Err_032 exp^Err_033  /  'if' exp^Err_034 'then'^Err_035 block elseifstats elseopt 'end'^Err_036  /  'for' decl^Err_037 '='^Err_038 exp^Err_039 ','^Err_040 exp^Err_041 (',' exp^Err_042)? 'do'^Err_043 block 'end'^Err_044  /  'local' decllist '=' explist  /  varlist '=' explist  /  suffixedexp
+elseifstats     <-  elseifstat*
+elseifstat      <-  'elseif' exp^Err_045 'then'^Err_046 block
+elseopt         <-  ('else' block)?
+returnstat      <-  'return' explist? ';'?
+exp             <-  e1
+e1              <-  e2 ('or' e2^Err_047)*
+e2              <-  e3 ('and' e3^Err_048)*
+e3              <-  e4 (('=='  /  '~='  /  '<='  /  '>='  /  '<'  /  '>') e4^Err_049)*
+e4              <-  e5 ('|' e5^Err_050)*
+e5              <-  e6 ('~' !'=' e6^Err_051)*
+e6              <-  e7 ('&' e7^Err_052)*
+e7              <-  e8 (('<<'  /  '>>') e8^Err_053)*
+e8              <-  e9 ('..' e8^Err_054)?
+e9              <-  e10 (('+'  /  '-') e10^Err_055)*
+e10             <-  e11 (('*'  /  '%%'  /  '/'  /  '//') e11^Err_056)*
+e11             <-  ('not'  /  '#'  /  '-'  /  '~')* e12
+e12             <-  castexp ('^' e11^Err_057)?
+suffixedexp     <-  prefixexp expsuffix+
+expsuffix       <-  funcargs  /  ':' NAME funcargs  /  '[' exp^Err_058 ']'^Err_059  /  '.' !'.' NAME^Err_060
+prefixexp       <-  NAME  /  '(' exp ')'
+castexp         <-  simpleexp 'as' type^Err_061  /  simpleexp
+simpleexp       <-  'nil'  /  'false'  /  'true'  /  NUMBER  /  STRINGLIT  /  initlist  /  suffixedexp  /  prefixexp
+var             <-  suffixedexp  /  NAME !expsuffix
+varlist         <-  var (',' var)*
+funcargs        <-  '(' explist? ')'  /  initlist  /  STRINGLIT
+explist         <-  exp (',' exp)*
+initlist        <-  '{' fieldlist? '}'
+fieldlist       <-  field (fieldsep field)* fieldsep?
+field           <-  (NAME '=')? exp
+fieldsep        <-  ';'  /  ','
+STRINGLIT       <-  '"' (!'"' .)* '"'  /  "'" (!"'" .)* "'"
+RESERVED        <-  ('and'  /  'as'  /  'boolean'  /  'break'  /  'do'  /  'elseif'  /  'else'  /  'end'  /  'float'  /  'foreign'  /  'for'  /  'false'  /  'function'  /  'goto'  /  'if'  /  'import'  /  'integer'  /  'in'  /  'local'  /  'nil'  /  'not'  /  'or'  /  'record'  /  'repeat'  /  'return'  /  'string'  /  'then'  /  'true'  /  'until'  /  'value'  /  'while') ![a-zA-Z_0-9]
+NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
+NUMBER          <-  [0-9]+ ('.' !'.' [0-9]*)?
+COMMENT         <-  '--' (!%nl .)*
+SPACE           <-  [ 	
+]  /  COMMENT
+SKIP            <-  ([ 	
+]  /  COMMENT)*
+Token           <-  '~='  /  '~'  /  '}'  /  '|'  /  '{'  /  STRINGLIT  /  RESERVED  /  NUMBER  /  NAME  /  COMMENT  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '#'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!'(' EatToken)*
+Err_002         <-  (!(NAME  /  ')') EatToken)*
+Err_003         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  NAME  /  ';'  /  ':'  /  '(') EatToken)*
+Err_004         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_005         <-  (!NAME EatToken)*
+Err_006         <-  (!'end' EatToken)*
+Err_007         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_008         <-  (!')' EatToken)*
+Err_009         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_010         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_011         <-  (!'=' EatToken)*
+Err_012         <-  (!'foreign' EatToken)*
+Err_013         <-  (!'import' EatToken)*
+Err_014         <-  (!(STRINGLIT  /  '(') EatToken)*
+Err_015         <-  (!')' EatToken)*
+Err_016         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_017         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_018         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_019         <-  (!(','  /  ')') EatToken)*
+Err_020         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  NAME  /  '(') EatToken)*
+Err_021         <-  (!(','  /  ')') EatToken)*
+Err_022         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_023         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_024         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_025         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_026         <-  (!('end'  /  NAME) EatToken)*
+Err_027         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  NAME  /  '(') EatToken)*
+Err_028         <-  (!('end'  /  NAME  /  ';') EatToken)*
+Err_029         <-  (!'do' EatToken)*
+Err_030         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_031         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_032         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  STRINGLIT  /  NUMBER  /  NAME  /  '-'  /  '('  /  '#') EatToken)*
+Err_033         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_034         <-  (!'then' EatToken)*
+Err_035         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_036         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_037         <-  (!'=' EatToken)*
+Err_038         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  STRINGLIT  /  NUMBER  /  NAME  /  '-'  /  '('  /  '#') EatToken)*
+Err_039         <-  (!',' EatToken)*
+Err_040         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  STRINGLIT  /  NUMBER  /  NAME  /  '-'  /  '('  /  '#') EatToken)*
+Err_041         <-  (!('do'  /  ',') EatToken)*
+Err_042         <-  (!'do' EatToken)*
+Err_043         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_044         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_045         <-  (!'then' EatToken)*
+Err_046         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_047         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ']'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_048         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_049         <-  (!('~='  /  '}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_050         <-  (!('~='  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_051         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_052         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_053         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_054         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_055         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '..'  /  '-'  /  ','  /  '+'  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_056         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_057         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_058         <-  (!']' EatToken)*
+Err_059         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  STRINGLIT  /  NAME  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_060         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  STRINGLIT  /  NAME  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_061         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*	
+
+Property 	unique
+program         <-  SKIP_unique ((toplevelfunc_unique  /  (toplevelvar  /  (toplevelrecord_unique  /  (import_unique  /  foreign_unique)_unique)_unique)_unique)_unique)*_unique !.
+toplevelfunc    <-  localopt 'function'_unique NAME_unique^Err_001 '('_unique^Err_002 paramlist_unique ')'_unique^Err_003 rettypeopt_unique block_unique 'end'_unique^Err_004
+toplevelvar     <-  localopt decl '=' exp
+toplevelrecord  <-  'record'_unique NAME_unique^Err_005 recordfields_unique^Err_006 'end'_unique^Err_007
+localopt        <-  'local'?
+import          <-  'local' NAME '=' 'import'_unique (('('_unique STRINGLIT_unique^Err_008 ')'_unique^Err_009  /  STRINGLIT_unique)_unique)^Err_010
+foreign         <-  'local'_unique NAME_unique^Err_011 '='_unique^Err_012 'foreign'_unique^Err_013 'import'_unique^Err_014 (('('_unique STRINGLIT_unique^Err_015 ')'_unique^Err_016  /  STRINGLIT_unique)_unique)^Err_017
+rettypeopt      <-  (':'_unique rettype_unique^Err_018)?_unique
+paramlist       <-  (param_unique (','_unique param_unique^Err_019)*_unique)?_unique
+param           <-  NAME_unique ':'_unique^Err_020 type_unique^Err_021
+decl            <-  NAME (':' type)?
+decllist        <-  decl (',' decl)*
+simpletype      <-  'nil'  /  'boolean'_unique  /  'integer'_unique  /  'float'_unique  /  'string'_unique  /  'value'_unique  /  NAME  /  '{' type '}'
+typelist        <-  '(' (type (',' type)*)? ')'
+rettype         <-  typelist '->' rettype^Err_022  /  simpletype '->' rettype^Err_023  /  typelist  /  simpletype
+type            <-  typelist '->' rettype^Err_024  /  simpletype '->' rettype^Err_025  /  simpletype
+recordfields    <-  recordfield_unique+_unique^Err_026
+recordfield     <-  NAME_unique ':'_unique^Err_027 type_unique^Err_028 ';'_unique?_unique
+block           <-  statement* returnstat_unique?
+statement       <-  ';'  /  'do' block 'end'  /  'while'_unique exp_unique^Err_029 'do'_unique^Err_030 block_unique 'end'_unique^Err_031  /  'repeat'_unique block_unique 'until'_unique^Err_032 exp_unique^Err_033  /  'if'_unique exp_unique^Err_034 'then'_unique^Err_035 block_unique elseifstats_unique elseopt_unique 'end'_unique^Err_036  /  'for'_unique decl_unique^Err_037 '='_unique^Err_038 exp_unique^Err_039 ','_unique^Err_040 exp_unique^Err_041 (','_unique exp_unique^Err_042)?_unique 'do'_unique^Err_043 block_unique 'end'_unique^Err_044  /  'local' decllist '=' explist  /  varlist '=' explist_unique  /  suffixedexp
+elseifstats     <-  elseifstat_unique*_unique
+elseifstat      <-  'elseif'_unique exp_unique^Err_045 'then'_unique^Err_046 block_unique
+elseopt         <-  ('else'_unique block_unique)?_unique
+returnstat      <-  'return'_unique explist_unique?_unique ';'_unique?_unique
+exp             <-  e1
+e1              <-  e2 ('or'_unique e2_unique^Err_047)*
+e2              <-  e3 ('and'_unique e3_unique^Err_048)*
+e3              <-  e4 ((('=='_unique  /  ('~='_unique  /  ('<='_unique  /  ('>='_unique  /  ('<'_unique  /  '>'_unique)_unique)_unique)_unique)_unique)_unique) e4_unique^Err_049)*
+e4              <-  e5 ('|'_unique e5_unique^Err_050)*
+e5              <-  e6 ('~'_unique !'=' e6_unique^Err_051)*
+e6              <-  e7 ('&'_unique e7_unique^Err_052)*
+e7              <-  e8 ((('<<'_unique  /  '>>'_unique)_unique) e8_unique^Err_053)*
+e8              <-  e9 ('..'_unique e8_unique^Err_054)?
+e9              <-  e10 ((('+'_unique  /  '-'_unique)_unique) e10_unique^Err_055)*
+e10             <-  e11 ((('*'_unique  /  ('%%'_unique  /  ('/'_unique  /  '//'_unique)_unique)_unique)_unique) e11_unique^Err_056)*
+e11             <-  (('not'_unique  /  ('#'_unique  /  ('-'_unique  /  '~'_unique)_unique)_unique)_unique)* e12
+e12             <-  castexp ('^'_unique e11_unique^Err_057)?
+suffixedexp     <-  prefixexp expsuffix+
+expsuffix       <-  funcargs  /  ':' NAME funcargs  /  ('['_unique exp_unique^Err_058 ']'_unique^Err_059  /  '.'_unique !'.' NAME_unique^Err_060)_unique
+prefixexp       <-  NAME  /  '(' exp ')'
+castexp         <-  simpleexp 'as'_unique type_unique^Err_061  /  simpleexp
+simpleexp       <-  'nil'  /  'false'_unique  /  'true'_unique  /  NUMBER_unique  /  STRINGLIT  /  initlist  /  suffixedexp  /  prefixexp
+var             <-  suffixedexp  /  NAME !expsuffix
+varlist         <-  var (',' var)*
+funcargs        <-  '(' explist? ')'  /  (initlist_unique  /  STRINGLIT_unique)_unique
+explist         <-  exp (',' exp)*
+initlist        <-  '{' fieldlist? '}'
+fieldlist       <-  field (fieldsep field)* fieldsep?
+field           <-  (NAME '=')? exp
+fieldsep        <-  ';'  /  ','
+STRINGLIT       <-  '"' (!'"' .)* '"'  /  "'" (!"'" .)* "'"
+RESERVED        <-  ('and'  /  'as'  /  'boolean'  /  'break'  /  'do'  /  'elseif'  /  'else'  /  'end'  /  'float'  /  'foreign'  /  'for'  /  'false'  /  'function'  /  'goto'  /  'if'  /  'import'  /  'integer'  /  'in'  /  'local'  /  'nil'  /  'not'  /  'or'  /  'record'  /  'repeat'  /  'return'  /  'string'  /  'then'  /  'true'  /  'until'  /  'value'  /  'while') ![a-zA-Z_0-9]
+NAME            <-  !RESERVED [a-zA-Z_] [a-zA-Z_0-9]*
+NUMBER          <-  [0-9]+ ('.' !'.' [0-9]*)?
+COMMENT         <-  '--' (!%nl .)*
+SPACE           <-  [ 	
+]  /  COMMENT
+SKIP            <-  ([ 	
+]  /  COMMENT)*
+Token           <-  '~='  /  '~'  /  '}'  /  '|'  /  '{'  /  STRINGLIT  /  RESERVED  /  NUMBER  /  NAME  /  COMMENT  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '->'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  '#'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!'(' EatToken)*
+Err_002         <-  (!(NAME  /  ')') EatToken)*
+Err_003         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  NAME  /  ';'  /  ':'  /  '(') EatToken)*
+Err_004         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_005         <-  (!NAME EatToken)*
+Err_006         <-  (!'end' EatToken)*
+Err_007         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_008         <-  (!')' EatToken)*
+Err_009         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_010         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_011         <-  (!'=' EatToken)*
+Err_012         <-  (!'foreign' EatToken)*
+Err_013         <-  (!'import' EatToken)*
+Err_014         <-  (!(STRINGLIT  /  '(') EatToken)*
+Err_015         <-  (!')' EatToken)*
+Err_016         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_017         <-  (!('record'  /  'local'  /  'function'  /  NAME  /  !.) EatToken)*
+Err_018         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_019         <-  (!(','  /  ')') EatToken)*
+Err_020         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  NAME  /  '(') EatToken)*
+Err_021         <-  (!(','  /  ')') EatToken)*
+Err_022         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_023         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_024         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_025         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_026         <-  (!('end'  /  NAME) EatToken)*
+Err_027         <-  (!('{'  /  'value'  /  'string'  /  'nil'  /  'integer'  /  'float'  /  'boolean'  /  NAME  /  '(') EatToken)*
+Err_028         <-  (!('end'  /  NAME  /  ';') EatToken)*
+Err_029         <-  (!'do' EatToken)*
+Err_030         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_031         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_032         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  STRINGLIT  /  NUMBER  /  NAME  /  '-'  /  '('  /  '#') EatToken)*
+Err_033         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_034         <-  (!'then' EatToken)*
+Err_035         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_036         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_037         <-  (!'=' EatToken)*
+Err_038         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  STRINGLIT  /  NUMBER  /  NAME  /  '-'  /  '('  /  '#') EatToken)*
+Err_039         <-  (!',' EatToken)*
+Err_040         <-  (!('~'  /  '{'  /  'true'  /  'not'  /  'nil'  /  'false'  /  STRINGLIT  /  NUMBER  /  NAME  /  '-'  /  '('  /  '#') EatToken)*
+Err_041         <-  (!('do'  /  ',') EatToken)*
+Err_042         <-  (!'do' EatToken)*
+Err_043         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_044         <-  (!('while'  /  'until'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_045         <-  (!'then' EatToken)*
+Err_046         <-  (!('while'  /  'return'  /  'repeat'  /  'local'  /  'if'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ';'  /  '(') EatToken)*
+Err_047         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  NAME  /  ']'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_048         <-  (!('}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_049         <-  (!('~='  /  '}'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_050         <-  (!('~='  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_051         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  !.) EatToken)*
+Err_052         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_053         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_054         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ','  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_055         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '..'  /  '-'  /  ','  /  '+'  /  ')'  /  '('  /  '&'  /  !.) EatToken)*
+Err_056         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_057         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_058         <-  (!']' EatToken)*
+Err_059         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  STRINGLIT  /  NAME  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_060         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  '{'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'as'  /  'and'  /  STRINGLIT  /  NAME  /  '^'  /  ']'  /  '['  /  '>>'  /  '>='  /  '>'  /  '=='  /  '='  /  '<='  /  '<<'  /  '<'  /  ';'  /  ':'  /  '//'  /  '/'  /  '..'  /  '.'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*
+Err_061         <-  (!('~='  /  '~'  /  '}'  /  '|'  /  'while'  /  'until'  /  'then'  /  'return'  /  'repeat'  /  'record'  /  'or'  /  'local'  /  'if'  /  'function'  /  'for'  /  'end'  /  'elseif'  /  'else'  /  'do'  /  'and'  /  NAME  /  '^'  /  ']'  /  '>>'  /  '>='  /  '>'  /  '=='  /  '<='  /  '<<'  /  '<'  /  ';'  /  '//'  /  '/'  /  '..'  /  '-'  /  ','  /  '+'  /  '*'  /  ')'  /  '('  /  '&'  /  '%%'  /  !.) EatToken)*	
+
+End UPath
+
+Yes: 	arraytype01.titan
+Yes: 	arraytype02.titan
+Yes: 	assign01.titan
+Yes: 	comment01.titan
+Yes: 	dowhile01.titan
+Yes: 	expression01.titan
+Yes: 	expression02.titan
+Yes: 	expression03.titan
+Yes: 	expression04.titan
+Yes: 	expression05.titan
+Yes: 	expression06.titan
+Yes: 	expression07.titan
+Yes: 	expression08.titan
+Yes: 	expressionCall01.titan
+Yes: 	expressionCall02.titan
+Yes: 	expressionCall03.titan
+Yes: 	expressionCall04.titan
+Yes: 	expressionCall05.titan
+Yes: 	expressionCall06.titan
+Yes: 	expressionCall07.titan
+Yes: 	expressionCall08.titan
+Yes: 	expressionCall09.titan
+Yes: 	expressionCall10.titan
+Yes: 	expressionCast01.titan
+Yes: 	expressionCast02.titan
+Yes: 	expressionCast03.titan
+Yes: 	expressionCast04.titan
+Yes: 	expressionOp01.titan
+Yes: 	expressionOp02.titan
+Yes: 	expressionOp03.titan
+Yes: 	expressionOp04.titan
+Yes: 	expressionOp05.titan
+Yes: 	expressionOp06.titan
+Yes: 	expressionString01.titan
+Yes: 	expressionString02.titan
+Yes: 	expressionString03.titan
+Yes: 	expressionString04.titan
+Yes: 	expressionString05.titan
+Yes: 	for01.titan
+Yes: 	foreign01.titan
+Yes: 	functiontype01.titan
+Yes: 	functiontype02.titan
+Yes: 	functiontype03.titan
+Yes: 	functiontype04.titan
+Yes: 	functiontype05.titan
+Yes: 	functiontype06.titan
+Yes: 	functiontype07.titan
+Yes: 	functiontype08.titan
+Yes: 	if01.titan
+Yes: 	if02.titan
+Yes: 	if03.titan
+Yes: 	if04.titan
+Yes: 	import01.titan
+Yes: 	moduleMember01.titan
+Yes: 	primitivetype01.titan
+Yes: 	primitivetype02.titan
+Yes: 	record01.titan
+Yes: 	record02.titan
+Yes: 	record03.titan
+Yes: 	record04.titan
+Yes: 	record05.titan
+Yes: 	record06.titan
+Yes: 	record07.titan
+Yes: 	record08.titan
+Yes: 	record09.titan
+Yes: 	record10.titan
+Yes: 	record11.titan
+Yes: 	record12.titan
+Yes: 	repeat01.titan
+Yes: 	return01.titan
+Yes: 	return02.titan
+Yes: 	return03.titan
+Yes: 	return04.titan
+Yes: 	return05.titan
+Yes: 	return06.titan
+Yes: 	suffixOp01.titan
+Yes: 	table01.titan
+Yes: 	table02.titan
+Yes: 	table03.titan
+Yes: 	toplevelfunction01.titan
+Yes: 	toplevelfunction02.titan
+Yes: 	toplevelfunction03.titan
+Yes: 	toplevelfunction04.titan
+Yes: 	toplevelvar01.titan
+Yes: 	toplevelvar02.titan
+Yes: 	vardec01.titan
+Yes: 	while01.titan
+No: 	assignAssign01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	assignFor01.titan
+r = nil lab = fail line: 2 col: 9
+No: 	assignLocal01.titan
+r = nil lab = fail line: 2 col: 11
+No: 	assignVar01.titan
+r = nil lab = fail line: 1 col: 3
+No: 	castMissingType01.titan
+r = nil lab = fail line: 4 col: 1
+No: 	colonRecordField01.titan
+r = nil lab = fail line: 2 col: 5
+No: 	commaFor01.titan
+r = nil lab = fail line: 2 col: 12
+No: 	declFor01.titan
+r = nil lab = fail line: 2 col: 6
+No: 	declLocal01.titan
+r = nil lab = fail line: 2 col: 9
+No: 	declLocal02.titan
+r = nil lab = fail line: 2 col: 8
+No: 	declLocal03.titan
+r = nil lab = fail line: 2 col: 15
+No: 	declLocal04.titan
+r = nil lab = fail line: 2 col: 8
+No: 	declParList01.titan
+r = nil lab = fail line: 2 col: 11
+No: 	declParList02.titan
+r = nil lab = fail line: 1 col: 22
+No: 	doFor01.titan
+r = nil lab = fail line: 3 col: 2
+No: 	doWhile01.titan
+r = nil lab = fail line: 3 col: 3
+No: 	endBlock01.titan
+r = nil lab = fail line: 4 col: 1
+No: 	endFor01.titan
+r = nil lab = fail line: 4 col: 2
+No: 	endFunc01.titan
+r = nil lab = fail line: 3 col: 2
+No: 	endFunc02.titan
+r = nil lab = fail line: 2 col: 9
+No: 	endFunc03.titan
+r = nil lab = fail line: 4 col: 1
+No: 	endIf01.titan
+r = nil lab = fail line: 5 col: 2
+No: 	endRecord01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	endWhile01.titan
+r = nil lab = fail line: 5 col: 2
+No: 	exp1For01.titan
+r = nil lab = fail line: 2 col: 10
+No: 	exp2For01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	exp3For01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	expAssign01.titan
+r = nil lab = fail line: 2 col: 6
+No: 	expAssign02.titan
+r = nil lab = fail line: 2 col: 13
+No: 	expAssign03.titan
+r = nil lab = fail line: 4 col: 1
+No: 	expElseIf01.titan
+r = nil lab = fail line: 5 col: 1
+No: 	expExpList01.titan
+r = nil lab = fail line: 4 col: 1
+No: 	expExpList02.titan
+r = nil lab = fail line: 2 col: 11
+No: 	expExpSuf01.titan
+r = nil lab = fail line: 2 col: 8
+No: 	expFieldList01.titan
+r = nil lab = fail line: 2 col: 11
+No: 	expIf01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	expLocal01.titan
+r = nil lab = fail line: 4 col: 1
+No: 	expRepeat01.titan
+r = nil lab = fail line: 6 col: 1
+No: 	expSimpleExp01.titan
+r = nil lab = fail line: 2 col: 7
+No: 	expStat01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	expStat02.titan
+r = nil lab = fail line: 2 col: 2
+No: 	expVarDec01.titan
+r = nil lab = fail line: 2 col: 1
+No: 	expVarList01.titan
+r = nil lab = fail line: 2 col: 5
+No: 	expWhile01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	fieldRecord01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	funcArgsExpSuf01.titan
+r = nil lab = fail line: 2 col: 12
+No: 	lParPList01.titan
+r = nil lab = fail line: 1 col: 14
+No: 	nameColonExpSuf01.titan
+r = nil lab = fail line: 2 col: 10
+No: 	nameDotExpSuf01.titan
+r = nil lab = fail line: 2 col: 8
+No: 	nameFunc01.titan
+r = nil lab = fail line: 1 col: 17
+No: 	nameFunc02.titan
+r = nil lab = fail line: 1 col: 10
+No: 	nameImport01.titan
+r = nil lab = fail line: 1 col: 7
+No: 	nameRecord01.titan
+r = nil lab = fail line: 2 col: 1
+No: 	opExp01.titan
+r = nil lab = fail line: 4 col: 1
+No: 	paramSemicolon01.titan
+r = nil lab = fail line: 1 col: 15
+No: 	rBracketExpSuf01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	rCurlyInitList01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	rCurlyType01.titan
+r = nil lab = fail line: 1 col: 15
+No: 	rParFuncArgs01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	rParImport01.titan
+r = nil lab = fail line: 2 col: 1
+No: 	rParPList01.titan
+r = nil lab = fail line: 1 col: 16
+No: 	rParSimpleExp01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	rParenTypelist01.titan
+r = nil lab = fail line: 1 col: 21
+No: 	stringImport01.titan
+r = nil lab = fail line: 2 col: 1
+No: 	stringLParImport01.titan
+r = nil lab = fail line: 1 col: 22
+No: 	thenElseIf01.titan
+r = nil lab = fail line: 5 col: 2
+No: 	thenIf01.titan
+r = nil lab = fail line: 3 col: 3
+No: 	typeDecl01.titan
+r = nil lab = fail line: 1 col: 18
+No: 	typeFunc01.titan
+r = nil lab = fail line: 2 col: 7
+No: 	typeRecordField01.titan
+r = nil lab = fail line: 3 col: 1
+No: 	typeReturnTypes01.titan
+r = nil lab = fail line: 1 col: 20
+No: 	typeType01.titan
+r = nil lab = fail line: 1 col: 11
+No: 	typelistType01.titan
+r = nil lab = fail line: 1 col: 13
+No: 	untilRepeat01.titan
+r = nil lab = fail line: 5 col: 1

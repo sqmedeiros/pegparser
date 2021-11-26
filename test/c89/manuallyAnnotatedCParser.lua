@@ -20,9 +20,9 @@ storage_class_spec    <-  'auto'  /  'register'  /  'static'  /  'extern'  /  't
 
 type_spec             <-  'void'  /  'char'  /  'short'  /  'int'  /  'long'  /'float'  /
                           'double'  /  'signed'  /  'unsigned'  /  typedef_name  /
-                          'enum' ID? '{' enumerator^Enumerator (',' enumerator^EnumeratorComma)* '}'^Braces      /
+                          'enum' ID? '{'^Erro44 enumerator^Enumerator (',' enumerator^EnumeratorComma)* '}'^Braces      /
                           'enum' ID                                            /
-                          struct_or_union ID? '{' (struct_decl+)^ZeroDecl '}'^Braces             /
+                          struct_or_union ID? '{'^Erro45 (struct_decl+)^ZeroDecl '}'^Braces             /
                           struct_or_union ID
 
 type_qualifier        <-  'const'  /  'volatile'
@@ -31,9 +31,9 @@ struct_or_union       <-  'struct'  /  'union'
 
 init_declarator_list  <-  init_declarator (',' init_declarator^DeclAfterComma)*
 
-init_declarator       <-  declarator '=' initializer  /  declarator
+init_declarator       <-  declarator '=' initializer^Erro46  /  declarator
 
-struct_decl           <-  spec_qualifier struct_declarator (',' struct_declarator^DeclAfterComma)* ';'^Semicolon  /
+struct_decl           <-  spec_qualifier struct_declarator^Erro99 (',' struct_declarator^DeclAfterComma)* ';'^Semicolon  /
                           spec_qualifier struct_decl
 
 spec_qualifier_list   <-  (type_spec  /  type_qualifier)+
@@ -58,7 +58,7 @@ param_decl            <-  decl_spec+ (declarator  /  abstract_declarator)?
 
 id_list               <-  ID (',' ID^Identifier)*
 
-initializer           <-  '{' initializer (',' initializer)* ','? '}'^Braces  /
+initializer           <-  '{' initializer^Erro48 (',' initializer)* ','? '}'^Braces  /
                           assignment_exp
 
 type_name             <-  spec_qualifier_list abstract_declarator?
@@ -70,10 +70,10 @@ direct_abstract_declarator <- '(' abstract_declarator ')'^Brack ('[' const_exp? 
 
 typedef_name          <-  ID [a-z]
 
-stat                  <-  ID ':' stat                                /
+stat                  <-  ID ':' stat^Erro51                                /
                           'case' const_exp^InvalidExpr ':'^Colon stat^StatCase                  / 
                           'default' ':'^Colon stat^StatDefault                         /
-                          exp? ';'                                   /
+                          exp? ';'                                  /
                           compound_stat                              /
                           'if' '('^BrackIf exp^InvalidExpr ')'^Brack stat^Stat 'else' stat^Stat          /
                           'if' '('^Brack exp^InvalidExpr ')'^Brack stat^Stat                      /

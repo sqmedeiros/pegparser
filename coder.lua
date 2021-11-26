@@ -1,12 +1,16 @@
-local m = require'lpeglabel'
-local parser = require'pegparser.parser'
-local pretty = require'pegparser.pretty'
-local predef = require'pegparser.predef'
-local ast = require'pegparser.ast'
+local Coder = {}
+Coder.__index = Coder
 
-local sp = predef.space^0
+local M = require'lpeglabel'
+local Node = require'node'
+local Predef = require'predef'
+local Ast = require'ast'
 
-local function unfoldset (l)
+local sp = Predef.space^0
+local lpegG = {}
+
+
+function Coder.unfoldset (l)
 	local set = {}
 	for i, v in ipairs(l) do
 		if #v == 3 then
@@ -22,85 +26,102 @@ local function unfoldset (l)
 	return table.concat(set)
 end
 
-local function makep (p)
-	if p.tag == 'empty' then
-		return m.P""
-	elseif p.tag == 'char' then
-		--print("makeppp", p.p1, p.p1 == '\\t')
-		if p.p1 == '\\t' then
-			return m.P'\t'
-		elseif p.p1 == '\\r' then
-			return m.P'\r'
-		elseif p.p1 == '\\n' then
-			return m.P'\n'
+
+function Coder.unquote (p)
+	return string.sub(p.v, 2, #p.v - 1)
+end
+
+
+function Coder.makep (p)
+	assert(p)
+	local tag = p.tag
+	
+	if p.tag == "empty" then
+		return M.P""
+	elseif p.tag == "char" then
+		local v = Coder.unquote(p)
+		print("makep", v)
+		if v == "'\\t'" then
+			return M.P'\t'
+		elseif v == "'\\r'" then
+			return M.P'\r'
+		elseif v == "'\\n'" then
+			return M.P'\n'
 		else
-			return m.P(p.p1)
+			return M.P(v)
 		end
-	elseif p.tag == 'def' then
-		return predef[p.p1]
-	elseif p.tag == 'set' then
-		return m.S(unfoldset(p.p1))
-	elseif p.tag == 'any' then
-		return m.P(1)
-	elseif p.tag == 'constCap' then
-		return m.Cc(p.p1)
-	elseif p.tag == 'posCap' then
-		return m.Cp()
-	elseif p.tag == 'simpCap' then
-		return m.C(makep(p.p1))
-	elseif p.tag == 'tabCap' then
-		return m.Ct(makep(p.p1))
-	elseif p.tag == 'nameCap' then
-		return m.Cg(makep(p.p2), p.p1)
-	elseif p.tag == 'anonCap' then
-		return m.Cg(makep(p.p1))
-	elseif p.tag == 'funCap' then
-		return makep(p.p1) / function () return end
-	elseif p.tag == 'var' then
-		return m.V(p.p1)
-	elseif p.tag == 'ord' then
-		return makep(p.p1) + makep(p.p2)
-	elseif p.tag == 'con' then
-		return makep(p.p1) * makep(p.p2)
-	elseif p.tag == 'and' then
-		return #makep(p.p1)
-	elseif p.tag == 'not' then
-		return -makep(p.p1)
-	elseif p.tag == 'opt' then
-		return makep(p.p1)^-1
-	elseif p.tag == 'star' then
-		return makep(p.p1)^0
-	elseif p.tag == 'plus' then
-		return makep(p.p1)^1
-	elseif p.tag == 'throw' then
-		return m.T(p.p1)
+	elseif tag == 'def' then
+		return Predef[p.v]
+	elseif tag == 'set' then
+		return M.S(Coder.unfoldset(p.v))
+	elseif tag == 'any' then
+		return M.P(1)
+	elseif tag == 'constCap' then
+		return M.Cc(p.v)
+	elseif tag == 'posCap' then
+		return M.Cp()
+	elseif tag == 'simpCap' then
+		return M.C(makep(p.v))
+	elseif tag == 'tabCap' then
+		return M.Ct(Coder.makep(p.v))
+	elseif tag == 'namedCap' then
+		return M.Cg(Coder.makep(p.v[2]), p.v[1])
+	elseif tag == 'anonCap' then
+		return M.Cg(Coder.makep(p.v))
+	elseif tag == 'funCap' then
+		return Coder.makep(p.v) / function () return end
+	elseif tag == 'var' then
+		return M.V(p.v)
+	elseif tag == 'ord' then
+		local res = Coder.makep(p.v[1])
+		for i = 2, #p.v do
+			res = res + Coder.makep(p.v[i])
+		end
+		return res
+	elseif tag == 'con' then
+		local res = Coder.makep(p.v[1])
+		for i = 2, #p.v do
+			res = res * Coder.makep(p.v[i])
+		end
+		return res
+	elseif tag == 'and' then
+		return #Coder.makep(p.v)
+	elseif tag == 'not' then
+		return -Coder.makep(p.v)
+	elseif tag == 'opt' then
+		return Coder.makep(p.v)^-1
+	elseif tag == 'star' then
+		return Coder.makep(p.v)^0
+	elseif tag == 'plus' then
+		return Coder.makep(p.v)^1
+	elseif tag == 'throw' then
+		return M.T(p.v)
 	else
-		error("Unknown tag: " .. p.tag)
+		error("Unknown tag: " .. tag)
 	end
 end
 
 
-local function isLetter (s) --'for'
+function Coder.isLetter (s)
 	return (s >= 'a' and s <= 'z') or (s >= 'A' and s <= 'Z')
 end
 
-local function matchskip (p)
-	if p.tag == 'char' and isLetter(string.sub(p.p1, 1)) then
-		--local aux = parser.newClass('a-z', 'A-Z', '0-9')
-		local aux = parser.newClass{'a-z', 'A-Z', '0-9'}
-		aux = parser.newNot(aux)
-		aux = parser.newSeq(parser.newSeq(p, aux), parser.newVar('SKIP'))
-		--print(pretty.printp(aux))
-		return aux
+function Coder.matchskip (p)
+	if p.tag == 'char' and Coder.isLetter(string.sub(p.v, 2)) then
+		print("here", p.v, string.sub(p.v, 2))
+    local notLetterDigit = Node.nott(Node.set('a-z', 'A-Z', '0-9'))
+    --return Node.con{p, notLetterDigit, Node.var"SKIP"}
+    return p
 	else
-		return parser.newSeq(p, parser.newVar('SKIP'))
+		return Node.con{p, Node.var"SKIP"}
 	end
 end
 
-local function autoskip (p, g)
+function Coder.autoskip (p, g)
+	assert(p.tag)
 	if p.tag == 'empty' or p.tag == 'char' or p.tag == 'set' or
      p.tag == 'any' then
-		return matchskip(p)
+		return Coder.matchskip(p)
 	elseif p.tag == 'def' then
 		return p
 	elseif p.tag == 'constCap' then
@@ -108,24 +129,28 @@ local function autoskip (p, g)
 	elseif p.tag == 'posCap' then
 		return p
 	elseif p.tag == 'simpCap' then
-		return matchskip(p)  --TODO: see if this is ok
+		return Coder.matchskip(p)  --TODO: see if this is ok
 	elseif p.tag == 'tabCap' then
-		return parser.newNode(p.tag, autoskip(p.p1, g))
-	elseif p.tag == 'nameCap' then
-		return parser.newNode(p.tag, p.p1, autoskip(p.p2, g))
+		return Node.tabCap(Coder.autoskip(p.v, g))
+	elseif p.tag == 'namedCap' then
+		return Node.namedCap(p.v[1], Coder.autoskip(p.v[2], g))
 	elseif p.tag == 'anonCap' then
-		return matchskip(p)
+		return Coder.matchskip(p)
 	elseif p.tag == 'var' then
-		if p.p1 ~= 'SKIP' and p.p1 ~= 'SPACE' and parser.isLexRule(p.p1) then
-			return matchskip(p)
+		if Grammar.isLexRule(p.v) then
+			return Coder.matchskip(p)
 		else
 			return p
 		end
 	elseif p.tag == 'ord' or p.tag == 'con' then
-		return parser.newNode(p.tag, autoskip(p.p1, g), autoskip(p.p2, g))
+		local expList = {}
+		for _, iExp in ipairs(p.v) do
+			table.insert(expList, Coder.autoskip(iExp, g))
+		end
+		return Node.new(p.tag, expList)
 	elseif p.tag == 'and' or p.tag == 'not' or p.tag == 'opt' or
          p.tag == 'star' or p.tag == 'plus' then
-		return parser.newNode(p.tag, autoskip(p.p1, g))
+		return Node.new(p.tag, Coder.autoskip(p.v, g))
 	elseif p.tag == 'throw' then
 		return p
 	else
@@ -134,33 +159,57 @@ local function autoskip (p, g)
 end
 
 
-local function makeg (g, tree)
-	local g = g
-	if tree then
-		g = ast.buildAST(g)
-		--print("Coder: New grammar with annotations to build AST")
-		--print(pretty.printg(g), '\n')
+function Coder.setSkip (g)
+	local space = Node.set{' ','\t','\n','\v','\f','\r'}
+	if g:hasRule("COMMENT") then
+		space =	Node.choice{space, Node.var"COMMENT"}
 	end
-	local peg = { [1] = g.plist[1] }
-	for i, v in ipairs(g.plist) do
-		if v ~= 'SKIP' and v ~= 'SPACE' and v ~= 'COMMENT' then
-			local p = g.prules[v]
-			if not parser.isLexRule(v) then
-				p = autoskip(p, g)
-				if v == g.plist[1] then
-					p = parser.newSeq(parser.newVar('SKIP'), p)
-				end
-			end
-			peg[v] = makep(p)
-		else
-			peg[v] = makep(g.prules[v])
-		end
+
+	local varSpace = 'SPACE'
+	if g:hasRule(varSpace) then
+		space = Node.choice{space, g:getRHS(varSpace) }
 	end
-	return m.P(peg)
+	lpegG[varSpace] = Coder.makep(space)
+
+	local skip = Node.star(space)
+	local varSkip = 'SKIP'
+	lpegG[varSkip] = Coder.makep(skip)
 end
 
 
-return {
-	makep = makep,
-	makeg = makeg
-}
+function Coder.setEOF (g, s)
+	s = s or 'EOF'
+	assert(g:hasRule(s) == false, "Grammar already has rule " .. tostring(s))
+	lpegG[s] = Coder.makep(Node.nott(Node.any()))
+end
+
+
+function Coder.makeg (g, tree)
+	local g = g
+	if tree then
+		g = Ast.buildAST(g)
+	end
+	
+	lpegG = { [1] = g:getStartRule() }
+	print(g.startRule)
+		
+	for i, var in ipairs(g:getVars()) do
+		print("i, var", i, var)
+		local p = g:getRHS(var)
+		if not g.isLexRule(var) then
+			p = Coder.autoskip(p, g)
+			if var == g:getStartRule() then
+				--p = Node.con{Node.var"SKIP", p}
+			end
+		end
+ 		lpegG[var] = Coder.makep(p)
+	end
+	
+	Coder.setSkip(g)
+	Coder.setEOF(g)
+	
+	return M.P(lpegG)
+end
+
+
+return Coder
