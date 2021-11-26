@@ -51,9 +51,14 @@ local function buildAST (g)
 			p = parser.newSeq(newNameCap('rule', parser.newConstCap(v)), p)
 			newg.prules[v] = newTabCap(p)
 		elseif parser.isErrRule(v) then
+			print("isErrRule", v)
 			local p = g.prules[v]
-			p = parser.newSeq(p, parser.newConstCap('NONE'))
-			newg.prules[v] = p 
+			p = parser.newSeq(p, parser.newConstCap('NONE' .. v))
+			newg.prules[v] = p
+		elseif v == 'EatToken' then
+			local p = g.prules[v]
+			p = parser.newSeq(p, parser.newDiscardCap())
+			newg.prules[v] = p
 		else
 			newg.prules[v] = g.prules[v]
 		end
