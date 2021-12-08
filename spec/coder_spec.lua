@@ -13,39 +13,62 @@ describe("Testing #coder", function()
 		local lpegParser = Coder.makeg(g)
 		assert.equal(lpegParser:match("a"), 2)
 		assert.equal(lpegParser:match("x"), nil)
-		--assert.equal(lpegParser:match(" a"), 3)
-		--assert.equal(lpegParser:match("  x"), nil)
+		assert.equal(lpegParser:match(" a"), 3)
+		assert.equal(lpegParser:match("  x"), nil)
 		assert.equal(lpegParser:match("a  "), 4)
-		--assert.equal(lpegParser:match("x  "), nil)
+		assert.equal(lpegParser:match("x  "), nil)
 	end)
-end)	
 
---[==[
-  test("Grammar with syntax errors: checking the error label", function()
+	test("Grammar with lexical and syntactical rules", function()
+		local g = Parser.match[[
+			s <- "a" B
+			B <- "b" "c"
+		]]
+		
+		assert(g)
+		
+		local lpegParser = Coder.makeg(g)
+		assert.equal(lpegParser:match(" a bc"), 6)
+		assert.equal(lpegParser:match(" a b c"), nil)
+		assert.equal(lpegParser:match("abc"), 4)
+		assert.equal(lpegParser:match("a bc"), 5)
+		assert.equal(lpegParser:match(" a  bc  "), 9)
+	end)
 
--- testing coder
-local g = [[
-  S <- "0" B / "1" A / ""   -- balanced strings
-  A <- "0" S / "1" A A      -- one more 0
-  B <- "1" S / "0" B B      -- one more 1
-]]
 
-local p = coder.makeg(m.match(g))
-assert(p:match("00011011") == 9)
+	test("Grammar with balanced 0's and 1's)", function()
 
-local g = [[
-  S <- ("0" B / "1" A)*
-  A <- "0" / "1" A A
-  B <- "1" / "0" B B
-]]
+		local g = Parser.match[[
+  		S <- "0" B / "1" A / ""   -- balanced strings
+  		A <- "0" S / "1" A A      -- one more 0
+  		B <- "1" S / "0" B B      -- one more 1
+		]]
 
-local tree, r = m.match(g)
-print(pretty.printg(tree, r))
-local p = coder.makeg(m.match(g))
+		assert(g)
 
-assert(p:match("00011011") == 9)
-assert(p:match("000110110") == 9)
-assert(p:match("011110110") == 3)
-print(p:match("000110010"))
-assert(p:match("000110010") == 1)
-]==]
+		local lpegParser = Coder.makeg(g)
+		assert.equal(lpegParser:match("00011011"), 9)
+		assert.equal(lpegParser:match("0 0011011"), 1)
+		assert.equal(lpegParser:match(" 00011011"), 1)
+		assert.equal(lpegParser:match("1000110101"), 11)
+		assert.equal(lpegParser:match("10"), 3)
+		assert.equal(lpegParser:match("011"), 3)
+	end)
+
+	test("Another grammar with balanced 0's and 1's)", function()
+		
+		local g = Parser.match[[
+  		S <- ("0" B / "1" A)*
+  		A <- "0" / "1" A A
+  		B <- "1" / "0" B B
+		]]
+
+		assert(g)
+
+		local lpegParser = Coder.makeg(g)
+		assert.equal(lpegParser:match("00011011"),  9)
+		assert.equal(lpegParser:match("000110110"), 9)
+		assert.equal(lpegParser:match("011110110"), 3)
+		assert.equal(lpegParser:match("000110010"), 1)
+	end)
+end)

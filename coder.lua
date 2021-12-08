@@ -5,6 +5,7 @@ local M = require'lpeglabel'
 local Node = require'node'
 local Predef = require'predef'
 local Ast = require'ast'
+local Grammar = require'grammar'
 
 local sp = Predef.space^0
 local lpegG = {}
@@ -40,7 +41,6 @@ function Coder.makep (p)
 		return M.P""
 	elseif p.tag == "char" then
 		local v = Coder.unquote(p)
-		print("makep", v)
 		if v == "'\\t'" then
 			return M.P'\t'
 		elseif v == "'\\r'" then
@@ -72,7 +72,7 @@ function Coder.makep (p)
 		return Coder.makep(p.v) / function () return end
 	elseif tag == 'var' then
 		return M.V(p.v)
-	elseif tag == 'ord' then
+	elseif tag == 'choice' then
 		local res = Coder.makep(p.v[1])
 		for i = 2, #p.v do
 			res = res + Coder.makep(p.v[i])
@@ -107,14 +107,14 @@ function Coder.isLetter (s)
 end
 
 function Coder.matchskip (p)
-	if p.tag == 'char' and Coder.isLetter(string.sub(p.v, 2)) then
-		print("here", p.v, string.sub(p.v, 2))
-    local notLetterDigit = Node.nott(Node.set('a-z', 'A-Z', '0-9'))
+	--if p.tag == 'char' and Coder.isLetter(string.sub(p.v, 2)) then
+	--	print("here", p.v, string.sub(p.v, 2))
+    --local notLetterDigit = Node.nott(Node.set('a-z', 'A-Z', '0-9'))
     --return Node.con{p, notLetterDigit, Node.var"SKIP"}
-    return p
-	else
+    --return p
+	--else
 		return Node.con{p, Node.var"SKIP"}
-	end
+	--end
 end
 
 function Coder.autoskip (p, g)
@@ -142,7 +142,7 @@ function Coder.autoskip (p, g)
 		else
 			return p
 		end
-	elseif p.tag == 'ord' or p.tag == 'con' then
+	elseif p.tag == 'choice' or p.tag == 'con' then
 		local expList = {}
 		for _, iExp in ipairs(p.v) do
 			table.insert(expList, Coder.autoskip(iExp, g))
@@ -191,15 +191,13 @@ function Coder.makeg (g, tree)
 	end
 	
 	lpegG = { [1] = g:getStartRule() }
-	print(g.startRule)
 		
 	for i, var in ipairs(g:getVars()) do
-		print("i, var", i, var)
 		local p = g:getRHS(var)
 		if not g.isLexRule(var) then
 			p = Coder.autoskip(p, g)
 			if var == g:getStartRule() then
-				--p = Node.con{Node.var"SKIP", p}
+				p = Node.con{Node.var"SKIP", p}
 			end
 		end
  		lpegG[var] = Coder.makep(p)
