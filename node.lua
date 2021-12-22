@@ -1,9 +1,11 @@
-local Node = {}
+local Node = {
+	
+}
 Node.__index = Node
 
 
 function Node.new (tag, v)
-	local self = { tag = tag, v = v }
+	local self = { tag = tag, v = v, k = k }
 	return setmetatable(self, Node)
 end
 
@@ -28,7 +30,7 @@ end
 
 function Node.char (v)
 	assert(v)
-	return Node.new('char', v)
+	return Node.new('char', v, Node.unquote(v))
 end
 
 
@@ -133,6 +135,10 @@ function Node.discardCap (exp)
 	return Node.new('funCap', exp)
 end
 
+
+function Node:unquote ()
+	return string.sub(self.v, 2, #self.v - 1)
+end
 
 function Node:isSimple ()
 	local tag = self.tag
