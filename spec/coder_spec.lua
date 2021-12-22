@@ -5,7 +5,7 @@ describe("Testing #coder", function()
 
 	test("Simple grammar", function()
 		local g = Parser.match[[
-			s <- "a"
+			s <- 'a'
 		]]
 		
 		assert(g)
