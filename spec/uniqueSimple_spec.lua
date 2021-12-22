@@ -1,5 +1,5 @@
-local usimple = require"uniqueSimple"
-local parser = require"parser"
+local UVerySimple = require"uniqueVerySimple"
+local Parser = require"parser"
 
 local function sameListMap(list, map)
 	local copyMap = {}
@@ -20,7 +20,7 @@ describe("Testing #unique", function()
 	
 	test("Calculating unique tokens", function()
 	  --The right-hand side of a lexical rule does not influence unique tokens
-		local g = parser.match[[
+		local g = Parser.match[[
 			s <- 'a' 'b' / A / b   
 			A <- 'a' / 'c'        --lexical rule
 			b <- 'b' / 'c' / 'd' / 'A']]
