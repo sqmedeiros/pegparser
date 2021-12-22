@@ -28,11 +28,6 @@ function Coder.unfoldset (l)
 end
 
 
-function Coder.unquote (p)
-	return string.sub(p.v, 2, #p.v - 1)
-end
-
-
 function Coder.makep (p)
 	assert(p)
 	local tag = p.tag
@@ -40,7 +35,7 @@ function Coder.makep (p)
 	if p.tag == "empty" then
 		return M.P""
 	elseif p.tag == "char" then
-		local v = Coder.unquote(p)
+		local v = p:unquote()
 		if v == "'\\t'" then
 			return M.P'\t'
 		elseif v == "'\\r'" then
