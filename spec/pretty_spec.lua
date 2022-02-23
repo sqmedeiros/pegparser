@@ -6,7 +6,7 @@ describe("Testing #pretty", function()
 	
 	test("Printing expressions", function()
         local pretty = Pretty.new()
-        local exp, s
+        local exp
     
 		-- Empty
         exp = Node.empty()
@@ -33,24 +33,24 @@ describe("Testing #pretty", function()
         assert.same('foo', pretty:printp(exp))
 		
 		-- And predicate
-		exp = Node.andd(Node.var"foo")
+        local nodeAnd = Node.andd(Node.var"foo")
+		exp = nodeAnd
         assert.same('&foo', pretty:printp(exp))
 		
 		-- Not predicate
 		exp = Node.nott(Node.char"'foo'")
         assert.same("!'foo'", pretty:printp(exp))
 		
-        --[==[
 		-- Concatetation
-		local nodeCon = { tag = "con", v = { nodeChar, nodeVar } }
-		assert.same(Node.con{Node.char"'foo'", Node.var"foo"}, nodeCon)
-		assert.same(Node.new("con", { Node.char"'foo'", Node.var"foo"} ), nodeCon)
+		local nodeCon = Node.con{Node.char"'foo'", Node.var"foo"}
+        exp = nodeCon
+		assert.same("'foo' foo", pretty:printp(exp))
 		
 		-- Choice
-		local nodeChoice = { tag = "choice", v = { nodeSet, nodeAnd } }
-		assert.same(Node.choice{nodeSet, nodeAnd}, nodeChoice)
-		assert.same(Node.new("choice", { nodeSet, nodeAnd } ), nodeChoice)
+		local exp = Node.choice{nodeCon, nodeAnd}
+		assert.same("'foo' foo  /  &foo", pretty:printp(exp))
 		
+        --[==[
 		-- "a" A / B "B"
 		local con1 = { tag = "con", v = { { tag = "char", v = "a" }, { tag = "var", v = "A" } } }
 		local con2 = { tag = "con", v = { { tag = "var", v = "B" }, { tag = "char", v = "B" } } }  

@@ -45,10 +45,10 @@ function Pretty:printp (p, flag)
 		return '{:' .. self:printp(p.v, flag) .. ':}'
 	elseif p.tag == 'var' then
 		return p.v .. self:printProp(p)
-	elseif p.tag == 'ord' then
+	elseif p.tag == 'choice' then
         local outTab = {}
         for i, v in ipairs(p.v) do
-            outTab.insert(self:printProp(v, flag))
+            table.insert(outTab, self:printp(v, flag))
         end
         return table.concat(outTab, '  /  ')
 		--[==[ if p.p2.tag == 'throw' then
@@ -71,7 +71,7 @@ function Pretty:printp (p, flag)
 	elseif p.tag == 'con' then
         local outTab = {}
         for i, v in ipairs(p.v) do
-            outTab.insert(self:printProp(v, flag))
+            table.insert(outTab, self:printp(v, flag))
         end
         return table.concat(outTab, ' ')
 		--[==[
