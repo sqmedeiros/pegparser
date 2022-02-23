@@ -108,9 +108,9 @@ describe("Testing #node", function()
 		local nodeDiscardCap = { tag = "funCap", v = nodeChar }
 		assert.same(Node.discardCap(nodeChar), nodeDiscardCap)
 		assert.same(Node.new("funCap", nodeChar), nodeDiscardCap)
-		
 	end)
 	
+
 	test("Testing if an expression (without non-terminals) matches the empty string", function()
 		local nodeEmpty = Node.empty()
 		assert.True(nodeEmpty:matchEmpty())

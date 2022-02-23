@@ -26,17 +26,27 @@ describe("Testing #unique", function()
 			A <- 'a' / 'c'        --lexical rule
 			b <- 'b' / 'c' / 'd' / 'A']]
 			
-		print(g)
 		local unique = UVerySimple.new(g)
 
 		local tabUnique = unique:uniqueTk()
-		--print(tabUnique:tostring())
-		print("tabUnique")
-		for k, v in pairs(tabUnique) do
-			print(k, v)
-		end
-		sameListMap({'a', "'A'", 'c', 'd', "A"}, tabUnique)
+		
+		sameListMap({"'a'", "A", "'c'", "'d'", "'A'"}, tabUnique)
 	end)
 	
 end)
 			
+describe("Testing #calcUniquePath", function()
+	
+	test("Calculating unique tokens", function()
+	  --The right-hand side of a lexical rule does not influence unique tokens
+		local g = Parser.match[[
+			s <- 'a' 'b' / A / b   
+			A <- 'a' / 'c'        --lexical rule
+			b <- 'b' / 'c' / 'd' / 'A']]
+			
+		local unique = UVerySimple.new(g)
+
+		unique:calcUniquePath()
+	end)
+	
+end)

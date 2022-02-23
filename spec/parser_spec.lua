@@ -45,13 +45,13 @@ describe("Testing #parser", function()
     assertlab([[a <- %{ } ]], 'NameThrow')
 
     assertlab([[a <- %{ ops ]], 'RCurThrow')
+
   end)
 
 
   test("Grammar with undefined nonterminal", function()
 
     local r, msg = pcall(Parser.match, [[a <- 'a' b]])
-
     assert(not r and string.find(msg, "'b' was not defined", 1, true))
   end)
 

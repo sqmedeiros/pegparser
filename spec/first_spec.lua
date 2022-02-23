@@ -382,22 +382,22 @@ end)
 describe("Testing #last", function()
 
 	test("LAST set of simple expresions", function()
-		local g = parser.match[[
+		local g = Parser.match[[
 			s   <- 'a'
 			a   <- .
 			b   <- ''
 			C   <- 'c'
 		]]
 
-		local objFst = first.new(g)
+		local objFst = First.new(g)
 		objFst:calcFirstG()
 		objFst:calcLastG()
 
 		local setLst = {}
-		setLst['s'] = set.new{ 'a' }
-		setLst['a'] = set.new{ first.any }
-		setLst['b'] = set.new{ first.empty }
-		setLst['C'] = set.new{ objFst:lexKey('C') }
+		setLst['s'] = Set.new{ 'a' }
+		setLst['a'] = Set.new{ first.any }
+		setLst['b'] = Set.new{ first.empty }
+		setLst['C'] = Set.new{ objFst:lexKey('C') }
 
 		assert.same(objFst.LAST, setLst)
 	end)
@@ -587,7 +587,10 @@ describe("Testing #last", function()
 		assert.same(objFst.LAST, setLst)
 	end)
 end)
+]==]
 
+
+--[==[
 describe("Testing #precede", function()
 
 	test("PRECEDE set of the start non-terminal", function()

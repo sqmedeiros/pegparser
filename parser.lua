@@ -151,7 +151,7 @@ local pegGrammar = [[
   
   escseq        <-  '\t' -> newEsqSeq
 
-  var           <-    name -> newVar !arrow  
+  var           <-   name -> newVar !arrow  
 
   name          <-   {[a-zA-Z_] [a-zA-Z0-9_]*} S
  

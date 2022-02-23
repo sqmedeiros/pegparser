@@ -71,25 +71,12 @@ function UniqueVerySimple:uniqueTk ()
 		end
 	end
 
-	print("Uunique")
 	local cont = {}
 	for k, v in pairs(self.tkUse) do
 		print(k, " = ", v)
 		self.tkUnique[k] = (v == 1) or nil
-		--if not cont[v] then
-		--	cont[v] = 1
-		--else
-		--	cont[v] = cont[v] + 1
-		--end
 	end
-	
-	--[==[
-	for i = 1, 10 do
-		print("Token ", i, " = ", cont[i])
-	end
-	]==]
 
-	self.tkUnique['SKIP'] = nil 
 	self:printUnique()
 	return self.tkUnique
 end
@@ -116,7 +103,7 @@ function UniqueVerySimple:countVarUse (exp)
          tag == 'opt' or tag == 'plus' then
 		self:countVarUse(exp)
 	elseif tag == 'con' or tag == 'choice' then
-		for i, v in iparis(exp.v) do
+		for i, v in ipairs(exp.v) do
 			self:countVarUse(v)
 		end
 	else
@@ -221,13 +208,13 @@ function UniqueVerySimple:calcUniquePath (startOn)
 		end
 	end
 
-	self:varUse()
+	--self:varUse()
 	for i, var in ipairs(grammar:getVars()) do		
 		if not Grammar.isLexRule(var) then
-			self:uniquePath(grammar:getRHS(var), self.varUse[var])
+			self:uniquePath(grammar:getRHS(var), self.varUnique[var])
+			--self:uniquePath(grammar:getRHS(var), self.varUse[var])
 		end
 	end
-	
 
 	--[==[io.write("Unique vars: ")
 	for i, v in ipairs(g.plist) do
