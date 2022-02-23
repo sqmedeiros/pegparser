@@ -1,43 +1,57 @@
-local pretty = {}
+local Parser = require'parser'
 
-local parser = require'pegparser.parser'
+local Pretty = {
+    property = nil,
+    propertyStr = ""
+}
+Pretty.__index = Pretty
 
-local property
+function Pretty.new (prop, propStr)
+    local self = {}
+    self.property = prop
+    self.propertyStr = propStr
+    setmetatable(self, Pretty)
+    return self
+end
 
-local function printProp (p)
-	if property and p[property] then
-		return '_' .. tostring(property)
+
+function Pretty:printProp (p)
+	if self.property and p[self.property] then
+		return '_' .. self.propertyStr
 	end
 	return ''
 end
 
-local function printp (p, flag)
+function Pretty:printp (p, flag)
 	if p.tag == 'empty' then
 		return "''"
 	elseif p.tag == 'char' then
-		return p.p2 .. p.p1 .. p.p2 .. printProp(p) 
+		return p.v .. self:printProp(p) 
 	elseif p.tag == 'any' then
 		return "."
 	elseif p.tag == 'set' then
-		return "[" .. table.concat(p.p1) .. "]"
+		return "[" .. table.concat(p.v) .. "]"
 	elseif p.tag == 'constCap' then
-		return '{:const ' .. p.p1 .. '}'
+		return '{:const ' .. p.v .. '}'
 	elseif p.tag == 'posCap' then
 		return '{}'
 	elseif p.tag == 'simpCap' then
-		return '{' .. printp(p.p1, flag) .. '}'
+		return '{' .. self:printp(p.v, flag) .. '}'
 	elseif p.tag == 'tabCap' then
-		return '{|' .. printp(p.p1, flag) .. '|}'
+		return '{|' .. self:printp(p.v, flag) .. '|}'
 	elseif p.tag == 'nameCap' then
-		return '{:' .. p.p1 .. ': ' .. printp(p.p2, flag) .. ':}'
+		return '{:' .. p.v .. ': ' .. self:printp(p.v, flag) .. ':}'
 	elseif p.tag == 'anonCap' then
-		return '{:' .. printp(p.p1, flag) .. ':}'
+		return '{:' .. self:printp(p.v, flag) .. ':}'
 	elseif p.tag == 'var' then
-		return p.p1 .. printProp(p)
+		return p.v .. self:printProp(p)
 	elseif p.tag == 'ord' then
-		local s1 = printp(p.p1, flag) 
-		local s2 = printp(p.p2, flag)
-		if p.p2.tag == 'throw' then
+        local outTab = {}
+        for i, v in ipairs(p.v) do
+            outTab.insert(self:printProp(v, flag))
+        end
+        return table.concat(outTab, '  /  ')
+		--[==[ if p.p2.tag == 'throw' then
 			if not flag then
 				return '[' .. s1 .. ']^' .. string.sub(s2, 3, #s2 - 1) .. printProp(p)
 			else
@@ -53,10 +67,14 @@ local function printp (p, flag)
 			else
 				return  '(' .. s1 .. '  /  ' .. s2 .. ')' .. printProp(p)
 			end
-		end
+		end]==]
 	elseif p.tag == 'con' then
-		local s1 = printp(p.p1, flag)
-		local s2 = printp(p.p2, flag)
+        local outTab = {}
+        for i, v in ipairs(p.v) do
+            outTab.insert(self:printProp(v, flag))
+        end
+        return table.concat(outTab, ' ')
+		--[==[
 		local s = s1
 		if p.p1.tag == 'ord' and p.p1.p2.tag ~= 'throw' then
 			s = '(' .. s .. ')'
@@ -66,42 +84,43 @@ local function printp (p, flag)
 		else
 			s = s .. ' ' .. s2
 		end
-		return s --.. printProp(p)
+		return s --.. printProp(p)]==]
 	elseif p.tag == 'and' or p.tag == 'not' then
-		local s = printp(p.p1, flag)
-		if parser.isSimpleExp(p.p1) then
-			return parser.predSymbol(p) .. s
+		local s = self:printp(p.v, flag)
+		if p.v:isSimple() then
+			return p:getPredOp() .. s
 		else
-			return  parser.predSymbol(p) .. '(' .. s .. ')'
+			return  p:getPredOp() .. '(' .. s .. ')'
 		end
-	elseif p.tag == 'not' then
-		return '!(' .. printp(p.p1, flag)	.. ')'
 	elseif p.tag == "star" or p.tag == 'plus' or p.tag == 'opt' then
-		local s = printp(p.p1, flag)
-		if parser.isSimpleExp(p.p1) then
-			return s .. parser.repSymbol(p) .. printProp(p)
+		local s = self:printp(p.v, flag)
+		if p.v:isSimple() then
+			return s .. p:getRepOp() .. printProp(p)
 		else
 			return '(' .. s .. ')' .. parser.repSymbol(p) .. printProp(p)
 		end
   elseif p.tag == 'throw' then
-    return '%{' .. p.p1 .. '}'
+    return '%{' .. p.v .. '}'
 	elseif p.tag == 'def' then
-		return '%' .. p.p1
+		return '%' .. p.v
 	else
 		print(p, p.tag)
 		error("Unknown tag: " .. p.tag)
 	end
 end
 
-local function printg (g, flagthrow, k, notLex)
-	property = k
-	print("Property ", k)
+
+function Pretty:printg (grammar, flagthrow, withLex, property, propertyStr)
+	self.property = property
+    self.propertyStr = propertyStr or self.propertyStr
 	local t = {}
-	for i, v in ipairs(g.plist) do
-		if not parser.isLexRule(v) or not notLex then
+    
+    for i, var in ipairs(grammar:getVars()) do
+        if not Grammar.isLexRule(v) or withLex then
 			table.insert(t, string.format("%-15s <-  %s", v, printp(g.prules[v], flagthrow)))
 		end
-	end
+    end
+    
 	return table.concat(t, '\n')
 end
 
@@ -174,9 +193,4 @@ local function printToFile (g, file, ext, rec, pre, pos)
 end
 
 
-return {
-	printp = printp,
-	printg = printg,
-	prefix = prefix,
-	printToFile = printToFile
-}
+return Pretty
