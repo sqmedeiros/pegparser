@@ -1,6 +1,6 @@
 local Node = require"node"
-local Grammar = require"grammar"
 local Pretty = require"pretty"
+local Parser = require"parser"
 
 describe("Testing #pretty", function()
 	
@@ -80,7 +80,15 @@ describe("Testing #pretty", function()
 	
     
 	test("Printing a grammar", function()
-		
+		local s = [[x <- 'a' b / 'c'
+                    b <- x / 'd'
+                    c <- b]]
+
+        local g, msg = Parser.match(s)
+        local pretty = Pretty.new()
+        assert(pretty:printg(g), s)
+        
+        
 		
 	end)
 end)

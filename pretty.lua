@@ -1,4 +1,5 @@
 local Parser = require'parser'
+local Grammar = require'grammar'
 
 local Pretty = {
     property = nil,
@@ -119,8 +120,8 @@ function Pretty:printg (grammar, flagthrow, withLex, property, propertyStr)
 	local t = {}
     
     for i, var in ipairs(grammar:getVars()) do
-        if not Grammar.isLexRule(v) or withLex then
-			table.insert(t, string.format("%-15s <-  %s", v, printp(g.prules[v], flagthrow)))
+        if not Grammar.isLexRule(var) or withLex then
+			table.insert(t, string.format("%-15s <-  %s", v, self:printp(grammar:getRHS(var), flagthrow)))
 		end
     end
     
