@@ -27,7 +27,6 @@ describe("Testing #pretty", function()
 		exp = Node.set{"a-e", "0-9", 42}
 		assert.same('[a-e0-942]', pretty:printp(exp))
 		
-    
 		-- Var
 		exp = Node.var("foo")
         assert.same('foo', pretty:printp(exp))
@@ -46,101 +45,42 @@ describe("Testing #pretty", function()
         exp = nodeCon
 		assert.same("'foo' foo", pretty:printp(exp))
 		
-		-- Choice
-		local exp = Node.choice{nodeCon, nodeAnd}
+		-- Choice 1
+		exp = Node.choice{nodeCon, nodeAnd}
 		assert.same("'foo' foo  /  &foo", pretty:printp(exp))
-		
+        
+        -- Choice with throw
+        exp = Node.choice{Node.var"foo", Node.throw"lua"}
+		assert.same("foo^lua", pretty:printp(exp))
+        
+        -- Concatenation of choices 1
+        exp = Node.con{Node.choice{Node.char"'a'", Node.any()}, Node.var"b" }
+        assert.same("('a'  /  .) b", pretty:printp(exp))
+        
+        -- Concatenation of choices 2
+        exp = Node.con{Node.var"b", Node.choice{Node.char"'a'", Node.any()} }
+        assert.same("b ('a'  /  .)", pretty:printp(exp))
+        
 		-- Optional: p?
-		local nodeOpt = Node.opt(Node.var"foo")
-		exp = nodeOpt
+		exp = Node.opt(Node.var"foo")
         assert.same("foo?", pretty:printp(exp))
 		
 		-- Zero or more: p*
-		local nodeStar = Node.star(Node.char"'foo'")
-        exp = nodeStar
+		exp = Node.star(Node.char"'foo'")
 		assert.same("'foo'*", pretty:printp(exp))
 		
 		-- One or more: p+
-		local nodePlus = Node.plus(Node.var"foo")
-        exp = nodePlus
+		exp = Node.plus(Node.var"foo")
         assert.same("foo+", pretty:printp(exp))
 		
 		-- Throw
-		local nodeThrow = Node.throw"lua"
-		exp = nodeThrow
+		exp = Node.throw"lua"
 		assert.same("%{lua}", pretty:printp(exp))
 	end)
 	
-    --[==[
-	test("Testing if an expression (without non-terminals) matches the empty string", function()
-		local nodeEmpty = Node.empty()
-		assert.True(nodeEmpty:matchEmpty())
+    
+	test("Printing a grammar", function()
 		
-		local nodeAny = Node.any()
-		assert.False(nodeAny:matchEmpty())
-		
-		local nodeChar = Node.char("bola")
-		assert.False(nodeChar:matchEmpty())
-
-		local nodeSet = Node.set{"0-9"}
-		assert.False(nodeSet:matchEmpty())
-		
-		local nodeAnd = Node.andd(nodeChar)
-		assert.True(nodeAnd:matchEmpty())
-		
-		local nodeNot = Node.nott(nodeChar)
-		assert.True(nodeNot:matchEmpty())
-		
-		local nodeCon = Node.con{nodeChar, nodeEmpty}
-		assert.False(nodeCon:matchEmpty())
-		
-		nodeCon = Node.con{nodeEmpty, nodeChar}
-		assert.False(nodeCon:matchEmpty())
-		
-		nodeCon = Node.con{nodeChar, nodeChar}
-		assert.False(nodeCon:matchEmpty())
-		
-		nodeCon = Node.con{nodeNot, nodeAnd}
-		assert.True(nodeCon:matchEmpty())
-		
-		local nodeChoice = Node.choice{nodeChar, nodeEmpty}
-		assert.True(nodeChoice:matchEmpty())
-		
-		nodeChoice = Node.choice{nodeEmpty, nodeChar}
-		assert.True(nodeChoice:matchEmpty())
-		
-		nodeChoice = Node.choice{nodeChar, nodeChar}
-		assert.False(nodeChoice:matchEmpty())
-		
-		nodeChoice = Node.choice{nodeNot, nodeAnd}
-		assert.True(nodeChoice:matchEmpty())
-		
-		local nodeStar = Node.star(nodeChar)
-		assert.True(nodeStar:matchEmpty())
-		
-		local nodePlus = Node.plus(nodeChar)
-		assert.False(nodePlus:matchEmpty())
-		
-		local nodeOpt = Node.opt(nodeChar)
-		assert.True(nodeOpt:matchEmpty())
-		
-		local nodeThrow = Node.throw("foo")
-		assert.True(nodeThrow:matchEmpty())
-	end)
-	
-	test("Testing if a non-terminal matches the empty string", function()
-		local g = Grammar.new()
-		local rhs = Node.con{Node.var"a", Node.var"b"}
-		g:addRule("s", rhs)
-		g:addRule("a", Node.var"c")
-		g:addRule("b", Node.char"a")
-		g:addRule("c", Node.empty())
-		
-		assert.False(Node.var"s":matchEmpty(g))
-		assert.True(Node.var"a":matchEmpty(g))
-		assert.False(Node.var"b":matchEmpty(g))
-		assert.True(Node.var"c":matchEmpty(g))
 		
 	end)
-    ]==]
 end)

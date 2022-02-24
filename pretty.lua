@@ -47,8 +47,18 @@ function Pretty:printp (p, flag)
 		return p.v .. self:printProp(p)
 	elseif p.tag == 'choice' then
         local outTab = {}
-        for i, v in ipairs(p.v) do
-            table.insert(outTab, self:printp(v, flag))
+        local n = #p.v
+        for i = 1, n do
+            local iExp = p.v[i]
+            local s = self:printp(iExp, flag)
+            if i == n - 1 and p.v[i+1].tag == 'throw' then
+                s = s .. '^' .. p.v[i+1].v
+                table.insert(outTab, s)
+                break
+            else
+                table.insert(outTab, s)
+            end
+            
         end
         return table.concat(outTab, '  /  ')
 		--[==[ if p.p2.tag == 'throw' then
@@ -71,20 +81,13 @@ function Pretty:printp (p, flag)
 	elseif p.tag == 'con' then
         local outTab = {}
         for i, v in ipairs(p.v) do
-            table.insert(outTab, self:printp(v, flag))
+            local s = self:printp(v, flag)
+            if v.tag == 'choice' and v.v[2].tag ~= 'throw' then
+                s = '(' .. s .. ')'
+            end        
+            table.insert(outTab, s)
         end
         return table.concat(outTab, ' ')
-		--[==[
-		local s = s1
-		if p.p1.tag == 'ord' and p.p1.p2.tag ~= 'throw' then
-			s = '(' .. s .. ')'
-		end
-		if p.p2.tag == 'ord' and p.p2.p2.tag ~= 'throw' then
-			s = s .. ' (' .. s2 .. ')'
-		else
-			s = s .. ' ' .. s2
-		end
-		return s --.. printProp(p)]==]
 	elseif p.tag == 'and' or p.tag == 'not' then
 		local s = self:printp(p.v, flag)
 		if p.v:isSimple() then
