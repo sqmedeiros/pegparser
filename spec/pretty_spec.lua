@@ -50,68 +50,25 @@ describe("Testing #pretty", function()
 		local exp = Node.choice{nodeCon, nodeAnd}
 		assert.same("'foo' foo  /  &foo", pretty:printp(exp))
 		
-        --[==[
-		-- "a" A / B "B"
-		local con1 = { tag = "con", v = { { tag = "char", v = "a" }, { tag = "var", v = "A" } } }
-		local con2 = { tag = "con", v = { { tag = "var", v = "B" }, { tag = "char", v = "B" } } }  
-		local choice = { tag = "choice", v = { con1, con2 } }  
-		assert.same(Node.choice{Node.con{Node.char"a", Node.var"A"}, Node.con{Node.var"B", Node.char"B"}}, choice)
-		
 		-- Optional: p?
-		local nodeOpt = { tag = "opt", v = nodeVar }
-		assert.same(Node.opt(Node.var"foo"), nodeOpt)
-		assert.same(Node.new("opt", Node.new("var", "foo")), nodeOpt)
+		local nodeOpt = Node.opt(Node.var"foo")
+		exp = nodeOpt
+        assert.same("foo?", pretty:printp(exp))
 		
 		-- Zero or more: p*
-		local nodeStar = { tag = "star", v = nodeChar }
-		assert.same(Node.star(Node.char"'foo'"), nodeStar)
-		assert.same(Node.new("star", Node.new("char", "'foo'")), nodeStar)
+		local nodeStar = Node.star(Node.char"'foo'")
+        exp = nodeStar
+		assert.same("'foo'*", pretty:printp(exp))
 		
-		-- One or more: p*
-		local nodePlus = { tag = "plus", v = nodeVar }
-		assert.same(Node.plus(Node.var"foo"), nodePlus)
-		assert.same(Node.new("plus", Node.new("var", "foo")), nodePlus)
+		-- One or more: p+
+		local nodePlus = Node.plus(Node.var"foo")
+        exp = nodePlus
+        assert.same("foo+", pretty:printp(exp))
 		
 		-- Throw
-		local nodeThrow = { tag = "throw", v = "lua" }
-		assert.same(Node.throw"lua", nodeThrow)
-		assert.same(Node.new("throw", "lua"), nodeThrow)
-		
-		-- Def
-		local nodeDef = { tag = "def", v = "lua" }
-		assert.same(Node.def"lua", nodeDef)
-		assert.same(Node.new("def", "lua"), nodeDef)
-		
-		-- Captures
-		local nodeConstCap = { tag = "constCap", v = nodeChar }
-		assert.same(Node.constCap(nodeChar), nodeConstCap)
-		assert.same(Node.new("constCap", nodeChar), nodeConstCap)
-		
-		local nodePosCap = { tag = "posCap" }
-		assert.same(Node.posCap(), nodePosCap)
-		assert.same(Node.new("posCap"), nodePosCap)
-
-		local nodeSimpCap = { tag = "simpCap", v = nodeChar }
-		assert.same(Node.simpCap(nodeChar), nodeSimpCap)
-		assert.same(Node.new("simpCap", nodeChar), nodeSimpCap)
-
-		local nodeTabCap = { tag = "tabCap", v = nodeChar }
-		assert.same(Node.tabCap(nodeChar), nodeTabCap)
-		assert.same(Node.new("tabCap", nodeChar), nodeTabCap)
-
-		local nodeAnonCap = { tag = "anonCap", v = nodeChar }
-		assert.same(Node.anonCap(nodeChar), nodeAnonCap)
-		assert.same(Node.new("anonCap", nodeChar), nodeAnonCap)
-
-		local nodeNamedCap = { tag = "namedCap", v = { "name", nodeChar } }
-		assert.same(Node.namedCap("name", nodeChar), nodeNamedCap)
-		assert.same(Node.new("namedCap", {"name", nodeChar}), nodeNamedCap)
-
-		local nodeDiscardCap = { tag = "funCap", v = nodeChar }
-		assert.same(Node.discardCap(nodeChar), nodeDiscardCap)
-		assert.same(Node.new("funCap", nodeChar), nodeDiscardCap)
-        
-        ]==]
+		local nodeThrow = Node.throw"lua"
+		exp = nodeThrow
+		assert.same("%{lua}", pretty:printp(exp))
 	end)
 	
     --[==[

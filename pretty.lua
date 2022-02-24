@@ -95,9 +95,9 @@ function Pretty:printp (p, flag)
 	elseif p.tag == "star" or p.tag == 'plus' or p.tag == 'opt' then
 		local s = self:printp(p.v, flag)
 		if p.v:isSimple() then
-			return s .. p:getRepOp() .. printProp(p)
+			return s .. p:getRepOp() .. self:printProp(p)
 		else
-			return '(' .. s .. ')' .. parser.repSymbol(p) .. printProp(p)
+			return '(' .. s .. ')' .. parser.repSymbol(p) .. self:printProp(p)
 		end
   elseif p.tag == 'throw' then
     return '%{' .. p.v .. '}'
