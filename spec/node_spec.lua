@@ -65,7 +65,7 @@ describe("Testing #node", function()
 		assert.same(Node.star(Node.char"'foo'"), nodeStar)
 		assert.same(Node.new("star", Node.new("char", "'foo'")), nodeStar)
 		
-		-- One or more: p*
+		-- One or more: p+
 		local nodePlus = { tag = "plus", v = nodeVar }
 		assert.same(Node.plus(Node.var"foo"), nodePlus)
 		assert.same(Node.new("plus", Node.new("var", "foo")), nodePlus)
