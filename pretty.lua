@@ -9,14 +9,22 @@ Pretty.__index = Pretty
 
 function Pretty.new (prop, propStr)
     local self = {}
-    self.property = prop
-    self.propertyStr = propStr
     setmetatable(self, Pretty)
+    self:setProperty(prop, propStr)
     return self
 end
 
 
+function Pretty:setProperty (prop, propStr)
+    self.property = prop
+    self.propertyStr = propStr or prop
+end
+
 function Pretty:printProp (p)
+    --if self.property then
+      --  print("Property " .. self.property)
+      --  assert(false)
+    --end
 	if self.property and p[self.property] then
 		return '_' .. self.propertyStr
 	end
@@ -114,9 +122,7 @@ function Pretty:printp (p, flag)
 end
 
 
-function Pretty:printg (grammar, flagthrow, withLex, property, propertyStr)
-	self.property = property
-    self.propertyStr = propertyStr or self.propertyStr
+function Pretty:printg (grammar, flagthrow, withLex)
 	local t = {}
     
     for i, var in ipairs(grammar:getVars()) do

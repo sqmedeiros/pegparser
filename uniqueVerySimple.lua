@@ -150,7 +150,7 @@ end
 
 
 function UniqueVerySimple:setlabel (exp, upath)
-	if upath == UniqueSimpe.ON and not exp:matchEmpty(self.grammar) then
+	if upath == UniqueVerySimple.ON and not exp:matchEmpty(self.grammar) then
 		exp.label = true
 	end
 end
@@ -171,21 +171,23 @@ function UniqueVerySimple:uniquePath (exp, upath)
 		self:setlabel(exp, upath)
 	elseif tag == 'con' then
 		for i, v in ipairs(exp.v) do
-			uniquePath(v, upath)
-			upath = updateUPath(v, upath)
+			self:uniquePath(v, upath)
+			upath = self:updateUPath(v, upath)
 		end
-	elseif tag == 'ord' then
-		setlabel(exp, upath)
+	elseif tag == 'choice' then
+		self:setlabel(exp, upath)
 		local n = #exp.v
 		for i = 1, n - 1 do
-			uniquePath(exp.v[i], UniqueVerySimple.OFF)
+			self:uniquePath(exp.v[i], UniqueVerySimple.OFF)
 		end
-		uniquePath(exp.v[n], UniqueVerySimple.OFF)
+		self:uniquePath(exp.v[n], UniqueVerySimple.OFF)
 	elseif tag == 'star' or tag == 'opt' then
 		uniquePath(exp.v, UniqueVerySimple.OFF)
 	elseif tag == 'plus' then
-		setlabel(exp, upath)
-		uniquePath(exp.v, UniqueVerySimple.OFF)
+		self:setlabel(exp, upath)
+		self:uniquePath(exp.v, UniqueVerySimple.OFF)
+    else
+        assert(false, tostring(exp.tag))
 	end
 end
 
