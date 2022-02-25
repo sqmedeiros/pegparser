@@ -195,6 +195,43 @@ describe("Testing #calcUniquePath", function()
         assert.is_true(Util.checkProperty(g, g_label, "label"))
     end)
     
+    test([[]], function()
+        
+        local g = Parser.match[[
+            program         <-  (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* 
+            toplevelfunc    <-  localopt 'function' 'name' '(' ')' 'return' 'end'
+            toplevelvar     <-  localopt 'name' '=' 'x'
+            toplevelrecord  <-  'record' 'name' '{' '}' 'end'
+            localopt        <-  'local'?
+            import          <-  'local' 'name' '=' 'import' ('(' 'string' ')'  /  'string')
+            foreign         <-  'local' 'name' '=' 'foreign' 'import' ('(' 'string' ')'  /  'string')
+        ]]
+        
+        local unique = UVerySimple.new(g)
+        unique:calcUniquePath()
+            
+        local g_unique = [[
+            program         <-  (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* 
+            toplevelfunc    <-  localopt 'function'_unique 'name' '(' ')' 'return'_unique 'end'
+            toplevelvar     <-  localopt 'name' '=' 'x'_unique
+            toplevelrecord  <-  'record'_unique 'name' '{'_unique '}'_unique 'end'
+            localopt        <-  'local'?
+            import          <-  'local' 'name' '=' 'import' ('(' 'string' ')'  /  'string')
+            foreign         <-  'local' 'name' '=' 'foreign'_unique 'import' ('(' 'string' ')'  /  'string')
+        ]]
+        assert.is_true(Util.checkProperty(g, g_unique, "unique"))
+    
+        local g_label = [[
+            program         <-  (toplevelfunc  /  toplevelvar  /  toplevelrecord  /  import  /  foreign)* 
+            toplevelfunc    <-  localopt 'function' 'name'_label '('_label ')'_label 'return'_label 'end'_label
+            toplevelvar     <-  localopt 'name' '=' 'x'
+            toplevelrecord  <-  'record' 'name'_label '{'_label '}'_label 'end'_label
+            localopt        <-  'local'?
+            import          <-  'local' 'name' '=' 'import' ('(' 'string' ')'  /  'string')
+            foreign         <-  'local' 'name' '=' 'foreign' 'import'_label ('(' 'string' ')'  /  'string')
+        ]]
+        assert.is_true(Util.checkProperty(g, g_label, "label"))
+    end)
 
 	
 end)
