@@ -121,7 +121,9 @@ function Pretty:printg (grammar, flagthrow, withLex, property, propertyStr)
     
     for i, var in ipairs(grammar:getVars()) do
         if not Grammar.isLexRule(var) or withLex then
-			table.insert(t, string.format("%-15s <-  %s", v, self:printp(grammar:getRHS(var), flagthrow)))
+			table.insert(t, string.format("%-15s <-  %s",
+                                          var, self:printp(grammar:getRHS(var), 
+                                          flagthrow)))
 		end
     end
     

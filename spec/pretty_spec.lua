@@ -1,6 +1,23 @@
 local Node = require"node"
 local Pretty = require"pretty"
 local Parser = require"parser"
+local Util = require"util"
+
+
+local function sameWithoutSpace (auto, manual)
+    local sAuto = Util.removeSpace(auto)
+    local sManual = Util.removeSpace(manual)
+    return sAuto == sManual
+end
+
+
+local function checkPrint (s)
+    local g, msg = Parser.match(s)
+    assert.is_not_nil(g)
+    local pretty = Pretty.new()
+    return sameWithoutSpace(pretty:printg(g), s)
+end
+
 
 describe("Testing #pretty", function()
 	
@@ -84,11 +101,6 @@ describe("Testing #pretty", function()
                     b <- x / 'd'
                     c <- b]]
 
-        local g, msg = Parser.match(s)
-        local pretty = Pretty.new()
-        assert(pretty:printg(g), s)
-        
-        
-		
+        assert.is_true(checkPrint(s))
 	end)
 end)

@@ -1,6 +1,9 @@
-local lfs = require'lfs'
-local re = require 'relabel'
-local ast = require'pegparser.ast'
+local Util ={}
+Util.__index = Util
+
+function Util.new ()
+	return setmetatable({}, Util)
+end
 
 local verbose = false
 
@@ -36,8 +39,9 @@ local function getPath (s)
 end
 
 
-local function removeSpace (s)
-	return s:gsub("[ \t\n\r]", "")
+function Util.removeSpace (s, space)
+	space = space or " \t\n\r"
+	return s:gsub("[" .. space .. "]", "")
 end
 
 
@@ -184,15 +188,4 @@ local function testNoRecDist (dir, ext, p)
 end
 
 
-
-return {
-	testYes = testYes,
-	testNo = testNo,
-	testNoRec = testNoRec,
-	testNoRecDist = testNoRecDist,
-	testFile = testFile,
-	setVerbose = setVerbose,
-	getFileName = getFileName,
-	getPath = getPath,
-	removeSpace = removeSpace
-}
+return Util
