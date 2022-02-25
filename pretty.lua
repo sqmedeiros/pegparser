@@ -109,7 +109,7 @@ function Pretty:printp (p, flag)
 		if p.v:isSimple() then
 			return s .. p:getRepOp() .. self:printProp(p)
 		else
-			return '(' .. s .. ')' .. parser.repSymbol(p) .. self:printProp(p)
+			return '(' .. s .. ')' .. p:getRepOp() .. self:printProp(p)
 		end
   elseif p.tag == 'throw' then
     return '%{' .. p.v .. '}'
