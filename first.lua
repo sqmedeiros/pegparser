@@ -1,7 +1,7 @@
 local Set = require"set"
 local Pretty = require"pretty"
 local Grammar = require"grammar"
-local Node = require"Node"
+local Node = require"node"
 
 local First = { prefixLex  = "___",
 								empty      = "__empty",
