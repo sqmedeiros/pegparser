@@ -73,11 +73,9 @@ function UniqueVerySimple:uniqueTk ()
 
 	local cont = {}
 	for k, v in pairs(self.tkUse) do
-		print(k, " = ", v)
 		self.tkUnique[k] = (v == 1) or nil
 	end
 
-	self:printUnique()
 	return self.tkUnique
 end
 

@@ -6,18 +6,11 @@ local Util = require"util"
 
 local pretty = Pretty.new()
 
-
-local function sameWithoutSpace (auto, manual)
-    local sAuto = Util.removeSpace(auto)
-    local sManual = Util.removeSpace(manual)
-    return sAuto == sManual
-end
-
 local function checkPrint (s)
     local g, msg = Parser.match(s)
     assert.is_not_nil(g)
     local pretty = Pretty.new()
-    return sameWithoutSpace(pretty:printg(g), s)
+    return Util.sameWithoutSpace(pretty:printg(g), s)
 end
 
 
@@ -55,7 +48,7 @@ end)
 			
 describe("Testing #calcUniquePath", function()
 	
-	test("Calculating unique tokens", function()
+	test("Grammar 1", function()
 	  --The right-hand side of a lexical rule does not influence unique tokens
 		local g = Parser.match[[
 			s <- 'a' 'b' / A / b   
@@ -63,26 +56,42 @@ describe("Testing #calcUniquePath", function()
 			b <- 'b' / 'c' / 'd' / 'A']]
 			
 		local unique = UVerySimple.new(g)
-
 		unique:calcUniquePath()
-        pretty:setProperty("unique")
-        local auto = pretty:printg(g)
-        local g_prop_unique = [[
+        
+        local g_unique = [[
 			s <- 'a'_unique 'b' / A_unique / b   
-			b <- 'b' / 'c'_unique / 'd'_unique / 'A'_unique]]
+			b <- 'b' / 'c'_unique / 'd'_unique / 'A'_unique
+        ]]
+        assert.is_true(Util.checkProperty(g, g_unique, "unique"))
         
-        assert.is_true(sameWithoutSpace(auto, g_prop_unique))
-        print"----\n"
-        
-        pretty:setProperty("label")
-        local auto = pretty:printg(g)
-        local g_prop_label = [[
+        local g_label = [[
 			s <- 'a' 'b'_label / A / b   
-			b <- 'b' / 'c' / 'd' / 'A']]
-        
-        assert.is_true(sameWithoutSpace(auto, g_prop_label))
-            
-        
+			b <- 'b' / 'c' / 'd' / 'A'
+        ]]
+        assert.is_true(Util.checkProperty(g, g_label, "label"))
 	end)
+    
+
+    test("Grammar 2", function()
+        --The right-hand side of a lexical rule does not influence unique tokens
+		local g = Parser.match[[
+                s <- 'a' 'b' / 'c' 'd'
+        ]]
+        
+        local unique = UVerySimple.new(g)
+		unique:calcUniquePath()
+
+        local g_unique = [[
+            s <- 'a'_unique 'b'_unique / 'c'_unique 'd'_unique
+        ]]
+        assert.is_true(Util.checkProperty(g, g_unique, "unique"))
+		
+        local g_label = [[
+            s <- 'a' 'b'_label / 'c' 'd'_label
+        ]]
+        assert.is_true(Util.checkProperty(g, g_label, "label"))
+	end)
+
+    
 	
 end)

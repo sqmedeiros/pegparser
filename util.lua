@@ -1,3 +1,5 @@
+local Pretty = require'pretty'
+
 local Util ={}
 Util.__index = Util
 
@@ -39,9 +41,21 @@ local function getPath (s)
 end
 
 
+function Util.checkProperty (g, s, prop)
+    local pretty = Pretty.new(prop)
+    local auto = pretty:printg(g)
+    return Util.sameWithoutSpace(auto, s)
+end
+
+
 function Util.removeSpace (s, space)
 	space = space or " \t\n\r"
 	return s:gsub("[" .. space .. "]", "")
+end
+
+
+function Util.sameWithoutSpace (s1, s2)
+    return Util.removeSpace(s1) == Util.removeSpace(s2)
 end
 
 
