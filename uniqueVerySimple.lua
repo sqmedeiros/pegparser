@@ -180,7 +180,7 @@ function UniqueVerySimple:uniquePath (exp, upath)
 		end
 		self:uniquePath(exp.v[n], UniqueVerySimple.OFF)
 	elseif tag == 'star' or tag == 'opt' then
-		uniquePath(exp.v, UniqueVerySimple.OFF)
+		self:uniquePath(exp.v, UniqueVerySimple.OFF)
 	elseif tag == 'plus' then
 		self:setlabel(exp, upath)
 		self:uniquePath(exp.v, UniqueVerySimple.OFF)
