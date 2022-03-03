@@ -9,13 +9,20 @@ function Node.new (tag, v)
 	return setmetatable(self, Node)
 end
 
---function Node.copy (node)
---	if type.node(v) ~= "table" then
---		return Node.new(node.tag, node.v)
---	else
---		
---	end	
---end
+
+function Node.copy (node)
+	if type(node.v) ~= "table" then
+		return Node.new(node.tag, node.v)
+	elseif node.tag == 'con' or node.tag == 'choice' then
+		local t = {}
+		for k, v in pairs(node.v) do
+			t[k] = Node.copy(v)
+		end
+		return Node.new(node.tag, t)			
+	else
+		return Node.new(node.tag, Node.copy(node.v))
+	end
+end
 
 
 function Node.empty ()

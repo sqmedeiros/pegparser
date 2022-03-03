@@ -181,5 +181,27 @@ describe("Testing #node", function()
 		assert.True(Node.var"c":matchEmpty(g))
 		
 	end)
+
+	test("Testing copy", function()
+		local nodeChar = Node.char"bola"
+		local copyChar = nodeChar:copy()
+		assert.are.same(nodeChar, copyChar)
+		assert.are_not.equal(nodeChar, copyChar)
+
+		local nodeCon = Node.con{nodeChar, Node.any()}
+		local copyCon = nodeCon:copy()
+		assert.are.same(nodeCon, copyCon)
+		assert.are_not.equal(nodeCon, copyCon)
+
+		local nodeStar = Node.star(nodeChar)
+		local copyStar = nodeStar:copy()
+		assert.are.same(nodeStar, copyStar)
+		assert.are_not.equal(nodeStar, copyStar)		
+
+		local nodeCon = Node.con{Node.choice{nodeChar, Node.any()}, Node.star(nodeChar)}
+		local copyCon = nodeCon:copy()
+		assert.are.same(nodeCon, copyCon)
+		assert.are_not.equal(nodeCon, copyCon)
+	end)
 	
 end)
