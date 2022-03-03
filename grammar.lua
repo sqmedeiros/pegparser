@@ -1,3 +1,5 @@
+local Node = require"node"
+
 local Grammar = {
 	prefErrRule = "__Err",
 }
@@ -10,10 +12,27 @@ function Grammar.new ()
 	self.ruleMap = {}
 	self.ruleList = {}
 	self.tokenSet = {}
-	self.unique = {}
 	self.startRule = nil
 	return self
 end
+
+function Grammar:copy()
+	local copy = Grammar.new()
+
+	for i, var in ipairs(self.ruleList) do
+		copy.ruleList[i] = var
+		copy.ruleMap[var] = Node.copy(self.ruleMap[var])
+	end
+
+	for k, v in pairs(self.tokenSet) do
+		copy.tokenSet[k] = v
+	end
+
+	copy.startRule = self.startRule
+	return copy
+end
+
+
 
 
 function Grammar:getRHS (exp)

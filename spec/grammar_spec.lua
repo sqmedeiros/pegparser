@@ -98,5 +98,20 @@ describe("Testing #grammar", function()
 		assert.same(g:getTokens(), { })
 		
 	end)
+
+
+	test("Grammar copy", function()
+		local g = Grammar.new()
+		g:addRule("s", Node.con{Node.any(), Node.var"A"})
+		g:addRule("A", Node.var"c")
+		g:addRule("B", Node.char"a")
+		g:addRule("c", Node.empty())
+		g:addRule("D", Node.empty())
+
+		local copy = g:copy()
+		assert.are.same(g, copy)
+		assert.are_not.equal(g, copy)
+	end)
+
 end)
 
