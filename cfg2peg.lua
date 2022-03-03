@@ -1,25 +1,24 @@
-local first = require'pegparser.first'
-local recovery = require'pegparser.recovery'
-local parser = require'pegparser.parser'
-local pretty = require'pegparser.pretty'
-local unique = require'pegparser.unique'
+local First = require'first'
+local Grammar = require'grammar'
+local Pretty = require'pretty'
 
-local calck = first.calck
-local calcfirst = first.calcfirst
-local newNode = parser.newNode
-local newSeq = parser.newSeq
-local newNot = parser.newNot
-local newVar = parser.newVar
-local newOrd = parser.newOrd
-local newAnd = parser.newAnd
-local matchIDBegin = first.matchIDBegin
 
-local KEYWORD = 'KEY__'
-local IDBegin = 'IDBegin__'
-local IDRest = 'IDRest__'
+local Cfg2Peg = {
+	KEYWORD = 'KEY__',
+	IDBegin = 'IDBegin__',
+	IDRest = 'IDRest__',
+}
 
-local irep = 0
-local getPeg
+Cfg2Peg.__index = Cfg2Peg
+
+function Cfg2Peg.new(cfg)
+	assert(cfg)
+	local self = setmetable({}, Cfg2Peg)
+	self.cfg = cfg
+	self.irep = 0
+	return self
+end
+
 
 local function getRepName ()
   local s = 'rep_' .. string.format("%03d", irep)
@@ -28,7 +27,7 @@ local function getRepName ()
 end
 
 
-function tableSwap (t, i, j)
+function Cfg2Peg.tableSwap (t, i, j)
 	local aux = t[i]
 	t[i] = t[j]
 	t[j] = aux
@@ -85,39 +84,8 @@ end
 end
 --]==]
 
--- given a list of expressions, generates a left-associateve con
-function getConFromList (l)
-	local n = #l
 
-	if n == 1 then
-		return l[1]
-	else
-		local p2 = l[n]
-		return newSeq(getConFromList(table.pack(table.unpack(l, 1, n - 1))), p2)
-	end
-end
-
-
--- assumes concatenation is left-associative
-function getListFromCon (p)
-	local t = {}
-
-	local aux = p
-	while aux.tag == 'con' do
-		table.insert(t, aux.p2)
-		aux = aux.p1
-	end
-	table.insert(t, aux)
-
-	local n = #t
-	for i = 1, n/2 do
-		tableSwap(t, i, n - i + 1)
-	end
-
-	return t
-end
-
-function isLazyRep (p)
+function Cfg2Peg.isLazyRep (p)
 	return p.tag == 'opt' and
 	       (p.p1.tag == 'opt' or p.p1.tag == 'star' or p.p1.tag == 'plus')
 end
@@ -141,19 +109,6 @@ function convertLazyRepetition(g, peg, p)
 	return getConFromList(t)
 end
 
--- assumes the choice is right-associative
-function getChoiceAlternatives (p)
-	local t = {}
-
-	local aux = p
-	while aux.tag == 'ord' do
-		table.insert(t, aux.p1)
-		aux = aux.p2
-	end
-	table.insert(t, aux)
-
-	return t
-end
 
 
 function solveChoiceConflict (g, p1, p2)
@@ -224,92 +179,23 @@ function getChoicePeg (g, peg, p, flw, rule)
 	end
 
 	return
-
-	--[===[
-	print("Conflicts")
-	for i, v in pairs(t) do
-		local first1 = calcfirst(g, p1)
-		local first2 = calcfirst(g, p2)
-		print("p1", pretty.printp(p1))
-		print("p2", pretty.printp(p2))
-		if not first.disjoint(first1, first2) then
-	end
-
-
-	local last = n
-	while last > 1 do
-		local j = 1
-		while j < last do
-			local p1 = t[j]
-			local p2 = t[j+1]
-			local first1 = calcfirst(g, p1)
-			local first2 = calcfirst(g, p2)
-			print("p1", pretty.printp(p1))
-			print("p2", pretty.printp(p2))
-			if not first.disjoint(first1, first2) then
-				if unique.matchUPath(p1) then
-					print("Alternative 1 match unique", pretty.printp(p1))
-				end
-			end
-			if unique.matchUPath(p.p2) then
-			  print("Alternative 2 match unique", pretty.printp(p2))
-			  tableSwap(t, j, j + 1)
-			end
-			local tkPath1 = {}
-			first.calcTkPath(g, p1, tkPath1, {})
-			io.write("tkpath1: ")
-			printktable(tkPath1)
-
-			local tkPath2 = {}
-			first.calcTkPath(g, p2, tkPath2, {})
-			io.write("tkpath2: ")
-			printktable(tkPath2)
-
-			if (matchTkNotInPath(g, p1, tkPath2, {})) then
-				print("Alternative 1 match tkpath different, should come first")
-			end
-
-			if (matchTkNotInPath(g, p2, tkPath1, {})) then
-				print("Alternative 2 match tkpath different, should come first")
-				tableSwap(t, j, j + 1)
-			end
-			j = j + 1
-		end
-		last = last - 1
-	end
-
-	print("After ordering")
-	for i, v in pairs(t) do
-		print("Alt " .. i .. ": ", pretty.printp(v))
-	end
-	return t
-	]===]
-
 end
 
 
-function getPeg (g, peg, p, flw, rule)
+function Cfg2Peg:getPeg (g, peg, p, flw, rule)
 	if p.tag == 'var' or p.tag == 'char' or p.tag == 'any' or p.tag == 'set' then
-		return newNode(p, p.p1, p.p2)
-	elseif p.tag == 'ord' then
-		if p.disjoint or parser.isLexRule(rule) then
-			return newNode(p, getPeg(g, peg, p.p1, flw, rule), getPeg(g, peg, p.p2, flw, rule))
+		return p
+	elseif p.tag == 'choice' then
+		if p.disjoint or Grammar.isLexRule(rule) then
+			local t = {}
+			for i, v in ipairs(p.v) do
+				table.insert(Node.new(g, peg, v, flw, rule))
+			end
+			return Node.choice(t)
 		else
 			print("Non-ll(1) choice", pretty.printp(p))
 			getChoicePeg(g, peg, p, flw, rule)
 		end
-
-			--[==[if p.p2.tag == 'ord' then
-				local first1 = calcfirst(g, p.p1)
-				local first21 = calcfirst(g, p.p2.p1)
-				if first.disjoint(first1, first21) then
-				  print("tkpath inverter")
-					return newNode(p, getPeg(g, peg, p.p2.p1, flw, rule),
-					                  getPeg(g, peg, newOrd(p.p1, p.p2.p2), flw, rule))
-				end
-			end]==]
-
-			--print("rule123", rule)
 		return newNode(p, getPeg(g, peg, p.p1, flw, rule), getPeg(g, peg, p.p2, flw, rule))
 	elseif p.tag == 'con' then
 		local p1 = getPeg(g, peg, p.p1, calck(g, p.p2, flw, rule), rule)
@@ -335,11 +221,11 @@ function getPeg (g, peg, p, flw, rule)
 			end
 		end
 	elseif p.tag == 'not' then
-		return newNode(p, getPeg(g, peg, p.p1, flw, rule))
+		return Node.nott(newNode(p, getPeg(g, peg, p.p1, flw, rule)))
 	elseif p.tag == 'def' then
 		return newNode(p, p.p1, p.p2)
 	else
-		assert(false, p.tag .. ': ' .. pretty.printp(p))
+		assert(false, p.tag .. ': ' .. Pretty.printp(p))
 	end
 end
 
@@ -355,14 +241,15 @@ local function markRulesUsedByID (peg, p)
 	end
 end
 
-local function initId (g, peg, ruleId)
-	local pIDBegin = g.prules[ruleId].p1
-	local pIDRest = g.prules[ruleId].p2
+function Cfg2Peg:initId ()
+	local expId = self.grammar:getRHS(self.ruleId)
+	local pIDBegin = Node.copy(expId.v[1])
+	local pIDRest = Node.copy(expId.v[2]) --TODO: assumes a simple concatenation
 	local fragment = true
 
-	parser.addRuleG(peg, IDBegin, pIDBegin, fragment)
-	parser.addRuleG(peg, IDRest, pIDRest, fragmen)
-	peg.usedByID = {}
+	self.peg:addRule(IDBegin, pIDBegin, fragment)
+	self.peg:addRule(IDRest, pIDRest, fragment)
+	self.peg.usedByID = {}
 	markRulesUsedByID(peg, peg.prules[ruleId])
 end
 
@@ -446,21 +333,25 @@ local function collectKeywords (g, peg, ruleID, lex)
   end
 end
 
-local function convertLexRule (g, peg, ruleID)
-	initId(g, peg, ruleID)
+
+function Cfg2Peg:convertLexRule ()
+	self:initId()
 	--collectKeywords(g, peg, ruleID)
 end
 
-local function convert (g, ruleID)
-	local peg = parser.initgrammar(g)
-	convertLexRule(g, peg, ruleID)
+
+function Cfg2Peg:convert (ruleID)
+	self.peg = self.cfg:copy()
+	self.ruleId = ruleId or self.ruleId
+	self:convertLexRule()
+
 	unique.calcUniquePath(g)
   print(pretty.printg(g, true, 'unique'), '\n')
   local n = #g.plist
-	--for i = 1, n, v in ipairs(g.plist) do
-	for i = 1, n do
-		local v = g.plist[i]
-		if not parser.isLexRule(v) then
+	
+	for i, var in ipairs(grammar:getVars()) do
+		local v = self.cfg:getStartRule()
+		if not Grammar.isLexRule(v) then
 		--if v ~= 'SKIP' then
 			peg.prules[v] = getPeg(g, peg, g.prules[v], g.FOLLOW[v], v)
 		elseif v ~= 'SKIP' then
@@ -470,7 +361,10 @@ local function convert (g, ruleID)
   return peg
 end
 
-return {
-	convert = convert,
-	getChoiceAlternatives = getChoiceAlternatives,
-}
+return Cfg2Peg
+
+
+--return {
+--	convert = convert,
+--	getChoiceAlternatives = getChoiceAlternatives,
+--}
