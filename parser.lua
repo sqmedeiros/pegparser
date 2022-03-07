@@ -3,8 +3,8 @@ Parser.__index = Parser
 
 local M = require'lpeglabel'
 local Re = require'relabel'
-local ErrMsg = require'pegparser.syntax_errors'
-local Predef = require'pegparser.predef'
+local ErrMsg = require'syntax_errors'
+local Predef = require'predef'
 local Node = require"node"
 local Grammar = require"grammar"
 
