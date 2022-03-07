@@ -1,6 +1,7 @@
 local Set = require'set'
 local Parser = require'parser'
 local First = require'first'
+local Node = require'node'
 
 local empty = First.empty
 local any = First.any
@@ -375,6 +376,22 @@ describe("Testing #follow", function()
 		setFlw['id'] = Set.new        { 'a', '"a"', '<a>', '1', 'subgraph', '{', 'graph', 'node', 'edge', ';', '}', '=', ',', '->', '--', ':' , '[', ']'}
 
 		assert.same(objFst.FOLLOW, setFlw)
+	end)
+	
+	test("Testing calck", function()
+		local g = Parser.match[[
+			s   <- a* 'A'
+			a   <- b / 'o' c 'd'
+			b   <- 'B'? 'x'
+			c   <- 'a'* &'b'
+		]]
+
+		local objFst = First.new(g)
+		objFst:calcFirstG()
+
+		local k = Set.new{'k'}
+		assert.same(objFst:calck(Node.var('s'), k), Set.new{'B', 'x', 'o', 'A'})
+		assert.same(objFst:calck(Node.var('c'), k), Set.new{'a', 'k'})
 	end)
 end)
 
