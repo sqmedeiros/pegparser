@@ -44,6 +44,23 @@ function First:initSetFromGrammar (name)
 end
 
 
+function First.unfoldset (l)
+	local myset = Set.new()
+	for i, v in ipairs(l) do
+		if #v == 3 then
+			local x = string.byte(v:sub(1, 1))
+			local y = string.byte(v:sub(3, 3))
+			for i = x, y do
+				myset.insert(string.char(i))
+			end
+		else
+			myset.insert(v)
+		end
+	end
+	return myset
+end
+
+
 function First:calcFirstG ()
 	local update = true
 	local grammar = self.grammar
