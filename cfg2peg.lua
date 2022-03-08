@@ -229,7 +229,7 @@ function Cfg2Peg:getPeg (g, peg, p, flw, rule)
 	end
 end
 
-local function markRulesUsedByID (peg, p)
+function Cfg2Peg:markRulesUsedByID (peg, p)
 	if p.tag == 'var' then
 		peg.usedByID[p.p1] = true
 		markRulesUsedByID(peg, peg.prules[p.p1])
@@ -250,7 +250,7 @@ function Cfg2Peg:initId ()
 	self.peg:addRule(IDBegin, pIDBegin, fragment)
 	self.peg:addRule(IDRest, pIDRest, fragment)
 	self.peg.usedByID = {}
-	markRulesUsedByID(peg, peg.prules[ruleId])
+	self:markRulesUsedByID(peg, peg.prules[ruleId])
 end
 
 local function newPredIDRest (p)
