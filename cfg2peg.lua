@@ -2,6 +2,7 @@ local First = require'first'
 local Grammar = require'grammar'
 local Pretty = require'pretty'
 local Node = require'node'
+local UVerySimple = require"uniqueVerySimple"
 
 local Cfg2Peg = {
 	KEYWORD = 'KEY__',
@@ -17,6 +18,8 @@ function Cfg2Peg.new(cfg)
 	self.cfg = cfg
 	self.first = First.new(cfg)
 	self.first:calcFirstG()
+    self.first:calcFollowG()
+    self.unique = nil
 	return self
 end
 
@@ -37,7 +40,7 @@ end
 
 function Cfg2Peg:newNonLL1Rep(p, flw, rule)
 	assert(p ~= nil)
-	print("newNonLL1Rep", Pretty.printp(p))
+	print("newNonLL1Rep", Pretty:printp(p))
 	local p1 = getPeg(g, peg, p.p1, flw, rule)
 	local predFlw = parser.newAnd(first.set2choice(flw))
 
@@ -81,10 +84,62 @@ function convertLazyRepetition(g, peg, p)
 end
 
 
-function solveChoiceConflict (g, p1, p2)
-	local solved = nil
+function Cfg2Peg:isConflictSolved (tabConflict)
+    for i, row in ipairs(tabConflict) do
+        for k, _ in pairs(row) do
+            if tabConflict[k][i] then
+                print("Conflict remains ", i, k)
+                return false
+            end
+        end
+    end
+
+    return true
+end
+
+
+function Cfg2Peg:solveChoiceConflict (p, tabConflict)
+    local solved = true
+    local notConflict = {}
+
+    pretty = Pretty.new()
+    for i, v in ipairs(tabConflict) do
+        if next(v) ~= nil then -- alternative has a conflict with other(s)
+            local iExp = p.v[i]
+            if self.unique:matchUPath(iExp) then  -- conflict solved
+                print("Alternative " .. i .. " match unique", pretty:printp(iExp))
+                tabConflict[i] = {}
+                table.insert(notConflict, i)
+            end
+        else  -- no conflict with other alternatives
+            table.insert(notConflict, i)
+        end
+    end
+
+    local listChoice = {}
+    for i, v in ipairs(notConflict) do
+        table.insert(listChoice, p.v[v])
+    end
+
+    for i, v in ipairs(tabConflict) do
+        if next(v) ~= nil then
+            table.insert(listChoice, p.v[i])
+        end
+    end
+
+    p.v = listChoice
+
+    if self:isConflictSolved(tabConflict) then
+        print("Solved")
+        return true
+    end
+
+
+    --[==[
+    
+    local solved = nil
 	if unique.matchUPath(p1) then
-		print("Alternative 1 match unique", pretty.printp(p1))
+		
 		solved = 1
 	end
 
@@ -114,65 +169,55 @@ function solveChoiceConflict (g, p1, p2)
 	end
 
 	return solved
+
+    ]==]
 end
 
-function Cfg2Peg:getChoicePeg (p, flw, rule)
-	local t = getChoiceAlternatives(p)
 
+function Cfg2Peg:getChoicePeg (p, flw, rule)
+    local t = p.v
 	local n = #t
-	local tDisj = {}
 	local conflict = {}
 	local newt = {}
 	local firstAlt = {}
 
 	print("Before ordering")
-	for i, v in pairs(t) do
-		print("Alt " .. i .. ": ", Pretty.printp(v))
+	for i, v in ipairs(p.v) do
+		print("Alt " .. i .. ": ", Pretty:printp(v))
 		conflict[i] = {}
 		firstAlt[i] = self.first:calcFirstExp(v)
 	end
 
+    local disjoint = true
+
 	for i = 1, n - 1 do
 		for j = i + 1, n do
 			if not firstAlt[i]:disjoint(firstAlt[j]) then
-				print("Alt i", Pretty.printp(t[i]))
-				print("Alt j", Pretty.printp(t[j]))
+				--print("Alt i", Pretty:printp(t[i]))
+				--print("Alt j", Pretty:printp(t[j]))
 				print("Conflict ", i, j)
-				--local solved = solveChoiceConflict(g, p1, p2)
-				--if solved then
-				--	print("Conflict solved")
-				--end
+                disjoint = false
+                conflict[i][j] = true
+                conflict[j][i] = true
 			end
 		end
 	end
 
-	return
+    if not disjoint then
+        self:solveChoiceConflict(p, conflict)
+    end
 end
 
 
 function Cfg2Peg:getPeg (p, flw, rule)
-	if p.tag == 'var' or p.tag == 'char' or p.tag == 'any' or p.tag == 'set' then
-		return p
-	elseif p.tag == 'choice' then
-		if p.disjoint or Grammar.isLexRule(rule) then
-			local t = {}
-			for i, v in ipairs(p.v) do
-				table.insert(t, self:getPeg(v, flw, rule))
-			end
-			return Node.choice(t)
-		else
-			print("Non-ll(1) choice", Pretty.printp(p))
-			return self:getChoicePeg(p, flw, rule)
-		end
+	if p.tag == 'choice' then
+        self:getChoicePeg(p, flw, rule)
 	elseif p.tag == 'con' then
-		local t = {}
 		local n = #p.v
 		for i = n, 1, -1 do
-			local iExp = p.v[i]
-			t[i] = self:getPeg(iExp, flw, rule)
-			flw = self.first:calck(self.g, iExp, flw, rule)
+			p.v[i] = self:getPeg(p.v[i], flw, rule)
+			flw = self.first:calck(p.v[i], flw)
 		end
-		return Node.con(t)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		if true then
 			return p
@@ -196,12 +241,8 @@ function Cfg2Peg:getPeg (p, flw, rule)
 				return res
 			end]==]
 		end
-	elseif p.tag == 'not' then
-		return p
-	elseif p.tag == 'def' then
-		return p
 	else
-		assert(false, p.tag .. ': ' .. Pretty.printp(p))
+		assert(p and p.tag , p.tag .. ': ' .. Pretty.printp(p))
 	end
 end
 
@@ -314,7 +355,8 @@ local function collectKeywords (g, peg, ruleID, lex)
 end
 
 
-function Cfg2Peg:convertLexRule ()
+function Cfg2Peg:convertLexRule (ruleId)
+    self.ruleId = ruleId or self.ruleId
 	self:initId()
 	--collectKeywords(g, peg, ruleID)
 end
@@ -323,26 +365,22 @@ end
 function Cfg2Peg:convert (ruleId)
 	self.peg = self.cfg:copy()
 	self.irep = 0
-	self.ruleId = ruleId or self.ruleId
-	self:convertLexRule()
+	self:convertLexRule(ruleId)
 
-	if true then
-		return
-	end
-	unique.calcUniquePath(g)
-	print(pretty.printg(g, true, 'unique'), '\n')
-	local n = #g.plist
-	
-	for i, var in ipairs(grammar:getVars()) do
-		local v = self.cfg:getStartRule()
-		if not Grammar.isLexRule(v) then
-		--if v ~= 'SKIP' then
-			peg.prules[v] = getPeg(g, peg, g.prules[v], g.FOLLOW[v], v)
-		elseif v ~= 'SKIP' then
-			peg.prules[v] = convertLazyRepetition(g, peg, g.prules[v])
+    self.unique = UVerySimple.new(self.peg)
+    self.unique:calcUniquePath()
+    local pretty = Pretty.new("unique")
+    print(pretty:printg(self.peg))
+    
+	for i, var in ipairs(self.peg:getVars()) do
+		if not Grammar.isLexRule(var) then
+            self:getPeg(self.peg:getRHS(var), self.first.FOLLOW[var], var)
+		--elseif v ~= 'SKIP' then
+			--convertLazyRepetition(self.peg:getRHS(var))
 		end
   end
-  return peg
+
+  return self.peg
 end
 
 return Cfg2Peg
