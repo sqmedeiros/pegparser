@@ -188,6 +188,11 @@ describe("Testing #node", function()
 		assert.are.same(nodeChar, copyChar)
 		assert.are_not.equal(nodeChar, copyChar)
 
+        local nodeSet = Node.set{'a-e', '0-9', '@', 'x'}
+        local copySet = nodeSet:copy()
+        assert.are.same(nodeSet, copySet)
+        assert.are_not.equal(nodeSet, copySet)
+
 		local nodeCon = Node.con{nodeChar, Node.any()}
 		local copyCon = nodeCon:copy()
 		assert.are.same(nodeCon, copyCon)
