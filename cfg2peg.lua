@@ -64,23 +64,26 @@ function Cfg2Peg.isLazyRep (p)
 	       (p.v.tag == 'opt' or p.v.tag == 'star' or p.v.tag == 'plus')
 end
 
--- Assumes a few simplifications
+-- Assumes a few simplifications:
 -- 1. there is no other transformation related to lexical rules
 -- 2. there is no lazy repetition inside another one
-function convertLazyRepetition(g, peg, p)
-	local t = getListFromCon(p)
-	local n = #t
+function Cfg2Peg:convertLazyRepetition (p)
+    if p.tag == 'choice' then
+        for i, v in ipairs(p.v) do
+            self:convertLazyRepetition(v)
+        end
+    else if p.tag == 'con' then
+        local n = #p.v
 
-	for i = n, 1, -1 do
-		local v = t[i]
-		if isLazyRep(v) then
-			local newt = table.pack(table.unpack(t, i + 1, n))
-			local p = getConFromList(newt)
-			t[i] = newNode(v.p1, newSeq(newNot(p), v.p1.p1))
-		end
-	end
-
-	return getConFromList(t)
+        for i = n, 1, -1 do
+            local iExp = p.v[i]
+                if self:isLazyRep(iExp) then
+                local newt = table.pack(table.unpack(t, i + 1, n))
+                local p = getConFromList(newt)
+                t[i] = newNode(v.p1, newSeq(newNot(p), v.p1.p1))
+            end
+        end
+    end
 end
 
 
@@ -375,8 +378,8 @@ function Cfg2Peg:convert (ruleId)
 	for i, var in ipairs(self.peg:getVars()) do
 		if not Grammar.isLexRule(var) then
             self:getPeg(self.peg:getRHS(var), self.first.FOLLOW[var], var)
-		--elseif v ~= 'SKIP' then
-			--convertLazyRepetition(self.peg:getRHS(var))
+		else
+            self:convertLazyRepetition(self.peg:getRHS(var))
 		end
   end
 
@@ -384,9 +387,3 @@ function Cfg2Peg:convert (ruleId)
 end
 
 return Cfg2Peg
-
-
---return {
---	convert = convert,
---	getChoiceAlternatives = getChoiceAlternatives,
---}
