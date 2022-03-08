@@ -163,6 +163,36 @@ function UniqueVerySimple:updateUPath (exp, upath)
 end
 
 
+function UniqueVerySimple:matchUPath (p)
+	if p.tag == 'char' then
+		return p.unique
+	elseif p.tag == 'var' then
+		return p.unique and not p:matchEmpty(self.grammar)
+	elseif p.tag == 'con' then
+        for i, v in ipairs(p.v) do
+            if self:matchUPath(v) then
+                return true
+            end
+        end
+		return false
+	elseif p.tag == 'choice' then
+		if p.unique then
+            return true
+        end
+        for i, v in ipairs(p.v) do
+            if not self:matchUPath(v) then
+                return false
+            end
+        end
+        return true
+	elseif p.tag == 'plus' then
+		return p.unique
+	else
+		return false
+	end
+end
+
+
 function UniqueVerySimple:uniquePath (exp, upath)
 	local tag = exp.tag
 	if tag == 'char' or tag == 'var' then
@@ -226,6 +256,9 @@ function UniqueVerySimple:calcUniquePath (startOn)
   ]==]
 
 end
+
+
+
 
 
 return UniqueVerySimple

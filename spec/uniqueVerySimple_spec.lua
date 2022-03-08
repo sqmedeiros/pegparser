@@ -233,5 +233,35 @@ describe("Testing #calcUniquePath", function()
         assert.is_true(Util.checkProperty(g, g_label, "label"))
     end)
 
+
+    test("Testing #matchUPath", function()
+        local g = Parser.match[[
+			s   <-  a / 'a' 'b' / 'a' 'c'
+			a   <- 'x' / 'a' / 'y'
+            b   <- '1' / '2'
+		]]
+        local unique = UVerySimple.new(g)
+        unique:calcUniquePath()
+
+        local choiceS = g:getRHS"s"
+        assert.is_false(unique:matchUPath(choiceS))
+        -- check alternatives of rule s
+        assert.is_not_true(unique:matchUPath(choiceS.v[1]))
+        assert.is_true(unique:matchUPath(choiceS.v[2]))
+        assert.is_true(unique:matchUPath(choiceS.v[3]))
+
+        local choiceA = g:getRHS"a"
+        assert.is_false(unique:matchUPath(choiceA))
+        -- check alternatives of rule a
+        assert.is_true(unique:matchUPath(choiceA.v[1]))
+        assert.is_not_true(unique:matchUPath(choiceA.v[2]))
+        assert.is_true(unique:matchUPath(choiceA.v[3]))
+
+        local choiceB = g:getRHS"b"
+        assert.is_true(unique:matchUPath(choiceB))
+        -- check alternatives of rule b
+        assert.is_true(unique:matchUPath(choiceB.v[1]))
+        assert.is_true(unique:matchUPath(choiceB.v[2]))
+    end)
 	
 end)
