@@ -1,12 +1,12 @@
 local First = require'first'
 local Grammar = require'grammar'
 local Pretty = require'pretty'
-
+local Node = require'node'
 
 local Cfg2Peg = {
 	KEYWORD = 'KEY__',
-	IDBegin = 'IDBegin__',
-	IDRest = 'IDRest__',
+	IdBegin = 'IDBegin__',
+	IdRest = 'IDRest__',
 }
 
 Cfg2Peg.__index = Cfg2Peg
@@ -205,39 +205,40 @@ function Cfg2Peg:getPeg (p, flw, rule)
 	end
 end
 
-function Cfg2Peg:markRulesUsedByID (peg, p)
+function Cfg2Peg:markRulesUsedById (p)
 	if p.tag == 'var' then
-		peg.usedByID[p.p1] = true
-		markRulesUsedByID(peg, peg.prules[p.p1])
-	elseif p.tag == 'con' or p.tag == 'ord' then
-		markRulesUsedByID(peg, p.p1)
-		markRulesUsedByID(peg, p.p2)
+		self.peg.usedById[p.v] = true
+		self:markRulesUsedById(self.peg:getRHS(p.v))
+	elseif p.tag == 'con' or p.tag == 'choice' then
+        for i, v in ipairs(p.v) do
+            self:markRulesUsedById(v)
+        end
 	elseif p.tag == 'star' or p.tag == 'rep' or p.tag == 'opt' then
-		markRulesUsedByID(peg, p.p1)
+		self:markRulesUsedById(p.v)
 	end
 end
 
 function Cfg2Peg:initId ()
 	local expId = self.cfg:getRHS(self.ruleId)
-	local pIDBegin = Node.copy(expId.v[1])
-	local pIDRest = Node.copy(expId.v[2]) --TODO: assumes a simple concatenation
+	local pIdBegin = Node.copy(expId.v[1])
+	local pIdRest = Node.copy(expId.v[2]) --TODO: assumes a simple concatenation
 	local fragment = true
 
-	self.peg:addRule(IDBegin, pIDBegin, fragment)
-	self.peg:addRule(IDRest, pIDRest, fragment)
+	self.peg:addRule(self.IdBegin, pIdBegin, fragment)
+    self.peg:addRule(self.IdRest, pIdRest, fragment)
 	self.peg.usedByID = {}
-	self:markRulesUsedByID(peg, peg.prules[ruleId])
+	self:markRulesUsedById(self.peg:getRHS(self.ruleId))
 end
 
 
-local function newPredIDRest (p)
-	return newSeq(p, newNot(newVar(IDRest)))
+local function newPredIdRest (p)
+	return newSeq(p, newNot(newVar(self.IdRest)))
 end
 
 
-local function addPredIDRest (p, tkey, rule)
+local function addPredIdRest (p, tkey, rule)
 	table.insert(tkey, newVar(rule))
-	return newPredIDRest(p)
+	return newPredIdRest(p)
 end
 
 
@@ -319,7 +320,7 @@ function Cfg2Peg:convertLexRule ()
 end
 
 
-function Cfg2Peg:convert (ruleID)
+function Cfg2Peg:convert (ruleId)
 	self.peg = self.cfg:copy()
 	self.irep = 0
 	self.ruleId = ruleId or self.ruleId
