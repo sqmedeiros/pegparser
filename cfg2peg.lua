@@ -13,9 +13,10 @@ Cfg2Peg.__index = Cfg2Peg
 
 function Cfg2Peg.new(cfg)
 	assert(cfg)
-	local self = setmetable({}, Cfg2Peg)
+	local self = setmetatable({}, Cfg2Peg)
 	self.cfg = cfg
-	self.irep = 0
+	self.first = First.new(cfg)
+	self.first:calcFirstG()
 	return self
 end
 
@@ -34,9 +35,9 @@ function Cfg2Peg.tableSwap (t, i, j)
 end
 
 
-function newNonLL1Rep(g, peg, p, flw, rule)
+function Cfg2Peg:newNonLL1Rep(p, flw, rule)
 	assert(p ~= nil)
-	print("newNonLL1Rep", pretty.printp(p))
+	print("newNonLL1Rep", Pretty.printp(p))
 	local p1 = getPeg(g, peg, p.p1, flw, rule)
 	local predFlw = parser.newAnd(first.set2choice(flw))
 
@@ -54,40 +55,10 @@ function newNonLL1Rep(g, peg, p, flw, rule)
 	end
 end
 
---[==[function getLexPeg (g, peg, p, pflw, rule)
-	if p.tag == 'var' or p.tag == 'char' or p.tag == 'any' or p.tag == 'set' then
-		return newNode(p, p.p1, p.p2)
-	elseif p.tag == 'ord' then
-		local p1 = getLexPeg(g, peg, p.p1, pflw, rule)
-		local p2 = getLexPeg(g, peg, p.p1, pflw, rule)
-		return newNode(p, p1, p2)
-	end
-	elseif p.tag == 'con' then
-		local p1 = getLexPeg(g, peg, p.p1, newSeq(p.p2, pflw)), rule)
-		local p2 = getLexPeg(g, peg, p.p2, pflw, rule)
-		return newNode(p, p1, p2)
-	elseif p.tag == 'star' or p.tag == 'plus' then
-		return newNode(p, getLexPeg(g, peg, p.p1, pflw, rule))
-	elseif p.tag == 'opt' then
-		if p.p1.tag == 'opt' or p.p1.tag == 'star' or p.p1.tag == 'plus' then
-			local
-		else
-			return newNode(p, getLexPeg(g, peg, p.p1, pflw, rule))
-		end
-	elseif p.tag == 'not' then
-		return newNode(p, getLexPeg(g, peg, p.p1, pflw, rule))
-	elseif p.tag == 'def' then
-		return newNode(p, p.p1, p.p2)
-	else
-		assert(false, p.tag .. ': ' .. pretty.printp(p))
-	end
-end
---]==]
-
 
 function Cfg2Peg.isLazyRep (p)
 	return p.tag == 'opt' and
-	       (p.p1.tag == 'opt' or p.p1.tag == 'star' or p.p1.tag == 'plus')
+	       (p.v.tag == 'opt' or p.v.tag == 'star' or p.v.tag == 'plus')
 end
 
 -- Assumes a few simplifications
@@ -108,7 +79,6 @@ function convertLazyRepetition(g, peg, p)
 
 	return getConFromList(t)
 end
-
 
 
 function solveChoiceConflict (g, p1, p2)
@@ -146,34 +116,32 @@ function solveChoiceConflict (g, p1, p2)
 	return solved
 end
 
-function getChoicePeg (g, peg, p, flw, rule)
+function Cfg2Peg:getChoicePeg (p, flw, rule)
 	local t = getChoiceAlternatives(p)
 
 	local n = #t
 	local tDisj = {}
 	local conflict = {}
 	local newt = {}
+	local firstAlt = {}
 
 	print("Before ordering")
 	for i, v in pairs(t) do
-		print("Alt " .. i .. ": ", pretty.printp(v))
+		print("Alt " .. i .. ": ", Pretty.printp(v))
 		conflict[i] = {}
+		firstAlt[i] = self.first:calcFirstExp(v)
 	end
 
-	for i = 1, n -1 do
-		local p1 = t[i]
+	for i = 1, n - 1 do
 		for j = i + 1, n do
-			local p2 = t[j]
-			local first1 = calcfirst(g, p1)
-			local first2 = calcfirst(g, p2)
-			if not first.disjoint(first1, first2) then
-				print("p1", pretty.printp(p1))
-			  print("p2", pretty.printp(p2))
+			if not firstAlt[i]:disjoint(firstAlt[j]) then
+				print("Alt i", Pretty.printp(t[i]))
+				print("Alt j", Pretty.printp(t[j]))
 				print("Conflict ", i, j)
-				local solved = solveChoiceConflict(g, p1, p2)
-				if solved then
-					print("Conflict solved")
-				end
+				--local solved = solveChoiceConflict(g, p1, p2)
+				--if solved then
+				--	print("Conflict solved")
+				--end
 			end
 		end
 	end
@@ -182,48 +150,56 @@ function getChoicePeg (g, peg, p, flw, rule)
 end
 
 
-function Cfg2Peg:getPeg (g, peg, p, flw, rule)
+function Cfg2Peg:getPeg (p, flw, rule)
 	if p.tag == 'var' or p.tag == 'char' or p.tag == 'any' or p.tag == 'set' then
 		return p
 	elseif p.tag == 'choice' then
 		if p.disjoint or Grammar.isLexRule(rule) then
 			local t = {}
 			for i, v in ipairs(p.v) do
-				table.insert(Node.new(g, peg, v, flw, rule))
+				table.insert(t, self:getPeg(v, flw, rule))
 			end
 			return Node.choice(t)
 		else
-			print("Non-ll(1) choice", pretty.printp(p))
-			getChoicePeg(g, peg, p, flw, rule)
+			print("Non-ll(1) choice", Pretty.printp(p))
+			return self:getChoicePeg(p, flw, rule)
 		end
-		return newNode(p, getPeg(g, peg, p.p1, flw, rule), getPeg(g, peg, p.p2, flw, rule))
 	elseif p.tag == 'con' then
-		local p1 = getPeg(g, peg, p.p1, calck(g, p.p2, flw, rule), rule)
-		local p2 = getPeg(g, peg, p.p2, flw, rule)
-		return newNode(p, p1, p2)
+		local t = {}
+		local n = #p.v
+		for i = n, 1, -1 do
+			local iExp = p.v[i]
+			t[i] = self:getPeg(iExp, flw, rule)
+			flw = self.first:calck(self.g, iExp, flw, rule)
+		end
+		return Node.con(t)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		local first1 = calcfirst(g, p.p1)
+		if true then
+			return p
+		end
+		local firstV = self.first:calcFistExp(p.v)
 		--local flwRep = union(calcfirst(g, p.p1), flw, true)
 		local flwRep = flw
 		
 		if p.disjoint then
-			return newNode(p, getPeg(g, peg, p.p1, flw, rule))
+			return Node.new(p.tag, self:getPeg(p.v, flw, rule))
 		else
 			print("Non-ll(1) repetition", pretty.printp(p))
-			if unique.matchUPath(p.p1) then
-			  print("Repetition match unique", pretty.printp(p.p1))
-			  return newNode(p, getPeg(g, peg, p.p1, flw, rule))
+			return Node.new(p.tag, self:getPeg(p.v, flw, rule))
+			--[==[if unique.matchUPath(p.p1) then
+				print("Repetition match unique", pretty.printp(p.p1))
+				return newNode(p, getPeg(g, peg, p.p1, flw, rule))
 			else
 				--return newNode(p, getPeg(g, peg, p.p1, flw, rule))
 				local res = newNonLL1Rep(g, peg, p, flw, rule)
 				print("nonLL1Rep res", pretty.printp(res))
 				return res
-			end
+			end]==]
 		end
 	elseif p.tag == 'not' then
-		return Node.nott(newNode(p, getPeg(g, peg, p.p1, flw, rule)))
+		return p
 	elseif p.tag == 'def' then
-		return newNode(p, p.p1, p.p2)
+		return p
 	else
 		assert(false, p.tag .. ': ' .. Pretty.printp(p))
 	end
@@ -242,7 +218,7 @@ function Cfg2Peg:markRulesUsedByID (peg, p)
 end
 
 function Cfg2Peg:initId ()
-	local expId = self.grammar:getRHS(self.ruleId)
+	local expId = self.cfg:getRHS(self.ruleId)
 	local pIDBegin = Node.copy(expId.v[1])
 	local pIDRest = Node.copy(expId.v[2]) --TODO: assumes a simple concatenation
 	local fragment = true
@@ -253,14 +229,17 @@ function Cfg2Peg:initId ()
 	self:markRulesUsedByID(peg, peg.prules[ruleId])
 end
 
+
 local function newPredIDRest (p)
 	return newSeq(p, newNot(newVar(IDRest)))
 end
+
 
 local function addPredIDRest (p, tkey, rule)
 	table.insert(tkey, newVar(rule))
 	return newPredIDRest(p)
 end
+
 
 local function collectKwSyn (peg, p, tkey, rule)
 	if p.tag == 'char' or p.tag == 'set' then
@@ -342,12 +321,16 @@ end
 
 function Cfg2Peg:convert (ruleID)
 	self.peg = self.cfg:copy()
+	self.irep = 0
 	self.ruleId = ruleId or self.ruleId
 	self:convertLexRule()
 
+	if true then
+		return
+	end
 	unique.calcUniquePath(g)
-  print(pretty.printg(g, true, 'unique'), '\n')
-  local n = #g.plist
+	print(pretty.printg(g, true, 'unique'), '\n')
+	local n = #g.plist
 	
 	for i, var in ipairs(grammar:getVars()) do
 		local v = self.cfg:getStartRule()

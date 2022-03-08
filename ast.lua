@@ -1,11 +1,4 @@
-local parser = require 'pegparser.parser'
-local pretty = require 'pegparser.pretty'
-
-local newSeq = parser.newSeq
-local newNode = parser.newNode
-local newSimpCap = parser.newSimpCap
-local newTabCap = parser.newTabCap
-local newNameCap = parser.newNameCap
+local Parser = require 'parser'
 
 
 local function addCaptures (p, g)

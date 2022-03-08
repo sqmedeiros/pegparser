@@ -44,24 +44,41 @@ function First:initSetFromGrammar (name)
 end
 
 
+function First.unfoldset (l)
+	local myset = Set.new()
+	for i, v in ipairs(l) do
+		if #v == 3 then
+			local x = string.byte(v:sub(1, 1))
+			local y = string.byte(v:sub(3, 3))
+			for i = x, y do
+				myset.insert(string.char(i))
+			end
+		else
+			myset.insert(v)
+		end
+	end
+	return myset
+end
+
+
 function First:calcFirstG ()
 	local update = true
 	local grammar = self.grammar
 	local FIRST = self.FIRST
 	
 	while update do
-    update = false
-    for i, var in ipairs(grammar:getVars()) do
+		update = false
+		for i, var in ipairs(grammar:getVars()) do
 			local exp = grammar:getRHS(var)
 			if Grammar.isLexRule(var) then
 				exp = Node.var(var)
 			end
 			local newFirst = self:calcFirstExp(exp)
 			if not newFirst:equal(FIRST[var]) then
-        update = true
-	      FIRST[var] = FIRST[var]:union(newFirst)
+				update = true
+				FIRST[var] = FIRST[var]:union(newFirst)
 			end
-    end
+		end
 	end
 
 	return FIRST
@@ -72,7 +89,7 @@ function First:calcFirstExp (exp)
 	if exp.tag == 'empty' then
 		return Set.new{ self.empty }
 	elseif exp.tag == 'char' then
-    return Set.new{ exp:unquote() }
+		return Set.new{ exp:unquote() }
 	elseif exp.tag == 'any' then
 		return Set.new{ self.any }
 	--elseif p.tag == 'set' then
@@ -122,47 +139,15 @@ function First:calcFirstExp (exp)
 end
 
 
-function First.calck (exp, k)
+function First:calck (exp, k)
 	assert(k:getEle(empty) == nil)
-	if exp.tag == 'empty' then
-		return k
-	elseif exp.tag == 'char' then
-		return Set.new{ exp:unquote() }
-	elseif exp.tag == 'any' then
-		return Set.new{ self.any }
-	--elseif p.tag == 'set' then
-	--	return unfoldset(p.p1)
-	elseif exp.tag == 'choice' or exp.tag == 'con' then
-		local newK = self:calcFirstExp(exp)
-		
-		if newK:getEle(empty) then
-			newK:union(k)
-		end
-
-		return newK		
-	elseif exp.tag == 'var' then
-		if Grammar.isLexRule(exp.v) then
-			return First.calcFirstExp(exp)
-		end
-    if Node.matchEmpty(exp) then
-			return self.FIRST[exp.v]:union(k)
-    else
-		  return self.FIRST[exp.v]
-    end
-	elseif exp.tag == 'throw' then
-		return k
-	elseif exp.tag == 'and' then
-		return k
-	elseif exp.tag == 'not' then
-		return k 
-	elseif exp.tag == 'opt' or exp.tag == 'star' then
-		-- in case of a well-formed PEG a repetition does not match the empty string
-		return First.calcFirstExp(exp.v):union(k)
-	elseif p.tag == 'plus' then
-		return First.calcFirstExp(exp.v)
-	else
-		error("Unknown tag: " .. p.tag)
+	local newK = self:calcFirstExp(exp)
+	
+	if newK:getEle(self.empty) then
+		newK = newK:union(k)
+		newK:remove(self.empty)
 	end
+	return newK
 end
 
 
@@ -174,14 +159,14 @@ function First:calcFollowG ()
 	FOLLOW[self.grammar:getStartRule()] = Set.new{ self.endInput }
 
 	while update do
-    update = false
+		update = false
 
-    local oldFOLLOW = {}
-    for k, v in pairs(FOLLOW) do
+		local oldFOLLOW = {}
+		for k, v in pairs(FOLLOW) do
 			oldFOLLOW[k] = v
-    end
+		end
 
-    for i, var in ipairs(grammar:getVars()) do
+		for i, var in ipairs(grammar:getVars()) do
 			local exp = grammar:getRHS(var)
 			if Grammar.isLexRule(var) then
 				exp = Node.var(var)
@@ -191,10 +176,10 @@ function First:calcFollowG ()
 
 		for i, var in ipairs(grammar:getVars()) do
 			if not FOLLOW[var]:equal(oldFOLLOW[var]) then
-        update = true
+				update = true
 				break
 			end
-    end
+		end
 	end
 
 	return FOLLOW
