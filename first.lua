@@ -51,10 +51,10 @@ function First.unfoldset (l)
 			local x = string.byte(v:sub(1, 1))
 			local y = string.byte(v:sub(3, 3))
 			for i = x, y do
-				myset.insert(string.char(i))
+				myset:insert(string.char(i))
 			end
 		else
-			myset.insert(v)
+			myset:insert(v)
 		end
 	end
 	return myset
@@ -86,15 +86,15 @@ end
 
 
 function First:calcFirstExp (exp)
-	if exp.tag == 'empty' then
-		return Set.new{ self.empty }
-	elseif exp.tag == 'char' then
-		return Set.new{ exp:unquote() }
-	elseif exp.tag == 'any' then
-		return Set.new{ self.any }
-	--elseif p.tag == 'set' then
-	--	return unfoldset(p.v)
-	elseif exp.tag == 'choice' then
+    if exp.tag == 'empty' then
+        return Set.new{ self.empty }
+    elseif exp.tag == 'char' then
+        return Set.new{ exp:unquote() }
+    elseif exp.tag == 'any' then
+        return Set.new{ self.any }
+    elseif exp.tag == 'set' then
+        return self.unfoldset(exp.v)
+    elseif exp.tag == 'choice' then
 		local firstChoice = Set.new()
 		
 		for i, v in ipairs(exp.v) do

@@ -20,6 +20,7 @@ end
 
 
 function Set:insert(ele)
+    assert(ele ~= nil)
 	local res = self:getEle(ele)
 	if res ~= nil then
 		return false

@@ -44,7 +44,25 @@ describe("Testing #first", function()
 		
 		assert.same(objFst.FIRST, setFirst)
 	end)
-	
+
+    test("FIRST set of a character class", function()
+        local g = Parser.match[[
+			s   <- [a-e]
+			a   <- [f-hR-U]
+            b   <- [%#@f2]
+        ]]
+
+        local objFst = First.new(g)
+		objFst:calcFirstG()
+
+		local setFirst = {}
+		setFirst['s'] = Set.new { 'a', 'b', 'c', 'd', 'e' }
+		setFirst['a'] = Set.new { 'f', 'g', 'h', 'R', 'S', 'T', 'U' }
+		setFirst['b'] = Set.new { '%', '#', '@', 'f', '2' }
+
+		assert.same(objFst.FIRST, setFirst)
+    end)
+
 	test("FIRST set of concatenation", function()
 		local g = Parser.match[[
 			s   <- 'a' a
