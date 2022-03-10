@@ -32,7 +32,8 @@ function Pretty:printProp (p)
 end
 
 function Pretty:printp (p, flag)
-	if p.tag == 'empty' then
+    assert(p and p.tag)
+    if p.tag == 'empty' then
 		return "''"
 	elseif p.tag == 'char' then
 		return p.v .. self:printProp(p) 
