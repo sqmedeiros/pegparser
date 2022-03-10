@@ -11,6 +11,7 @@ end
 
 
 function Node.copy (node)
+    assert(type(node) == "table")
 	if type(node.v) ~= "table" or node.tag == 'set' then
 		return Node.new(node.tag, node.v)
 	elseif node.tag == 'con' or node.tag == 'choice' then
