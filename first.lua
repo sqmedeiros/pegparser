@@ -128,7 +128,7 @@ function First:calcFirstExp (exp)
 	elseif exp.tag == 'not' then
 		return Set.new{ self.empty }
   -- in a well-formed PEG, given p*, we know p does not match the empty string
-	elseif exp.tag == 'opt' or exp.tag == 'star' then 
+	elseif exp.tag == 'opt' or exp.tag == 'star' then
 		return self:calcFirstExp(exp.v):union(Set.new{self.empty})
   elseif exp.tag == 'plus' then
 		return self:calcFirstExp(exp.v)
@@ -198,7 +198,8 @@ end
 
 
 function First:calcFollowExp (exp, flw)
-	if exp.tag == 'empty' or exp.tag == 'char' or exp.tag == 'any' then
+	if exp.tag == 'empty' or exp.tag == 'char' or exp.tag == 'any' or
+       exp.tag == 'set' then
 		return
 	elseif exp.tag == 'var' then
     self.FOLLOW[exp.v] = self.FOLLOW[exp.v]:union(flw)

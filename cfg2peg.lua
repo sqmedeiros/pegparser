@@ -72,15 +72,17 @@ function Cfg2Peg:convertLazyRepetition (p)
         for i, v in ipairs(p.v) do
             self:convertLazyRepetition(v)
         end
-    else if p.tag == 'con' then
+    elseif p.tag == 'con' then
         local n = #p.v
 
         for i = n, 1, -1 do
             local iExp = p.v[i]
-                if self:isLazyRep(iExp) then
-                local newt = table.pack(table.unpack(t, i + 1, n))
-                local p = getConFromList(newt)
-                t[i] = newNode(v.p1, newSeq(newNot(p), v.p1.p1))
+            if self.isLazyRep(iExp) then
+                assert(i ~= n, "Lazy repetition must not be the last expression of a concatenation")
+                local tailCon = Node.con{table.unpack(p.v, i + 1, n)}
+                local innerRep = iExp.v
+                p.v[i].tag = innerRep.tag
+                p.v[i].v = Node.con{Node.nott(tailCon), innerRep.v}
             end
         end
     end
@@ -185,8 +187,9 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
 	local firstAlt = {}
 
 	print("Before ordering")
+    local pretty = Pretty.new()
 	for i, v in ipairs(p.v) do
-		print("Alt " .. i .. ": ", Pretty:printp(v))
+		print("Alt " .. i .. ": ", pretty:printp(v))
 		conflict[i] = {}
 		firstAlt[i] = self.first:calcFirstExp(v)
 	end
@@ -218,14 +221,14 @@ function Cfg2Peg:getPeg (p, flw, rule)
 	elseif p.tag == 'con' then
 		local n = #p.v
 		for i = n, 1, -1 do
-			p.v[i] = self:getPeg(p.v[i], flw, rule)
-			flw = self.first:calck(p.v[i], flw)
+			self:getPeg(p.v[i], flw, rule)
+            flw = self.first:calck(p.v[i], flw)
 		end
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		if true then
 			return p
 		end
-		local firstV = self.first:calcFistExp(p.v)
+		local firstV = self.first:calcFirstExp(p.v)
 		--local flwRep = union(calcfirst(g, p.p1), flw, true)
 		local flwRep = flw
 		
@@ -244,8 +247,6 @@ function Cfg2Peg:getPeg (p, flw, rule)
 				return res
 			end]==]
 		end
-	else
-		assert(p and p.tag , p.tag .. ': ' .. Pretty.printp(p))
 	end
 end
 
@@ -264,8 +265,10 @@ end
 
 function Cfg2Peg:initId ()
 	local expId = self.cfg:getRHS(self.ruleId)
+    -- assumes a simple concatenation
+    assert(expId.tag == 'con' and #expId.v == 2, "The rule that matches an identifier should be a concenation of two expressions")
 	local pIdBegin = Node.copy(expId.v[1])
-	local pIdRest = Node.copy(expId.v[2]) --TODO: assumes a simple concatenation
+	local pIdRest = Node.copy(expId.v[2])
 	local fragment = true
 
 	self.peg:addRule(self.IdBegin, pIdBegin, fragment)
@@ -368,7 +371,7 @@ end
 function Cfg2Peg:convert (ruleId)
 	self.peg = self.cfg:copy()
 	self.irep = 0
-	self:convertLexRule(ruleId)
+    self:convertLexRule(ruleId)
 
     self.unique = UVerySimple.new(self.peg)
     self.unique:calcUniquePath()
@@ -381,7 +384,7 @@ function Cfg2Peg:convert (ruleId)
 		else
             self:convertLazyRepetition(self.peg:getRHS(var))
 		end
-  end
+    end
 
   return self.peg
 end

@@ -14,6 +14,7 @@ end
 
 describe("Transforming a CFG into an equivalent PEG\n", function()
 
+    local pretty = Pretty.new()
 
 	test("Identifying the rule that matches an identifier", function()
 		local g = Parser.match[[
@@ -56,6 +57,24 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 		assert.is_true(checkGPrint(c2p.peg, peg, true))
 	end)
 
+    test("Converting lazy repetitions", function()
+        local g = Parser.match[[
+            X <- '<p>' .*? '</p>'
+            id  <- [a-z] [a-z0-9]*
+		]]
+
+		local c2p = Cfg2Peg.new(g)
+		c2p:convert('id')
+
+        local peg = [[
+            X   <- '<p>' (!'</p>' .)* '</p>'
+			id  <- [a-z] [a-z0-9]*
+        ]] ..
+        Cfg2Peg.IdBegin .. [[ <- [a-z] ]] ..
+        Cfg2Peg.IdRest  .. [[ <- [a-z0-9]* ]]
+
+		assert.is_true(checkGPrint(c2p.peg, peg, true))
+	end)
 
     
 end)

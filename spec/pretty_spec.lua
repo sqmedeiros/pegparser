@@ -103,4 +103,12 @@ describe("Testing #pretty", function()
 
         assert.is_true(checkPrint(s))
 	end)
+
+    test("Printing a more complex grammar", function()
+		local s = [[x <- 'a' b / 'c'
+                    b <- x / ('d''o')?
+                    c <- b [a-z]*]]
+
+        assert.is_true(checkPrint(s))
+	end)
 end)

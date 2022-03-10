@@ -195,7 +195,7 @@ end
 
 function UniqueVerySimple:uniquePath (exp, upath)
 	local tag = exp.tag
-	if tag == 'char' or tag == 'var' then
+	if tag == 'char' or tag == 'var' or tag == 'set' then
 		self:setlabel(exp, upath)
 	elseif tag == 'con' then
 		for i, v in ipairs(exp.v) do
