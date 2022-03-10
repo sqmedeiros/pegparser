@@ -60,6 +60,8 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
     test("Converting lazy repetitions", function()
         local g = Parser.match[[
             X <- '<p>' .*? '</p>'
+            Y   <- ('a' / 'b')*? 'c'
+            Z   <-  'a'?? ('a' / 'b')
             id  <- [a-z] [a-z0-9]*
 		]]
 
@@ -68,6 +70,8 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 
         local peg = [[
             X   <- '<p>' (!'</p>' .)* '</p>'
+            Y   <- (!'c' ('a' / 'b'))* 'c'
+            Z   <- (!('a' / 'b') 'a')? ('a' / 'b')
 			id  <- [a-z] [a-z0-9]*
         ]] ..
         Cfg2Peg.IdBegin .. [[ <- [a-z] ]] ..
