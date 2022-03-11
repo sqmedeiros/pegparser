@@ -273,7 +273,7 @@ function Cfg2Peg:initId ()
 
 	self.peg:addRule(self.IdBegin, pIdBegin, fragment)
     self.peg:addRule(self.IdRest, pIdRest, fragment)
-	self.peg.usedByID = {}
+	self.peg.usedById = {}
 	self:markRulesUsedById(self.peg:getRHS(self.ruleId))
 end
 
