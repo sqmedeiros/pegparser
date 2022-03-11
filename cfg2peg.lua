@@ -90,16 +90,19 @@ end
 
 
 function Cfg2Peg:isConflictSolved (tabConflict)
+    local conflict = false
+    io.write("Remaining conflicts: ")
     for i, row in ipairs(tabConflict) do
         for k, _ in pairs(row) do
-            if tabConflict[k][i] then
-                print("Conflict remains ", i, k)
-                return false
+            if k < i and tabConflict[k][i] then
+                io.write("(" .. k .. " , " .. i .. ") ")
+                conflict = true
             end
         end
     end
 
-    return true
+    io.write"\n"
+    return not conflict
 end
 
 
@@ -186,28 +189,32 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
 	local newt = {}
 	local firstAlt = {}
 
-	print("Before ordering")
+	print("Alternativies before ordering")
     local pretty = Pretty.new()
 	for i, v in ipairs(p.v) do
-		print("Alt " .. i .. ": ", pretty:printp(v))
+		io.write("( " .. i .. ") " .. pretty:printp(v))
+        if i < #p.v then io.write(" / ") end
 		conflict[i] = {}
 		firstAlt[i] = self.first:calcFirstExp(v)
 	end
+    io.write"\n"
 
     local disjoint = true
 
+    io.write("Conflicts: ")
 	for i = 1, n - 1 do
 		for j = i + 1, n do
 			if not firstAlt[i]:disjoint(firstAlt[j]) then
 				--print("Alt i", Pretty:printp(t[i]))
 				--print("Alt j", Pretty:printp(t[j]))
-				print("Conflict ", i, j)
+				io.write("(" .. i .. " , " .. j .. ") ")
                 disjoint = false
                 conflict[i][j] = true
                 conflict[j][i] = true
 			end
 		end
 	end
+    io.write("\n")
 
     if not disjoint then
         self:solveChoiceConflict(p, conflict)
