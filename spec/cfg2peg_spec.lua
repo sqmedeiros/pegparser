@@ -119,5 +119,9 @@ WS   <-   [ \t\n\r]+
 		c2p:convert('ID')
 
         print(pretty:printg(c2p.peg, nil, true))
+        local Coder = require"coder"
+        local parser = Coder.makeg(c2p.peg)
+        local input = "graph { }"
+        assert.equal(parser:match(input), #input + 1)
     end)
 end)
