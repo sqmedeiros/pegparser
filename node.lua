@@ -65,12 +65,34 @@ function Node.nott (exp)
 end
 
 
-function Node.con (l)
-	if #l > 1 then
-		return Node.new('con', l)
+function Node.con (l1, l2)
+	-- in case of two arguments, the code asssumes two exp
+	if l2 ~= nil then
+		local exp
+		if l1.tag == 'con' then
+			exp = l1
+		else
+			exp = Node.new('con', {l1})
+		end
+		
+		if l2.tag == 'con' then
+			for i, v in ipairs(l2) do
+				table.insert(exp.v, i)
+			end
+		else
+			table.insert(exp.v, l2)
+		end
+		return exp
+	elseif #l1 > 1 then
+		return Node.new('con', l1)
 	else
-		return l[1]
+		return l1[1]
 	end
+end
+
+
+function Node.mergeCon (exp1, exp2)
+	
 end
 
 

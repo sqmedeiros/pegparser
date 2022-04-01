@@ -20,6 +20,7 @@ function Cfg2Peg.new(cfg)
 	self.first:calcFirstG()
     self.first:calcFollowG()
     self.unique = nil
+    self.predUse = false
 	return self
 end
 
@@ -30,6 +31,10 @@ local function getRepName ()
 	return s
 end
 
+
+function Cfg2Peg:setPredUse (v)
+	self.predUse = v
+end
 
 function Cfg2Peg.tableSwap (t, i, j)
 	local aux = t[i]
@@ -172,25 +177,32 @@ function Cfg2Peg:reordAlternatives (p, tConflict, tNotConflict)
         table.insert(listChoice, p.v[v])
     end
 
+	local n = #p.v
+	local pretty = Pretty.new()
     for i, v in ipairs(tConflict) do
-        if next(v) ~= nil then
-            local tAltPred = {}
-            for j = 1 + 1, #p.v do
+        if next(v) ~= nil then -- alternative has a conflict with other(s)
+			local tAltPred = {}
+            for j = i + 1, #p.v do
                 if tConflict[i][j] then
                     table.insert(tAltPred, p.v[j]) 
                 end
             end
-            --print(#tAltPred)
-            local predConflict = Node.nott(Node.con(tAltPred))
-            local formerAlt = p.v[i]
-            if p.v[i].tag == 'con' then
-                formerAlt = p.v[i].v
-            end
-            table.insert(listChoice, Node.con{predConflict, formerAlt})
+            
+            local newAlt = p.v[i]
+            if #tAltPred > 0 then
+				local predChoice = Node.nott(Node.choice(tAltPred))
+				print("pred", pretty:printp(predChoice))
+            	newAlt = Node.con(predChoice, newAlt)
+            	
+			end
+			table.insert(listChoice, newAlt)
         end
     end
 
+	print(#listChoice, p.tag)
     p.v = listChoice
+    
+    print("heeere", pretty:printp(p))
 end
 
 
@@ -234,7 +246,9 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
             print("Solved")
             disjoint = true
         end
-        self:reordAlternatives(p, tConflict, tNotConflict)
+        if self.predUse then
+			self:reordAlternatives(p, tConflict, tNotConflict)
+		end
     end
 
     return disjoint
