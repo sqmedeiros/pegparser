@@ -117,7 +117,7 @@ function Cfg2Peg:solveChoiceConflict (p, tConflict)
 
     pretty = Pretty.new()
     for i, v in ipairs(tConflict) do
-        if next(v) ~= nil then -- alternative has a conflict with other(s)
+		if next(v) ~= nil then -- alternative has a conflict with other(s)
             local iExp = p.v[i]
             if self.unique:matchUPath(iExp) then  -- conflict solved
                 print("Alternative " .. i .. " match unique", pretty:printp(iExp))
@@ -171,6 +171,24 @@ function Cfg2Peg:solveChoiceConflict (p, tConflict)
 end
 
 
+function Cfg2Peg:computePredicate (p, i, tConflict)
+	local tAltPred = {}
+    for j = i + 1, #p.v do
+		if tConflict[i][j] then
+			table.insert(tAltPred, p.v[j])
+        end
+    end
+           
+	if #tAltPred > 0 then
+		local predChoice = Node.nott(Node.choice(tAltPred))
+		print("pred", pretty:printp(predChoice))
+        return Node.con(predChoice, p.v[i])      	
+	else
+		return p.v[i]
+	end
+end
+
+
 function Cfg2Peg:reordAlternatives (p, tConflict, tNotConflict)
     local listChoice = {}
     for i, v in ipairs(tNotConflict) do
@@ -181,19 +199,9 @@ function Cfg2Peg:reordAlternatives (p, tConflict, tNotConflict)
 	local pretty = Pretty.new()
     for i, v in ipairs(tConflict) do
         if next(v) ~= nil then -- alternative has a conflict with other(s)
-			local tAltPred = {}
-            for j = i + 1, #p.v do
-                if tConflict[i][j] then
-                    table.insert(tAltPred, p.v[j]) 
-                end
-            end
-            
-            local newAlt = p.v[i]
-            if #tAltPred > 0 then
-				local predChoice = Node.nott(Node.choice(tAltPred))
-				print("pred", pretty:printp(predChoice))
-            	newAlt = Node.con(predChoice, newAlt)
-            	
+			local newAlt = p.v[i]
+			if self.predUse then
+				newAlt = self:computePredicate(p, i, tConflict)
 			end
 			table.insert(listChoice, newAlt)
         end
@@ -201,8 +209,6 @@ function Cfg2Peg:reordAlternatives (p, tConflict, tNotConflict)
 
 	print(#listChoice, p.tag)
     p.v = listChoice
-    
-    print("heeere", pretty:printp(p))
 end
 
 
@@ -245,10 +251,8 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
         if self:isConflictSolved(tConflict) then
             print("Solved")
             disjoint = true
-        end
-        if self.predUse then
-			self:reordAlternatives(p, tConflict, tNotConflict)
 		end
+		self:reordAlternatives(p, tConflict, tNotConflict)
     end
 
     return disjoint
