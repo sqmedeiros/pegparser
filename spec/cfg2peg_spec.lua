@@ -33,19 +33,17 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 
     local pretty = Pretty.new()
 
-	test("Identifying the rule that matches an identifier", function()
+	--[==[test("Identifying the rule that matches an identifier", function()
 		local g = [[
 			Id  <- [a-z] [a-z0-9]*
 		]]
 
         local peg = [[
 			Id  <- [a-z] [a-z0-9]*
-        ]] ..
-        Cfg2Peg.IdBegin .. [[ <- [a-z] ]] ..
-        Cfg2Peg.IdRest  .. [[ <- [a-z0-9]* ]]
+        ]] 
 
 		checkConversionToPeg(g, peg, 'Id', true)
-	end)
+	end)]==]
 
 	test([[Changing the order of alternatives, based on unique tokens,
            when the alternatives' FIRST set is not disjoint]], function()
@@ -59,14 +57,12 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 			a   <- 'a' / 'y'
             b   <- 'a' / 'a''y'
 			Id  <- [a-z] [a-z0-9]*
-        ]] ..
-        Cfg2Peg.IdBegin .. [[ <- [a-z] ]] ..
-        Cfg2Peg.IdRest  .. [[ <- [a-z0-9]* ]]
+        ]]
 
 		checkConversionToPeg(g, peg, 'Id', true)
 	end)
 	
-	test([[Changing the order of alternatives, based on unique tokens,
+	--[==[test([[Changing the order of alternatives, based on unique tokens,
            when the alternatives' FIRST set is not disjoint]], function()
 		local g = [[
 			a   <- 'a' / 'y'
@@ -78,9 +74,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 			a   <- 'a' / 'y'
             b   <- !('a''y') 'a' / 'a''y'
 			Id  <- [a-z] [a-z0-9]*
-        ]] ..
-        Cfg2Peg.IdBegin .. [[ <- [a-z] ]] ..
-        Cfg2Peg.IdRest  .. [[ <- [a-z0-9]* ]]
+        ]]
 
 		checkConversionToPeg(g, peg, 'Id', true, true)
 	end)
@@ -99,9 +93,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 			a   <- 'x' / 'a' / 'y''z' / 'y'
             b   <- 'a' / 'a''y'
 			Id  <- [a-z] [a-z0-9]*
-        ]] ..
-        Cfg2Peg.IdBegin .. [[ <- [a-z] ]] ..
-        Cfg2Peg.IdRest  .. [[ <- [a-z0-9]* ]]
+        ]]
 
 		checkConversionToPeg(g, peg, 'Id', true)
 	end)
@@ -119,12 +111,32 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
             Y   <- (!'c' ('a' / 'b'))* 'c'
             Z   <- (!('a' / 'b') 'a')? ('a' / 'b')
 			id  <- [a-z] [a-z0-9]*
-        ]] ..
-        Cfg2Peg.IdBegin .. [[ <- [a-z] ]] ..
-        Cfg2Peg.IdRest  .. [[ <- [a-z0-9]* ]]
+        ]]
 
 		checkConversionToPeg(g, peg, 'id', true)
 	end)
+	
+	
+	test("Not matching keywords as identifiers", function()
+        local g = [[
+            s <- 'there' 'are' 'AB'
+            x <- 'x9' '3' y
+            y <- ('bb' z)*
+            z <- id
+            id  <- [a-z] [a-z0-9]*
+		]]
+
+        local peg = [[
+            s <- 'there' 'are' 'AB'
+            x <- 'x9' '3' y
+            y <- ('bb' z)*
+            z <- id
+            id  <- [a-z] [a-z0-9]*
+        ]]
+
+		checkConversionToPeg(g, peg, 'id', true)
+	end)
+	
 
     test("Converting DOT grammar", function()
         local g = Parser.match[[
@@ -169,5 +181,5 @@ WS   <-   [ \t\n\r]+
         local parser = Coder.makeg(c2p.peg)
         local input = "graph { }"
         assert.equal(parser:match(input), #input + 1)
-    end)
+    end)]==]
 end)

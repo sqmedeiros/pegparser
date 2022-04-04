@@ -5,7 +5,7 @@ local Node = require'node'
 local UVerySimple = require"uniqueVerySimple"
 
 local Cfg2Peg = {
-	KEYWORD = 'KEY__',
+	Keyword = 'Keyword__',
 	IdBegin = 'IDBegin__',
 	IdRest = 'IDRest__',
 }
@@ -294,18 +294,31 @@ function Cfg2Peg:getPeg (p, flw, rule)
 	end
 end
 
-function Cfg2Peg:markRulesUsedById (p)
-	if p.tag == 'var' then
-		self.peg.usedById[p.v] = true
-		self:markRulesUsedById(self.peg:getRHS(p.v))
-	elseif p.tag == 'con' or p.tag == 'choice' then
-        for i, v in ipairs(p.v) do
-            self:markRulesUsedById(v)
-        end
-	elseif p.tag == 'star' or p.tag == 'rep' or p.tag == 'opt' then
-		self:markRulesUsedById(p.v)
-	end
+
+function Cfg2Peg.isIdBegin (ch)
+	return (ch >= 'a' and ch <= 'z') or (ch >= 'A' and ch <= 'Z') or ch == '_'
 end
+
+
+function Cfg2Peg.matchIdBegin (p)
+	print("idBegin ", p.v, p.tag, string.sub(p.v, 2, 2), Cfg2Peg.isIdBegin(string.sub(p.v, 2, 2)))
+	if p.tag == 'char' then
+		return Cfg2Peg.isIdBegin(string.sub(p.v, 2, 2))
+	elseif p.tag == 'set' then
+		for k, v in pairs(p.v) do
+			if #v == 1 then
+				if Cfg2Peg.isIdBegin(string.sub(v, 2, 2)) then
+					return true
+				end
+			elseif Cfg2Peg.isIdBegin(string.sub(v, 1, 1)) or Cfg2Peg.isIdBegin(string.sub(v, 3, 3)) then
+				return true
+			end
+		end
+	end
+		
+	return false
+end
+
 
 function Cfg2Peg:initId ()
 	local expId = self.cfg:getRHS(self.ruleId)
@@ -315,112 +328,111 @@ function Cfg2Peg:initId ()
 	local pIdRest = Node.copy(expId.v[2])
 	local fragment = true
 
-	self.peg:addRule(self.IdBegin, pIdBegin, fragment)
-    self.peg:addRule(self.IdRest, pIdRest, fragment)
-	self.peg.usedById = {}
-	self:markRulesUsedById(self.peg:getRHS(self.ruleId))
+	--self.peg:addRule(self.IdBegin, pIdBegin, fragment)
+    --self.peg:addRule(self.IdRest, pIdRest, fragment)
 end
 
 
-local function newPredIdRest (p)
-	return newSeq(p, newNot(newVar(self.IdRest)))
+function Cfg2Peg:newPredIdRest (p)
+	return Node.con(p, Node.nott(Node.var(self.IdRest)))
 end
 
 
-local function addPredIdRest (p, tkey, rule)
-	table.insert(tkey, newVar(rule))
-	return newPredIdRest(p)
+function Cfg2Peg:addPredIdRest (p, tKey, rule)
+	print("Insert ", rule)
+	table.insert(tKey, p.v)
+	return self:newPredIdRest(p)
 end
 
 
-local function collectKwSyn (peg, p, tkey, rule)
+function Cfg2Peg:collectKwSyn (p, tKey, rule)
 	if p.tag == 'char' or p.tag == 'set' then
-		if matchIDBegin(p) then
-			return addPredIDRest(p, tkey, rule)
+		print("eeeuuu", p.v, Cfg2Peg.matchIdBegin(p))
+		if Cfg2Peg.matchIdBegin(p) then
+			return self:addPredIdRest(p, tKey, rule)
 		end
-	elseif p.tag == 'ord' then
-		local p1 = collectKwSyn(peg, p.p1, tkey, rule)
-		local p2 = collectKwSyn(peg, p.p2, tkey, rule)
-		return newOrd(p1, p2)
+	elseif p.tag == 'choice' then
+		local tChoice = {}
+		for i, v in ipairs(p.v) do
+			table.insert(tChoice, self:collectKwSyn(v, tKey, rule))
+		end
+		return Node.choice(tChoice)
 	elseif p.tag == 'con' then
-		local p1 = collectKwSyn(peg, p.p1, tkey, rule)
-		local p2 = collectKwSyn(peg, p.p2, tkey, rule)
-		return newSeq(p1, p2)
+		pretty = Pretty.new()
+		print("eita1 ", pretty:printp(p), #p.v)
+		local newCon = self:collectKwSyn(p.v[1], tKey, rule)
+		for i = 2, #p.v do
+			print("aquiii ", pretty:printp(p.v[i]))
+			local p2 = self:collectKwSyn(p.v[i], tKey, rule)
+			print("p2 ", pretty:printp(p2))
+			newCon = Node.con(newCon, p2)
+			print("conn2 ", pretty:printp(newCon))
+		end
+		print("eita2 ", pretty:printp(newCon))
+		return newCon
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		local p1 = collectKwSyn(peg, p.p1, tkey, rule)
-		return newNode(p, p1)
+		local p1 = self:collectKwSyn(p.v, tKey, rule)
+		return Node.new(p.tag, p1)
 	end
 	return p
 end
 
-local function collectKwLex (peg, p, tkey, rule)
-	if p.tag == 'char' or p.tag == 'set' then
-		if matchIDBegin(p) then
-			return addPredIDRest(p, tkey, rule)
-		end
-	elseif p.tag == 'ord' then
-		if matchIDBegin(p.p1) or matchIDBegin(p.p2) then
-			return addPredIDRest(p, tkey, rule)
-		end
-	elseif p.tag == 'con' then
-		local p1 = p.p1
-		while type(p1) == 'table' and (p1.tag ~= 'char' and p1.tag ~= 'set') do
-			p1 = p1.p1
-		end
 
-		if type(p1) == 'table' and matchIDBegin(p1) then
-			return addPredIDRest(p, tkey, rule)
-		end
-	elseif p.tag == 'plus' and matchIDBegin(p.p1) then
-		return addPredIDRest(p, tkey, rule)
-	end
-	return p
-end
-
-local function collectKeywords (g, peg, ruleID, lex)
-	local tkey = {}
-	for i, v in ipairs(g.plist) do
-		if parser.isLexRule(v) and not peg.usedByID[v] then
-			peg.prules[v] = collectKwLex(peg, peg.prules[v], tkey, v)
-			--print("Rule ", v)
-			--io.write(v .. " -> ")
-			--io.write(pretty.printp(peg.prules[v]))
-			--io.write("\n")
-		elseif not parser.isLexRule(v) then
-			peg.prules[v] = collectKwSyn(peg, peg.prules[v], tkey, v)
+function Cfg2Peg:collectKeywords ()
+	local tKey = {}
+	for i, v in ipairs(self.cfg:getVars()) do
+		if not Grammar.isLexRule(v) and v ~= self.ruleId then
+			self.peg:updateRule(v, self:collectKwSyn(self.peg:getRHS(v), tKey, v))
 		end
   end
 
-	print("#tkey", #tkey)
-	if #tkey > 0 then
-		local pKey = tkey[1]
-    for i = 2, #tkey do
-      pKey = newOrd(pKey, tkey[i])
-    end
-    parser.addRuleG(peg, KEYWORD, pKey)
+	local nKey = #tKey
+	io.write("#nKey " .. #tKey .. ': ')
+	for i, v in ipairs(tKey) do
+		io.write(v .. ', ')
+	end
+	io.write("\n")
+	if nKey > 0 then
+		local pKey
+		if nKey == 1 then
+			pKey = Node.char(tKey)
+		else
+			pKey = {}
+			for i, v in ipairs(tKey) do
+				table.insert(pKey, Node.char(v))
+			end
+			pKey = Node.choice(pKey)
+		end
+			
+		
+		self.peg:addRule(self.Keyword, pKey)
+		
     --print(KEYWORD, "<--->", pretty.printp(pKey))
-
-    peg.prules[ruleID] = newSeq(newNot(newVar(KEYWORD)), peg.prules[ruleID])
-  end
+		local pNotKeyword = Node.nott(Node.var(self.Keyword))
+		
+		self.peg:updateRule(self.ruleId, Node.con(pNotKeyword, self.peg:getRHS(self.ruleId)))
+		
+	end
 end
 
 
 function Cfg2Peg:convertLexRule (ruleId)
     self.ruleId = ruleId or self.ruleId
 	self:initId()
-	--collectKeywords(g, peg, ruleID)
+	self:collectKeywords()
 end
 
 
 function Cfg2Peg:convert (ruleId)
 	self.peg = self.cfg:copy()
 	self.irep = 0
-    self:convertLexRule(ruleId)
 
     self.unique = UVerySimple.new(self.peg)
     self.unique:calcUniquePath()
     local pretty = Pretty.new("unique")
     print(pretty:printg(self.peg))
+    
+    self:convertLexRule(ruleId)
     
 	for i, var in ipairs(self.peg:getVars()) do
 		if not Grammar.isLexRule(var) then

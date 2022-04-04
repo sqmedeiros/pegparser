@@ -90,6 +90,8 @@ end
 
 
 function Grammar:addRule (var, rhs, frag)
+	assert(not self:hasRule(var))
+
 	table.insert(self.ruleList, var)
 	self.ruleMap[var] = rhs
 
@@ -100,10 +102,8 @@ end
 
 
 function Grammar:updateRule (var, rhs)
-	if not self:hasRule(var) then
-		return false
-	end
-	
+	assert(self:hasRule(var))
+			
 	self.ruleMap[var] = rhs
 	return true
 end

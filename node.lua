@@ -77,7 +77,7 @@ function Node.con (l1, l2)
 		
 		if l2.tag == 'con' then
 			for i, v in ipairs(l2) do
-				table.insert(exp.v, i)
+				table.insert(exp.v, v)
 			end
 		else
 			table.insert(exp.v, l2)
