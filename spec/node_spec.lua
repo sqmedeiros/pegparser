@@ -40,10 +40,21 @@ describe("Testing #node", function()
 		assert.same(Node.new("not", Node.new("char", "'foo'")), nodeNot)
 		
 		-- Concatetation
-		local nodeCon = { tag = "con", v = { nodeChar, nodeVar } }
-		assert.same(Node.con{Node.char"'foo'", Node.var"foo"}, nodeCon)
-		assert.same(Node.new("con", { Node.char"'foo'", Node.var"foo"} ), nodeCon)
+		local nodeCon1 = { tag = "con", v = { nodeChar, nodeVar } }
+		assert.same(Node.con{Node.char"'foo'", Node.var"foo"}, nodeCon1)
+		assert.same(Node.new("con", { Node.char"'foo'", Node.var"foo"} ), nodeCon1)
 		
+		-- Concatetation with two arguments
+		local nodeCon2 = Node.con(Node.char"'foo'", Node.var"foo")
+		assert.same(nodeCon1, nodeCon2)
+		
+		local nodeCon3 = Node.con(Node.char"'a'", Node.any())
+		nodeCon4 = Node.con(nodeCon2, nodeCon3)
+		assert.same(nodeCon4, Node.con{Node.char"'foo'", Node.var"foo", Node.char"'a'", Node.any()})
+		
+		assert.same(Node.con(Node.any(), nodeCon2),
+		            Node.con(Node.con(Node.any(), Node.char"'foo'"), Node.var"foo"))
+			
 		-- Choice
 		local nodeChoice = { tag = "choice", v = { nodeSet, nodeAnd } }
 		assert.same(Node.choice{nodeSet, nodeAnd}, nodeChoice)

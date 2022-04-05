@@ -70,23 +70,28 @@ function Node.con (l1, l2)
 	if l2 ~= nil then
 		local exp
 		if l1.tag == 'con' then
-			exp = l1
+			exp = Node.copy(l1)
 		else
-			exp = Node.new('con', {l1})
+			exp = Node.new('con', {Node.copy(l1)})
 		end
 		
 		if l2.tag == 'con' then
-			for i, v in ipairs(l2) do
-				table.insert(exp.v, v)
+			for i, v in ipairs(l2.v) do
+				table.insert(exp.v, Node.copy(v))
 			end
 		else
-			table.insert(exp.v, l2)
+			table.insert(exp.v, Node.copy(l2))
 		end
+		
 		return exp
 	elseif #l1 > 1 then
-		return Node.new('con', l1)
+		local con = Node.new('con', {})
+		for i, v in ipairs(l1) do
+			table.insert(con.v, Node.copy(v))
+		end
+		return con
 	else
-		return l1[1]
+		return Node.copy(l1[1])
 	end
 end
 
