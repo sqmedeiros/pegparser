@@ -4,22 +4,24 @@ local Pretty = require'pretty'
 local Util = require'util'
 
 
-local function checkConversionToPeg (stringG, stringPeg, idRule, withLex, predUse)
+local function checkConversionToPeg (stringG, stringPeg, config)
 	local g = Parser.match(stringG)
 	assert.is_not_nil(g)
 	
+	config = config or {}
+	
 	local c2p = Cfg2Peg.new(g)
-	c2p:setPredUse(predUse)
-	c2p:convert(idRule)
+	c2p:setPredUse(config.predUse)
+	c2p:convert(config.idRule, config.lex)
 	
 	local peg = c2p.peg
     local pretty = Pretty.new()
-    local equal = Util.sameWithoutSpace(pretty:printg(peg, nil, withLex), stringPeg)
+    local equal = Util.sameWithoutSpace(pretty:printg(peg, nil, config.lex), stringPeg)
     
     if not equal then
 		print("---- Different ----\n")
 		print(">>>> Generated PEG <<<<")
-		print(pretty:printg(peg))
+		print(pretty:printg(peg, nil, config.lex))
 		print("\n**** Expected PEG ****")
 		print(stringPeg)
 		print("")
@@ -50,16 +52,36 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 		local g = [[
 			a   <- 'a' / 'y'
             b   <- 'a' / 'a''y'
-			Id  <- [a-z] [a-z0-9]*
 		]]
 
         local peg = [[
 			a   <- 'a' / 'y'
             b   <- 'a' / 'a''y'
-			Id  <- [a-z] [a-z0-9]*
         ]]
 
-		checkConversionToPeg(g, peg, 'Id', true)
+		checkConversionToPeg(g, peg)
+	end)
+	
+	test([[Extra checks to not mismatch identifiers and reserved words]], function()
+		local g = [[
+			a   <- 'a' / 'y'
+            b   <- 'a' / 'a''y'
+			Id  <- [a-z] [a-z0-9]*
+		]]
+
+		print("aqui ", pretty:printg(Parser.match(g), nil, true))
+
+		-- I'm favoring readability here, so I used __IdRest directly instead of Cfg2Peg.IdRest
+        local peg = [[
+			a   <- 'a' !__IdRest / 'y' !__IdRest
+            b   <- 'a' !__IdRest / 'a' !__IdRest 'y' !__IdRest
+			Id  <- !__Keywords [a-z] [a-z0-9]*
+			__IdBegin <- [a-z]
+			__IdRest <- [a-z0-9]*
+			__Keywords <- 'a' / 'y'
+        ]]
+
+		checkConversionToPeg(g, peg, {idRule = 'Id', lex = true})
 	end)
 	
 	--[==[test([[Changing the order of alternatives, based on unique tokens,
