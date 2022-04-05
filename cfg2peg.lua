@@ -182,7 +182,6 @@ function Cfg2Peg:computePredicate (p, i, tConflict)
            
 	if #tAltPred > 0 then
 		local predChoice = Node.nott(Node.choice(tAltPred))
-		print("pred", pretty:printp(predChoice))
         return Node.con(predChoice, p.v[i])      	
 	else
 		return p.v[i]
@@ -208,7 +207,6 @@ function Cfg2Peg:reordAlternatives (p, tConflict, tNotConflict)
         end
     end
 
-	print(#listChoice, p.tag)
     p.v = listChoice
 end
 
@@ -302,7 +300,6 @@ end
 
 
 function Cfg2Peg.matchIdBegin (p)
-	print("idBegin ", p.v, p.tag, string.sub(p.v, 2, 2), Cfg2Peg.isIdBegin(string.sub(p.v, 2, 2)))
 	if p.tag == 'char' then
 		return Cfg2Peg.isIdBegin(string.sub(p.v, 2, 2))
 	elseif p.tag == 'set' then
@@ -340,7 +337,6 @@ end
 
 
 function Cfg2Peg:addPredIdRest (p, setKey, rule)
-	print("Insert ", rule)
 	setKey:insert(p.v)
 	return self:newPredIdRest(p)
 end
