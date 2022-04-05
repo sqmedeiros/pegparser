@@ -55,13 +55,13 @@ end
 
 function Node.andd (exp)
 	assert(exp)
-	return Node.new('and', exp)
+	return Node.new('and', Node.copy(exp))
 end
 
 
 function Node.nott (exp)
 	assert(exp)
-	return Node.new('not', exp)
+	return Node.new('not', Node.copy(exp))
 end
 
 
@@ -96,32 +96,31 @@ function Node.con (l1, l2)
 end
 
 
-function Node.mergeCon (exp1, exp2)
-	
-end
-
-
 function Node.choice (l)
 	if #l > 1 then
-		return Node.new('choice', l)
+		local choice = Node.new('choice', {})
+		for i, v in ipairs(l) do
+			table.insert(choice.v, Node.copy(v))
+		end
+		return choice
 	else
-		return l[1]
+		return Node.copy(l[1])
 	end
 end
 
 
 function Node.opt (exp)
-	return Node.new('opt', exp)
+	return Node.new('opt', Node.copy(exp))
 end
 
 
 function Node.star (exp)
-	return Node.new('star', exp)
+	return Node.new('star', Node.copy(exp))
 end
 
 
 function Node.plus (exp)
-	return Node.new('plus', exp)
+	return Node.new('plus', Node.copy(exp))
 end
 
 
@@ -146,27 +145,27 @@ end
 
 
 function Node.simpCap (exp)
-	return Node.new('simpCap', exp)
+	return Node.new('simpCap', Node.copy(exp))
 end
 
 
 function Node.tabCap (exp)
-	return Node.new('tabCap', exp)
+	return Node.new('tabCap', Node.copy(exp))
 end
 
 
 function Node.anonCap (exp)
-	return Node.new('anonCap', exp)
+	return Node.new('anonCap', Node.copy(exp))
 end
 
 
 function Node.namedCap (v, exp)
-	return Node.new('namedCap', {v, exp} )
+	return Node.new('namedCap', {v, Node.copy(exp)} )
 end
 
 
 function Node.discardCap (exp)
-	return Node.new('funCap', exp)
+	return Node.new('funCap', Node.copy(exp))
 end
 
 
