@@ -1,4 +1,4 @@
-local Pretty = require'pretty'
+local Pretty = require'pegparser.pretty'
 
 local Util ={}
 Util.__index = Util
