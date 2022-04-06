@@ -163,7 +163,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 	end)
 	
 
-    test("Converting DOT grammar - Syntactical rules", function()
+    test("Converting DOT grammar - Not dealing with reserved words", function()
         local g = [[
 graph   <-   STRICT? (GRAPH   /  DIGRAPH ) id? '{' stmt_list '}'
 stmt_list   <-   (stmt ';'? )*
