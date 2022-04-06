@@ -1,0 +1,214 @@
+Unique Path (UPath)
+insideLoop: 
+Uunique
+C	 = 	1
+A	 = 	3
+B	 = 	1
+while	 = 	1
+id	 = 	1
+bola	 = 	2
+SKIP	 = 	1
+G	 = 	1
+H	 = 	1
+J	 = 	1
+if	 = 	4
+Token 	1	 = 	8
+Token 	2	 = 	1
+Token 	3	 = 	1
+Token 	4	 = 	1
+Token 	5	 = 	nil
+Token 	6	 = 	nil
+Token 	7	 = 	nil
+Token 	8	 = 	nil
+Token 	9	 = 	nil
+Token 	10	 = 	nil
+Unique tokens (# 7): B, C, G, H, J, id, while
+calcTail
+exp: 	A, B, C, G, H, bola, id
+fator: 	H, bola
+id: 	id
+SPACE: 		, 
+, , , ,  
+SKIP: 		, 
+, , , ,  , __empty
+Global Prefix
+exp: 	
+fator: 	A
+id: 	A, J
+SPACE: 	
+SKIP: 	
+calcPrefix
+__A	 -> 
+	(__A, exp): 	__SKIP
+	(__A, exp): 	if
+	(__A, exp): 	__SKIP
+__J	 -> 
+	(__J, exp): 	__SKIP
+__C	 -> 
+	(__C, exp): 	if
+__H	 -> 
+	(__H, fator): 	bola
+__bola	 -> 
+	(__bola, fator): 	if
+	(__bola, fator): 	id
+__while	 -> 
+	(__while, exp): 	A
+__B	 -> 
+	(__B, exp): 	if
+__id	 -> 
+	(__id, id): 	A, J
+id	 -> 
+	(id, exp): 	J
+	(id, fator): 	A
+	(id, fator): 	A
+SKIP	 -> 
+	(SKIP, exp): 	
+__G	 -> 
+	(__G, exp): 	while
+__if	 -> 
+	(__if, exp): 	A
+	(__if, fator): 	id
+	(__if, exp): 	A
+	(__if, exp): 	A
+fator	 -> 
+	(fator, exp): 	A
+exp	 -> 
+SKIP	 pref := 		 flw := 	A, J
+true33	SKIP
+foi true22	SKIP	table: 0x55b9eb632410	nil
+__A	 pref := 	__SKIP	 flw := 	if, while
+__if	 pref := 	A	 flw := 	A
+__A	 pref := 	if	 flw := 	$
+__if	 pref := 	A	 flw := 	B
+__B	 pref := 	if	 flw := 	$
+true33	B
+__if	 pref := 	A	 flw := 	C
+true33	if
+__C	 pref := 	if	 flw := 	$
+true33	C
+__while	 pref := 	A	 flw := 	G
+true33	while
+foi true22	while	G	nil
+__G	 pref := 	while	 flw := 	$
+true33	G
+__A	 pref := 	__SKIP	 flw := 	id
+true33	A
+symPrefUniVar	fator	exp	true
+passou um
+passou três	fator	exp
+__J	 pref := 	__SKIP	 flw := 	id
+true33	J
+foi true22	J	id	nil
+symPrefUniVar	id	exp	true
+passou um
+passou três	id	exp
+prefixUnique	if	nil
+symPrefUniVar	id	fator	false
+UniqueFlwVar	id	rule = 	fator	pref = 	A	flw = 	if	rep = 	nil
+__if	 pref := 	id	 flw := 	bola
+true33	if
+foi true22	if	bola	true
+__bola	 pref := 	if	 flw := 	H
+foi true22	bola	H	true
+__H	 pref := 	bola	 flw := 	$
+true33	H
+symPrefUniVar	id	fator	true
+passou um
+passou três	id	fator
+UniqueFlwVar	id	rule = 	fator	pref = 	A	flw = 	bola	rep = 	nil
+__bola	 pref := 	id	 flw := 	$
+true33	bola
+__id	 pref := 	A, J	 flw := 	$, bola, if
+true33	id
+unique var 	fator
+Unique usage	fator
+unique var 	id
+unique var 	id
+SKIP	 pref := 		 flw := 	A, J
+true33	SKIP
+foi true22	SKIP	table: 0x55b9eb632410	true
+__A	 pref := 	__SKIP	 flw := 	if, while
+__if	 pref := 	A	 flw := 	A
+__A	 pref := 	if	 flw := 	$
+__if	 pref := 	A	 flw := 	B
+__B	 pref := 	if	 flw := 	$
+true33	B
+__if	 pref := 	A	 flw := 	C
+true33	if
+__C	 pref := 	if	 flw := 	$
+true33	C
+__while	 pref := 	A	 flw := 	G
+true33	while
+foi true22	while	G	true
+__G	 pref := 	while	 flw := 	$
+true33	G
+__A	 pref := 	__SKIP	 flw := 	id
+true33	A
+__J	 pref := 	__SKIP	 flw := 	id
+true33	J
+foi true22	J	id	true
+prefixUnique	if	true
+symPrefUniVar	id	fator	false
+UniqueFlwVar	id	rule = 	fator	pref = 	A	flw = 	if	rep = 	nil
+__if	 pref := 	id	 flw := 	bola
+true33	if
+foi true22	if	bola	true
+__bola	 pref := 	if	 flw := 	H
+foi true22	bola	H	true
+__H	 pref := 	bola	 flw := 	$
+true33	H
+UniqueFlwVar	id	rule = 	fator	pref = 	A	flw = 	bola	rep = 	nil
+__bola	 pref := 	id	 flw := 	$
+true33	bola
+__id	 pref := 	A, J	 flw := 	$, bola, if
+true33	id
+unique var 	fator
+Unique usage	fator
+unique var 	id
+unique var 	id
+Unique vars: exp, fator, 
+matchUPath: exp, fator, id, 
+Adding labels: Err_1, Err_2, Err_3, Err_4, Err_5, Err_6, Err_7, Err_8, Err_9, 
+
+Property 	nil
+exp             <-  SKIP ('A' ('if' 'A'  /  'if' 'B'  /  'if' 'C'^Err_001  /  'while' 'G'^Err_002)  /  'A' fator^Err_003  /  'J' id^Err_004)^Err_005
+fator           <-  (id 'if' 'bola'^Err_006 'H'^Err_007  /  id 'bola'^Err_008)^Err_009
+id              <-  'id'
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'while'  /  'if'  /  'id'  /  'bola'  /  'J'  /  'H'  /  'G'  /  'C'  /  'B'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!(!.) EatToken)*
+Err_002         <-  (!(!.) EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!(!.) EatToken)*
+Err_005         <-  (!(!.) EatToken)*
+Err_006         <-  (!'H' EatToken)*
+Err_007         <-  (!(!.) EatToken)*
+Err_008         <-  (!(!.) EatToken)*
+Err_009         <-  (!(!.) EatToken)*	
+
+Property 	unique
+exp             <-  SKIP_unique (('A' (('if' 'A'_unique  /  ('if' 'B'_unique  /  ('if'_unique 'C'_unique^Err_001  /  'while'_unique 'G'_unique^Err_002)_unique)_unique)_unique)  /  ('A'_unique fator_unique^Err_003  /  'J'_unique id_unique^Err_004)_unique)_unique)^Err_005
+fator           <-  ((id 'if'_unique 'bola'_unique^Err_006 'H'_unique^Err_007  /  id_unique 'bola'_unique^Err_008)_unique)^Err_009
+id              <-  'id'_unique
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'while'  /  'if'  /  'id'  /  'bola'  /  'J'  /  'H'  /  'G'  /  'C'  /  'B'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!(!.) EatToken)*
+Err_002         <-  (!(!.) EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!(!.) EatToken)*
+Err_005         <-  (!(!.) EatToken)*
+Err_006         <-  (!'H' EatToken)*
+Err_007         <-  (!(!.) EatToken)*
+Err_008         <-  (!(!.) EatToken)*
+Err_009         <-  (!(!.) EatToken)*	
+
+End UPath
+

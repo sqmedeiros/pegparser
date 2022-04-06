@@ -1,0 +1,196 @@
+Unique Path (UPath)
+Uunique
+H	 = 	1
+G	 = 	1
+C	 = 	1
+B	 = 	1
+A	 = 	3
+id	 = 	1
+bola	 = 	2
+if	 = 	4
+SKIP	 = 	1
+J	 = 	1
+while	 = 	1
+Token 	1	 = 	8
+Token 	2	 = 	1
+Token 	3	 = 	1
+Token 	4	 = 	1
+Token 	5	 = 	nil
+Token 	6	 = 	nil
+Token 	7	 = 	nil
+Token 	8	 = 	nil
+Token 	9	 = 	nil
+Token 	10	 = 	nil
+Unique tokens (# 7): B, C, G, H, J, id, while
+calcTail
+exp: 	A, B, C, G, H, bola, id
+fator: 	H, bola
+id: 	id
+SPACE: 		, 
+, , , ,  
+SKIP: 		, 
+, , , ,  , __empty
+Global Prefix
+exp: 	
+fator: 	A
+id: 	A, J
+SPACE: 	
+SKIP: 	
+calcPrefix
+__id	 -> 
+	(__id, id): 	A, J
+exp	 -> 
+__C	 -> 
+	(__C, exp): 	if
+__B	 -> 
+	(__B, exp): 	if
+__A	 -> 
+	(__A, exp): 	if
+	(__A, exp): 	__SKIP
+	(__A, exp): 	__SKIP
+__G	 -> 
+	(__G, exp): 	while
+__J	 -> 
+	(__J, exp): 	__SKIP
+id	 -> 
+	(id, exp): 	J
+	(id, fator): 	A
+	(id, fator): 	A
+fator	 -> 
+	(fator, exp): 	A
+__bola	 -> 
+	(__bola, fator): 	if
+	(__bola, fator): 	id
+__while	 -> 
+	(__while, exp): 	A
+SKIP	 -> 
+	(SKIP, exp): 	
+__H	 -> 
+	(__H, fator): 	bola
+__if	 -> 
+	(__if, fator): 	id
+	(__if, exp): 	A
+	(__if, exp): 	A
+	(__if, exp): 	A
+isPrefixUniqueFlw s = 	SKIP	exp
+sem colisao
+foi uniqueEq	A	exp
+__SKIP ; 
+isPrefixUniqueFlw s = 	__A	exp
+sem colisao
+foi uniqueEq	if	exp
+A ; 
+isPrefixUniqueFlw s = 	__if	exp
+sem colisao
+foi uniqueEq	if	exp
+A ; 
+isPrefixUniqueFlw s = 	__if	exp
+sem colisao
+isPrefixUniqueFlw s = 	__if	exp
+sem colisao
+isPrefixUniqueFlw s = 	__while	exp
+sem colisao
+isPrefixUniqueFlw s = 	__A	exp
+sem colisao
+isPrefixUniqueFlw s = 	__J	exp
+sem colisao
+foi uniqueEq	id	fator
+A ; 
+isPrefixUniqueFlw s = 	id	fator
+sem colisao
+foi uniqueEq	id	fator
+A ; 
+isPrefixUniqueFlw s = 	id	fator
+sem colisao
+upathEq	A
+upathEq	if
+upathEq	if
+unique var 	fator
+Unique usage	fator
+unique var 	id
+upathEq	id
+unique var 	id
+upathEq	id
+foi uniqueEq	A	exp
+__SKIP ; 
+foi uniqueEq	if	exp
+A ; 
+foi uniqueEq	if	exp
+A ; 
+foi uniqueEq	id	fator
+A ; 
+upathEq	A
+upathEq	if
+upathEq	if
+unique var 	fator
+Unique usage	fator
+unique var 	id
+upathEq	id
+unique var 	id
+upathEq	id
+Unique vars: exp, fator, 
+matchUPath: exp, fator, id, 
+Adding labels: Err_1, Err_2, Err_3, Err_4, Err_5, Err_6, Err_7, Err_8, Err_9, 
+
+Property 	nil
+exp             <-  SKIP ('A' ('if' 'A'  /  'if' 'B'  /  'if' 'C'^Err_001  /  'while' 'G'^Err_002)  /  'A' fator^Err_003  /  'J' id^Err_004)^Err_005
+fator           <-  (id 'if' 'bola'^Err_006 'H'^Err_007  /  id 'bola'^Err_008)^Err_009
+id              <-  'id'
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'while'  /  'if'  /  'id'  /  'bola'  /  'J'  /  'H'  /  'G'  /  'C'  /  'B'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!(!.) EatToken)*
+Err_002         <-  (!(!.) EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!(!.) EatToken)*
+Err_005         <-  (!(!.) EatToken)*
+Err_006         <-  (!'H' EatToken)*
+Err_007         <-  (!(!.) EatToken)*
+Err_008         <-  (!(!.) EatToken)*
+Err_009         <-  (!(!.) EatToken)*	
+
+Property 	unique
+exp             <-  SKIP_unique (('A' (('if' 'A'_unique  /  ('if' 'B'_unique  /  ('if'_unique 'C'_unique^Err_001  /  'while'_unique 'G'_unique^Err_002)_unique)_unique)_unique)  /  ('A'_unique fator_unique^Err_003  /  'J'_unique id_unique^Err_004)_unique)_unique)^Err_005
+fator           <-  ((id 'if'_unique 'bola'_unique^Err_006 'H'_unique^Err_007  /  id_unique 'bola'_unique^Err_008)_unique)^Err_009
+id              <-  'id'_unique
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'while'  /  'if'  /  'id'  /  'bola'  /  'J'  /  'H'  /  'G'  /  'C'  /  'B'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!(!.) EatToken)*
+Err_002         <-  (!(!.) EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!(!.) EatToken)*
+Err_005         <-  (!(!.) EatToken)*
+Err_006         <-  (!'H' EatToken)*
+Err_007         <-  (!(!.) EatToken)*
+Err_008         <-  (!(!.) EatToken)*
+Err_009         <-  (!(!.) EatToken)*	
+
+Property 	uniqueEq
+exp             <-  SKIP ('A'_uniqueEq ('if'_uniqueEq 'A'  /  'if'_uniqueEq 'B'  /  'if' 'C'^Err_001  /  'while' 'G'^Err_002)  /  'A' fator^Err_003  /  'J' id^Err_004)^Err_005
+fator           <-  (id_uniqueEq 'if' 'bola'^Err_006 'H'^Err_007  /  id_uniqueEq 'bola'^Err_008)^Err_009
+id              <-  'id'
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'while'  /  'if'  /  'id'  /  'bola'  /  'J'  /  'H'  /  'G'  /  'C'  /  'B'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!(!.) EatToken)*
+Err_002         <-  (!(!.) EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!(!.) EatToken)*
+Err_005         <-  (!(!.) EatToken)*
+Err_006         <-  (!'H' EatToken)*
+Err_007         <-  (!(!.) EatToken)*
+Err_008         <-  (!(!.) EatToken)*
+Err_009         <-  (!(!.) EatToken)*	
+
+End UPath
+

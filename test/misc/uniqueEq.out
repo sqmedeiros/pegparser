@@ -1,0 +1,144 @@
+Unique Path (UPath)
+Uunique
+f	 = 	1
+e	 = 	1
+d	 = 	1
+SKIP	 = 	1
+b	 = 	2
+A	 = 	2
+c	 = 	2
+g	 = 	1
+Token 	1	 = 	5
+Token 	2	 = 	3
+Token 	3	 = 	nil
+Token 	4	 = 	nil
+Token 	5	 = 	nil
+Token 	6	 = 	nil
+Token 	7	 = 	nil
+Token 	8	 = 	nil
+Token 	9	 = 	nil
+Token 	10	 = 	nil
+Unique tokens (# 4): d, e, f, g
+calcTail
+exp: 	f, g
+SPACE: 		, 
+, , , ,  
+SKIP: 		, 
+, , , ,  , __empty
+Global Prefix
+exp: 	
+SPACE: 	
+SKIP: 	
+calcPrefix
+__c	 -> 
+	(__c, exp): 	b
+	(__c, exp): 	b
+__e	 -> 
+	(__e, exp): 	c
+SKIP	 -> 
+	(SKIP, exp): 	
+__d	 -> 
+	(__d, exp): 	c
+__b	 -> 
+	(__b, exp): 	A
+	(__b, exp): 	A
+__g	 -> 
+	(__g, exp): 	e
+exp	 -> 
+__A	 -> 
+	(__A, exp): 	__SKIP
+	(__A, exp): 	__SKIP
+__f	 -> 
+	(__f, exp): 	d
+isPrefixUniqueFlw s = 	SKIP	exp
+sem colisao
+foi uniqueEq	A	exp
+__SKIP ; 
+isPrefixUniqueFlw s = 	__A	exp
+colide flw	A	table: 0x56214452dbb0	exp
+teve colisao
+foi uniqueEq	b	exp
+A ; 
+foi uniqueEq	c	exp
+b ; 
+isPrefixUniqueFlw s = 	__A	exp
+colide flw	A	table: 0x56214452d4d0	exp
+teve colisao
+upathEq	A
+upathEq	b
+upathEq	c
+foi uniqueEq	A	exp
+__SKIP ; 
+isPrefixUniqueFlw s = 	__A	exp
+colide flw	A	table: 0x56214452dbb0	exp
+teve colisao
+previousEq: 	b	, rule: 	exp	, prev: 	__A	table: 0x56214452d5a0	table: 0x56214452d4d0
+__SKIP ; 
+foi uniqueEq	b	exp
+A ; 
+previousEq: 	c	, rule: 	exp	, prev: 	__b	table: 0x56214452d620	table: 0x56214452d5a0
+A ; 
+foi uniqueEq	c	exp
+b ; 
+upathEq	A
+upathEq	b
+upathEq	c
+Unique vars: exp, 
+matchUPath: exp, 
+addEq	b	nil	exp
+addEq	c	nil	exp
+Adding labels: Err_1, Err_2, Err_3, Err_4, Err_5, Err_6, Err_7, Err_8, 
+
+Property 	nil
+exp             <-  SKIP ('A' 'b'^Err_001 'c'^Err_002 'd' 'f'^Err_003  /  'A' 'b'^Err_004 'c'^Err_005 'e'^Err_006 'g'^Err_007)^Err_008
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'g'  /  'f'  /  'e'  /  'd'  /  'c'  /  'b'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!'c' EatToken)*
+Err_002         <-  (!'d' EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!'c' EatToken)*
+Err_005         <-  (!'e' EatToken)*
+Err_006         <-  (!'g' EatToken)*
+Err_007         <-  (!(!.) EatToken)*
+Err_008         <-  (!(!.) EatToken)*	
+
+Property 	unique
+exp             <-  SKIP_unique (('A' 'b'^Err_001 'c'^Err_002 'd'_unique 'f'_unique^Err_003  /  'A'_unique 'b'_unique^Err_004 'c'_unique^Err_005 'e'_unique^Err_006 'g'_unique^Err_007)_unique)^Err_008
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'g'  /  'f'  /  'e'  /  'd'  /  'c'  /  'b'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!'c' EatToken)*
+Err_002         <-  (!'d' EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!'c' EatToken)*
+Err_005         <-  (!'e' EatToken)*
+Err_006         <-  (!'g' EatToken)*
+Err_007         <-  (!(!.) EatToken)*
+Err_008         <-  (!(!.) EatToken)*	
+
+Property 	uniqueEq
+exp             <-  SKIP ('A'_uniqueEq 'b'_uniqueEq^Err_001 'c'_uniqueEq^Err_002 'd' 'f'^Err_003  /  'A' 'b'^Err_004 'c'^Err_005 'e'^Err_006 'g'^Err_007)^Err_008
+SPACE           <-  [ 	
+]
+SKIP            <-  [ 	
+]*
+Token           <-  'g'  /  'f'  /  'e'  /  'd'  /  'c'  /  'b'  /  'A'
+EatToken        <-  (Token  /  (!SPACE .)+) SKIP
+Err_001         <-  (!'c' EatToken)*
+Err_002         <-  (!'d' EatToken)*
+Err_003         <-  (!(!.) EatToken)*
+Err_004         <-  (!'c' EatToken)*
+Err_005         <-  (!'e' EatToken)*
+Err_006         <-  (!'g' EatToken)*
+Err_007         <-  (!(!.) EatToken)*
+Err_008         <-  (!(!.) EatToken)*	
+
+End UPath
+
