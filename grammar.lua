@@ -1,4 +1,4 @@
-local Node = require"node"
+local Node = require"pegparser.node"
 
 local Grammar = {
 	prefErrRule = "__Err",

@@ -1,4 +1,4 @@
-local Grammar = require'grammar'
+local Grammar = require'pegparser.grammar'
 
 local UniqueVerySimple = { ON    = "on",
                            OFF   = "off" }

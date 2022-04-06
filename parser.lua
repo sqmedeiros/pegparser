@@ -3,10 +3,10 @@ Parser.__index = Parser
 
 local M = require'lpeglabel'
 local Re = require'relabel'
-local ErrMsg = require'syntax_errors'
-local Predef = require'predef'
-local Node = require"node"
-local Grammar = require"grammar"
+local ErrMsg = require'pegparser.syntax_errors'
+local Predef = require'pegparser.predef'
+local Node = require"pegparser.node"
+local Grammar = require"pegparser.grammar"
 
 local g = nil -- the resulting grammar
 local varRef = {} -- variables that appeared in right-hand side of grammar rules

@@ -2,10 +2,10 @@ local Coder = {}
 Coder.__index = Coder
 
 local M = require'lpeglabel'
-local Node = require'node'
-local Predef = require'predef'
-local Ast = require'ast'
-local Grammar = require'grammar'
+local Node = require'pegparser.node'
+local Predef = require'pegparser.predef'
+--local Ast = require'pegparser.ast'
+local Grammar = require'pegparser.grammar'
 
 local sp = Predef.space^0
 local lpegG = {}
@@ -181,9 +181,9 @@ end
 
 function Coder.makeg (g, tree)
 	local g = g
-	if tree then
-		g = Ast.buildAST(g)
-	end
+	--if tree then
+	--	g = Ast.buildAST(g)
+	--end
 	
 	lpegG = { [1] = g:getStartRule() }
 		

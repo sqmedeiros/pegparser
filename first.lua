@@ -1,7 +1,7 @@
-local Set = require"set"
-local Pretty = require"pretty"
-local Grammar = require"grammar"
-local Node = require"node"
+local Set = require"pegparser.set"
+local Pretty = require"pegparser.pretty"
+local Grammar = require"pegparser.grammar"
+local Node = require"pegparser.node"
 
 local First = { prefixLex  = "___",
 								empty      = "__empty",

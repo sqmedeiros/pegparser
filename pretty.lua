@@ -1,5 +1,5 @@
-local Parser = require'parser'
-local Grammar = require'grammar'
+local Parser = require'pegparser.parser'
+local Grammar = require'pegparser.grammar'
 
 local Pretty = {
     property = nil,

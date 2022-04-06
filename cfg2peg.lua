@@ -1,9 +1,9 @@
-local First = require'first'
-local Grammar = require'grammar'
-local Pretty = require'pretty'
-local Node = require'node'
-local UVerySimple = require"uniqueVerySimple"
-local Set = require'set'
+local First = require'pegparser.first'
+local Grammar = require'pegparser.grammar'
+local Pretty = require'pegparser.pretty'
+local Node = require'pegparser.node'
+local UVerySimple = require"pegparser.uniqueVerySimple"
+local Set = require'pegparser.set'
 
 local Cfg2Peg = {
 	Keyword = '__Keywords',
