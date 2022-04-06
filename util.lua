@@ -86,7 +86,12 @@ end
 
 local function testFile (file, p)
 	local s = getText(file)
-	return p:match(s)
+
+	local begin = os.clock()
+	local r, lab, pos = p:match(s)
+	local final = os.clock() - begin
+
+	return r, lab, pos, final
 end
 
 
@@ -96,22 +101,30 @@ end
 
 
 local function testYes (dir, ext, p)
+	local time = 0
 	for i, file in ipairs(getFiles(dir, ext)) do
 		print("Yes: ", file)
-		local r, lab, pos = testFile(dir .. file, p)
+		local r, lab, pos, t = testFile(dir .. file, p)
+
 		local line, col = '', ''
 		if not r then
 			line, col = re.calcline(getText(dir .. file), pos)
 		end
-		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
+
+		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. 
+			   '  Line: ' .. line .. ' Col: ' .. col)
+		time = time + t
 	end
+	return time
 end
 
 
 local function testNo (dir, ext, p, strict, special)
+	local time = 0
 	for i, file in ipairs(getFiles(dir, ext)) do
 		print("No: ", file)
-		local r, lab, pos = testFile(dir .. file, p)
+		local r, lab, pos, t = testFile(dir .. file, p)
+
 		if lab ~= nil then
 			io.write('r = ' .. tostring(r) .. ' lab = ' .. tostring(lab))
 		end
@@ -120,13 +133,16 @@ local function testNo (dir, ext, p, strict, special)
 			line, col = re.calcline(getText(dir .. file), pos)
 			io.write(' line: ' .. line .. ' col: ' .. col)
 		end
+
 		if strict then
 			assert(r == nil and (matchlabel(file, lab) or matchlabel(file, special)), file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
 		else
 			assert(r == nil, file .. ': Label: ' .. tostring(lab) .. '  Line: ' .. line .. ' Col: ' .. col)
 		end
 		io.write('\n')
+		time = time + t
 	end
+	return time;
 end
 
 
