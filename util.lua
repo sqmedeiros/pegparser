@@ -1,4 +1,6 @@
 local Pretty = require'pegparser.pretty'
+local lfs = require'lfs'
+local re = require'relabel'
 
 local Util ={}
 Util.__index = Util
