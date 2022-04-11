@@ -25,7 +25,7 @@ local function getFileName (s)
 end
 
 
-local function getPath (s)
+function Util.getPath (s)
 	local i = 1
 	local j = string.find(s, '/', i)
 	while j ~= nil do
@@ -100,7 +100,7 @@ local function matchlabel (s1, s2)
 end
 
 
-local function testYes (dir, ext, p)
+function Util.testYes (dir, ext, p)
 	local time = 0
 	for i, file in ipairs(getFiles(dir, ext)) do
 		print("Yes: ", file)
