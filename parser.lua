@@ -166,7 +166,7 @@ local pegGrammar = [[
 
 
 local pegParser = Re.compile(pegGrammar, {
-	newRule = Parser.newRule,
+  newRule = Parser.newRule,
   newChoice = Node.choice,
   newCon = Node.con,
   newAnd = Node.andd,
@@ -195,7 +195,7 @@ function Parser.match (s)
 	else
 		local gRules = g:getRules()
 		for _, var in ipairs(varRef) do
-			assert(gRules[var] ~= nil, "Rule '" .. var .. "' was not defined")
+			assert(g:isPreDefRule(var) or gRules[var] ~= nil, "Rule '" .. var .. "' was not defined")
 		end
 
 		return g 

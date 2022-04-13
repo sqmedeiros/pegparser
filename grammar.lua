@@ -1,4 +1,5 @@
 local Node = require"pegparser.node"
+local Set = require"pegparser.set"
 
 local Grammar = {
 	prefErrRule = "__Err",
@@ -13,10 +14,22 @@ function Grammar.new ()
 	self.ruleList = {}
 	self.tokenSet = {}
 	self.startRule = nil
+	self:setPreDefRules()
 	return self
 end
 
-function Grammar:copy()
+
+function Grammar:setPreDefRules ()
+	self.preDefRules = Set.new{"EOF"}
+end
+
+
+function Grammar:isPreDefRule (rule)
+	return self.preDefRules:getEle(rule) ~= nil
+end
+
+
+function Grammar:copy ()
 	local copy = Grammar.new()
 
 	for i, var in ipairs(self.ruleList) do

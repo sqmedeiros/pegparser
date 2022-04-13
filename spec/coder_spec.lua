@@ -16,6 +16,24 @@ describe("Testing #coder", function()
 		assert.equal(lpegParser:match(" a"), 3)
 		assert.equal(lpegParser:match("  x"), nil)
 		assert.equal(lpegParser:match("a  "), 4)
+		assert.equal(lpegParser:match("a  b"), 4)
+		assert.equal(lpegParser:match("x  "), nil)
+	end)
+
+test("Grammar that uses a predefined rule (EOF)", function()
+		local g = Parser.match[[
+			s <- 'a' EOF
+		]]
+
+		assert(g)
+
+		local lpegParser = Coder.makeg(g)
+		assert.equal(lpegParser:match("a"), 2)
+		assert.equal(lpegParser:match("x"), nil)
+		assert.equal(lpegParser:match(" a"), 3)
+		assert.equal(lpegParser:match("  x"), nil)
+		assert.equal(lpegParser:match("a  "), 4)
+		assert.equal(lpegParser:match("a  b"), nil)
 		assert.equal(lpegParser:match("x  "), nil)
 	end)
 
