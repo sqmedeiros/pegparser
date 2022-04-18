@@ -126,7 +126,7 @@ function Cfg2Peg:solveChoiceConflict (p, tConflict)
     for i, v in ipairs(tConflict) do
 		if next(v) ~= nil then -- alternative has a conflict with other(s)
             local iExp = p.v[i]
-            if self.unique:matchUPath(iExp) then  -- conflict solved
+            if self.useUnique and self.unique:matchUPath(iExp) then  -- conflict solved
                 print("Alternative " .. i .. " match unique", pretty:printp(iExp))
                 tConflict[i] = {}
                 table.insert(tNotConflict, i)
@@ -252,20 +252,18 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
     io.write("\n")
 
     if not disjoint then
-		local tNotConflict = {}
-
 		if self.useUnique then
 			self.unique = UVerySimple.new(self.peg)
 			self.unique:calcUniquePath()
 
 			local pretty = Pretty.new("unique")
 			print(pretty:printg(self.peg))
+		end
 
-			tConflict, tNotConflict = self:solveChoiceConflict(p, tConflict)
-			if self:isConflictSolved(tConflict) then
-				print("Solved")
-				disjoint = true
-			end
+		local tConflict, tNotConflict = self:solveChoiceConflict(p, tConflict)
+		if self:isConflictSolved(tConflict) then
+			print("Solved")
+			disjoint = true
 		end
 
 		self:reordAlternatives(p, tConflict, tNotConflict)
