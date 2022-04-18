@@ -21,7 +21,8 @@ function Cfg2Peg.new(cfg)
 	self.first:calcFirstG()
     self.first:calcFollowG()
     self.unique = nil
-    self.predUse = false
+    self.usePredicate = false
+    self.useUnique = false
 	return self
 end
 
@@ -33,9 +34,15 @@ local function getRepName ()
 end
 
 
-function Cfg2Peg:setPredUse (v)
-	self.predUse = v
+function Cfg2Peg:setUsePredicate (v)
+	self.usePredicate = v
 end
+
+
+function Cfg2Peg:setUseUnique (v)
+	self.useUnique = v
+end
+
 
 function Cfg2Peg.tableSwap (t, i, j)
 	local aux = t[i]
@@ -113,10 +120,9 @@ end
 
 
 function Cfg2Peg:solveChoiceConflict (p, tConflict)
-    local solved = true
     local tNotConflict = {}
+	local pretty = Pretty.new()
 
-    pretty = Pretty.new()
     for i, v in ipairs(tConflict) do
 		if next(v) ~= nil then -- alternative has a conflict with other(s)
             local iExp = p.v[i]
@@ -200,7 +206,7 @@ function Cfg2Peg:reordAlternatives (p, tConflict, tNotConflict)
     for i, v in ipairs(tConflict) do
         if next(v) ~= nil then -- alternative has a conflict with other(s)
 			local newAlt = p.v[i]
-			if self.predUse then
+			if self.usePredicate then
 				newAlt = self:computePredicate(p, i, tConflict)
 			end
 			table.insert(listChoice, newAlt)
@@ -246,11 +252,22 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
     io.write("\n")
 
     if not disjoint then
-        tConflict, tNotConflict = self:solveChoiceConflict(p, tConflict)
-        if self:isConflictSolved(tConflict) then
-            print("Solved")
-            disjoint = true
+		local tNotConflict = {}
+
+		if self.useUnique then
+			self.unique = UVerySimple.new(self.peg)
+			self.unique:calcUniquePath()
+
+			local pretty = Pretty.new("unique")
+			print(pretty:printg(self.peg))
+
+			tConflict, tNotConflict = self:solveChoiceConflict(p, tConflict)
+			if self:isConflictSolved(tConflict) then
+				print("Solved")
+				disjoint = true
+			end
 		end
+
 		self:reordAlternatives(p, tConflict, tNotConflict)
     end
 
@@ -418,11 +435,6 @@ end
 function Cfg2Peg:convert (ruleId, checkIdReserved)
 	self.peg = self.cfg:copy()
 	self.irep = 0
-
-    self.unique = UVerySimple.new(self.peg)
-    self.unique:calcUniquePath()
-    local pretty = Pretty.new("unique")
-    print(pretty:printg(self.peg))
     
     if checkIdReserved then
 		self:convertLexRule(ruleId)

@@ -11,7 +11,8 @@ local function checkConversionToPeg (stringG, stringPeg, config)
 	config = config or {}
 	
 	local c2p = Cfg2Peg.new(g)
-	c2p:setPredUse(config.predUse)
+	c2p:setUsePredicate(config.predicate)
+	c2p:setUseUnique(config.unique)
 	c2p:convert(config.idRule, config.reserved)
 	
 	local peg = c2p.peg
@@ -61,7 +62,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
             b   <- !('a''y') 'a' / 'a''y'
         ]]
 
-		checkConversionToPeg(g, peg, {predUse = true})
+		checkConversionToPeg(g, peg, {predicate = true})
 	end)
 
     test([[Changing the order of alternatives, based on unique tokens,
@@ -78,7 +79,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
             b   <- 'a' / 'a''y'
         ]]
 
-		checkConversionToPeg(g, peg)
+		checkConversionToPeg(g, peg, {unique = true})
 	end)
 
 	test("Converting lazy repetitionsss", function()
@@ -231,7 +232,7 @@ LINE_COMMENT   <-   '//' (!('\r'? '\n') .)* '\r'? '\n'
 PREPROC   <-   '#' (![\r\n] .)*
 WS   <-   [ \t\n\r]+
 ]]
-	checkConversionToPeg(g, peg)
+	checkConversionToPeg(g, peg, {unique = true})
 
     end)
 end)
