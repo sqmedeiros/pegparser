@@ -20,13 +20,12 @@ describe("Testing #coder", function()
 		assert.equal(lpegParser:match("x  "), nil)
 	end)
 
-test("Grammar that uses a predefined rule (EOF)", function()
+	test("Grammar that uses a predefined rule (EOF)", function()
 		local g = Parser.match[[
 			s <- 'a' EOF
 		]]
 
 		assert(g)
-
 		local lpegParser = Coder.makeg(g)
 		assert.equal(lpegParser:match("a"), 2)
 		assert.equal(lpegParser:match("x"), nil)

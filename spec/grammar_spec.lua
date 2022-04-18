@@ -71,10 +71,28 @@ describe("Testing #grammar", function()
 		assert.same(g:getStartRule(), "s")
 		
 		g:setStartRule("b")
-		assert.same("b", g:getStartRule())		
-		         
+		assert.same("b", g:getStartRule())
 	end)
-	
+
+
+	test("Creating a grammar with EOF", function()
+		local g = Grammar.new()
+		local rhs = Node.con{Node.char"a", Node.var"EOF"}
+		g:addRule("s", rhs)
+
+		local ruleMap = {
+			s = rhs,
+		}
+
+		assert.same(g:getRules(), ruleMap)
+		assert.same(g:getVars(), { "s" })
+
+		assert.same(g:getRHS"s", rhs)
+
+		assert.same(g:getStartRule(), "s")
+	end)
+
+
 	test("Handling lexer rules", function()	
 		local g = Grammar.new()
 		g:addRule("s", Node.var"A")

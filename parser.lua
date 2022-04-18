@@ -38,7 +38,6 @@ function Parser.newSet (l)
 end
 
 
-
 function Parser.newVar (v)
 	table.insert(varRef, v)
 	return Node.var(v)
@@ -125,7 +124,7 @@ end
 
 
 local pegGrammar = [[
-	grammar       <-   S rule+^Rule (!.)^Extra
+  grammar       <-   S rule+^Rule (!.)^Extra
 
   rule          <-   (name S arrow^Arrow exp^ExpRule)   -> newRule
 
@@ -195,7 +194,13 @@ function Parser.match (s)
 	else
 		local gRules = g:getRules()
 		for _, var in ipairs(varRef) do
-			assert(g:isPreDefRule(var) or gRules[var] ~= nil, "Rule '" .. var .. "' was not defined")
+			if gRules[var] == nil then
+				if g:isPreDefRule(var) then
+					Parser.newRule(var, g.preDefRules[var])
+				else
+					assert(false, "Rule '" .. var .. "' was not defined")
+				end
+			end
 		end
 
 		return g 

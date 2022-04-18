@@ -1,5 +1,4 @@
 local Node = require"pegparser.node"
-local Set = require"pegparser.set"
 
 local Grammar = {
 	prefErrRule = "__Err",
@@ -20,12 +19,14 @@ end
 
 
 function Grammar:setPreDefRules ()
-	self.preDefRules = Set.new{"EOF"}
+	self.preDefRules = {
+		EOF = Node.nott(Node.any())
+	}
 end
 
 
 function Grammar:isPreDefRule (rule)
-	return self.preDefRules:getEle(rule) ~= nil
+	return self.preDefRules[rule] ~= nil
 end
 
 

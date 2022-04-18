@@ -172,13 +172,6 @@ function Coder.setSkip (g)
 end
 
 
-function Coder.setEOF (g, s)
-	s = s or 'EOF'
-	assert(g:hasRule(s) == false, "Grammar already has rule " .. tostring(s))
-	lpegG[s] = Coder.makep(Node.nott(Node.any()))
-end
-
-
 function Coder.makeg (g, tree)
 	local g = g
 	--if tree then
@@ -199,7 +192,6 @@ function Coder.makeg (g, tree)
 	end
 	
 	Coder.setSkip(g)
-	Coder.setEOF(g)
 	
 	return M.P(lpegG)
 end

@@ -355,6 +355,29 @@ describe("Testing #follow", function()
 		assert.same(objFst.FOLLOW, setFlw)
 	end)
 
+
+	test("FIRST/FOLLOW set considering EOF", function()
+		local g = Parser.match[[
+			s   <- 'a' EOF
+		]]
+
+		local objFst = First.new(g)
+		objFst:calcFirstG()
+		objFst:calcFollowG()
+
+		local setFirst = {}
+		setFirst['s'] = Set.new { 'a' }
+		setFirst['EOF'] = Set.new{ objFst:lexKey('EOF') }
+
+		local setFlw = {}
+		setFlw['s'] = Set.new{ endInput }
+		setFlw['EOF'] = Set.new { endInput }
+
+		assert.same(objFst.FIRST, setFirst)
+		assert.same(objFst.FOLLOW, setFlw)
+	end)
+
+
 	test("Calculating FOLLOW of a DOT grammar", function()
 		local g = Parser.match[[
 			graph             <-   'strict'? ('graph'   /  'digraph') id? '{' stmt_list '}'
