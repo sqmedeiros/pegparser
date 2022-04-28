@@ -23,6 +23,8 @@ function Cfg2Peg.new(cfg)
     self.unique = nil
     self.usePredicate = false
     self.useUnique = false
+    self.usePrefix = false
+    self.pretty = Pretty.new()
 	return self
 end
 
@@ -44,6 +46,11 @@ function Cfg2Peg:setUseUnique (v)
 end
 
 
+function Cfg2Peg:setUsePrefix (v)
+	self.reordPrefix = v
+end
+
+
 function Cfg2Peg.tableSwap (t, i, j)
 	local aux = t[i]
 	t[i] = t[j]
@@ -53,7 +60,7 @@ end
 
 function Cfg2Peg:newNonLL1Rep(p, flw, rule)
 	assert(p ~= nil)
-	print("newNonLL1Rep", Pretty:printp(p))
+	print("newNonLL1Rep", self.pretty:printp(p))
 	local p1 = getPeg(g, peg, p.p1, flw, rule)
 	local predFlw = parser.newAnd(first.set2choice(flw))
 
@@ -76,6 +83,8 @@ function Cfg2Peg.isLazyRep (p)
 	return p.tag == 'opt' and
 	       (p.v.tag == 'opt' or p.v.tag == 'star' or p.v.tag == 'plus')
 end
+
+
 
 -- Assumes a few simplifications:
 -- 1. there is no other transformation related to lexical rules
@@ -119,62 +128,30 @@ function Cfg2Peg:isConflictSolved (tabConflict)
 end
 
 
-function Cfg2Peg:solveChoiceConflict (p, tConflict)
-    local tNotConflict = {}
-	local pretty = Pretty.new()
+function Cfg2Peg:calcPrefixAlternatives (p, tReord)
+    local pretty = self.pretty
+    local n = #p.v
+    
+    for i = 1, n do
+		tReord[i].s = pretty:printp(p.v[i])
+    end
+end
 
+
+function Cfg2Peg:calcUniqueAlternatives (p, tConflict)
+    local hasUniqueAlt = false
+    
     for i, v in ipairs(tConflict) do
 		if next(v) ~= nil then -- alternative has a conflict with other(s)
             local iExp = p.v[i]
             if self.useUnique and self.unique:matchUPath(iExp) then  -- conflict solved
-                print("Alternative " .. i .. " match unique", pretty:printp(iExp))
+                print("Alternative " .. i .. " match unique", self.pretty:printp(iExp))
                 tConflict[i] = {}
-                table.insert(tNotConflict, i)
+                mapConflict[p[i]]
+				hasUniqueAlt = true
             end
-        else  -- no conflict with other alternatives
-            table.insert(tNotConflict, i)
         end
     end
-
-    return tConflict, tNotConflict
-
-
-    --[==[
-    
-    local solved = nil
-	if unique.matchUPath(p1) then
-		
-		solved = 1
-	end
-
-	if unique.matchUPath(p2) then
-		print("Alternative 2 match unique", pretty.printp(p2))
-		solved = solved or 2
-	end
-
-	local tkPath1 = {}
-	first.calcTkPath(g, p1, tkPath1, {})
-	io.write("tkpath1: ")
-	printktable(tkPath1)
-
-	local tkPath2 = {}
-	first.calcTkPath(g, p2, tkPath2, {})
-	io.write("tkpath2: ")
-	printktable(tkPath2)
-
-	if (matchTkNotInPath(g, p1, tkPath2, {})) then
-		print("Alternative 1 match tkpath different, should come first")
-		solved = 1
-	end
-
-	if (matchTkNotInPath(g, p2, tkPath1, {})) then
-		print("Alternative 2 match tkpath different, should come first")
-		solved = solved or 2
-	end
-
-	return solved
-
-    ]==]
 end
 
 
@@ -195,78 +172,129 @@ function Cfg2Peg:computePredicate (p, i, tConflict)
 end
 
 
-function Cfg2Peg:reordAlternatives (p, tConflict, tNotConflict)
-    local listChoice = {}
-    for i, v in ipairs(tNotConflict) do
-        table.insert(listChoice, p.v[v])
-    end
+function Cfg2Peg:compAlternatives (p, i, j, tConflict, mapConflict)
+	-- if the first alternative does not have a conflict, do not change its order
+	if next(mapConflict[p[i]]) == nil then
+		return false
+	end
+	
+	-- from now on, we know the first alternative has a conflict
+	
+	-- if the second alternative does not have a conflict, put it first
+	if next(mapConflict[p[j]]) == nil then
+		return true
+	end
+	
+	-- from now on, we konw both alternatives have a conflict
+	-- if the first alternative is a prefix of the second one, swap them
+	local s1 = self.pretty:printp(p.v[i])
+	local s2 = self.pretty:printp(p.v[j])
+	return string.find(s2, s1, 1, true)
+end
 
-	local n = #p.v
-	local pretty = Pretty.new()
+
+function Cfg2Peg:reordAlternatives (p, tConflict, tReord)
+    local listChoiceConflict = {}
+    local listChoiceNoConflict = {}
+    
+    local n = #p.v
+    repeat
+		changed = false
+		for i = 1, n - 1 do
+			self:compAlternatives(p, i, i + 1, tConflict, tReord)
+		end
+		n = n - 1
+    until changed == false
+    
     for i, v in ipairs(tConflict) do
-        if next(v) ~= nil then -- alternative has a conflict with other(s)
+		if next(v) ~= nil then -- alternative has a conflict with other(s)
 			local newAlt = p.v[i]
 			if self.usePredicate then
 				newAlt = self:computePredicate(p, i, tConflict)
 			end
 			table.insert(listChoice, newAlt)
-        end
+		else  -- no conflict with other alteratives
+			table.insert(listChoiceNoConflict, p.v[i])
+		end
     end
 
-    p.v = listChoice
+    p.v = 
+end
+
+
+function Cfg2Peg:computeFirstAlternatives (p)
+	local firstAlt = {}
+	for i, v in ipairs(p.v) do
+		firstAlt[i] = self.first:calcFirstExp(v)
+	end
+end
+
+
+function Cfg2Peg:initTConflict (p)
+	assert(p.tag == 'choice')
+	local tConflict = {}
+	for i, v in ipairs(p.v) do
+		tConflict[i] = {}
+		mapConflict[v] = {}
+	end
+	return tConflict, mapConflict
+end
+
+
+function Cfg2Peg:computeConflicts (p, flw, rule)
+    local firstAlt = computeFirstAlternatives(p)
+	local tConflict, mapConflict = initTConflict(p)
+	local disjoint = true
+	local n = #p.v
+
+	for i = 1, n - 1 do
+		for j = i + 1, n do
+			if not firstAlt[i]:disjoint(firstAlt[j]) then
+			    disjoint = false
+                tConflict[i][j] = true
+                tConflict[j][i] = true
+                mapConflict[p.v[i]][p.v[j]] = true
+                mapConflict[p.v[j]][p.v[i]] = true
+			end
+		end
+	end
+	
+	return disjoint, tConflict, mapConflict
 end
 
 
 function Cfg2Peg:getChoicePeg (p, flw, rule)
-    local t = p.v
-	local n = #t
-	local tConflict = {}
-	local newt = {}
-	local firstAlt = {}
+	local pretty = self.pretty
 
-	print("Alternativies before ordering")
-    local pretty = Pretty.new()
-	for i, v in ipairs(p.v) do
-		io.write("( " .. i .. ") " .. pretty:printp(v))
-        if i < #p.v then io.write(" / ") end
-		tConflict[i] = {}
-		firstAlt[i] = self.first:calcFirstExp(v)
-	end
-    io.write"\n"
-
-    local disjoint = true
-
-    io.write("Conflicts: ")
-	for i = 1, n - 1 do
-		for j = i + 1, n do
-			if not firstAlt[i]:disjoint(firstAlt[j]) then
-				--print("Alt i", Pretty:printp(t[i]))
-				--print("Alt j", Pretty:printp(t[j]))
-				io.write("(" .. i .. " , " .. j .. ") ")
-                disjoint = false
-                tConflict[i][j] = true
-                tConflict[j][i] = true
-			end
-		end
-	end
-    io.write("\n")
+	print("Alternatives before ordering")
+    print(pretty:printChoiceAlternative(p))
+    
+    local disjoint, tConflict, mapConflict = computeConflicts()
 
     if not disjoint then
+		print("Conflicts:\n", pretty:printChoiceConflicts(p, tConflict))
+     
+		if self.usePrefix then
+			print("Calculation alternatives that are a prefix of other ones")
+			self:calcPrefixAlternatives(p, tConflict, tReord)
+		end
+		
 		if self.useUnique then
 			self.unique = UVerySimple.new(self.peg)
 			self.unique:calcUniquePath()
-
-			local pretty = Pretty.new("unique")
+			
+			pretty:setProperty('unique')
 			print(pretty:printg(self.peg))
+			pretty:setProperty(nil)
+		
+			self:calcUniqueAlternatives(p, tConflict)
 		end
-
-		local tConflict, tNotConflict = self:solveChoiceConflict(p, tConflict)
+		
 		if self:isConflictSolved(tConflict) then
 			print("Solved")
 			disjoint = true
 		end
 
-		self:reordAlternatives(p, tConflict, tNotConflict)
     end
 
     return disjoint

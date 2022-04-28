@@ -123,6 +123,38 @@ function Pretty:printp (p, flag)
 end
 
 
+function Pretty:printChoiceAlternatives (p)
+	local t = {}
+	for i, v in ipairs(p.v) do
+		local s = '(' .. i .. ') ' .. self:printp(v))		
+		table.insert(t, s)
+	end
+    
+    return table.concat(t, ' / ')
+end
+
+
+function Pretty:printChoiceConflicts (p, tConflict, verbose)
+	local n = #p.v
+	local t = {}
+	
+	for i = 1, n - 1 do
+		for j = i + 1, n do
+			if tConflict[i][j] then
+				local s = '(' .. i .. ' , ' .. j .. ') '
+				table.insert(s)
+				if verbose then
+					s = self:printp(t[i]) .. '  ,  ' .. self:printp(t[j])
+					table.insert(s)
+				end
+			end
+		end
+	end
+    
+    return table.concat(t, '\n')
+end
+
+
 function Pretty:printg (grammar, flagthrow, withLex)
 	local t = {}
     
