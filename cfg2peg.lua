@@ -24,7 +24,21 @@ function Cfg2Peg.new(cfg)
     self.useUnique = false
     self.usePrefix = false
     self.pretty = Pretty.new()
+    self:initConflictStats()
 	return self
+end
+
+
+function Cfg2Peg:initConflictStats ()
+    self.conflictStats = { unique = 0, prefix = 0, total = 0}
+end
+
+
+function Cfg2Peg:printConflictStats ()
+    print("Conflict stats:")
+    print("Total #conflicts: ", self.conflictStats.total)
+    print("Solved by #unique: ", self.conflictStats.unique)
+    print("Solved by #prefix: ", self.conflictStats.prefix)
 end
 
 
@@ -129,6 +143,9 @@ function Cfg2Peg:calcUniqueAlternatives (p, mapConflict)
 		if next(mapConflict[v]) ~= nil then -- alternative has a conflict with other(s)
             if self.useUnique and self.unique:matchUPath(v) then  -- conflict solved
                 print("Alternative " .. i .. " match unique", self.pretty:printp(v))
+                for _, _ in pairs(mapConflict[v]) do
+                    self.conflictStats.unique = self.conflictStats.unique + 1
+                end
                 mapConflict[v] = {}
 				hasUniqueAlt = true
             end
@@ -163,6 +180,7 @@ function Cfg2Peg:compAlternatives (v, i, j, mapConflict)
         print("Prefix: ", s1, s2, start, finish)
         mapConflict[v[i]][v[j]] = nil
         mapConflict[v[j]][v[i]] = nil
+        self.conflictStats.prefix = self.conflictStats.prefix + 1
     end
     return start == 1
 end
@@ -221,6 +239,7 @@ function Cfg2Peg:computeConflicts (p, flw, rule)
 			    disjoint = false
                 mapConflict[p.v[i]][p.v[j]] = true
                 mapConflict[p.v[j]][p.v[i]] = true
+                self.conflictStats.total = self.conflictStats.total + 1
 			end
 		end
 	end
@@ -258,7 +277,6 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
 			print("Solved")
 			disjoint = true
 		end
-
     end
 
     return disjoint
@@ -429,7 +447,8 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
     if checkIdReserved then
 		self:convertLexRule(ruleId)
 	end
-    
+
+    self:initConflictStats()
 	for i, var in ipairs(self.peg:getVars()) do
 		if not Grammar.isLexRule(var) then
             self:getPeg(self.peg:getRHS(var), self.first.FOLLOW[var], var)
@@ -437,6 +456,7 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
             self:convertLazyRepetition(self.peg:getRHS(var))
 		end
     end
+    self:printConflictStats()
 
   return self.peg
 end
