@@ -82,6 +82,38 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 		checkConversionToPeg(g, peg, {unique = true})
 	end)
 
+
+    test([[Applying #here unique, prefix and unique+prefix]], function()
+		local g = [[
+			s   <-  a / 'a' 'b' / 'a' 'c'
+			a   <- 'x' / 'a' / 'y' / 'y''z'
+            b   <- 'a' / 'a''y'
+		]]
+
+        local pegUnique = [[
+            s   <- 'a' 'b' / 'a' 'c' / a
+			a   <- 'x' / 'a' / 'y''z' / 'y'
+            b   <- 'a' / 'a''y'
+        ]]
+
+        local pegPrefix = [[
+            s   <-  a / 'a' 'b' / 'a' 'c'
+			a   <- 'x' / 'a' / 'y''z' / 'y'
+            b   <- 'a''y' / 'a'
+        ]]
+
+        local pegUniquePrefix = [[
+            s   <- 'a' 'b' / 'a' 'c' / a
+			a   <- 'x' / 'a' / 'y''z' / 'y'
+            b   <- 'a''y' / 'a'
+        ]]
+
+        checkConversionToPeg(g, pegUnique, {unique = true})
+        checkConversionToPeg(g, pegPrefix, {prefix = true})
+        checkConversionToPeg(g, pegUniquePrefix, {unique = true, prefix = true})
+	end)
+
+
 	test("Converting lazy repetitionsss", function()
         
         -- converts only lazy repetitions in lexical rules
@@ -235,4 +267,5 @@ WS   <-   [ \t\n\r]+
 	checkConversionToPeg(g, peg, {unique = true})
 
     end)
+
 end)

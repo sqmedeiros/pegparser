@@ -158,13 +158,13 @@ function Cfg2Peg:compAlternatives (v, i, j, mapConflict)
     -- if the first alternative is a prefix of the second one, swap them
 	local s1 = self.pretty:printp(v[i])
 	local s2 = self.pretty:printp(v[j])
-	local res = string.find(s2, s1, 1, true)
-    if res then
-        print("Prefix: ", s1, s2)
+	local start, finish = string.find(s2, s1, 1, true)
+    if start == 1 then
+        print("Prefix: ", s1, s2, start, finish)
         mapConflict[v[i]][v[j]] = nil
         mapConflict[v[j]][v[i]] = nil
     end
-    return res
+    return start == 1
 end
 
 
