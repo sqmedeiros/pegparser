@@ -11,7 +11,7 @@ local function checkConversionToPeg (stringG, stringPeg, config)
 	config = config or {}
 	
 	local c2p = Cfg2Peg.new(g)
-	c2p:setUsePredicate(config.predicate)
+	c2p:setUsePrefix(config.prefix)
 	c2p:setUseUnique(config.unique)
 	c2p:convert(config.idRule, config.reserved)
 	
@@ -51,7 +51,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 		checkConversionToPeg(g, peg)
 	end)
 	
-	test([[Using a predicate to guard the matching of non-disjoint alternatives]], function()
+	test([[Checking if some of the non-disjoint alternatives is a prefix of the other ones]], function()
 		local g = [[
 			a   <- 'a' / 'y'
             b   <- 'a' / 'a''y'
@@ -59,10 +59,10 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 
         local peg = [[
 			a   <- 'a' / 'y'
-            b   <- !('a''y') 'a' / 'a''y'
+            b   <- 'a''y' / 'a'
         ]]
 
-		checkConversionToPeg(g, peg, {predicate = true})
+		checkConversionToPeg(g, peg, {prefix = true})
 	end)
 
     test([[Changing the order of alternatives, based on unique tokens,
