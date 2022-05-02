@@ -69,7 +69,7 @@ end
 function Cfg2Peg:newNonLL1Rep(p, flw, rule)
 	assert(p ~= nil)
 	print("newNonLL1Rep", self.pretty:printp(p))
-	local p1 = getPeg(g, peg, p.p1, flw, rule)
+	local innerExp = self:getPeg(p.v, flw, rule)
 	local predFlw = parser.newAnd(first.set2choice(flw))
 
 	if p.tag == 'opt' then
@@ -261,13 +261,6 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
         print(self:printChoiceConflicts(p, listChoice, mapConflict))
 
 		if self.useUnique then
-			self.unique = UVerySimple.new(self.peg)
-			self.unique:calcUniquePath()
-			
-			pretty:setProperty('unique')
-			print(pretty:printg(self.peg))
-			pretty:setProperty(nil)
-		
 			self:calcUniqueAlternatives(p, mapConflict)
 		end
 
@@ -283,6 +276,26 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
 end
 
 
+function Cfg2Peg:getRepPeg (p, flw, rule)
+	local firstRep = self.first:calcFirstExp(p.v)
+	local flwRep = self.first:calck(firstRep, flw)
+		
+	if firstRep:disjoint(flwRep) then
+		p.v = self:getPeg(p.v, flw, rule)
+		return
+	end
+	
+	print("Non-ll(1) repetition", self.pretty:printp(p))
+	
+	if self.useUnique and self.unique:matchUPath(p.v) then
+		print("Repetition match unique", pretty.printp(p.v))
+		p.v = self:getPeg(p.v, flw, rule)	
+	else		
+		Cfg2Peg:newNonLL1Rep(p, flw, rule)
+	end
+end
+
+
 function Cfg2Peg:getPeg (p, flw, rule)
 	if p.tag == 'choice' then
         self:getChoicePeg(p, flw, rule)
@@ -293,28 +306,7 @@ function Cfg2Peg:getPeg (p, flw, rule)
             flw = self.first:calck(p.v[i], flw)
 		end
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		if true then
-			return p
-		end
-		local firstV = self.first:calcFirstExp(p.v)
-		--local flwRep = union(calcfirst(g, p.p1), flw, true)
-		local flwRep = flw
-		
-		if p.disjoint then
-			return Node.new(p.tag, self:getPeg(p.v, flw, rule))
-		else
-			print("Non-ll(1) repetition", pretty.printp(p))
-			return Node.new(p.tag, self:getPeg(p.v, flw, rule))
-			--[==[if unique.matchUPath(p.p1) then
-				print("Repetition match unique", pretty.printp(p.p1))
-				return newNode(p, getPeg(g, peg, p.p1, flw, rule))
-			else
-				--return newNode(p, getPeg(g, peg, p.p1, flw, rule))
-				local res = newNonLL1Rep(g, peg, p, flw, rule)
-				print("nonLL1Rep res", pretty.printp(res))
-				return res
-			end]==]
-		end
+		self:getRepPeg(p, flw, rule)
 	end
 end
 
@@ -443,6 +435,17 @@ end
 function Cfg2Peg:convert (ruleId, checkIdReserved)
 	self.peg = self.cfg:copy()
 	self.irep = 0
+    
+    if self.useUnique then
+		print("Unique Symbols")
+		self.unique = UVerySimple.new(self.peg)
+		self.unique:calcUniquePath()
+			
+		pretty:setProperty('unique')
+		print(pretty:printg(self.peg))
+		pretty:setProperty(nil)
+		print("")
+	end
     
     if checkIdReserved then
 		self:convertLexRule(ruleId)
