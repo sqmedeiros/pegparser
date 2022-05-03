@@ -8,7 +8,8 @@ local Set = require'pegparser.set'
 local Cfg2Peg = {
 	Keyword = '__Keywords',
 	IdBegin = '__IdBegin',
-	IdRest = '__IdRest',
+	IdRest  = '__IdRest',
+	RepPref = 'rep_',
 }
 
 Cfg2Peg.__index = Cfg2Peg
@@ -23,6 +24,7 @@ function Cfg2Peg.new(cfg)
     self.unique = nil
     self.useUnique = false
     self.usePrefix = false
+    self.repCount = 0
     self.pretty = Pretty.new()
     self:initConflictStats()
 	return self
@@ -33,6 +35,11 @@ function Cfg2Peg:initConflictStats ()
     self.conflictStats = { unique = 0, prefix = 0, total = 0}
 end
 
+
+function Cfg2Peg:getRepName (s)
+	self.repCount = self.repCount + 1
+	return Cfg2Peg.RepPrefix .. string.format("%03d", self.repCount))
+end
 
 function Cfg2Peg:printConflictStats ()
     print("Conflict stats:")
@@ -68,13 +75,23 @@ end
 
 function Cfg2Peg:newNonLL1Rep(p, flw, rule)
 	assert(p ~= nil)
+	assert(p.tag == 'opt' or p.tag == 'plus' or p.tag == 'star')
 	print("newNonLL1Rep", self.pretty:printp(p))
 	local innerExp = self:getPeg(p.v, flw, rule)
-	local predFlw = parser.newAnd(first.set2choice(flw))
+	local predFlw = Node.andd(self.first.choiceFromSet(flw))
 
 	if p.tag == 'opt' then
-		return newOrd(newSeq(p1, predFlw), newNode('empty'))
+		p.tag = 'choice'
+		p.v = { Node.con{innerExp, predFlw), Node.empty() } }
 	elseif p.tag == 'star' or p.tag == 'plus' then
+		local s = newRepName()
+		p.tag = 'var'
+		p.var = self.addRepRule
+	
+	else -- p.tag == 'plus' then
+		
+	end
+		self.addNewRep()
 		local s = getRepName()
 		table.insert(peg.plist, s)
 		local var = newVar(s)

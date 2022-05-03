@@ -228,4 +228,21 @@ function First:calcFollowExp (exp, flw)
 end
 
 
+function First.choiceFromSet (set)
+	local list = {}
+	for k, _ in pairs(set.sort().getElem()) do
+		local node
+		if k == First.__empty then
+			node = Node.empty()
+		elseif k == First.__any then
+			node = Node.any()
+		else
+			node = Node.char(k)
+		end
+		table.insert(list, node)
+	end
+	return Node.choice(list)
+end
+
+
 return First

@@ -115,6 +115,18 @@ function Grammar:addRule (var, rhs, frag)
 end
 
 
+function Grammar:addNewRep (var, rhs, frag)
+	assert(not self:hasRule(var))
+
+	table.insert(self.ruleList, var)
+	self.ruleMap[var] = rhs
+
+	if Grammar.isLexRule(var) and not frag then
+	  self:addToken(var)
+	end
+end
+
+
 function Grammar:updateRule (var, rhs)
 	assert(self:hasRule(var))
 			
