@@ -132,19 +132,13 @@ end
 
 
 function Cfg2Peg:isConflictSolved (mapConflict)
-    local conflict = false
-    io.write("Remaining conflicts: ")
-    for i, row in ipairs(mapConflict) do
-        for k, _ in pairs(row) do
-            if k < i and mapConflict[k][i] then
-                io.write("(" .. k .. " , " .. i .. ") ")
-                conflict = true
-            end
+    for k, v in pairs(mapConflict) do
+        if next(v) ~= nil then
+            return false
         end
     end
 
-    io.write"\n"
-    return not conflict
+    return true
 end
 
 
@@ -278,8 +272,11 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
 
         self:reordAlternatives(p, mapConflict)
 
-		if self:isConflictSolved(mapConflict) then
-			print("Solved")
+        print("Remaining Conflicts:")
+        print(self:printChoiceConflicts(p, listChoice, mapConflict))
+
+        if self:isConflictSolved(mapConflict) then
+			print("Solved123")
 			disjoint = true
 		end
     end
@@ -311,10 +308,6 @@ end
 
 
 function Cfg2Peg:getPeg (p, flw, rule)
-	assert(type(p) == 'table', type(p))
-	assert(type(flw) == 'table', print(p, flw, rule))
-	assert(type(rule) == "string", type(rule))
-	--print("getPeg", self.pretty:printp(p))
 	if p.tag == 'choice' then
         self:getChoicePeg(p, flw, rule)
 	elseif p.tag == 'con' then
@@ -326,7 +319,6 @@ function Cfg2Peg:getPeg (p, flw, rule)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		self:getRepPeg(p, flw, rule)
 	end
-	--print("vai terminar", tostring(p), tostring(p.tag), self.pretty:printp(p))
 end
 
 
@@ -432,7 +424,6 @@ function Cfg2Peg:collectKeywords ()
 			pKey = Node.choice(pKey)
 		end
 			
-		
 		self.peg:addRule(self.Keyword, pKey)
 		
     --print(KEYWORD, "<--->", pretty.printp(pKey))
@@ -480,7 +471,7 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
     end
     self:printConflictStats()
 
-  return self.peg
+    return self.peg
 end
 
 
