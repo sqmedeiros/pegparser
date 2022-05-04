@@ -211,8 +211,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 		checkConversionToPeg(g, peg)
 	end)
 	
-	--[==[
-	
+    
 	test([[Extra checks to not mismatch identifiers and reserved words]], function()
 		local g = [[
 			a   <- 'a' / 'y'
@@ -330,5 +329,4 @@ WS   <-   [ \t\n\r]+
 	checkConversionToPeg(g, peg, {unique = true})
 
     end)
-    --]==]
 end)
