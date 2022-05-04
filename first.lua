@@ -134,7 +134,7 @@ function First:calcFirstExp (exp)
 		return self:calcFirstExp(exp.v)
 	else
 		print(exp, exp.tag, exp.empty, exp.any)
-		error("Unknown tag: " .. exp.tag)
+		error("Unknown tag: " .. tostring(exp.tag))
 	end
 end
 
@@ -230,14 +230,14 @@ end
 
 function First.choiceFromSet (set)
 	local list = {}
-	for k, _ in pairs(set.sort().getElem()) do
+	for i, v in ipairs(set:sort()) do
 		local node
-		if k == First.__empty then
+		if v == First.__empty then
 			node = Node.empty()
-		elseif k == First.__any then
+		elseif v == First.__any then
 			node = Node.any()
 		else
-			node = Node.char(k)
+			node = Node.char("'" .. v .. "'")
 		end
 		table.insert(list, node)
 	end

@@ -1,5 +1,6 @@
 local Parser = require'pegparser.parser'
 local Grammar = require'pegparser.grammar'
+local debug = require'debug'
 
 local Pretty = {
     property = nil,
@@ -32,7 +33,7 @@ function Pretty:printProp (p)
 end
 
 function Pretty:printp (p, flag)
-    assert(p and p.tag)
+    assert(p and p.tag, debug.traceback())
     if p.tag == 'empty' then
 		return "''"
 	elseif p.tag == 'char' then
@@ -92,7 +93,7 @@ function Pretty:printp (p, flag)
         local outTab = {}
         for i, v in ipairs(p.v) do
             local s = self:printp(v, flag)
-            if v.tag == 'choice' and v.v[2].tag ~= 'throw' then
+            if v.tag == 'choice' and v.v[2] and v.v[2].tag ~= 'throw' then
                 s = '(' .. s .. ')'
             end        
             table.insert(outTab, s)
@@ -105,7 +106,7 @@ function Pretty:printp (p, flag)
 		else
 			return  p:getPredOp() .. '(' .. s .. ')'
 		end
-	elseif p.tag == "star" or p.tag == 'plus' or p.tag == 'opt' then
+	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		local s = self:printp(p.v, flag)
 		if p.v:isSimple() then
 			return s .. p:getRepOp() .. self:printProp(p)

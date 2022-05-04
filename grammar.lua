@@ -175,6 +175,14 @@ function Grammar.isLexRule (exp)
 end
 
 
+function Grammar.isSynRule (exp)
+	local var = Grammar.getVarName(exp)
+
+	local ch = string.sub(var, 1, 1)
+	return ch >= 'a' and ch <= 'z'
+end
+
+
 function Grammar.isErrRule (exp)
 	local var = Grammar.getVarName(exp)
 	return string.find(var, Grammar.prefErrRule) ~= nil

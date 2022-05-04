@@ -133,7 +133,8 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 
 		checkConversionToPeg(g, peg)
 	end)
-	
+
+
 	test("Identifying the rule that matches an identifier", function()
 		local g = [[
 			Id  <- [a-z] [a-z0-9]*
@@ -149,6 +150,68 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 		checkConversionToPeg(g, peg, { idRule = 'Id', reserved = true})
 	end)
 	
+	
+	test("Converting p* non-disjoint repetitions in syntactical rules", function()
+		local g = [[
+			s  <- 'id'* x
+			x  <- 'id' 'bolo' / 'bola'
+		]]
+
+		-- When generating the predicate, we sort the symbols lexicographically
+		-- Thus, the generated predicate is &('bola' / 'id')  instead of &('id' / 'bola')
+        local peg = [[
+			s  <- __rep_001 x
+			x  <- 'id' 'bolo' / 'bola'
+			__rep_001 <- 'id' __rep_001 / &('bola' / 'id')
+		]]
+
+		checkConversionToPeg(g, peg)
+	end)
+	
+	test("Converting p+ non-disjoint repetitions in syntactical rules", function()
+		local g = [[
+			s  <- s1 s2
+			s1 <-'a'*
+			s2 <- x
+			x  <- 'a'? 'b' 'c' / 'd'
+		]]
+
+		
+        local peg = [[
+			s  <- s1 s2
+			s1 <- __rep_001
+			s2 <- x
+			x  <- 'a'? 'b' 'c' / 'd'
+			__rep_001 <- 'a' __rep_001 / &('a' / 'b' / 'd')
+		]]
+
+		checkConversionToPeg(g, peg)
+	end)
+	
+	test("Converting p? non-disjoint repetitions in syntactical rules", function()
+		local g = [[
+			s  <- s1 s2? s3
+			s1 <- 'a'?
+			s2 <- x
+			s3 <- 'b'
+			x  <- 'a'? 'b' 'c' / 'd'
+		]]
+
+		
+        local peg = [[
+			s  <- s1 __rep_001 s3
+			s1 <- __rep_002
+			s2 <- x
+			s3 <- 'b'
+			x  <- 'a'? 'b' 'c' / 'd'
+			__rep_001 <- s2 &'b'  /  ''
+			__rep_002 <- 'a' &('a' / 'b' / 'd')  /  ''
+		]]
+
+		checkConversionToPeg(g, peg)
+	end)
+	
+	--[==[
 	
 	test([[Extra checks to not mismatch identifiers and reserved words]], function()
 		local g = [[
@@ -267,5 +330,5 @@ WS   <-   [ \t\n\r]+
 	checkConversionToPeg(g, peg, {unique = true})
 
     end)
-
+    --]==]
 end)

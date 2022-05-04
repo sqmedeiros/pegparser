@@ -9,7 +9,7 @@ local Cfg2Peg = {
 	Keyword = '__Keywords',
 	IdBegin = '__IdBegin',
 	IdRest  = '__IdRest',
-	RepPref = 'rep_',
+	RepPrefix = '__rep_',
 }
 
 Cfg2Peg.__index = Cfg2Peg
@@ -36,23 +36,17 @@ function Cfg2Peg:initConflictStats ()
 end
 
 
-function Cfg2Peg:getRepName (s)
+function Cfg2Peg:newRepVar ()
 	self.repCount = self.repCount + 1
-	return Cfg2Peg.RepPrefix .. string.format("%03d", self.repCount))
+	return Cfg2Peg.RepPrefix .. string.format("%03d", self.repCount)
 end
+
 
 function Cfg2Peg:printConflictStats ()
     print("Conflict stats:")
     print("Total #conflicts: ", self.conflictStats.total)
     print("Solved by #unique: ", self.conflictStats.unique)
     print("Solved by #prefix: ", self.conflictStats.prefix)
-end
-
-
-local function getRepName ()
-  local s = 'rep_' .. string.format("%03d", irep)
-	irep = irep + 1
-	return s
 end
 
 
@@ -72,35 +66,36 @@ function Cfg2Peg.tableSwap (t, i, j)
 	t[j] = aux
 end
 
-
-function Cfg2Peg:newNonLL1Rep(p, flw, rule)
-	assert(p ~= nil)
+-- Rewrites a non-disjoint repetition in the following ways
+-- p? ==>  p_rep  (where p_rep is a new rule)
+-- p_rep <-  p &flw  /  ''  (only matches p if is possible to match  &flw)
+-- p* ==>  p_rep  (where p_rep is a new rule)
+-- p_rep <-  p p_rep  /  &flw  (backtracks when is not possible to match  &flw)
+-- p+ ==>  p_rep  (where p_rep is a new rule)
+-- p_rep <-  p p_rep  /  p &flw  (backtracks when is not possible to match  p &flw)
+function Cfg2Peg:newNonDisjointRep(p, flw, rule)
 	assert(p.tag == 'opt' or p.tag == 'plus' or p.tag == 'star')
-	print("newNonLL1Rep", self.pretty:printp(p))
-	local innerExp = self:getPeg(p.v, flw, rule)
+	print("newNonDisjointRep", self.pretty:printp(p))
 	local predFlw = Node.andd(self.first.choiceFromSet(flw))
+	local innerExp = p.v
+	self:getPeg(innerExp, flw, rule)
+	--print("innerExp = ", self.pretty:printp(innerExp))
 
+	local p_rep = self:newRepVar()	
+	local p_rep_rhs
 	if p.tag == 'opt' then
-		p.tag = 'choice'
-		p.v = { Node.con{innerExp, predFlw), Node.empty() } }
-	elseif p.tag == 'star' or p.tag == 'plus' then
-		local s = newRepName()
-		p.tag = 'var'
-		p.var = self.addRepRule
-	
-	else -- p.tag == 'plus' then
-		
-	end
-		self.addNewRep()
-		local s = getRepName()
-		table.insert(peg.plist, s)
-		local var = newVar(s)
+		p_rep_rhs = Node.choice{Node.con{innerExp, predFlw}, Node.empty()}
+	else
 		if p.tag == 'plus' then
-			predFlw = newSeq(p1, predFlw)
+			predFlw = Node.con{innerExp, predFlw}
 		end
-		peg.prules[s] = newOrd(newSeq(p1, var), predFlw)
-		return var
+		p_rep_rhs = Node.choice{Node.con{innerExp, Node.var(p_rep)}, predFlw}
 	end
+	
+	p.tag = 'var'
+	p.v = p_rep	
+	self.peg:addRule(p_rep, p_rep_rhs)
+	self.first.FIRST[p_rep] = self.first:calcFirstExp(p_rep_rhs)
 end
 
 
@@ -294,26 +289,32 @@ end
 
 
 function Cfg2Peg:getRepPeg (p, flw, rule)
+	assert(p and flw and rule)
 	local firstRep = self.first:calcFirstExp(p.v)
-	local flwRep = self.first:calck(firstRep, flw)
-		
-	if firstRep:disjoint(flwRep) then
-		p.v = self:getPeg(p.v, flw, rule)
+	local flwRep = flw
+	local interFirstFlw = firstRep:inter(flw)
+
+	if interFirstFlw:empty() then
+		self:getPeg(p.v, flw, rule)
 		return
 	end
-	
-	print("Non-ll(1) repetition", self.pretty:printp(p))
-	
+
+	print("Non-ll(1) repetition", self.pretty:printp(p), interFirstFlw:tostring(), firstRep:tostring(), flwRep:tostring(), flw:tostring())
+
 	if self.useUnique and self.unique:matchUPath(p.v) then
 		print("Repetition match unique", pretty.printp(p.v))
-		p.v = self:getPeg(p.v, flw, rule)	
+		self:getPeg(p.v, flw, rule)
 	else		
-		Cfg2Peg:newNonLL1Rep(p, flw, rule)
+		self:newNonDisjointRep(p, flw, rule)
 	end
 end
 
 
 function Cfg2Peg:getPeg (p, flw, rule)
+	assert(type(p) == 'table', type(p))
+	assert(type(flw) == 'table', print(p, flw, rule))
+	assert(type(rule) == "string", type(rule))
+	--print("getPeg", self.pretty:printp(p))
 	if p.tag == 'choice' then
         self:getChoicePeg(p, flw, rule)
 	elseif p.tag == 'con' then
@@ -325,6 +326,7 @@ function Cfg2Peg:getPeg (p, flw, rule)
 	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
 		self:getRepPeg(p, flw, rule)
 	end
+	--print("vai terminar", tostring(p), tostring(p.tag), self.pretty:printp(p))
 end
 
 
@@ -458,9 +460,9 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 		self.unique = UVerySimple.new(self.peg)
 		self.unique:calcUniquePath()
 			
-		pretty:setProperty('unique')
-		print(pretty:printg(self.peg))
-		pretty:setProperty(nil)
+		self.pretty:setProperty('unique')
+		print(self.pretty:printg(self.peg))
+		self.pretty:setProperty(nil)
 		print("")
 	end
     
@@ -470,9 +472,9 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 
     self:initConflictStats()
 	for i, var in ipairs(self.peg:getVars()) do
-		if not Grammar.isLexRule(var) then
+		if Grammar.isSynRule(var) then
             self:getPeg(self.peg:getRHS(var), self.first.FOLLOW[var], var)
-		else
+		elseif Grammar.isLexRule then
             self:convertLazyRepetition(self.peg:getRHS(var))
 		end
     end
