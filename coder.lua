@@ -31,16 +31,16 @@ end
 function Coder.makep (p)
 	assert(p)
 	local tag = p.tag
-	
+
 	if p.tag == "empty" then
 		return M.P""
 	elseif p.tag == "char" then
 		local v = p:unquote()
-		if v == "'\\t'" then
+		if v == '\\t' then
 			return M.P'\t'
-		elseif v == "'\\r'" then
+		elseif v == '\\r' then
 			return M.P'\r'
-		elseif v == "'\\n'" then
+		elseif v == '\\n' then
 			return M.P'\n'
 		else
 			return M.P(v)

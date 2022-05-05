@@ -123,4 +123,38 @@ describe("Testing #coder", function()
 		assert.equal(lpegParser:match("x"), nil)
 	end)
 
+
+    test("Grammar with \n, \t, \r", function()
+
+		local g = Parser.match[[
+            S  <- ID X Y
+            ID <- 'a' '\n' 'b'
+            X  <- '\t'
+            Y  <- '\r'
+		]]
+
+		assert(g)
+
+		local lpegParser = Coder.makeg(g)
+        s = "a\nb\t\r"
+        assert.equal(lpegParser:match(s), #s + 1)
+	end)
+
+
+    test("Grammar with comments", function()
+
+		local g = Parser.match[[
+            s  <- ('a' / 'b' / 'c')*
+  			COMMENT <- ';' (!'\n' .)* '\n'
+		]]
+
+		assert(g)
+
+		local lpegParser = Coder.makeg(g)
+        s = "a ;first value\n   b  ;second value\n"
+        assert.equal(lpegParser:match(s), #s + 1)
+	end)
+
+
+
 end)
