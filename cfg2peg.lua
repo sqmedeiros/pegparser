@@ -457,10 +457,6 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 		print("")
 	end
     
-    if checkIdReserved then
-		self:convertLexRule(ruleId)
-	end
-
     self:initConflictStats()
 	for i, var in ipairs(self.peg:getVars()) do
 		if Grammar.isSynRule(var) then
@@ -470,6 +466,11 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 		end
     end
     self:printConflictStats()
+
+    if checkIdReserved then
+		self:convertLexRule(ruleId)
+	end
+
 
     return self.peg
 end
@@ -484,7 +485,7 @@ function Cfg2Peg:printChoiceConflicts (p, listChoice, mapConflict, verbose)
         local p1 = listChoice[i]
 		for j = i + 1, n do
             local p2 = listChoice[j]
-			if mapConflict[p1][p2] then
+			if mapConflict[p1][p2] and mapConflict[p2][p1] then
 				local s = '(' .. i .. ' , ' .. j .. ') '
 				table.insert(t, s)
 				if verbose then
