@@ -237,7 +237,12 @@ function First.choiceFromSet (set)
 		elseif v == First.__any then
 			node = Node.any()
 		else
-			node = Node.char("'" .. v .. "'")
+            local start = string.find(v, First.prefixLex, 1, true)
+            if start == 1 then -- is a lexical non-terminal
+                node = Node.var(string.sub(v, #First.prefixLex + 1))
+            else
+                node = Node.char("'" .. v .. "'")
+            end
 		end
 		table.insert(list, node)
 	end
