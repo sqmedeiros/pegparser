@@ -42,6 +42,13 @@ function Coder.makep (p)
 			return M.P'\r'
 		elseif v == '\\n' then
 			return M.P'\n'
+        elseif v == '\\"' then
+            return M.P'\"'
+        elseif v == '\\\'' then
+            return M.P"\'"
+        elseif string.find(v, '\\\\') then
+            v = string.gsub(v, '\\\\', '\\')
+            return M.P(v)
 		else
 			return M.P(v)
 		end
