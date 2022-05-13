@@ -234,6 +234,14 @@ gRApH {
         print(r, lab, errpos)
         assert.equal(lpegParser:match(s), #s + 1)
 
+		-- From grammarinator/testsSimpleId/test_273338121150092584181509196004485960627.dot
+		-- Generated a not valid HTML_STRING: <<V>><X.><]&.><><><Ty3></>>
+		-- <<V>> only is a valid HTML_STRING
+	    s = [[ sTRicT GrapH <<V>>  { {  }   ; sUbGraPh ""  {  }    } ]]
+
+		local r, lab, errpos = lpegParser:match(s)
+        print(r, lab, errpos)
+        assert.equal(lpegParser:match(s), #s + 1)
 
     end)
 
