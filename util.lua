@@ -105,15 +105,16 @@ end
 function Util.testYes (dir, ext, p)
 	local time = 0
 	for i, file in ipairs(getFiles(dir, ext)) do
-		print("Yes: ", file)
+		local fullPath = dir .. file
+		print("Yes: ", fullPath)
 		local r, lab, pos, t = testFile(dir .. file, p)
 
 		local line, col = '', ''
 		if not r then
-			line, col = re.calcline(getText(dir .. file), pos)
+			line, col = re.calcline(getText(fullPath), pos)
 		end
 
-		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. 
+		assert(r ~= nil, fullPath .. ': Label: ' .. tostring(lab) .. 
 			   '  Line: ' .. line .. ' Col: ' .. col)
 		time = time + t
 	end
