@@ -3,7 +3,7 @@ local Pretty = require"pegparser.pretty"
 local Grammar = require"pegparser.grammar"
 local Node = require"pegparser.node"
 
-local First = { prefixLex  = "___",
+local First = { prefixLex  = "__",
 								empty      = "__empty",
 								any        = "__any" ,
 								endInput   = "__$",

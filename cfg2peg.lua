@@ -241,10 +241,11 @@ function Cfg2Peg:computeConflicts (p, flw, rule)
 
 	for i = 1, n - 1 do
 		for j = i + 1, n do
-			if not firstAlt[i]:disjoint(firstAlt[j]) then
+			local interIJ = firstAlt[i]:inter(firstAlt[j])
+			if not interIJ:empty() then
 			    disjoint = false
-                mapConflict[p.v[i]][p.v[j]] = true
-                mapConflict[p.v[j]][p.v[i]] = true
+                mapConflict[p.v[i]][p.v[j]] = interIJ
+                mapConflict[p.v[j]][p.v[i]] = interIJ
                 self.conflictStats.total = self.conflictStats.total + 1
 			end
 		end
@@ -276,7 +277,6 @@ function Cfg2Peg:getChoicePeg (p, flw, rule)
         print(self:printChoiceConflicts(p, listChoice, mapConflict))
 
         if self:isConflictSolved(mapConflict) then
-			print("Solved123")
 			disjoint = true
 		end
     end
@@ -480,13 +480,15 @@ function Cfg2Peg:printChoiceConflicts (p, listChoice, mapConflict, verbose)
 	local n = #p.v
 	local t = {}
     local pretty = self.pretty
+	local none = true
 
 	for i = 1, n - 1 do
         local p1 = listChoice[i]
 		for j = i + 1, n do
             local p2 = listChoice[j]
 			if mapConflict[p1][p2] and mapConflict[p2][p1] then
-				local s = '(' .. i .. ' , ' .. j .. ') '
+				none = false
+				local s = '(' .. i .. ' , ' .. j .. '): ' .. mapConflict[p1][p2]:tostring()
 				table.insert(t, s)
 				if verbose then
 					s = pretty:printp(p1) .. '  ,  ' .. pretty:printp(p2)
@@ -496,7 +498,10 @@ function Cfg2Peg:printChoiceConflicts (p, listChoice, mapConflict, verbose)
 		end
 	end
 
-    return table.concat(t, ';  ')
+	if none then
+		table.insert(t, "None")
+	end
+    return table.concat(t, '\n')
 end
 
 
