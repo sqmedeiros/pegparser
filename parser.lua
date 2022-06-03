@@ -111,8 +111,8 @@ function Parser.newSuffix (exp, ...)
 end 
 
 
-function Parser.newRule (var, rhs)
-	g:addRule(var, rhs)
+function Parser.newRule (frag, var, rhs)
+	g:addRule(var, rhs, frag ~= '')
 	
 	if Grammar.isLexRule(var) then
 		for tk, _ in pairs(lasttk) do
@@ -126,7 +126,7 @@ end
 local pegGrammar = [[
   grammar       <-   S rule+^Rule (!.)^Extra
 
-  rule          <-   (name S arrow^Arrow exp^ExpRule)   -> newRule
+  rule          <-   (fragment name S arrow^Arrow exp^ExpRule)   -> newRule
 
   exp           <-   {| (seq ('/' S seq^SeqExp)*) |} -> newChoice
 
@@ -150,9 +150,11 @@ local pegGrammar = [[
   
   escseq        <-  '\t' -> newEsqSeq
 
-  var           <-   name -> newVar !arrow  
+  var           <-   name -> newVar !arrow
 
-  name          <-   {[a-zA-Z_] [a-zA-Z0-9_]*} S
+  fragment      <-   {'fragment'} ![a-zA-Z_] S / {''}
+  
+  name          <-   !('fragment' ![a-zA-Z_]) {[a-zA-Z_] [a-zA-Z0-9_]*} S
  
   def           <-   '%' S name -> newDef
 
@@ -196,7 +198,7 @@ function Parser.match (s)
 		for _, var in ipairs(varRef) do
 			if gRules[var] == nil then
 				if g:isPreDefRule(var) then
-					Parser.newRule(var, g.preDefRules[var])
+					Parser.newRule('', var, g.preDefRules[var])
 				else
 					assert(false, "Rule '" .. var .. "' was not defined")
 				end

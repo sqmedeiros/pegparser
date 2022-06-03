@@ -72,7 +72,7 @@ end
 function Grammar.getVarName (exp)
 	local var = exp
 	if type(exp) == "table" then
-		assert(exp.tag == 'var')
+		assert(exp.tag == 'var', "Tag was " .. tostring(exp.tag))
 		var = exp.v
 	end
 	assert(type(var) == "string", "Type of 'var' was " .. type(var))

@@ -176,6 +176,29 @@ describe("Testing #parser", function()
     assert.same(g:getStartRule(), "x")
   end)
 
+  test("Grammar with a fragment", function()
+    local s = [[a <- 'a' C
+                fragment C <- 'c']]
+
+    local g, msg = Parser.match(s)
+
+    assert.not_nil(g)
+
+    local ruleMap = {
+      a = Node.choice{Node.con{Node.char"'a'", Node.var"C"}},
+      C = Node.char"'c'"
+    }
+
+    assert.same(g:getRules(), ruleMap)
+    assert.same(g:getVars(), { "a", "C" })
+
+    -- adds the string literals and the lexical rules to the set of tokens
+    -- does not add symbols in the right-hand side of a lexical rule to set list of tokens
+    assert.same(g:getTokens(), { ["'a'"] = true })
+
+    assert.same(g:getStartRule(), "a")
+  end)
+
 
 --[==[
   test("Testing simple, position, and table capture", function()
