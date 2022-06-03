@@ -397,6 +397,17 @@ function Cfg2Peg:collectKwSyn (p, tKey, rule)
 end
 
 
+function Cfg2Peg:convertLexRuleByOrder ()
+	local setKey = Set.new()
+	for i, v in ipairs(self.cfg:getVars()) do
+		if self.cfg:isToken(v) then
+			print("Tk ", v)
+			--self.peg:updateRule(v, self:collectKwSyn(self.peg:getRHS(v), setKey, v))
+		end
+	end
+
+end
+
 function Cfg2Peg:collectKeywords ()
 	local setKey = Set.new()
 	for i, v in ipairs(self.cfg:getVars()) do
@@ -468,7 +479,8 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
     self:printConflictStats()
 
     if checkIdReserved then
-		self:convertLexRule(ruleId)
+		--self:convertLexRule(ruleId)
+		self:convertLexRuleByOrder()
 	end
 
 

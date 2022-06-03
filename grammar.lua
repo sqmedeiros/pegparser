@@ -161,6 +161,11 @@ function Grammar:getTokens (tk)
 end
 
 
+function Grammar:isToken (tk)
+	return self.tokenSet[tk]
+end
+
+
 function Grammar:hasRule (var)
 	local var = Grammar.getVarName(var)
 	return self.ruleMap[var] ~= nil
