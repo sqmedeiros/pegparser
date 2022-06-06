@@ -221,9 +221,11 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 
 		-- I'm favoring readability here, so I used __IdRest directly instead of Cfg2Peg.IdRest
         local peg = [[
-			a   <- 'a' !__IdRest / 'y' !__IdRest
-            b   <- 'a' !__IdRest / 'a' !__IdRest 'y' !__IdRest
+			a   <-  ZLex_001 / ZLex_002
+            b   <- ZLex_001 / ZLex_001 ZLex_002
 			Id  <- !__Keywords [a-z] [a-z0-9]*
+			ZLex_001 <- 'a' !__IdRest
+			ZLex_002 <- 'y' !__IdRest
 			__IdBegin <- [a-z]
 			__IdRest <- [a-z0-9]*
 			__Keywords <- 'a' / 'y'

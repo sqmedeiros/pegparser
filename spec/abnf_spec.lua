@@ -10,6 +10,12 @@ local function checkConversionToPeg (stringG, stringPeg, config)
 	
 	config = config or {}
 	
+	print("Tokens: ")
+	for k, v in pairs(g.tokenSet) do
+		io.write(k .. '; ')
+	end
+	io.write('\n')
+	
 	local c2p = Cfg2Peg.new(g)
 	c2p:setUsePrefix(config.prefix)
 	c2p:setUseUnique(config.unique)
@@ -50,19 +56,19 @@ element   <-   ID   /  group   /  option   /  STRING   /  NumberValue   /  Prose
 group   <-   '(' alternation ')' 
 option   <-   '[' alternation ']' 
 NumberValue   <-   '%' (BinaryValue  /  DecimalValue  /  HexValue)
-BinaryValue   <-   'b' BIT+ (('.' BIT+)+  /  ('-' BIT+))?
-DecimalValue   <-   'd' DIGIT+ (('.' DIGIT+)+  /  ('-' DIGIT+))?
-HexValue   <-   'x' HEX_DIGIT+ (('.' HEX_DIGIT+)+  /  ('-' HEX_DIGIT+))?
+fragment BinaryValue   <-   'b' BIT+ (('.' BIT+)+  /  ('-' BIT+))?
+fragment DecimalValue   <-   'd' DIGIT+ (('.' DIGIT+)+  /  ('-' DIGIT+))?
+fragment HexValue   <-   'x' HEX_DIGIT+ (('.' HEX_DIGIT+)+  /  ('-' HEX_DIGIT+))?
 ProseValue   <-   '<' ((!'>' .))* '>'
 ID   <-   LETTER (LETTER  /  DIGIT  /  '-')*
 INT   <-   [0-9]+
 COMMENT   <-   ';' (!('\n'  /  '\r') .)* '\r'? '\n'
 WS   <-   (' '  /  '\t'  /  '\r'  /  '\n')
 STRING   <-   ('%s'  /  '%i')? '"' ((!'"' .))* '"'
-LETTER   <-   [a-z]  /  [A-Z]
-BIT   <-   [0-1]
-DIGIT   <-   [0-9]
-HEX_DIGIT   <-   ([0-9]  /  [a-f]  /  [A-F])
+fragment LETTER   <-   [a-z]  /  [A-Z]
+fragment BIT   <-   [0-1]
+fragment DIGIT   <-   [0-9]
+fragment HEX_DIGIT   <-   ([0-9]  /  [a-f]  /  [A-F])
 ]]
 
 	local peg = [[

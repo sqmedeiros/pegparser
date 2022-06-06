@@ -182,6 +182,12 @@ function Node:isSimple ()
 end
 
 
+function Node:isRepetition ()
+	local tag = self.tag
+	return tag == 'opt' or tag == 'star' or tag == 'plus'
+end
+
+
 function Node:getRepOp ()
 	local tag = self.tag
 	assert(tag == 'opt' or tag == 'plus' or tag == 'star', tag)

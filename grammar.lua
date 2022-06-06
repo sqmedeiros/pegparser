@@ -12,6 +12,7 @@ function Grammar.new ()
 	self.ruleMap = {}
 	self.ruleList = {}
 	self.tokenSet = {}
+	self.fragmentSet = {}
 	self.startRule = nil
 	self:setPreDefRules()
 	return self
@@ -109,8 +110,12 @@ function Grammar:addRule (var, rhs, frag)
 	table.insert(self.ruleList, var)
 	self.ruleMap[var] = rhs
 
-	if Grammar.isLexRule(var) and not frag then
-	  self:addToken(var)
+	if Grammar.isLexRule(var) then
+		if not frag then
+			self:addToken(var)
+		else
+			self.fragmentSet[var] = true
+		end
 	end
 end
 

@@ -10,6 +10,7 @@ local Cfg2Peg = {
 	IdBegin = '__IdBegin',
 	IdRest  = '__IdRest',
 	RepPrefix = '__rep_',
+	ImpLexPrefix = 'ZLex_'
 }
 
 Cfg2Peg.__index = Cfg2Peg
@@ -25,6 +26,8 @@ function Cfg2Peg.new(cfg)
     self.useUnique = false
     self.usePrefix = false
     self.repCount = 0
+    self.impLex = 0
+    self.impMap = {}
     self.pretty = Pretty.new()
     self:initConflictStats()
 	return self
@@ -340,8 +343,15 @@ function Cfg2Peg.matchIdBegin (p)
 				return true
 			end
 		end
+	elseif p.tag == 'con' then
+		return Cfg2Peg.matchIdBegin(p.v[1])
+	elseif p.tag == 'choice' then
+		for i, v in ipairs(p.v) do
+			if Cfg2Peg.matchIdBegin(v) then
+				return true
+			end
+		end
 	end
-		
 	return false
 end
 
@@ -364,55 +374,32 @@ function Cfg2Peg:newPredIdRest (p)
 end
 
 
-function Cfg2Peg:addPredIdRest (p, setKey, rule)
-	setKey:insert(p.v)
-	return self:newPredIdRest(p)
+function Cfg2Peg:addPredIdRest (var, setKey)
+	setKey:insert(var)
+	return self:newPredIdRest(Node.var(var))
 end
 
 
-function Cfg2Peg:collectKwSyn (p, tKey, rule)
-	if p.tag == 'char' or p.tag == 'set' then
-		if Cfg2Peg.matchIdBegin(p) then
-			return self:addPredIdRest(p, tKey, rule)
-		end
-	elseif p.tag == 'choice' then
-		local tChoice = {}
-		for i, v in ipairs(p.v) do
-			table.insert(tChoice, self:collectKwSyn(v, tKey, rule))
-		end
-		return Node.choice(tChoice)
-	elseif p.tag == 'con' then
-		pretty = Pretty.new()
-		local newCon = self:collectKwSyn(p.v[1], tKey, rule)
-		for i = 2, #p.v do
-			local p2 = self:collectKwSyn(p.v[i], tKey, rule)
-			newCon = Node.con(newCon, p2)
-		end
-		return newCon
-	elseif p.tag == 'star' or p.tag == 'plus' or p.tag == 'opt' then
-		local p1 = self:collectKwSyn(p.v, tKey, rule)
-		return Node.new(p.tag, p1)
-	end
-	return p
-end
 
-
-function Cfg2Peg:convertLexRuleByOrder ()
+--[==[function Cfg2Peg:convertLexRuleByOrder ()
 	local setKey = Set.new()
 	for i, v in ipairs(self.cfg:getVars()) do
 		if self.cfg:isToken(v) then
 			print("Tk ", v)
-			--self.peg:updateRule(v, self:collectKwSyn(self.peg:getRHS(v), setKey, v))
+			self.peg:updateRule(v, self:collectKwSyn(self.peg:getRHS(v), setKey, v))
 		end
 	end
 
-end
+end]==]
 
 function Cfg2Peg:collectKeywords ()
 	local setKey = Set.new()
-	for i, v in ipairs(self.cfg:getVars()) do
-		if not Grammar.isLexRule(v) and v ~= self.ruleId then
-			self.peg:updateRule(v, self:collectKwSyn(self.peg:getRHS(v), setKey, v))
+	for i, var in pairs(self.peg:getVars()) do
+		local rhs = self.peg:getRHS(var)
+		print("var: ", var, var ~= self.ruleId, Grammar.isLexRule(var), not self.cfg.fragmentSet[var], Cfg2Peg.matchIdBegin(rhs))
+		if var ~= self.ruleId and Grammar.isLexRule(var) and not self.cfg.fragmentSet[var] and Cfg2Peg.matchIdBegin(rhs) then
+			self:addPredIdRest(var, setKey)
+			self.peg:updateRule(var, self:newPredIdRest(rhs))
 		end
 	end
 
@@ -449,7 +436,58 @@ end
 function Cfg2Peg:convertLexRule (ruleId)
     self.ruleId = ruleId or self.ruleId
 	self:initId()
+	self:checkImplicitLexRulesG()
 	self:collectKeywords()
+end
+
+
+function Cfg2Peg:newImplicitLexVar ()
+	self.impLex = self.impLex + 1
+	return Cfg2Peg.ImpLexPrefix .. string.format("%03d", self.impLex)
+end
+
+
+function Cfg2Peg:addImplicitLexRule (exp)
+	local impVar = self.impMap[exp.v]
+	
+	if not impVar then
+		impVar = self:newImplicitLexVar()
+		local rhs = Node.copy(exp)
+		if Cfg2Peg.matchIdBegin(rhs) then
+			rhs = self:newPredIdRest(rhs)
+		end
+		self.peg:addRule(impVar, rhs, false)
+		self.impMap[exp.v] = impVar 
+	end
+	
+	exp.tag = 'var'
+	exp.v = impVar
+end
+
+
+function Cfg2Peg:checkImplicitLexRulesAux (exp)
+	if exp.tag == 'char' then
+		self:addImplicitLexRule(exp)
+	elseif exp.tag == 'con' or exp.tag == 'choice' then
+		for i, iExp in ipairs(exp.v) do
+			self:checkImplicitLexRulesAux(iExp)
+		end
+	elseif exp:isRepetition() then
+		self:checkImplicitLexRulesAux(exp.v)
+	end
+end
+
+
+function Cfg2Peg:checkImplicitLexRulesG ()
+	local listVars = self.peg:getVars()
+	local nVars = #listVars
+	
+	for i = 1, nVars do
+		local var = listVars[i]
+		if Grammar.isSynRule(var) then
+            self:checkImplicitLexRulesAux(self.peg:getRHS(var))
+		end
+    end
 end
 
 
@@ -479,8 +517,8 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
     self:printConflictStats()
 
     if checkIdReserved then
-		--self:convertLexRule(ruleId)
-		self:convertLexRuleByOrder()
+		self:convertLexRule(ruleId)
+		--self:convertLexRuleByOrder()
 	end
 
 
