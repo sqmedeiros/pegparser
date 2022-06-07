@@ -99,7 +99,7 @@ HEX_DIGIT   <-   [0-9]  /  [a-f]  /  [A-F]
 EOF <- !.
 __rep_001       <-  repetition __rep_001  /  repetition &(')'  /  '/'  /  ']'  /  EOF  /  ID)
 __IdBegin <- LETTER
-__IdRest <- (LETTER  /  DIGIT  /  '-')*
+__IdRest <- LETTER  /  DIGIT  /  '-'
 ZLex_001 <- '='
 ZLex_002 <- '/'
 ZLex_003 <- '*'

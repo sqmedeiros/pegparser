@@ -362,6 +362,9 @@ function Cfg2Peg:initId ()
     assert(expId.tag == 'con' and #expId.v == 2, "The rule that matches an identifier should be a concenation of two expressions")
 	local pIdBegin = Node.copy(expId.v[1])
 	local pIdRest = Node.copy(expId.v[2])
+	while pIdRest:isRepetition() do
+		pIdRest = pIdRest.v
+	end
 	local fragment = true
 
 	self.peg:addRule(self.IdBegin, pIdBegin, fragment)
