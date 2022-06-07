@@ -89,7 +89,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
             x <- ZLex_003  ZLex_004 y
             y <- (ZLex_005 z)*
             z <- id
-            Number <- ('x' / 'X') [0-9]+
+            Number <- ('x' / 'X') [0-9]+ !__IdRest
             id  <- !__Keywords [a-z] [a-z0-9]*
             __IdBegin <- [a-z]
             __IdRest <- [a-z0-9]*
@@ -114,7 +114,7 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 
         local peg = [[
 			a   <- DO / END
-            DO  <- [Dd] [Oo] !__IDRest
+            DO  <- [Dd] [Oo] !__IdRest
             END <- 'end' !__IdRest
 			Id  <- !__Keywords [a-z] [a-z0-9]*
 			__IdBegin <- [a-z]

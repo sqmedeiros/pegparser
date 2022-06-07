@@ -73,31 +73,42 @@ fragment HEX_DIGIT   <-   ([0-9]  /  [a-f]  /  [A-F])
 
 	local peg = [[
 rulelist   <-   rule_* EOF 
-rule_   <-   ID '=' '/'? elements 
+rule_   <-   ID ZLex_001 ZLex_002? elements 
 elements   <-   alternation 
-alternation   <-   concatenation ('/' concatenation )* 
-concatenation   <-   repetition+ 
+alternation   <-   concatenation (ZLex_002 concatenation )* 
+concatenation   <-   __rep_001
 repetition   <-   repeat? element 
-repeat   <-   INT   /  (INT? '*' INT? ) 
+repeat   <-   INT? ZLex_003 INT? /  INT 
 element   <-   ID   /  group   /  option   /  STRING   /  NumberValue   /  ProseValue 
-group   <-   '(' alternation ')' 
-option   <-   '[' alternation ']' 
+group   <-   ZLex_004 alternation ZLex_005
+option   <-   ZLex_006 alternation ZLex_007
 NumberValue   <-   '%' (BinaryValue  /  DecimalValue  /  HexValue)
-BinaryValue   <-   'b' BIT+ (('.' BIT+)+  /  ('-' BIT+))?
-DecimalValue   <-   'd' DIGIT+ (('.' DIGIT+)+  /  ('-' DIGIT+))?
-HexValue   <-   'x' HEX_DIGIT+ (('.' HEX_DIGIT+)+  /  ('-' HEX_DIGIT+))?
-ProseValue   <-   '<' ((!'>' .))* '>'
+BinaryValue   <-   'b' BIT+ (('.' BIT+)+  /  '-' BIT+)?
+DecimalValue   <-   'd' DIGIT+ (('.' DIGIT+)+  /  '-' DIGIT+)?
+HexValue   <-   'x' HEX_DIGIT+ (('.' HEX_DIGIT+)+  /  '-' HEX_DIGIT+)?
+ProseValue   <-   '<' (!'>' .)* '>'
 ID   <-   LETTER (LETTER  /  DIGIT  /  '-')*
 INT   <-   [0-9]+
 COMMENT   <-   ';' (!('\n'  /  '\r') .)* '\r'? '\n'
-WS   <-   (' '  /  '\t'  /  '\r'  /  '\n')
-STRING   <-   ('%s'  /  '%i')? '"' ((!'"' .))* '"'
+WS   <-   ' '  /  '\t'  /  '\r'  /  '\n'
+STRING   <-   ('%s'  /  '%i')? '"' (!'"' .)* '"'
 LETTER   <-   [a-z]  /  [A-Z]
 BIT   <-   [0-1]
 DIGIT   <-   [0-9]
-HEX_DIGIT   <-   ([0-9]  /  [a-f]  /  [A-F])
+HEX_DIGIT   <-   [0-9]  /  [a-f]  /  [A-F]
+EOF <- !.
+__rep_001       <-  repetition __rep_001  /  repetition &(')'  /  '/'  /  ']'  /  EOF  /  ID)
+__IdBegin <- LETTER
+__IdRest <- (LETTER  /  DIGIT  /  '-')*
+ZLex_001 <- '='
+ZLex_002 <- '/'
+ZLex_003 <- '*'
+ZLex_004 <- '('
+ZLex_005 <- ')'
+ZLex_006 <- '['
+ZLex_007 <- ']'
 ]]
-	checkConversionToPeg(g, peg, {unique = true})
+	checkConversionToPeg(g, peg, {prefix = true, reserved = true, idRule = 'ID'})
 
     end)
 end)

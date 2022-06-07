@@ -224,11 +224,11 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 			a   <-  ZLex_001 / ZLex_002
             b   <- ZLex_001 / ZLex_001 ZLex_002
 			Id  <- !__Keywords [a-z] [a-z0-9]*
-			ZLex_001 <- 'a' !__IdRest
-			ZLex_002 <- 'y' !__IdRest
 			__IdBegin <- [a-z]
 			__IdRest <- [a-z0-9]*
-			__Keywords <- 'a' / 'y'
+			ZLex_001 <- 'a' !__IdRest
+			ZLex_002 <- 'y' !__IdRest
+			__Keywords <- ZLex_001 / ZLex_002
         ]]
 
 		checkConversionToPeg(g, peg, {idRule = 'Id', reserved = true})
@@ -245,15 +245,20 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 		]]
 
         local peg = [[
-            s <- 'there' !__IdRest 'AB' !__IdRest
-            x <- 'x9' !__IdRest '3' y
-            y <- ('bb' !__IdRest z)*
+            s <- ZLex_001 ZLex_002
+            x <- ZLex_003  ZLex_004 y
+            y <- (ZLex_005 z)*
             z <- id
-            Number <- ('x' / 'X') [0-9]+
+            Number <- ('x' / 'X') [0-9]+ !__IdRest
             id  <- !__Keywords [a-z] [a-z0-9]*
             __IdBegin <- [a-z]
             __IdRest <- [a-z0-9]*
-            __Keywords <- 'AB' / 'bb' / 'there' / 'x9'
+            ZLex_001 <- 'there' !__IdRest
+            ZLex_002 <- 'AB' !__IdRest
+            ZLex_003 <- 'x9' !__IdRest
+            ZLex_004 <- '3'
+            ZLex_005 <- 'bb' !__IdRest
+            __Keywords <- Number / ZLex_001 / ZLex_002 / ZLex_003 / ZLex_005
         ]]
 
 		checkConversionToPeg(g, peg, {idRule = 'id', reserved = true})

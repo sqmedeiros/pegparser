@@ -336,7 +336,7 @@ function Cfg2Peg.matchIdBegin (p)
 	elseif p.tag == 'set' then
 		for k, v in pairs(p.v) do
 			if #v == 1 then
-				if Cfg2Peg.isIdBegin(string.sub(v, 2, 2)) then
+				if Cfg2Peg.isIdBegin(string.sub(v, 1, 1)) then
 					return true
 				end
 			elseif Cfg2Peg.isIdBegin(string.sub(v, 1, 1)) or Cfg2Peg.isIdBegin(string.sub(v, 3, 3)) then
@@ -396,7 +396,6 @@ function Cfg2Peg:collectKeywords ()
 	local setKey = Set.new()
 	for i, var in pairs(self.peg:getVars()) do
 		local rhs = self.peg:getRHS(var)
-		print("var: ", var, var ~= self.ruleId, Grammar.isLexRule(var), not self.cfg.fragmentSet[var], Cfg2Peg.matchIdBegin(rhs))
 		if var ~= self.ruleId and Grammar.isLexRule(var) and not self.cfg.fragmentSet[var] and Cfg2Peg.matchIdBegin(rhs) then
 			self:addPredIdRest(var, setKey)
 			self.peg:updateRule(var, self:newPredIdRest(rhs))
@@ -452,11 +451,7 @@ function Cfg2Peg:addImplicitLexRule (exp)
 	
 	if not impVar then
 		impVar = self:newImplicitLexVar()
-		local rhs = Node.copy(exp)
-		if Cfg2Peg.matchIdBegin(rhs) then
-			rhs = self:newPredIdRest(rhs)
-		end
-		self.peg:addRule(impVar, rhs, false)
+		self.peg:addRule(impVar, Node.copy(exp), false)
 		self.impMap[exp.v] = impVar 
 	end
 	
