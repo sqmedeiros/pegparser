@@ -122,6 +122,43 @@ function Util.testYes (dir, ext, p)
 end
 
 
+function Util.testFiles (files, p)
+	local time = 0
+	for _, file in ipairs(files) do
+		print("Yes: ",  file)
+		local r, lab, pos, t = testFile(file, p)
+
+		local line, col = '', ''
+		if not r then
+			line, col = re.calcline(getText(file), pos)
+		end
+
+		assert(r ~= nil, file .. ': Label: ' .. tostring(lab) .. 
+			   '  Line: ' .. line .. ' Col: ' .. col)
+		time = time + t
+	end
+	return time
+end
+
+
+function Util.testFilesNo (files, p)
+	local time = 0
+	for _, file in ipairs(files) do
+		local r, lab, pos, t = testFile(file, p)
+
+		local line, col = '', ''
+		if not r then
+			line, col = re.calcline(getText(file), pos)
+            print('No: ' .. file .. ':  Line: ' .. line .. ' Col: ' .. col)
+		end
+
+		assert(r == nil, file .. 'Yes : ' .. tostring(r))
+		time = time + t
+	end
+	return time
+end
+
+
 local function testNo (dir, ext, p, strict, special)
 	local time = 0
 	for i, file in ipairs(getFiles(dir, ext)) do
