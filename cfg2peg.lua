@@ -150,7 +150,8 @@ function Cfg2Peg:calcUniqueAlternatives (p, mapConflict)
     
     for i, v in ipairs(p.v) do
 		if next(mapConflict[v]) ~= nil then -- alternative has a conflict with other(s)
-            if self.useUnique and self.unique:matchUPath(v) then  -- conflict solved
+            if false then
+            --if self.useUnique and self.unique:matchUPath(v) then  -- conflict solved
                 print("Alternative " .. i .. " match unique", self.pretty:printp(v))
                 for _, _ in pairs(mapConflict[v]) do
                     self.conflictStats.unique = self.conflictStats.unique + 1
@@ -182,21 +183,32 @@ function Cfg2Peg:compAlternatives (v, i, j, mapConflict)
     end
 
     -- if the first alternative is a prefix of the second one, swap them
-	local s1 = self.pretty:printp(v[i])
-	local s2 = self.pretty:printp(v[j])
-	local start, finish = string.find(s2, s1, 1, true)
-    if start == 1 then
-        print("Prefix: ", s1, s2, start, finish)
-        mapConflict[v[i]][v[j]] = nil
-        mapConflict[v[j]][v[i]] = nil
-        self.conflictStats.prefix = self.conflictStats.prefix + 1
-    end
-    return start == 1
+	if self:isPrefix(v[i], v[j]) then
+    mapConflict[v[i]][v[j]] = nil
+    mapConflict[v[j]][v[i]] = nil
+    self.conflictStats.prefix = self.conflictStats.prefix + 1
+		return true
+  end
+
+	return false
 end
 
 
 function Cfg2Peg:swap (t, i, j)
     t[i], t[j] = t[j], t[i]
+end
+
+
+-- returns true if the first expression is a prefix of the second one
+function Cfg2Peg:isPrefix (exp1, exp2)
+	local s1 = self.pretty:printp(exp1)
+	local s2 = self.pretty:printp(exp2)
+	local start, finish = string.find(s2, s1, 1, true)
+	if start == 1 then
+		print("Prefix: ", s1, s2, start, finish)
+	end
+
+  return start == 1
 end
 
 
@@ -245,7 +257,7 @@ function Cfg2Peg:computeConflicts (p, flw, rule)
 	for i = 1, n - 1 do
 		for j = i + 1, n do
 			local interIJ = firstAlt[i]:inter(firstAlt[j])
-			if not interIJ:empty() then
+			if not interIJ:empty() or self:isPrefix(p.v[i], p.v[j]) then
 			    disjoint = false
                 mapConflict[p.v[i]][p.v[j]] = interIJ
                 mapConflict[p.v[j]][p.v[i]] = interIJ
@@ -301,7 +313,8 @@ function Cfg2Peg:getRepPeg (p, flw, rule)
 
 	print("Non-ll(1) repetition", self.pretty:printp(p), interFirstFlw:tostring(), firstRep:tostring(), flwRep:tostring(), flw:tostring())
 
-	if self.useUnique and self.unique:matchUPath(p.v) then
+	--if self.useUnique and self.unique:matchUPath(p.v) then
+  if false then
 		print("Repetition match unique", pretty.printp(p.v))
 		self:getPeg(p.v, flw, rule)
 	else		
@@ -493,7 +506,8 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 	self.peg = self.cfg:copy()
 	self.irep = 0
     
-    if self.useUnique then
+    --if self.useUnique then
+    if false then
 		print("Unique Symbols")
 		self.unique = UVerySimple.new(self.peg)
 		self.unique:calcUniquePath()
