@@ -506,8 +506,8 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 	self.peg = self.cfg:copy()
 	self.irep = 0
     
-    --if self.useUnique then
-    if false then
+  --if self.useUnique then
+  if false then
 		print("Unique Symbols")
 		self.unique = UVerySimple.new(self.peg)
 		self.unique:calcUniquePath()
@@ -518,7 +518,19 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 		print("")
 	end
     
-    self:initConflictStats()
+  self:initConflictStats()
+
+	for i, var in ipairs(self.peg:getVars()) do
+		if Grammar.isSynRule(var) then
+      self:getPeg(self.peg:getRHS(var), self.first.FOLLOW[var], var)
+	  else
+		  self:getPeg(self.peg:getRHS(var), Set.new(), var)
+		end
+  end
+  self:printConflictStats()
+  print("Fim Da Primeira Passada")
+
+
 	for i, var in ipairs(self.peg:getVars()) do
 		if Grammar.isSynRule(var) then
             self:getPeg(self.peg:getRHS(var), self.first.FOLLOW[var], var)
