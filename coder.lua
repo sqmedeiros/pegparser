@@ -161,11 +161,21 @@ function Coder.autoskip (p, g)
 end
 
 
+function Coder.setComment (g, space, commentRules)
+	for i, v in ipairs(commentRules) do
+		if g:hasRule(v) then
+			space =	Node.choice{space, Node.var(v)}
+		end
+	end
+	return space
+end
+
+
 function Coder.setSkip (g)
 	local space = Node.set{' ','\t','\n','\v','\f','\r'}
-	if g:hasRule("COMMENT") then
-		space =	Node.choice{space, Node.var"COMMENT"}
-	end
+	local commentRules = { "COMMENT", "LINE_COMMENT", "BLOCK_COMMENT" }
+
+	space = Coder.setComment(g, space, commentRules)
 
 	local varSpace = 'SPACE'
 	if g:hasRule(varSpace) then

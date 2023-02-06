@@ -203,12 +203,24 @@ end
 function Cfg2Peg:isPrefix (exp1, exp2)
 	local s1 = self.pretty:printp(exp1)
 	local s2 = self.pretty:printp(exp2)
+
+	if s1 == s2 then  -- only considers a proper prefix
+		return false
+	end
+
+	-- in case of a literal char, should not consider the closing quote
+	-- to catch cases as: 'do' and 'double'
+	if exp1.tag == 'char' then
+		s1 = string.sub(s1, 1, #s1 - 1)
+		s2 = string.sub(s2, 1, #s2 - 1)
+	end
+
 	local start, finish = string.find(s2, s1, 1, true)
 	if start == 1 then
 		print("Prefix: ", s1, s2, start, finish)
 	end
 
-  return start == 1
+	return start == 1
 end
 
 
@@ -270,9 +282,26 @@ function Cfg2Peg:computeConflicts (p, flw, rule)
 end
 
 
+function Cfg2Peg:putAlternativeEmptyLast (p)
+	local n = #p.v
+
+	for i = 1, n - 1 do
+		if p.v[i]:matchEmpty(self.peg) then
+			print("Matches empty: ", self.pretty:printp(p.v[i]))
+			if p.v[n]:matchEmpty(self.peg) then
+				print("More than one alternative matches the empty string: " .. self.pretty:printp(p) .. "\n\n")
+			end
+			self:swap(p.v, i, n)
+		end
+	end
+
+end
+
+
 function Cfg2Peg:getChoicePeg (p, flw, rule)
 	local pretty = self.pretty
 
+	self:putAlternativeEmptyLast(p)
     local disjoint, listChoice, mapConflict = self:computeConflicts(p, flw, rule)
 
     if not disjoint then
@@ -343,7 +372,7 @@ function Cfg2Peg.isIdBegin (ch)
 end
 
 
-function Cfg2Peg.matchIdBegin (p)
+function Cfg2Peg:matchIdBegin (p)
 	if p.tag == 'char' then
 		return Cfg2Peg.isIdBegin(string.sub(p.v, 2, 2))
 	elseif p.tag == 'set' then
@@ -357,13 +386,15 @@ function Cfg2Peg.matchIdBegin (p)
 			end
 		end
 	elseif p.tag == 'con' then
-		return Cfg2Peg.matchIdBegin(p.v[1])
+		return self:matchIdBegin(p.v[1])
 	elseif p.tag == 'choice' then
 		for i, v in ipairs(p.v) do
-			if Cfg2Peg.matchIdBegin(v) then
+			if self:matchIdBegin(v) then
 				return true
 			end
 		end
+	elseif p.tag == 'var' and self.cfg.fragmentSet[p.v] then
+		return self:matchIdBegin(self.peg:getRHS(p.v))
 	end
 	return false
 end
@@ -412,7 +443,7 @@ function Cfg2Peg:collectKeywords ()
 	local setKey = Set.new()
 	for i, var in pairs(self.peg:getVars()) do
 		local rhs = self.peg:getRHS(var)
-		if var ~= self.ruleId and Grammar.isLexRule(var) and not self.cfg.fragmentSet[var] and Cfg2Peg.matchIdBegin(rhs) then
+		if var ~= self.ruleId and Grammar.isLexRule(var) and not self.cfg.fragmentSet[var] and self:matchIdBegin(rhs) then
 			self:addPredIdRest(var, setKey)
 			self.peg:updateRule(var, self:newPredIdRest(rhs))
 		end
@@ -448,11 +479,32 @@ function Cfg2Peg:collectKeywords ()
 end
 
 
+function Cfg2Peg:checkLexicalPrefixes ()
+	for i, var1 in ipairs(self.peg:getVars()) do
+		local rhs1 = self.peg:getRHS(var1)
+		local conflict = {}
+		if Grammar.isLexRule(var1) and not self:matchIdBegin(rhs1) and rhs1.tag == 'char' then
+			for j, var2 in ipairs(self.peg:getVars()) do
+				local rhs2 = self.peg:getRHS(var2)
+				if rhs2.tag == 'char' and var1 ~= var2 and Grammar.isLexRule(var2) and self:isPrefix(rhs1, rhs2) then
+					conflict[var2] = true
+				end
+			end
+			for k, _ in pairs(conflict) do
+				local pNotK = Node.nott(Node.var(k))
+				self.peg:updateRule(var1, Node.con(pNotK, self.peg:getRHS(var1)))
+			end
+		end
+	end
+end
+
+
 function Cfg2Peg:convertLexRule (ruleId)
     self.ruleId = ruleId or self.ruleId
 	self:initId()
 	self:checkImplicitLexRulesG()
 	self:collectKeywords()
+	self:checkLexicalPrefixes()
 end
 
 
@@ -534,7 +586,7 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 	for i, var in ipairs(self.peg:getVars()) do
 		if Grammar.isSynRule(var) then
             self:getPeg(self.peg:getRHS(var), self.first.FOLLOW[var], var)
-		elseif Grammar.isLexRule then
+		elseif Grammar.isLexRule(var) then
             self:convertLazyRepetition(self.peg:getRHS(var))
 		end
     end

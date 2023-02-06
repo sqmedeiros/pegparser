@@ -124,6 +124,89 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 
 		checkConversionToPeg(g, peg, {idRule = 'Id', reserved = true})
 	end)
+
+
+	test([[Keywords defined in lexical rules via a fragment rule]], function()
+		local g = [[
+			a   <- DO / END
+            DO  <- D O
+            END <- E N D
+            fragment D   <- [Dd]
+            fragment O   <- [Oo]
+            fragment E   <- 'E' / 'e'
+            fragment N   <- 'N' / 'n'
+			Id  <- [a-z] [a-z0-9]*
+		]]
+
+        local peg = [[
+			a   <- DO / END
+            DO  <- D O !__IdRest
+            END <- E N D !__IdRest
+            D   <- [Dd]
+            O   <- [Oo]
+            E   <- 'E' / 'e'
+            N   <- 'N' / 'n'
+			Id  <- !__Keywords [a-z] [a-z0-9]*
+			__IdBegin <- [a-z]
+			__IdRest <- [a-z0-9]
+			__Keywords <- D O / E N D
+        ]]
+
+		checkConversionToPeg(g, peg, {idRule = 'Id', reserved = true})
+	end)
+
+
+	test([[Identifying lexical rules, not related to keywords, which are a prefix of each other]], function()
+		local g = [[
+			a   <- DO / END
+			EQ   <- '=='
+			ATRIB <- '='
+            DO  <- [Dd] [Oo]
+            END <- 'end'
+			Id  <- [a-z] [a-z0-9]*
+		]]
+
+        local peg = [[
+			a   <- DO / END
+			EQ   <- '=='
+			ATRIB <- !EQ '='
+            DO  <- [Dd] [Oo] !__IdRest
+            END <- 'end' !__IdRest
+			Id  <- !__Keywords [a-z] [a-z0-9]*
+			__IdBegin <- [a-z]
+			__IdRest <- [a-z0-9]
+			__Keywords <- DO / END
+        ]]
+
+		checkConversionToPeg(g, peg, {idRule = 'Id', reserved = true})
+	end)
+
+	test([[Identifying lexical rules, not related to keywords, which are a prefix of each other]], function()
 	
+	    --TODO: it is not guaranteed to work in case a rule is a prefix of several others
+		local g = [[
+			a   <- DO / END
+			EQ   <- '=='
+			ATRIB <- '='
+			TRIPLE <- '==='
+            DO  <- [Dd] [Oo]
+            END <- 'end'
+			Id  <- [a-z] [a-z0-9]*
+		]]
+
+        local peg = [[
+			a   <- DO / END
+			EQ   <- '=='
+			ATRIB <- !EQ !TRIPLE '='
+            DO  <- [Dd] [Oo] !__IdRest
+            END <- 'end' !__IdRest
+			Id  <- !__Keywords [a-z] [a-z0-9]*
+			__IdBegin <- [a-z]
+			__IdRest <- [a-z0-9]
+			__Keywords <- DO / END
+        ]]
+
+		checkConversionToPeg(g, peg, {idRule = 'Id', reserved = true})
+	end)
 	
 end)
