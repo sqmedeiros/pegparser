@@ -12,13 +12,26 @@ local g = nil -- the resulting grammar
 local varRef = {} -- variables that appeared in right-hand side of grammar rules
 local lasttk = {}
 
+local mapEscSeqCharSet = {
+  ["\\n"]  = "\n",
+  ["\\t"]  = "\t",
+  ["\\r"]  = "\r",
+  ["\\\\"] = "\\",
+  ["\\\""] = "\"",
+  ["\\\'"] = "\'",
+}
 
-function Parser.newEsqSeq (v1, v2)
-	--print ("newEsqSeq = ", v1, #v1, #"\t")
+function Parser.newEscSeq (v1, v2)
+	--print ("newEscSeq = ", v1, #v1, #"\t")
 	--return "\t"
 	return v1
 end
 
+
+function Parser.newEscFunc (v1)
+	--print ("newEscFunc = ", v1, #v1, mapEscSeqCharSet[v1], #mapEscSeqCharSet[v1])
+	return mapEscSeqCharSet[v1]
+end
 
 function Parser.newLiteral (v)
 	if #v == 2 then
@@ -142,13 +155,15 @@ local pegGrammar = [[
   string        <-   ({"'" (escseq / (!"'"  .))* "'"^SingQuote}  S  /
                       {'"' (escseq / (!'"'  .))* '"'^DoubQuote}  S) -> newLiteral
 
-	class         <-   '[' {| (({(.'-'!']'.)} / (!']' {.}))+)^EmptyClass |} -> newSet ']'^RBraClass S
+	class         <-   '[' {| (({(.'-'!']'.)} / (!']' (esc / {.})))+)^EmptyClass |} -> newSet ']'^RBraClass S
+
+  char          <-   esc  /  .
 
   any           <-   '.' -> newAny S
   
-  esc           <-   [\\]
+  esc           <-   ('\' [nrt'"\\]) -> newEscFunc
   
-  escseq        <-  '\t' -> newEsqSeq
+  escseq        <-  '\t' -> newEscSeq
 
   var           <-   name -> newVar !arrow
 
@@ -176,7 +191,8 @@ local pegParser = Re.compile(pegGrammar, {
   newLiteral = Parser.newLiteral,
   newSet = Parser.newSet,
   newAny = Node.any,
-  newEsqSeq = Parser.newEsqSeq,
+  newEscSeq = Parser.newEscSeq,
+  newEscFunc = Parser.newEscFunc,
   newVar = Parser.newVar,
   newDef = Parser.newDef,
   newThrow = Node.throw

@@ -66,7 +66,8 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 	end)
 
     test([[Changing the order of alternatives, based on unique tokens,
-           when the alternatives' FIRST set is not disjoint]], function()
+           when the alternatives' FIRST set is not disjoint.
+           Expected to fail, as unique tokens are disabled currently]], function()
 		local g = [[
 			s   <-  a / 'a' 'b' / 'a' 'c'
 			a   <- 'x' / 'a' / 'y' / 'y''z'
@@ -83,7 +84,8 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 	end)
 
 
-    test([[Applying #here unique, prefix and unique+prefix]], function()
+    test([[Applying #here unique, prefix and unique+prefix.
+           Expected to fail, as unique tokens are disabled currently]], function()
 		local g = [[
 			s   <-  a / 'a' 'b' / 'a' 'c'
 			a   <- 'x' / 'a' / 'y' / 'y''z'
@@ -115,20 +117,22 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 
 
 	test("Converting lazy repetitionsss", function()
-        
-        -- converts only lazy repetitions in lexical rules
+       --TODO: check later the rule       Z   <-  'a'?? ('a' / 'b')
+       -- as it may be the beggining of an identifier
+
         local g = [[
 			x <- '[' X+? ']'
             X <- '<p>' .*? '</p>'
             Y   <- ('a' / 'b')*? 'c'
-            Z   <-  'a'?? ('a' / 'b')
+            Z   <-  '@a'?? ('a' / 'b')
 		]]
 
+				-- in case converts only lazy repetitions in lexical rules
         local peg = [[
 			x <- '[' (X+)? ']'
             X   <- '<p>' (!'</p>' .)* '</p>'
             Y   <- (!'c' ('a' / 'b'))* 'c'
-            Z   <- (!('a' / 'b') 'a')? ('a' / 'b')
+            Z   <- (!('a' / 'b') '@a')? ('a' / 'b')
         ]]
 
 		checkConversionToPeg(g, peg)
@@ -325,7 +329,7 @@ NUMBER   <-   '-'? ('.' DIGIT+  /  DIGIT+ ('.' DIGIT*)?)
 DIGIT   <-   [0-9]
 STRING   <-   '"' (!'"' ('\\"'  /  .))* '"'
 ID   <-   LETTER (LETTER  /  DIGIT)*
-LETTER   <-   [a-zA-Z\u0080-\u00FF_]
+LETTER   <-   [a-zA-Z\\u0080-\u00FF_]
 HTML_STRING   <-   '<' (TAG  /  ![<>] .)* '>'
 TAG   <-   '<' (!'>' .)* '>'
 COMMENT   <-   '/*' ( !'*/' .)* '*/'

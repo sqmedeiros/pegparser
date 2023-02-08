@@ -97,7 +97,7 @@ NUMBER   <-   '-'? ('.' DIGIT+  /  DIGIT+ ('.' DIGIT*)?)
 DIGIT   <-   [0-9]
 STRING   <-   '"' (!'"' ('\\"'  /  .))* '"'
 ID   <-   LETTER (LETTER  /  DIGIT)*
-LETTER   <-   [a-zA-Z\u0080-\u00FF_]
+LETTER   <-   [a-zA-Z\\u0080-\u00FF_]
 HTML_STRING   <-   '<' (TAG  /  ![<>] .)* '>'
 TAG   <-   '<' (!'>' .)* '>'
 COMMENT   <-   '/*' ( !'*/' .)* '*/'

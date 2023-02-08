@@ -181,7 +181,8 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 		checkConversionToPeg(g, peg, {idRule = 'Id', reserved = true})
 	end)
 
-	test([[Identifying lexical rules, not related to keywords, which are a prefix of each other]], function()
+	test([[Identifying lexical rules, not related to keywords, which are a prefix of each other.
+         May fail or not (depending on the grammar), as there are multiple lexical rules which are a prefix of each other]], function()
 	
 	    --TODO: it is not guaranteed to work in case a rule is a prefix of several others
 		local g = [[

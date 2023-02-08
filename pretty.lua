@@ -2,6 +2,15 @@ local Parser = require'pegparser.parser'
 local Grammar = require'pegparser.grammar'
 local debug = require'debug'
 
+local unmapEscSeqCharSet = {
+  ["\n"] = "\\n",
+  ["\t"] = "\\t",
+  ["\r"] = "\\r",
+  ["\\"] = "\\\\",
+  ["\""] = "\\\"",
+  ["\'"] = "\\\'",
+}
+
 local Pretty = {
     property = nil,
     propertyStr = ""
@@ -41,7 +50,11 @@ function Pretty:printp (p, flag)
 	elseif p.tag == 'any' then
 		return "."
 	elseif p.tag == 'set' then
-		return "[" .. table.concat(p.v) .. "]"
+    local allChars = {}
+		for i, v in ipairs(p.v) do
+			table.insert(allChars, unmapEscSeqCharSet[v] or v)
+		end
+		return "[" .. table.concat(allChars) .. "]"
 	elseif p.tag == 'constCap' then
 		return '{:const ' .. p.v .. '}'
 	elseif p.tag == 'posCap' then
