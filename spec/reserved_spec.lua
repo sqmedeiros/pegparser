@@ -64,10 +64,10 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
 			a   <-  ZLex_001 / ZLex_002
             b   <- ZLex_001 / ZLex_001 ZLex_002
 			Id  <- !__Keywords [a-z] [a-z0-9]*
-			__IdBegin <- [a-z]
-			__IdRest <- [a-z0-9]
 			ZLex_001 <- 'a' !__IdRest
 			ZLex_002 <- 'y' !__IdRest
+			__IdBegin <- [a-z]
+			__IdRest <- [a-z0-9]
 			__Keywords <- ZLex_001 / ZLex_002
         ]]
 
@@ -91,13 +91,13 @@ describe("Transforming a CFG into an equivalent PEG\n", function()
             z <- id
             Number <- ('x' / 'X') [0-9]+ !__IdRest
             id  <- !__Keywords [a-z] [a-z0-9]*
-            __IdBegin <- [a-z]
-            __IdRest <- [a-z0-9]
             ZLex_001 <- 'there' !__IdRest
             ZLex_002 <- 'AB' !__IdRest
             ZLex_003 <- 'x9' !__IdRest
             ZLex_004 <- '3'
             ZLex_005 <- 'bb' !__IdRest
+            __IdBegin <- [a-z]
+            __IdRest <- [a-z0-9]
             __Keywords <- Number / ZLex_001 / ZLex_002 / ZLex_003 / ZLex_005
         ]]
 

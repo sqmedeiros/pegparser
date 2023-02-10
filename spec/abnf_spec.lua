@@ -97,9 +97,6 @@ BIT   <-   [0-1]
 DIGIT   <-   [0-9]
 HEX_DIGIT   <-   [0-9]  /  [a-f]  /  [A-F]
 EOF <- !.
-__rep_001       <-  repetition __rep_001  /  repetition &(')'  /  '/'  /  ']'  /  EOF  /  ID)
-__IdBegin <- LETTER
-__IdRest <- LETTER  /  DIGIT  /  '-'
 ZLex_001 <- '='
 ZLex_002 <- '/'
 ZLex_003 <- '*'
@@ -107,6 +104,9 @@ ZLex_004 <- '('
 ZLex_005 <- ')'
 ZLex_006 <- '['
 ZLex_007 <- ']'
+__rep_001       <-  repetition __rep_001  /  repetition &(')'  /  '/'  /  ']'  /  EOF  /  ID)
+__IdBegin <- LETTER
+__IdRest <- LETTER  /  DIGIT  /  '-'
 ]]
 	checkConversionToPeg(g, peg, {prefix = true, reserved = true, idRule = 'ID'})
 

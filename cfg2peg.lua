@@ -459,7 +459,7 @@ function Cfg2Peg:collectKeywords ()
 	if nKey > 0 then
 		local pKey
 		if nKey == 1 then
-			pKey = Node.char(tKey)
+			pKey = Node.char(tKey[1])
 		else
 			pKey = {}
 			for i, v in ipairs(tKey) do
@@ -502,7 +502,7 @@ end
 function Cfg2Peg:convertLexRule (ruleId)
     self.ruleId = ruleId or self.ruleId
 	self:initId()
-	self:checkImplicitLexRulesG()
+	--self:checkImplicitLexRulesG()
 	self:collectKeywords()
 	self:checkLexicalPrefixes()
 end
@@ -571,6 +571,9 @@ function Cfg2Peg:convert (ruleId, checkIdReserved)
 	end
     
   self:initConflictStats()
+  if checkIdReserved then
+	self:checkImplicitLexRulesG()
+end
 
 	for i, var in ipairs(self.peg:getVars()) do
 		if Grammar.isSynRule(var) then
