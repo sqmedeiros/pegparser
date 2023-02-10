@@ -159,7 +159,7 @@ function Util.testFilesNo (files, p)
 end
 
 
-local function testNo (dir, ext, p, strict, special)
+function Util.testNo (dir, ext, p, strict, special)
 	local time = 0
 	for i, file in ipairs(getFiles(dir, ext)) do
 		print("No: ", file)
